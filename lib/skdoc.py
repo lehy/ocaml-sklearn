@@ -216,6 +216,33 @@ class Ndarray(Builtin):
     ml_type_ret = 'Ndarray.t'
     unwrap = '(Numpy.to_bigarray Bigarray.float64 Bigarray.c_layout)'
 
+class Ndarrayi(Builtin):
+    names = [
+        'ndarrayi',
+    ]
+    ml_type = 'Ndarrayi.t'
+    wrap = 'Numpy.of_bigarray'
+    ml_type_ret = 'Ndarrayi.t'
+    unwrap = '(Numpy.to_bigarray Bigarray.nativeint Bigarray.c_layout)'
+    
+class Ndarrayi32(Builtin):
+    names = [
+        'ndarrayi32',
+    ]
+    ml_type = 'Ndarrayi32.t'
+    wrap = 'Numpy.of_bigarray'
+    ml_type_ret = 'Ndarrayi32.t'
+    unwrap = '(Numpy.to_bigarray Bigarray.int32 Bigarray.c_layout)'
+
+class Ndarrayi64(Builtin):
+    names = [
+        'ndarrayi64',
+    ]
+    ml_type = 'Ndarrayi64.t'
+    wrap = 'Numpy.of_bigarray'
+    ml_type_ret = 'Ndarrayi64.t'
+    unwrap = '(Numpy.to_bigarray Bigarray.int64 Bigarray.c_layout)'
+
 
 class FloatList(Builtin):
     names = ['list of floats']
@@ -457,6 +484,9 @@ builtin_types = [
     Float(),
     Bool(),
     Ndarray(),
+    Ndarrayi(),
+    Ndarrayi32(),
+    Ndarrayi64(),
     FloatList(),
     StringList(),
     SparseMatrix(),
@@ -599,6 +629,8 @@ def parse_type(t, function, param_name):
         if isinstance(ret, (Ndarray, ArrayLike)):
             if param_name in ['feature_names', 'target_names']:
                 ret = builtin['list of string']
+            if param_name in ['neigh_ind']:
+                ret = builtin['ndarrayi']
         return ret
 
     if param_name in ['DESCR']:
@@ -1390,8 +1422,13 @@ class Function:
         # XXX TODO idea for return_: fix everything to true,
         # unless return_X_y: fix to false
         self.fixed_values = {'return_X_y': ('false', True)}
+        
         if function_name == 'make_regression':
             self.fixed_values['coef'] = ('true', False)
+
+        # kneighbors()
+        self.fixed_values['return_distance'] = ('true', False)
+        
         for name, has_default, t, fixed_value in self.arguments():
             if name in self.fixed_values:
                 continue
