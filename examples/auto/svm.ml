@@ -100,7 +100,7 @@ NuSVR(nu=0.1)
 let%expect_test "NuSVR" =
   let open Sklearn.Svm in
   let n_samples, n_features = 10, 5 in
-  (* np.random.seed(0)     *)
+  Random.init 0;
   let y = Owl.Arr.uniform [|n_samples|] in
   let x = Matrix.uniform n_samples n_features in
   let clf = NuSVR.create ~c:1.0 ~nu:0.1 () in
@@ -160,21 +160,19 @@ SVR(epsilon=0.2)
 
 *)
 
-(* TEST TODO
-let%expect_test "SVR" =
-    let svr = Sklearn.Svm.svr in
-    import numpy as np    
-    n_samples, n_features = 10, 5    
-    rng = np.random.RandomState(0)    
-    y = rng.randn(n_samples)    
-    X = rng.randn(n_samples, n_features)    
-    clf = SVR(C=1.0, epsilon=0.2)    
-    print @@ fit clf x y
-    [%expect {|
-            SVR(epsilon=0.2)            
-    |}]
 
-*)
+let%expect_test "SVR" =
+  let n_samples, n_features = 10, 5 in
+  Random.init 0;
+  let y = Owl.Arr.uniform [|n_samples|] in
+  let x = Matrix.uniform n_samples n_features in
+  let open Sklearn.Svm in
+  let clf = SVR.create ~c:1.0 ~epsilon:0.2 () in
+  print SVR.pp @@ SVR.fit clf ~x ~y ();
+  [%expect {|
+            SVR(C=1.0, cache_size=200, coef0=0.0, degree=3, epsilon=0.2, gamma='scale',
+                kernel='rbf', max_iter=-1, shrinking=True, tol=0.001, verbose=False)
+    |}]
 
 
 
