@@ -19,7 +19,8 @@ LinearSVR(random_state=0, tol=1e-05)
 let print f x = Format.printf "%a" f x
 let print_py x = Format.printf "%s" (Py.Object.to_string x)
 let print_ndarray = print Sklearn.Ndarray.pp
-let matrix mat = Owl.Dense.Matrix.D.of_arrays mat;;
+module Matrix = Owl.Dense.Matrix.D
+let matrix mat = Matrix.of_arrays mat;;
 let vector vec = Owl.Arr.of_array vec [|Array.length vec|];;
 
 let%expect_test "LinearSVR" =
@@ -96,22 +97,18 @@ NuSVR(nu=0.1)
 
 *)
 
-(* TEST TODO
-let%expect_text "NuSVR" =
-    let nuSVR = Sklearn.Svm.nuSVR in
-    import numpy as np    
-    n_samples, n_features = 10, 5    
-    np.random.seed(0)    
-    y = np.random.randn(n_samples)    
-    X = np.random.randn(n_samples, n_features)    
-    clf = NuSVR(C=1.0, nu=0.1)    
-    print @@ fit clf x y
-    [%expect {|
-            NuSVR(nu=0.1)            
+let%expect_test "NuSVR" =
+  let open Sklearn.Svm in
+  let n_samples, n_features = 10, 5 in
+  (* np.random.seed(0)     *)
+  let y = Owl.Arr.uniform [|n_samples|] in
+  let x = Matrix.uniform n_samples n_features in
+  let clf = NuSVR.create ~c:1.0 ~nu:0.1 () in
+  print NuSVR.pp @@ NuSVR.fit clf ~x ~y ();
+  [%expect {|
+            NuSVR(C=1.0, cache_size=200, coef0=0.0, degree=3, gamma='scale', kernel='rbf',
+                  max_iter=-1, nu=0.1, shrinking=True, tol=0.001, verbose=False)
     |}]
-
-*)
-
 
 
 (* SVC *)
@@ -130,7 +127,7 @@ SVC(gamma='auto')
 *)
 
 (* TEST TODO
-let%expect_text "SVC" =
+let%expect_test "SVC" =
     import numpy as np    
     X = np.array([[-1, -1], [-2, -1], [1, 1], [2, 1]])    
     y = np.array([1, 1, 2, 2])    
@@ -165,7 +162,7 @@ SVR(epsilon=0.2)
 *)
 
 (* TEST TODO
-let%expect_text "SVR" =
+let%expect_test "SVR" =
     let svr = Sklearn.Svm.svr in
     import numpy as np    
     n_samples, n_features = 10, 5    
