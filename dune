@@ -1,0 +1,4 @@
+(rule
+ (alias extract-examples)
+ (deps lib/skdoc.sh lib/skdoc.py)
+ (action (run bash lib/skdoc.sh examples)))

@@ -1,0 +1,23 @@
+(library
+ (public_name sklearn)
+ (libraries bigarray pyml owl)) ;; owl is only for Owl_pretty for printing Ndarrays, might remove it
+
+;; 58 is due to pyml, not sure what to do about it
+;; Warning 58: no cmx file was found in path for module Numpy, and its interface was not compiled with -opaque
+(env
+ (dev
+  (flags (:standard -w -58))))
+
+(rule
+ (targets
+  base.ml          conftest.mli             discriminant_analysis.ml   experimental.mli        impute.ml                 kernel_ridge.mli  model_selection.ml   random_projection.ml   tests.mli
+  base.mli         covariance.ml            discriminant_analysis.mli  externals.ml            impute.mli                linear_model.ml   model_selection.mli  neighbors.ml        random_projection.mli  tree.ml
+  calibration.ml   covariance.mli           dummy.ml                   externals.mli           inspection.ml             linear_model.mli  multiclass.ml        neighbors.mli       semi_supervised.ml     tree.mli
+  calibration.mli  cross_decomposition.ml   dummy.mli                  feature_extraction.ml   inspection.mli            manifold.ml       multiclass.mli       neural_network.ml   semi_supervised.mli    utils.ml
+  cluster.ml       cross_decomposition.mli  ensemble.ml                feature_extraction.mli  isotonic.ml               manifold.mli      multioutput.ml       neural_network.mli  setup.ml               utils.mli
+  cluster.mli      datasets.ml              ensemble.mli               feature_selection.ml    isotonic.mli              metrics.ml        multioutput.mli      pipeline.ml         setup.mli
+  compose.ml       datasets.mli             exceptions.ml              feature_selection.mli   kernel_approximation.ml   metrics.mli       naive_bayes.ml       pipeline.mli        svm.ml
+  compose.mli      decomposition.ml         exceptions.mli             gaussian_process.ml     kernel_approximation.mli  mixture.ml        naive_bayes.mli      preprocessing.ml    svm.mli
+  conftest.ml      decomposition.mli        experimental.ml            gaussian_process.mli    kernel_ridge.ml           mixture.mli       preprocessing.mli   tests.ml)
+ (deps    skdoc.sh skdoc.py)
+ (action  (run bash skdoc.sh build)))

@@ -1,0 +1,1383 @@
+(* accuracy_score *)
+(*
+>>> from sklearn.metrics import accuracy_score
+>>> y_pred = [0, 2, 1, 3]
+>>> y_true = [0, 1, 2, 3]
+>>> accuracy_score(y_true, y_pred)
+0.5
+>>> accuracy_score(y_true, y_pred, normalize=False)
+2
+
+
+*)
+
+(* TEST TODO
+let%expect_text "accuracy_score" =
+    let accuracy_score = Sklearn.Metrics.accuracy_score in
+    y_pred = [0, 2, 1, 3]    
+    y_true = [0, 1, 2, 3]    
+    accuracy_score(y_true, y_pred)    
+    [%expect {|
+            0.5            
+    |}]
+    accuracy_score(y_true, y_pred, normalize=False)    
+    [%expect {|
+            2            
+    |}]
+
+*)
+
+
+
+(* auc *)
+(*
+>>> import numpy as np
+>>> from sklearn import metrics
+>>> y = np.array([1, 1, 2, 2])
+>>> pred = np.array([0.1, 0.4, 0.35, 0.8])
+>>> fpr, tpr, thresholds = metrics.roc_curve(y, pred, pos_label=2)
+>>> metrics.auc(fpr, tpr)
+0.75
+
+
+*)
+
+(* TEST TODO
+let%expect_text "auc" =
+    import numpy as np    
+    let metrics = Sklearn.metrics in
+    y = np.array([1, 1, 2, 2])    
+    pred = np.array([0.1, 0.4, 0.35, 0.8])    
+    fpr, tpr, thresholds = metrics.roc_curve(y, pred, pos_label=2)    
+    print @@ auc metrics fpr tpr
+    [%expect {|
+            0.75            
+    |}]
+
+*)
+
+
+
+(* average_precision_score *)
+(*
+>>> import numpy as np
+>>> from sklearn.metrics import average_precision_score
+>>> y_true = np.array([0, 0, 1, 1])
+>>> y_scores = np.array([0.1, 0.4, 0.35, 0.8])
+>>> average_precision_score(y_true, y_scores)
+0.83...
+
+
+*)
+
+(* TEST TODO
+let%expect_text "average_precision_score" =
+    import numpy as np    
+    let average_precision_score = Sklearn.Metrics.average_precision_score in
+    y_true = np.array([0, 0, 1, 1])    
+    y_scores = np.array([0.1, 0.4, 0.35, 0.8])    
+    average_precision_score(y_true, y_scores)    
+    [%expect {|
+            0.83...            
+    |}]
+
+*)
+
+
+
+(* brier_score_loss *)
+(*
+>>> import numpy as np
+>>> from sklearn.metrics import brier_score_loss
+>>> y_true = np.array([0, 1, 1, 0])
+>>> y_true_categorical = np.array(["spam", "ham", "ham", "spam"])
+>>> y_prob = np.array([0.1, 0.9, 0.8, 0.3])
+>>> brier_score_loss(y_true, y_prob)
+0.037...
+>>> brier_score_loss(y_true, 1-y_prob, pos_label=0)
+0.037...
+>>> brier_score_loss(y_true_categorical, y_prob, pos_label="ham")
+0.037...
+>>> brier_score_loss(y_true, np.array(y_prob) > 0.5)
+0.0
+
+
+*)
+
+(* TEST TODO
+let%expect_text "brier_score_loss" =
+    import numpy as np    
+    let brier_score_loss = Sklearn.Metrics.brier_score_loss in
+    y_true = np.array([0, 1, 1, 0])    
+    y_true_categorical = np.array(["spam", "ham", "ham", "spam"])    
+    y_prob = np.array([0.1, 0.9, 0.8, 0.3])    
+    brier_score_loss(y_true, y_prob)    
+    [%expect {|
+            0.037...            
+    |}]
+    brier_score_loss(y_true, 1-y_prob, pos_label=0)    
+    [%expect {|
+            0.037...            
+    |}]
+    brier_score_loss(y_true_categorical, y_prob, pos_label="ham")    
+    [%expect {|
+            0.037...            
+    |}]
+    brier_score_loss(y_true, np.array(y_prob) > 0.5)    
+    [%expect {|
+            0.0            
+    |}]
+
+*)
+
+
+
+(*--------- Examples for module .Metrics.Cluster ----------*)
+(* confusion_matrix *)
+(*
+>>> from sklearn.metrics import confusion_matrix
+>>> y_true = [2, 0, 2, 2, 0, 1]
+>>> y_pred = [0, 0, 2, 2, 0, 2]
+>>> confusion_matrix(y_true, y_pred)
+array([[2, 0, 0],
+       [0, 0, 1],
+       [1, 0, 2]])
+
+
+*)
+
+(* TEST TODO
+let%expect_text "confusion_matrix" =
+    let confusion_matrix = Sklearn.Metrics.confusion_matrix in
+    y_true = [2, 0, 2, 2, 0, 1]    
+    y_pred = [0, 0, 2, 2, 0, 2]    
+    confusion_matrix(y_true, y_pred)    
+    [%expect {|
+            array([[2, 0, 0],            
+                   [0, 0, 1],            
+                   [1, 0, 2]])            
+    |}]
+
+*)
+
+
+
+(* confusion_matrix *)
+(*
+>>> y_true = ["cat", "ant", "cat", "cat", "ant", "bird"]
+>>> y_pred = ["ant", "ant", "cat", "cat", "ant", "cat"]
+>>> confusion_matrix(y_true, y_pred, labels=["ant", "bird", "cat"])
+array([[2, 0, 0],
+       [0, 0, 1],
+       [1, 0, 2]])
+
+
+*)
+
+(* TEST TODO
+let%expect_text "confusion_matrix" =
+    y_true = ["cat", "ant", "cat", "cat", "ant", "bird"]    
+    y_pred = ["ant", "ant", "cat", "cat", "ant", "cat"]    
+    confusion_matrix(y_true, y_pred, labels=["ant", "bird", "cat"])    
+    [%expect {|
+            array([[2, 0, 0],            
+                   [0, 0, 1],            
+                   [1, 0, 2]])            
+    |}]
+
+*)
+
+
+
+(* euclidean_distances *)
+(*
+>>> from sklearn.metrics.pairwise import euclidean_distances
+>>> X = [[0, 1], [1, 1]]
+>>> # distance between rows of X
+>>> euclidean_distances(X, X)
+array([[0., 1.],
+       [1., 0.]])
+>>> # get distance to origin
+>>> euclidean_distances(X, [[0, 0]])
+array([[1.        ],
+       [1.41421356]])
+
+
+*)
+
+(* TEST TODO
+let%expect_text "euclidean_distances" =
+    let euclidean_distances = Sklearn.Metrics.Pairwise.euclidean_distances in
+    X = [[0, 1], [1, 1]]    
+    # distance between rows of X    
+    euclidean_distances(X, X)    
+    [%expect {|
+            array([[0., 1.],            
+                   [1., 0.]])            
+    |}]
+    # get distance to origin    
+    euclidean_distances(X, [[0, 0]])    
+    [%expect {|
+            array([[1.        ],            
+                   [1.41421356]])            
+    |}]
+
+*)
+
+
+
+(* f1_score *)
+(*
+>>> from sklearn.metrics import f1_score
+>>> y_true = [0, 1, 2, 0, 1, 2]
+>>> y_pred = [0, 2, 1, 0, 0, 1]
+>>> f1_score(y_true, y_pred, average='macro')
+0.26...
+>>> f1_score(y_true, y_pred, average='micro')
+0.33...
+>>> f1_score(y_true, y_pred, average='weighted')
+0.26...
+>>> f1_score(y_true, y_pred, average=None)
+array([0.8, 0. , 0. ])
+>>> y_true = [0, 0, 0, 0, 0, 0]
+>>> y_pred = [0, 0, 0, 0, 0, 0]
+>>> f1_score(y_true, y_pred, zero_division=1)
+1.0...
+
+
+*)
+
+(* TEST TODO
+let%expect_text "f1_score" =
+    let f1_score = Sklearn.Metrics.f1_score in
+    y_true = [0, 1, 2, 0, 1, 2]    
+    y_pred = [0, 2, 1, 0, 0, 1]    
+    f1_score(y_true, y_pred, average='macro')    
+    [%expect {|
+            0.26...            
+    |}]
+    f1_score(y_true, y_pred, average='micro')    
+    [%expect {|
+            0.33...            
+    |}]
+    f1_score(y_true, y_pred, average='weighted')    
+    [%expect {|
+            0.26...            
+    |}]
+    f1_score(y_true, y_pred, average=None)    
+    [%expect {|
+            array([0.8, 0. , 0. ])            
+    |}]
+    y_true = [0, 0, 0, 0, 0, 0]    
+    y_pred = [0, 0, 0, 0, 0, 0]    
+    f1_score(y_true, y_pred, zero_division=1)    
+    [%expect {|
+            1.0...            
+    |}]
+
+*)
+
+
+
+(* fbeta_score *)
+(*
+>>> from sklearn.metrics import fbeta_score
+>>> y_true = [0, 1, 2, 0, 1, 2]
+>>> y_pred = [0, 2, 1, 0, 0, 1]
+>>> fbeta_score(y_true, y_pred, average='macro', beta=0.5)
+0.23...
+>>> fbeta_score(y_true, y_pred, average='micro', beta=0.5)
+0.33...
+>>> fbeta_score(y_true, y_pred, average='weighted', beta=0.5)
+0.23...
+>>> fbeta_score(y_true, y_pred, average=None, beta=0.5)
+array([0.71..., 0.        , 0.        ])
+
+
+*)
+
+(* TEST TODO
+let%expect_text "fbeta_score" =
+    let fbeta_score = Sklearn.Metrics.fbeta_score in
+    y_true = [0, 1, 2, 0, 1, 2]    
+    y_pred = [0, 2, 1, 0, 0, 1]    
+    fbeta_score(y_true, y_pred, average='macro', beta=0.5)    
+    [%expect {|
+            0.23...            
+    |}]
+    fbeta_score(y_true, y_pred, average='micro', beta=0.5)    
+    [%expect {|
+            0.33...            
+    |}]
+    fbeta_score(y_true, y_pred, average='weighted', beta=0.5)    
+    [%expect {|
+            0.23...            
+    |}]
+    fbeta_score(y_true, y_pred, average=None, beta=0.5)    
+    [%expect {|
+            array([0.71..., 0.        , 0.        ])            
+    |}]
+
+*)
+
+
+
+(* hamming_loss *)
+(*
+>>> from sklearn.metrics import hamming_loss
+>>> y_pred = [1, 2, 3, 4]
+>>> y_true = [2, 2, 3, 4]
+>>> hamming_loss(y_true, y_pred)
+0.25
+
+
+*)
+
+(* TEST TODO
+let%expect_text "hamming_loss" =
+    let hamming_loss = Sklearn.Metrics.hamming_loss in
+    y_pred = [1, 2, 3, 4]    
+    y_true = [2, 2, 3, 4]    
+    hamming_loss(y_true, y_pred)    
+    [%expect {|
+            0.25            
+    |}]
+
+*)
+
+
+
+(* hinge_loss *)
+(*
+>>> from sklearn import svm
+>>> from sklearn.metrics import hinge_loss
+>>> X = [[0], [1]]
+>>> y = [-1, 1]
+>>> est = svm.LinearSVC(random_state=0)
+>>> est.fit(X, y)
+LinearSVC(random_state=0)
+>>> pred_decision = est.decision_function([[-2], [3], [0.5]])
+>>> pred_decision
+array([-2.18...,  2.36...,  0.09...])
+>>> hinge_loss([-1, 1, 1], pred_decision)
+0.30...
+
+
+*)
+
+(* TEST TODO
+let%expect_text "hinge_loss" =
+    let svm = Sklearn.svm in
+    let hinge_loss = Sklearn.Metrics.hinge_loss in
+    X = [[0], [1]]    
+    y = [-1, 1]    
+    est = svm.LinearSVC(random_state=0)    
+    print @@ fit est x y
+    [%expect {|
+            LinearSVC(random_state=0)            
+    |}]
+    pred_decision = est.decision_function([[-2], [3], [0.5]])    
+    pred_decision    
+    [%expect {|
+            array([-2.18...,  2.36...,  0.09...])            
+    |}]
+    hinge_loss([-1, 1, 1], pred_decision)    
+    [%expect {|
+            0.30...            
+    |}]
+
+*)
+
+
+
+(* jaccard_score *)
+(*
+>>> import numpy as np
+>>> from sklearn.metrics import jaccard_score
+>>> y_true = np.array([[0, 1, 1],
+...                    [1, 1, 0]])
+>>> y_pred = np.array([[1, 1, 1],
+...                    [1, 0, 0]])
+
+
+*)
+
+(* TEST TODO
+let%expect_text "jaccard_score" =
+    import numpy as np    
+    let jaccard_score = Sklearn.Metrics.jaccard_score in
+    y_true = np.array([[0, 1, 1],[1, 1, 0]])    
+    y_pred = np.array([[1, 1, 1],[1, 0, 0]])    
+    [%expect {|
+    |}]
+
+*)
+
+
+
+(* jaccard_score *)
+(*
+>>> jaccard_score(y_true[0], y_pred[0])
+0.6666...
+
+
+*)
+
+(* TEST TODO
+let%expect_text "jaccard_score" =
+    jaccard_score(y_true[0], y_pred[0])    
+    [%expect {|
+            0.6666...            
+    |}]
+
+*)
+
+
+
+(* jaccard_score *)
+(*
+>>> jaccard_score(y_true, y_pred, average='samples')
+0.5833...
+>>> jaccard_score(y_true, y_pred, average='macro')
+0.6666...
+>>> jaccard_score(y_true, y_pred, average=None)
+array([0.5, 0.5, 1. ])
+
+
+*)
+
+(* TEST TODO
+let%expect_text "jaccard_score" =
+    jaccard_score(y_true, y_pred, average='samples')    
+    [%expect {|
+            0.5833...            
+    |}]
+    jaccard_score(y_true, y_pred, average='macro')    
+    [%expect {|
+            0.6666...            
+    |}]
+    jaccard_score(y_true, y_pred, average=None)    
+    [%expect {|
+            array([0.5, 0.5, 1. ])            
+    |}]
+
+*)
+
+
+
+(* log_loss *)
+(*
+>>> from sklearn.metrics import log_loss
+>>> log_loss(["spam", "ham", "ham", "spam"],
+...          [[.1, .9], [.9, .1], [.8, .2], [.35, .65]])
+0.21616...
+
+
+*)
+
+(* TEST TODO
+let%expect_text "log_loss" =
+    let log_loss = Sklearn.Metrics.log_loss in
+    log_loss(["spam", "ham", "ham", "spam"],[[.1, .9], [.9, .1], [.8, .2], [.35, .65]])    
+    [%expect {|
+            0.21616...            
+    |}]
+
+*)
+
+
+
+(* make_scorer *)
+(*
+>>> from sklearn.metrics import fbeta_score, make_scorer
+>>> ftwo_scorer = make_scorer(fbeta_score, beta=2)
+>>> ftwo_scorer
+make_scorer(fbeta_score, beta=2)
+>>> from sklearn.model_selection import GridSearchCV
+>>> from sklearn.svm import LinearSVC
+>>> grid = GridSearchCV(LinearSVC(), param_grid={'C': [1, 10]},
+...                     scoring=ftwo_scorer)
+
+
+*)
+
+(* TEST TODO
+let%expect_text "make_scorer" =
+    from sklearn.metrics import fbeta_score, make_scorer    
+    ftwo_scorer = make_scorer(fbeta_score, beta=2)    
+    ftwo_scorer    
+    [%expect {|
+            make_scorer(fbeta_score, beta=2)            
+    |}]
+    let gridSearchCV = Sklearn.Model_selection.gridSearchCV in
+    let linearSVC = Sklearn.Svm.linearSVC in
+    grid = GridSearchCV(LinearSVC(), param_grid={'C': [1, 10]},scoring=ftwo_scorer)    
+    [%expect {|
+    |}]
+
+*)
+
+
+
+(* multilabel_confusion_matrix *)
+(*
+>>> import numpy as np
+>>> from sklearn.metrics import multilabel_confusion_matrix
+>>> y_true = np.array([[1, 0, 1],
+...                    [0, 1, 0]])
+>>> y_pred = np.array([[1, 0, 0],
+...                    [0, 1, 1]])
+>>> multilabel_confusion_matrix(y_true, y_pred)
+array([[[1, 0],
+        [0, 1]],
+<BLANKLINE>
+       [[1, 0],
+        [0, 1]],
+<BLANKLINE>
+       [[0, 1],
+        [1, 0]]])
+
+
+*)
+
+(* TEST TODO
+let%expect_text "multilabel_confusion_matrix" =
+    import numpy as np    
+    let multilabel_confusion_matrix = Sklearn.Metrics.multilabel_confusion_matrix in
+    y_true = np.array([[1, 0, 1],[0, 1, 0]])    
+    y_pred = np.array([[1, 0, 0],[0, 1, 1]])    
+    multilabel_confusion_matrix(y_true, y_pred)    
+    [%expect {|
+            array([[[1, 0],            
+                    [0, 1]],            
+            <BLANKLINE>            
+                   [[1, 0],            
+                    [0, 1]],            
+            <BLANKLINE>            
+                   [[0, 1],            
+                    [1, 0]]])            
+    |}]
+
+*)
+
+
+
+(* nan_euclidean_distances *)
+(*
+>>> from sklearn.metrics.pairwise import nan_euclidean_distances
+>>> nan = float("NaN")
+>>> X = [[0, 1], [1, nan]]
+>>> nan_euclidean_distances(X, X) # distance between rows of X
+array([[0.        , 1.41421356],
+       [1.41421356, 0.        ]])
+
+
+*)
+
+(* TEST TODO
+let%expect_text "nan_euclidean_distances" =
+    let nan_euclidean_distances = Sklearn.Metrics.Pairwise.nan_euclidean_distances in
+    nan = float("NaN")    
+    X = [[0, 1], [1, nan]]    
+    nan_euclidean_distances(X, X) # distance between rows of X    
+    [%expect {|
+            array([[0.        , 1.41421356],            
+                   [1.41421356, 0.        ]])            
+    |}]
+
+*)
+
+
+
+(* nan_euclidean_distances *)
+(*
+>>> # get distance to origin
+>>> nan_euclidean_distances(X, [[0, 0]])
+array([[1.        ],
+       [1.41421356]])
+
+
+*)
+
+(* TEST TODO
+let%expect_text "nan_euclidean_distances" =
+    # get distance to origin    
+    nan_euclidean_distances(X, [[0, 0]])    
+    [%expect {|
+            array([[1.        ],            
+                   [1.41421356]])            
+    |}]
+
+*)
+
+
+
+(*--------- Examples for module .Metrics.Pairwise ----------*)
+(* Parallel *)
+(*
+>>> from math import sqrt
+>>> from joblib import Parallel, delayed
+>>> Parallel(n_jobs=1)(delayed(sqrt)(i**2) for i in range(10))
+[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
+
+
+*)
+
+(* TEST TODO
+let%expect_text "Parallel" =
+    let sqrt = Math.sqrt in
+    from joblib import Parallel, delayed    
+    Parallel(n_jobs=1)(delayed(sqrt)(i**2) for i in range(10))    
+    [%expect {|
+            [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]            
+    |}]
+
+*)
+
+
+
+(* Parallel *)
+(*
+>>> from math import modf
+>>> from joblib import Parallel, delayed
+>>> r = Parallel(n_jobs=1)(delayed(modf)(i/2.) for i in range(10))
+>>> res, i = zip( *r)
+>>> res
+(0.0, 0.5, 0.0, 0.5, 0.0, 0.5, 0.0, 0.5, 0.0, 0.5)
+>>> i
+(0.0, 0.0, 1.0, 1.0, 2.0, 2.0, 3.0, 3.0, 4.0, 4.0)
+
+
+*)
+
+(* TEST TODO
+let%expect_text "Parallel" =
+    let modf = Math.modf in
+    from joblib import Parallel, delayed    
+    r = Parallel(n_jobs=1)(delayed(modf)(i/2.) for i in range(10))    
+    let res, i = zip *r in
+    res    
+    [%expect {|
+            (0.0, 0.5, 0.0, 0.5, 0.0, 0.5, 0.0, 0.5, 0.0, 0.5)            
+    |}]
+    i    
+    [%expect {|
+            (0.0, 0.0, 1.0, 1.0, 2.0, 2.0, 3.0, 3.0, 4.0, 4.0)            
+    |}]
+
+*)
+
+
+
+(* Parallel *)
+(*
+>>> from time import sleep
+>>> from joblib import Parallel, delayed
+>>> r = Parallel(n_jobs=2, verbose=10)(delayed(sleep)(.2) for _ in range(10)) #doctest: +SKIP
+[Parallel(n_jobs=2)]: Done   1 tasks      | elapsed:    0.6s
+[Parallel(n_jobs=2)]: Done   4 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=2)]: Done  10 out of  10 | elapsed:    1.4s finished
+
+
+*)
+
+(* TEST TODO
+let%expect_text "Parallel" =
+    let sleep = Time.sleep in
+    from joblib import Parallel, delayed    
+    r = Parallel(n_jobs=2, verbose=10)(delayed(sleep)(.2) for _ in range(10)) #doctest: +SKIP    
+    [%expect {|
+            [Parallel(n_jobs=2)]: Done   1 tasks      | elapsed:    0.6s            
+            [Parallel(n_jobs=2)]: Done   4 tasks      | elapsed:    0.8s            
+            [Parallel(n_jobs=2)]: Done  10 out of  10 | elapsed:    1.4s finished            
+    |}]
+
+*)
+
+
+
+(* Parallel *)
+(*
+>>> from heapq import nlargest
+>>> from joblib import Parallel, delayed
+>>> Parallel(n_jobs=2)(delayed(nlargest)(2, n) for n in (range(4), 'abcde', 3)) #doctest: +SKIP
+#...
+---------------------------------------------------------------------------
+Sub-process traceback:
+---------------------------------------------------------------------------
+TypeError                                          Mon Nov 12 11:37:46 2012
+PID: 12934                                    Python 2.7.3: /usr/bin/python
+...........................................................................
+/usr/lib/python2.7/heapq.pyc in nlargest(n=2, iterable=3, key=None)
+    419         if n >= size:
+    420             return sorted(iterable, key=key, reverse=True)[:n]
+    421
+    422     # When key is none, use simpler decoration
+    423     if key is None:
+--> 424         it = izip(iterable, count(0,-1))                    # decorate
+    425         result = _nlargest(n, it)
+    426         return map(itemgetter(0), result)                   # undecorate
+    427
+    428     # General case, slowest method
+ TypeError: izip argument #1 must support iteration
+___________________________________________________________________________
+
+
+*)
+
+(* TEST TODO
+let%expect_text "Parallel" =
+    let nlargest = Heapq.nlargest in
+    from joblib import Parallel, delayed    
+    Parallel(n_jobs=2)(delayed(nlargest)(2, n) for n in (range(4), 'abcde', 3)) #doctest: +SKIP    
+    [%expect {|
+            #...            
+            ---------------------------------------------------------------------------            
+            Sub-process traceback:            
+            ---------------------------------------------------------------------------            
+            TypeError                                          Mon Nov 12 11:37:46 2012            
+            PID: 12934                                    Python 2.7.3: /usr/bin/python            
+            ...........................................................................            
+            /usr/lib/python2.7/heapq.pyc in nlargest(n=2, iterable=3, key=None)            
+                419         if n >= size:            
+                420             return sorted(iterable, key=key, reverse=True)[:n]            
+                421            
+                422     # When key is none, use simpler decoration            
+                423     if key is None:            
+            --> 424         it = izip(iterable, count(0,-1))                    # decorate            
+                425         result = _nlargest(n, it)            
+                426         return map(itemgetter(0), result)                   # undecorate            
+                427            
+                428     # General case, slowest method            
+             TypeError: izip argument #1 must support iteration            
+            ___________________________________________________________________________            
+    |}]
+
+*)
+
+
+
+(* csr_matrix *)
+(*
+>>> import numpy as np
+>>> from scipy.sparse import csr_matrix
+>>> csr_matrix((3, 4), dtype=np.int8).toarray()
+array([[0, 0, 0, 0],
+       [0, 0, 0, 0],
+       [0, 0, 0, 0]], dtype=int8)
+
+
+*)
+
+(* TEST TODO
+let%expect_text "csr_matrix" =
+    import numpy as np    
+    let csr_matrix = Scipy.Sparse.csr_matrix in
+    csr_matrix((3, 4), dtype=np.int8).toarray()    
+    [%expect {|
+            array([[0, 0, 0, 0],            
+                   [0, 0, 0, 0],            
+                   [0, 0, 0, 0]], dtype=int8)            
+    |}]
+
+*)
+
+
+
+(* csr_matrix *)
+(*
+>>> row = np.array([0, 0, 1, 2, 2, 2])
+>>> col = np.array([0, 2, 2, 0, 1, 2])
+>>> data = np.array([1, 2, 3, 4, 5, 6])
+>>> csr_matrix((data, (row, col)), shape=(3, 3)).toarray()
+array([[1, 0, 2],
+       [0, 0, 3],
+       [4, 5, 6]])
+
+
+*)
+
+(* TEST TODO
+let%expect_text "csr_matrix" =
+    row = np.array([0, 0, 1, 2, 2, 2])    
+    col = np.array([0, 2, 2, 0, 1, 2])    
+    data = np.array([1, 2, 3, 4, 5, 6])    
+    csr_matrix((data, (row, col)), shape=(3, 3)).toarray()    
+    [%expect {|
+            array([[1, 0, 2],            
+                   [0, 0, 3],            
+                   [4, 5, 6]])            
+    |}]
+
+*)
+
+
+
+(* csr_matrix *)
+(*
+>>> indptr = np.array([0, 2, 3, 6])
+>>> indices = np.array([0, 2, 2, 0, 1, 2])
+>>> data = np.array([1, 2, 3, 4, 5, 6])
+>>> csr_matrix((data, indices, indptr), shape=(3, 3)).toarray()
+array([[1, 0, 2],
+       [0, 0, 3],
+       [4, 5, 6]])
+
+
+*)
+
+(* TEST TODO
+let%expect_text "csr_matrix" =
+    indptr = np.array([0, 2, 3, 6])    
+    indices = np.array([0, 2, 2, 0, 1, 2])    
+    data = np.array([1, 2, 3, 4, 5, 6])    
+    csr_matrix((data, indices, indptr), shape=(3, 3)).toarray()    
+    [%expect {|
+            array([[1, 0, 2],            
+                   [0, 0, 3],            
+                   [4, 5, 6]])            
+    |}]
+
+*)
+
+
+
+(* euclidean_distances *)
+(*
+>>> from sklearn.metrics.pairwise import euclidean_distances
+>>> X = [[0, 1], [1, 1]]
+>>> # distance between rows of X
+>>> euclidean_distances(X, X)
+array([[0., 1.],
+       [1., 0.]])
+>>> # get distance to origin
+>>> euclidean_distances(X, [[0, 0]])
+array([[1.        ],
+       [1.41421356]])
+
+
+*)
+
+(* TEST TODO
+let%expect_text "euclidean_distances" =
+    let euclidean_distances = Sklearn.Metrics.Pairwise.euclidean_distances in
+    X = [[0, 1], [1, 1]]    
+    # distance between rows of X    
+    euclidean_distances(X, X)    
+    [%expect {|
+            array([[0., 1.],            
+                   [1., 0.]])            
+    |}]
+    # get distance to origin    
+    euclidean_distances(X, [[0, 0]])    
+    [%expect {|
+            array([[1.        ],            
+                   [1.41421356]])            
+    |}]
+
+*)
+
+
+
+(* isspmatrix *)
+(*
+>>> from scipy.sparse import csr_matrix, isspmatrix
+>>> isspmatrix(csr_matrix([[5]]))
+True
+
+
+*)
+
+(* TEST TODO
+let%expect_text "isspmatrix" =
+    from scipy.sparse import csr_matrix, isspmatrix    
+    isspmatrix(csr_matrix([[5]]))    
+    [%expect {|
+            True            
+    |}]
+
+*)
+
+
+
+(* nan_euclidean_distances *)
+(*
+>>> from sklearn.metrics.pairwise import nan_euclidean_distances
+>>> nan = float("NaN")
+>>> X = [[0, 1], [1, nan]]
+>>> nan_euclidean_distances(X, X) # distance between rows of X
+array([[0.        , 1.41421356],
+       [1.41421356, 0.        ]])
+
+
+*)
+
+(* TEST TODO
+let%expect_text "nan_euclidean_distances" =
+    let nan_euclidean_distances = Sklearn.Metrics.Pairwise.nan_euclidean_distances in
+    nan = float("NaN")    
+    X = [[0, 1], [1, nan]]    
+    nan_euclidean_distances(X, X) # distance between rows of X    
+    [%expect {|
+            array([[0.        , 1.41421356],            
+                   [1.41421356, 0.        ]])            
+    |}]
+
+*)
+
+
+
+(* nan_euclidean_distances *)
+(*
+>>> # get distance to origin
+>>> nan_euclidean_distances(X, [[0, 0]])
+array([[1.        ],
+       [1.41421356]])
+
+
+*)
+
+(* TEST TODO
+let%expect_text "nan_euclidean_distances" =
+    # get distance to origin    
+    nan_euclidean_distances(X, [[0, 0]])    
+    [%expect {|
+            array([[1.        ],            
+                   [1.41421356]])            
+    |}]
+
+*)
+
+
+
+(* paired_distances *)
+(*
+>>> from sklearn.metrics.pairwise import paired_distances
+>>> X = [[0, 1], [1, 1]]
+>>> Y = [[0, 1], [2, 1]]
+>>> paired_distances(X, Y)
+array([0., 1.])
+
+
+*)
+
+(* TEST TODO
+let%expect_text "paired_distances" =
+    let paired_distances = Sklearn.Metrics.Pairwise.paired_distances in
+    X = [[0, 1], [1, 1]]    
+    Y = [[0, 1], [2, 1]]    
+    paired_distances(X, Y)    
+    [%expect {|
+            array([0., 1.])            
+    |}]
+
+*)
+
+
+
+(* pairwise_distances_chunked *)
+(*
+>>> import numpy as np
+>>> from sklearn.metrics import pairwise_distances_chunked
+>>> X = np.random.RandomState(0).rand(5, 3)
+>>> D_chunk = next(pairwise_distances_chunked(X))
+>>> D_chunk
+array([[0.  ..., 0.29..., 0.41..., 0.19..., 0.57...],
+       [0.29..., 0.  ..., 0.57..., 0.41..., 0.76...],
+       [0.41..., 0.57..., 0.  ..., 0.44..., 0.90...],
+       [0.19..., 0.41..., 0.44..., 0.  ..., 0.51...],
+       [0.57..., 0.76..., 0.90..., 0.51..., 0.  ...]])
+
+
+*)
+
+(* TEST TODO
+let%expect_text "pairwise_distances_chunked" =
+    import numpy as np    
+    let pairwise_distances_chunked = Sklearn.Metrics.pairwise_distances_chunked in
+    X = np.random.RandomState(0).rand(5, 3)    
+    D_chunk = next(pairwise_distances_chunked(X))    
+    D_chunk    
+    [%expect {|
+            array([[0.  ..., 0.29..., 0.41..., 0.19..., 0.57...],            
+                   [0.29..., 0.  ..., 0.57..., 0.41..., 0.76...],            
+                   [0.41..., 0.57..., 0.  ..., 0.44..., 0.90...],            
+                   [0.19..., 0.41..., 0.44..., 0.  ..., 0.51...],            
+                   [0.57..., 0.76..., 0.90..., 0.51..., 0.  ...]])            
+    |}]
+
+*)
+
+
+
+(* pairwise_distances_chunked *)
+(*
+>>> r = .2
+>>> def reduce_func(D_chunk, start):
+...     neigh = [np.flatnonzero(d < r) for d in D_chunk]
+...     avg_dist = (D_chunk * (D_chunk < r)).mean(axis=1)
+...     return neigh, avg_dist
+>>> gen = pairwise_distances_chunked(X, reduce_func=reduce_func)
+>>> neigh, avg_dist = next(gen)
+>>> neigh
+[array([0, 3]), array([1]), array([2]), array([0, 3]), array([4])]
+>>> avg_dist
+array([0.039..., 0.        , 0.        , 0.039..., 0.        ])
+
+
+*)
+
+(* TEST TODO
+let%expect_text "pairwise_distances_chunked" =
+    r = .2    
+    def reduce_func(D_chunk, start):neigh = [np.flatnonzero(d < r) for d in D_chunk]avg_dist = (D_chunk * (D_chunk < r)).mean(axis=1)return neigh, avg_dist    
+    gen = pairwise_distances_chunked(X, reduce_func=reduce_func)    
+    let neigh, avg_dist = next gen in
+    neigh    
+    [%expect {|
+            [array([0, 3]), array([1]), array([2]), array([0, 3]), array([4])]            
+    |}]
+    avg_dist    
+    [%expect {|
+            array([0.039..., 0.        , 0.        , 0.039..., 0.        ])            
+    |}]
+
+*)
+
+
+
+(* pairwise_distances_chunked *)
+(*
+>>> r = [.2, .4, .4, .3, .1]
+>>> def reduce_func(D_chunk, start):
+...     neigh = [np.flatnonzero(d < r[i])
+...              for i, d in enumerate(D_chunk, start)]
+...     return neigh
+>>> neigh = next(pairwise_distances_chunked(X, reduce_func=reduce_func))
+>>> neigh
+[array([0, 3]), array([0, 1]), array([2]), array([0, 3]), array([4])]
+
+
+*)
+
+(* TEST TODO
+let%expect_text "pairwise_distances_chunked" =
+    r = [.2, .4, .4, .3, .1]    
+    def reduce_func(D_chunk, start):neigh = [np.flatnonzero(d < r[i])for i, d in enumerate(D_chunk, start)]return neigh    
+    neigh = next(pairwise_distances_chunked(X, reduce_func=reduce_func))    
+    neigh    
+    [%expect {|
+            [array([0, 3]), array([0, 1]), array([2]), array([0, 3]), array([4])]            
+    |}]
+
+*)
+
+
+
+(* pairwise_distances_chunked *)
+(*
+>>> import numpy as np
+>>> from sklearn.metrics import pairwise_distances_chunked
+>>> X = np.random.RandomState(0).rand(5, 3)
+>>> D_chunk = next(pairwise_distances_chunked(X))
+>>> D_chunk
+array([[0.  ..., 0.29..., 0.41..., 0.19..., 0.57...],
+       [0.29..., 0.  ..., 0.57..., 0.41..., 0.76...],
+       [0.41..., 0.57..., 0.  ..., 0.44..., 0.90...],
+       [0.19..., 0.41..., 0.44..., 0.  ..., 0.51...],
+       [0.57..., 0.76..., 0.90..., 0.51..., 0.  ...]])
+
+
+*)
+
+(* TEST TODO
+let%expect_text "pairwise_distances_chunked" =
+    import numpy as np    
+    let pairwise_distances_chunked = Sklearn.Metrics.pairwise_distances_chunked in
+    X = np.random.RandomState(0).rand(5, 3)    
+    D_chunk = next(pairwise_distances_chunked(X))    
+    D_chunk    
+    [%expect {|
+            array([[0.  ..., 0.29..., 0.41..., 0.19..., 0.57...],            
+                   [0.29..., 0.  ..., 0.57..., 0.41..., 0.76...],            
+                   [0.41..., 0.57..., 0.  ..., 0.44..., 0.90...],            
+                   [0.19..., 0.41..., 0.44..., 0.  ..., 0.51...],            
+                   [0.57..., 0.76..., 0.90..., 0.51..., 0.  ...]])            
+    |}]
+
+*)
+
+
+
+(* pairwise_distances_chunked *)
+(*
+>>> r = .2
+>>> def reduce_func(D_chunk, start):
+...     neigh = [np.flatnonzero(d < r) for d in D_chunk]
+...     avg_dist = (D_chunk * (D_chunk < r)).mean(axis=1)
+...     return neigh, avg_dist
+>>> gen = pairwise_distances_chunked(X, reduce_func=reduce_func)
+>>> neigh, avg_dist = next(gen)
+>>> neigh
+[array([0, 3]), array([1]), array([2]), array([0, 3]), array([4])]
+>>> avg_dist
+array([0.039..., 0.        , 0.        , 0.039..., 0.        ])
+
+
+*)
+
+(* TEST TODO
+let%expect_text "pairwise_distances_chunked" =
+    r = .2    
+    def reduce_func(D_chunk, start):neigh = [np.flatnonzero(d < r) for d in D_chunk]avg_dist = (D_chunk * (D_chunk < r)).mean(axis=1)return neigh, avg_dist    
+    gen = pairwise_distances_chunked(X, reduce_func=reduce_func)    
+    let neigh, avg_dist = next gen in
+    neigh    
+    [%expect {|
+            [array([0, 3]), array([1]), array([2]), array([0, 3]), array([4])]            
+    |}]
+    avg_dist    
+    [%expect {|
+            array([0.039..., 0.        , 0.        , 0.039..., 0.        ])            
+    |}]
+
+*)
+
+
+
+(* pairwise_distances_chunked *)
+(*
+>>> r = [.2, .4, .4, .3, .1]
+>>> def reduce_func(D_chunk, start):
+...     neigh = [np.flatnonzero(d < r[i])
+...              for i, d in enumerate(D_chunk, start)]
+...     return neigh
+>>> neigh = next(pairwise_distances_chunked(X, reduce_func=reduce_func))
+>>> neigh
+[array([0, 3]), array([0, 1]), array([2]), array([0, 3]), array([4])]
+
+
+*)
+
+(* TEST TODO
+let%expect_text "pairwise_distances_chunked" =
+    r = [.2, .4, .4, .3, .1]    
+    def reduce_func(D_chunk, start):neigh = [np.flatnonzero(d < r[i])for i, d in enumerate(D_chunk, start)]return neigh    
+    neigh = next(pairwise_distances_chunked(X, reduce_func=reduce_func))    
+    neigh    
+    [%expect {|
+            [array([0, 3]), array([0, 1]), array([2]), array([0, 3]), array([4])]            
+    |}]
+
+*)
+
+
+
+(* precision_recall_fscore_support *)
+(*
+>>> import numpy as np
+>>> from sklearn.metrics import precision_recall_fscore_support
+>>> y_true = np.array(['cat', 'dog', 'pig', 'cat', 'dog', 'pig'])
+>>> y_pred = np.array(['cat', 'pig', 'dog', 'cat', 'cat', 'dog'])
+>>> precision_recall_fscore_support(y_true, y_pred, average='macro')
+(0.22..., 0.33..., 0.26..., None)
+>>> precision_recall_fscore_support(y_true, y_pred, average='micro')
+(0.33..., 0.33..., 0.33..., None)
+>>> precision_recall_fscore_support(y_true, y_pred, average='weighted')
+(0.22..., 0.33..., 0.26..., None)
+
+
+*)
+
+(* TEST TODO
+let%expect_text "precision_recall_fscore_support" =
+    import numpy as np    
+    let precision_recall_fscore_support = Sklearn.Metrics.precision_recall_fscore_support in
+    y_true = np.array(['cat', 'dog', 'pig', 'cat', 'dog', 'pig'])    
+    y_pred = np.array(['cat', 'pig', 'dog', 'cat', 'cat', 'dog'])    
+    precision_recall_fscore_support(y_true, y_pred, average='macro')    
+    [%expect {|
+            (0.22..., 0.33..., 0.26..., None)            
+    |}]
+    precision_recall_fscore_support(y_true, y_pred, average='micro')    
+    [%expect {|
+            (0.33..., 0.33..., 0.33..., None)            
+    |}]
+    precision_recall_fscore_support(y_true, y_pred, average='weighted')    
+    [%expect {|
+            (0.22..., 0.33..., 0.26..., None)            
+    |}]
+
+*)
+
+
+
+(* precision_recall_fscore_support *)
+(*
+>>> precision_recall_fscore_support(y_true, y_pred, average=None,
+... labels=['pig', 'dog', 'cat'])
+(array([0.        , 0.        , 0.66...]),
+ array([0., 0., 1.]), array([0. , 0. , 0.8]),
+ array([2, 2, 2]))
+
+
+*)
+
+(* TEST TODO
+let%expect_text "precision_recall_fscore_support" =
+    precision_recall_fscore_support(y_true, y_pred, average=None,labels=['pig', 'dog', 'cat'])    
+    [%expect {|
+            (array([0.        , 0.        , 0.66...]),            
+             array([0., 0., 1.]), array([0. , 0. , 0.8]),            
+             array([2, 2, 2]))            
+    |}]
+
+*)
+
+
+
+(* precision_score *)
+(*
+>>> from sklearn.metrics import precision_score
+>>> y_true = [0, 1, 2, 0, 1, 2]
+>>> y_pred = [0, 2, 1, 0, 0, 1]
+>>> precision_score(y_true, y_pred, average='macro')
+0.22...
+>>> precision_score(y_true, y_pred, average='micro')
+0.33...
+>>> precision_score(y_true, y_pred, average='weighted')
+0.22...
+>>> precision_score(y_true, y_pred, average=None)
+array([0.66..., 0.        , 0.        ])
+>>> y_pred = [0, 0, 0, 0, 0, 0]
+>>> precision_score(y_true, y_pred, average=None)
+array([0.33..., 0.        , 0.        ])
+>>> precision_score(y_true, y_pred, average=None, zero_division=1)
+array([0.33..., 1.        , 1.        ])
+
+
+*)
+
+(* TEST TODO
+let%expect_text "precision_score" =
+    let precision_score = Sklearn.Metrics.precision_score in
+    y_true = [0, 1, 2, 0, 1, 2]    
+    y_pred = [0, 2, 1, 0, 0, 1]    
+    precision_score(y_true, y_pred, average='macro')    
+    [%expect {|
+            0.22...            
+    |}]
+    precision_score(y_true, y_pred, average='micro')    
+    [%expect {|
+            0.33...            
+    |}]
+    precision_score(y_true, y_pred, average='weighted')    
+    [%expect {|
+            0.22...            
+    |}]
+    precision_score(y_true, y_pred, average=None)    
+    [%expect {|
+            array([0.66..., 0.        , 0.        ])            
+    |}]
+    y_pred = [0, 0, 0, 0, 0, 0]    
+    precision_score(y_true, y_pred, average=None)    
+    [%expect {|
+            array([0.33..., 0.        , 0.        ])            
+    |}]
+    precision_score(y_true, y_pred, average=None, zero_division=1)    
+    [%expect {|
+            array([0.33..., 1.        , 1.        ])            
+    |}]
+
+*)
+
+
+
+(* recall_score *)
+(*
+>>> from sklearn.metrics import recall_score
+>>> y_true = [0, 1, 2, 0, 1, 2]
+>>> y_pred = [0, 2, 1, 0, 0, 1]
+>>> recall_score(y_true, y_pred, average='macro')
+0.33...
+>>> recall_score(y_true, y_pred, average='micro')
+0.33...
+>>> recall_score(y_true, y_pred, average='weighted')
+0.33...
+>>> recall_score(y_true, y_pred, average=None)
+array([1., 0., 0.])
+>>> y_true = [0, 0, 0, 0, 0, 0]
+>>> recall_score(y_true, y_pred, average=None)
+array([0.5, 0. , 0. ])
+>>> recall_score(y_true, y_pred, average=None, zero_division=1)
+array([0.5, 1. , 1. ])
+
+
+*)
+
+(* TEST TODO
+let%expect_text "recall_score" =
+    let recall_score = Sklearn.Metrics.recall_score in
+    y_true = [0, 1, 2, 0, 1, 2]    
+    y_pred = [0, 2, 1, 0, 0, 1]    
+    recall_score(y_true, y_pred, average='macro')    
+    [%expect {|
+            0.33...            
+    |}]
+    recall_score(y_true, y_pred, average='micro')    
+    [%expect {|
+            0.33...            
+    |}]
+    recall_score(y_true, y_pred, average='weighted')    
+    [%expect {|
+            0.33...            
+    |}]
+    recall_score(y_true, y_pred, average=None)    
+    [%expect {|
+            array([1., 0., 0.])            
+    |}]
+    y_true = [0, 0, 0, 0, 0, 0]    
+    recall_score(y_true, y_pred, average=None)    
+    [%expect {|
+            array([0.5, 0. , 0. ])            
+    |}]
+    recall_score(y_true, y_pred, average=None, zero_division=1)    
+    [%expect {|
+            array([0.5, 1. , 1. ])            
+    |}]
+
+*)
+
+
+
+(* zero_one_loss *)
+(*
+>>> from sklearn.metrics import zero_one_loss
+>>> y_pred = [1, 2, 3, 4]
+>>> y_true = [2, 2, 3, 4]
+>>> zero_one_loss(y_true, y_pred)
+0.25
+>>> zero_one_loss(y_true, y_pred, normalize=False)
+1
+
+
+*)
+
+(* TEST TODO
+let%expect_text "zero_one_loss" =
+    let zero_one_loss = Sklearn.Metrics.zero_one_loss in
+    y_pred = [1, 2, 3, 4]    
+    y_true = [2, 2, 3, 4]    
+    zero_one_loss(y_true, y_pred)    
+    [%expect {|
+            0.25            
+    |}]
+    zero_one_loss(y_true, y_pred, normalize=False)    
+    [%expect {|
+            1            
+    |}]
+
+*)
+
+
+
