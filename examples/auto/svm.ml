@@ -20,8 +20,7 @@ let print f x = Format.printf "%a" f x
 let print_py x = Format.printf "%s" (Py.Object.to_string x)
 let print_ndarray = print Sklearn.Ndarray.pp
 let matrix mat = Owl.Dense.Matrix.D.of_arrays mat;;
-
-
+let vector vec = Owl.Arr.of_array vec [|Array.length vec|];;
 
 let%expect_test "LinearSVR" =
   let x, y, _coef = Sklearn.Datasets.make_regression ~n_features:4 ~random_state:(`Int 0) () in
@@ -63,23 +62,22 @@ NuSVC()
 
 *)
 
-(* TEST TODO
-let%expect_text "NuSVC" =
-    import numpy as np    
-    X = np.array([[-1, -1], [-2, -1], [1, 1], [2, 1]])    
-    y = np.array([1, 1, 2, 2])    
-    let nuSVC = Sklearn.Svm.nuSVC in
-    clf = NuSVC()    
-    print @@ fit clf x y
-    [%expect {|
-            NuSVC()            
+let%expect_test "NuSVC" =
+  let x = matrix [|[|-1.; -1.|]; [|-2.; -1.|]; [|1.; 1.|]; [|2.; 1.|]|] in
+  let y = vector [|1.; 1.; 2.; 2.|] in
+  let open Sklearn.Svm in
+  let clf = NuSVC.create () in
+  print NuSVC.pp @@ NuSVC.fit clf ~x ~y ();
+  [%expect {|
+            NuSVC(break_ties=False, cache_size=200, class_weight=None, coef0=0.0,
+                  decision_function_shape='ovr', degree=3, gamma='scale', kernel='rbf',
+                  max_iter=-1, nu=0.5, probability=False, random_state=None, shrinking=True,
+                  tol=0.001, verbose=False)
+    |}];
+  print_ndarray @@ NuSVC.predict clf ~x:(matrix [|[|-0.8; -1.|]|]);
+  [%expect {|
+            [1.]
     |}]
-    print(clf.predict([[-0.8, -1]]))    
-    [%expect {|
-            [1]            
-    |}]
-
-*)
 
 
 
