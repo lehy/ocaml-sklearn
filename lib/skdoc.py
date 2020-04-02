@@ -402,6 +402,7 @@ def remove_shape(text):
                   text)
     text = re.sub(r'(,\s*)?(of\s+)?length \S+', '', text)
     text = re.sub(r'(,\s*)?\[[^[\]()]+,[^[\]()]+\]', '', text)
+    text = re.sub(r'if\s+\S+\s*=+\s*\S+\s*', '', text)
     return text
 
 
@@ -656,11 +657,13 @@ def parse_bunch(function, elements):
 def parse_types(function, doc, section='Parameters'):
     function_name = getattr(function, '__name__', '<no function name>')
     if section == 'Returns':
-        if function_name in ['decision_function', 'predict']:
+        if function_name in ['decision_function', 'predict', 'predict_proba']:
             return {'y': builtin['array']}
         if function_name in ['__str__']:
             return {'return': builtin['string']}
-
+        if function_name in ['fit']:
+            return {'self': builtin['self']}
+        
     if section == 'Parameters':
         if function_name in ['__str__']:
             return {'N_CHAR_MAX': builtin['int']}
@@ -1432,6 +1435,8 @@ class Function:
 
     def arguments(self):
         for k, v in self.signature.parameters.items():
+            if v.kind == inspect.Parameter.VAR_KEYWORD: # **kwargs
+                continue
             has_default = (v.default is not inspect.Parameter.empty)
             ty = self.types[k]
             fixed_value, _ = self.fixed_values.get(k, (None, False))

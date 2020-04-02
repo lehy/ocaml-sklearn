@@ -14,27 +14,32 @@ KNeighborsClassifier(...)
 
 *)
 
-(* TEST TODO
-let%expect_text "KNeighborsClassifier" =
-    X = [[0], [1], [2], [3]]    
-    y = [0, 0, 1, 1]    
-    let kNeighborsClassifier = Sklearn.Neighbors.kNeighborsClassifier in
-    neigh = KNeighborsClassifier(n_neighbors=3)    
-    print @@ fit neigh x y
+let print f x = Format.printf "%a" f x
+let print_py x = Format.printf "%s" (Py.Object.to_string x)
+let print_ndarray = print Sklearn.Ndarray.pp
+module Matrix = Owl.Dense.Matrix.D
+let matrix mat = Matrix.of_arrays mat;;
+let vector vec = Owl.Arr.of_array vec [|Array.length vec|];;
+
+let%expect_test "KNeighborsClassifier" =
+    let x = matrix [|[|0.|]; [|1.|]; [|2.|]; [|3.|]|] in
+    let y = vector [|0.; 0.; 1.; 1.|] in
+    let open Sklearn.Neighbors in
+    let neigh = KNeighborsClassifier.create ~n_neighbors:3 () in
+    print KNeighborsClassifier.pp @@ KNeighborsClassifier.fit neigh ~x:(`Ndarray x) ~y;
     [%expect {|
-            KNeighborsClassifier(...)            
-    |}]
-    print(neigh.predict([[1.1]]))    
+            KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski',
+                                 metric_params=None, n_jobs=None, n_neighbors=3, p=2,
+                                 weights='uniform')
+    |}];
+    print_ndarray @@ KNeighborsClassifier.predict neigh ~x:(matrix [|[|1.1|]|]);
     [%expect {|
-            [0]            
-    |}]
-    print(neigh.predict_proba([[0.9]]))    
+            [0.]
+    |}];
+    print_ndarray @@ KNeighborsClassifier.predict_proba neigh ~x:(matrix [|[|0.9|]|]);
     [%expect {|
             [[0.66666667 0.33333333]]            
     |}]
-
-*)
-
 
 
 (* kneighbors *)
@@ -51,7 +56,7 @@ NearestNeighbors(n_neighbors=1)
 *)
 
 (* TEST TODO
-let%expect_text "KNeighborsMixin.kneighbors" =
+let%expect_test "KNeighborsMixin.kneighbors" =
     samples = [[0., 0., 0.], [0., .5, 0.], [1., 1., .5]]    
     let nearestNeighbors = Sklearn.Neighbors.nearestNeighbors in
     neigh = NearestNeighbors(n_neighbors=1)    
@@ -85,7 +90,7 @@ array([[1., 0., 1.],
 *)
 
 (* TEST TODO
-let%expect_text "KNeighborsMixin.kneighbors_graph" =
+let%expect_test "KNeighborsMixin.kneighbors_graph" =
     X = [[0], [3], [1]]    
     let nearestNeighbors = Sklearn.Neighbors.nearestNeighbors in
     neigh = NearestNeighbors(n_neighbors=2)    
@@ -120,7 +125,7 @@ KNeighborsRegressor(...)
 *)
 
 (* TEST TODO
-let%expect_text "KNeighborsRegressor" =
+let%expect_test "KNeighborsRegressor" =
     X = [[0], [1], [2], [3]]    
     y = [0, 0, 1, 1]    
     let kNeighborsRegressor = Sklearn.Neighbors.kNeighborsRegressor in
@@ -152,7 +157,7 @@ NearestNeighbors(n_neighbors=1)
 *)
 
 (* TEST TODO
-let%expect_text "KNeighborsMixin.kneighbors" =
+let%expect_test "KNeighborsMixin.kneighbors" =
     samples = [[0., 0., 0.], [0., .5, 0.], [1., 1., .5]]    
     let nearestNeighbors = Sklearn.Neighbors.nearestNeighbors in
     neigh = NearestNeighbors(n_neighbors=1)    
@@ -186,7 +191,7 @@ array([[1., 0., 1.],
 *)
 
 (* TEST TODO
-let%expect_text "KNeighborsMixin.kneighbors_graph" =
+let%expect_test "KNeighborsMixin.kneighbors_graph" =
     X = [[0], [3], [1]]    
     let nearestNeighbors = Sklearn.Neighbors.nearestNeighbors in
     neigh = NearestNeighbors(n_neighbors=2)    
@@ -220,7 +225,7 @@ NearestNeighbors(n_neighbors=1)
 *)
 
 (* TEST TODO
-let%expect_text "KNeighborsMixin.kneighbors" =
+let%expect_test "KNeighborsMixin.kneighbors" =
     samples = [[0., 0., 0.], [0., .5, 0.], [1., 1., .5]]    
     let nearestNeighbors = Sklearn.Neighbors.nearestNeighbors in
     neigh = NearestNeighbors(n_neighbors=1)    
@@ -254,7 +259,7 @@ array([[1., 0., 1.],
 *)
 
 (* TEST TODO
-let%expect_text "KNeighborsMixin.kneighbors_graph" =
+let%expect_test "KNeighborsMixin.kneighbors_graph" =
     X = [[0], [3], [1]]    
     let nearestNeighbors = Sklearn.Neighbors.nearestNeighbors in
     neigh = NearestNeighbors(n_neighbors=2)    
@@ -289,7 +294,7 @@ array([ -0.9821...,  -1.0370..., -73.3697...,  -0.9821...])
 *)
 
 (* TEST TODO
-let%expect_text "LocalOutlierFactor" =
+let%expect_test "LocalOutlierFactor" =
     import numpy as np    
     let localOutlierFactor = Sklearn.Neighbors.localOutlierFactor in
     X = [[-1.1], [0.2], [101.1], [0.3]]    
@@ -321,7 +326,7 @@ NearestNeighbors(n_neighbors=1)
 *)
 
 (* TEST TODO
-let%expect_text "KNeighborsMixin.kneighbors" =
+let%expect_test "KNeighborsMixin.kneighbors" =
     samples = [[0., 0., 0.], [0., .5, 0.], [1., 1., .5]]    
     let nearestNeighbors = Sklearn.Neighbors.nearestNeighbors in
     neigh = NearestNeighbors(n_neighbors=1)    
@@ -355,7 +360,7 @@ array([[1., 0., 1.],
 *)
 
 (* TEST TODO
-let%expect_text "KNeighborsMixin.kneighbors_graph" =
+let%expect_test "KNeighborsMixin.kneighbors_graph" =
     X = [[0], [3], [1]]    
     let nearestNeighbors = Sklearn.Neighbors.nearestNeighbors in
     neigh = NearestNeighbors(n_neighbors=2)    
@@ -391,7 +396,7 @@ NearestCentroid()
 *)
 
 (* TEST TODO
-let%expect_text "NearestCentroid" =
+let%expect_test "NearestCentroid" =
     let nearestCentroid = Sklearn.Neighbors.nearestCentroid in
     import numpy as np    
     X = np.array([[-1, -1], [-2, -1], [-3, -2], [1, 1], [2, 1], [3, 2]])    
@@ -424,7 +429,7 @@ NearestNeighbors(n_neighbors=1)
 *)
 
 (* TEST TODO
-let%expect_text "KNeighborsMixin.kneighbors" =
+let%expect_test "KNeighborsMixin.kneighbors" =
     samples = [[0., 0., 0.], [0., .5, 0.], [1., 1., .5]]    
     let nearestNeighbors = Sklearn.Neighbors.nearestNeighbors in
     neigh = NearestNeighbors(n_neighbors=1)    
@@ -458,7 +463,7 @@ array([[1., 0., 1.],
 *)
 
 (* TEST TODO
-let%expect_text "KNeighborsMixin.kneighbors_graph" =
+let%expect_test "KNeighborsMixin.kneighbors_graph" =
     X = [[0], [3], [1]]    
     let nearestNeighbors = Sklearn.Neighbors.nearestNeighbors in
     neigh = NearestNeighbors(n_neighbors=2)    
@@ -496,7 +501,7 @@ NearestNeighbors(radius=1.6)
 *)
 
 (* TEST TODO
-let%expect_text "RadiusNeighborsMixin.radius_neighbors" =
+let%expect_test "RadiusNeighborsMixin.radius_neighbors" =
     import numpy as np    
     samples = [[0., 0., 0.], [0., .5, 0.], [1., 1., .5]]    
     let nearestNeighbors = Sklearn.Neighbors.nearestNeighbors in
@@ -536,7 +541,7 @@ array([[1., 0., 1.],
 *)
 
 (* TEST TODO
-let%expect_text "RadiusNeighborsMixin.radius_neighbors_graph" =
+let%expect_test "RadiusNeighborsMixin.radius_neighbors_graph" =
     X = [[0], [3], [1]]    
     let nearestNeighbors = Sklearn.Neighbors.nearestNeighbors in
     neigh = NearestNeighbors(radius=1.5)    
@@ -582,7 +587,7 @@ KNeighborsClassifier(...)
 *)
 
 (* TEST TODO
-let%expect_text "NeighborhoodComponentsAnalysis" =
+let%expect_test "NeighborhoodComponentsAnalysis" =
     let neighborhoodComponentsAnalysis = Sklearn.Neighbors.neighborhoodComponentsAnalysis in
     let kNeighborsClassifier = Sklearn.Neighbors.kNeighborsClassifier in
     let load_iris = Sklearn.Datasets.load_iris in
@@ -633,7 +638,7 @@ RadiusNeighborsClassifier(...)
 *)
 
 (* TEST TODO
-let%expect_text "RadiusNeighborsClassifier" =
+let%expect_test "RadiusNeighborsClassifier" =
     X = [[0], [1], [2], [3]]    
     y = [0, 0, 1, 1]    
     let radiusNeighborsClassifier = Sklearn.Neighbors.radiusNeighborsClassifier in
@@ -673,7 +678,7 @@ NearestNeighbors(radius=1.6)
 *)
 
 (* TEST TODO
-let%expect_text "RadiusNeighborsMixin.radius_neighbors" =
+let%expect_test "RadiusNeighborsMixin.radius_neighbors" =
     import numpy as np    
     samples = [[0., 0., 0.], [0., .5, 0.], [1., 1., .5]]    
     let nearestNeighbors = Sklearn.Neighbors.nearestNeighbors in
@@ -713,7 +718,7 @@ array([[1., 0., 1.],
 *)
 
 (* TEST TODO
-let%expect_text "RadiusNeighborsMixin.radius_neighbors_graph" =
+let%expect_test "RadiusNeighborsMixin.radius_neighbors_graph" =
     X = [[0], [3], [1]]    
     let nearestNeighbors = Sklearn.Neighbors.nearestNeighbors in
     neigh = NearestNeighbors(radius=1.5)    
@@ -748,7 +753,7 @@ RadiusNeighborsRegressor(...)
 *)
 
 (* TEST TODO
-let%expect_text "RadiusNeighborsRegressor" =
+let%expect_test "RadiusNeighborsRegressor" =
     X = [[0], [1], [2], [3]]    
     y = [0, 0, 1, 1]    
     let radiusNeighborsRegressor = Sklearn.Neighbors.radiusNeighborsRegressor in
@@ -784,7 +789,7 @@ NearestNeighbors(radius=1.6)
 *)
 
 (* TEST TODO
-let%expect_text "RadiusNeighborsMixin.radius_neighbors" =
+let%expect_test "RadiusNeighborsMixin.radius_neighbors" =
     import numpy as np    
     samples = [[0., 0., 0.], [0., .5, 0.], [1., 1., .5]]    
     let nearestNeighbors = Sklearn.Neighbors.nearestNeighbors in
@@ -824,7 +829,7 @@ array([[1., 0., 1.],
 *)
 
 (* TEST TODO
-let%expect_text "RadiusNeighborsMixin.radius_neighbors_graph" =
+let%expect_test "RadiusNeighborsMixin.radius_neighbors_graph" =
     X = [[0], [3], [1]]    
     let nearestNeighbors = Sklearn.Neighbors.nearestNeighbors in
     neigh = NearestNeighbors(radius=1.5)    
@@ -862,7 +867,7 @@ NearestNeighbors(radius=1.6)
 *)
 
 (* TEST TODO
-let%expect_text "RadiusNeighborsMixin.radius_neighbors" =
+let%expect_test "RadiusNeighborsMixin.radius_neighbors" =
     import numpy as np    
     samples = [[0., 0., 0.], [0., .5, 0.], [1., 1., .5]]    
     let nearestNeighbors = Sklearn.Neighbors.nearestNeighbors in
@@ -902,7 +907,7 @@ array([[1., 0., 1.],
 *)
 
 (* TEST TODO
-let%expect_text "RadiusNeighborsMixin.radius_neighbors_graph" =
+let%expect_test "RadiusNeighborsMixin.radius_neighbors_graph" =
     X = [[0], [3], [1]]    
     let nearestNeighbors = Sklearn.Neighbors.nearestNeighbors in
     neigh = NearestNeighbors(radius=1.5)    
@@ -936,7 +941,7 @@ array([[1., 0., 1.],
 *)
 
 (* TEST TODO
-let%expect_text "kneighbors_graph" =
+let%expect_test "kneighbors_graph" =
     X = [[0], [3], [1]]    
     let kneighbors_graph = Sklearn.Neighbors.kneighbors_graph in
     A = kneighbors_graph(X, 2, mode='connectivity', include_self=True)    
@@ -966,7 +971,7 @@ array([[1., 0., 1.],
 *)
 
 (* TEST TODO
-let%expect_text "radius_neighbors_graph" =
+let%expect_test "radius_neighbors_graph" =
     X = [[0], [3], [1]]    
     let radius_neighbors_graph = Sklearn.Neighbors.radius_neighbors_graph in
     A = radius_neighbors_graph(X, 1.5, mode='connectivity',include_self=True)    
