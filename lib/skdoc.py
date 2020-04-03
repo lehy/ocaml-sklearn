@@ -212,10 +212,11 @@ class Ndarray(Builtin):
         'array', 'array_like', 'indexable', 'float ndarray'
     ]
     ml_type = 'Ndarray.t'
-    wrap = 'Numpy.of_bigarray'
+    wrap = 'Ndarray.to_pyobject'  # 'Numpy.of_bigarray'
     ml_type_ret = 'Ndarray.t'
-    unwrap = '(Numpy.to_bigarray Bigarray.float64 Bigarray.c_layout)'
+    unwrap = 'Ndarray.of_pyobject'  #'(Numpy.to_bigarray Bigarray.float64 Bigarray.c_layout)'
 
+    
 class Ndarrayi(Builtin):
     names = [
         'ndarrayi',
@@ -310,9 +311,13 @@ class JoblibMemory(Builtin):
 
 
 class SparseMatrix(Builtin):
-    names = ['sparse matrix', 'sparse-matrix']
+    names = ['sparse matrix', 'sparse-matrix', 'CSR matrix', 'sparse graph in CSR format']
+    ml_type = 'Csr_matrix.t'
+    wrap = 'Csr_matrix.to_pyobject'
+    ml_type_ret = 'Csr_matrix.t'
+    unwrap = 'Csr_matrix.of_pyobject'
 
-
+    
 class PyObject(Builtin):
     names = ['object']
 
@@ -430,6 +435,7 @@ def remove_shape(text):
     text = re.sub(r'(,\s*)?(of\s+)?length \S+', '', text)
     text = re.sub(r'(,\s*)?\[[^[\]()]+,[^[\]()]+\]', '', text)
     text = re.sub(r'if\s+\S+\s*=+\s*\S+\s*', '', text)
+    text = re.sub(r'(,\s*)?\s*\d-dimensional\s*', '', text)
     return text
 
 
@@ -579,11 +585,12 @@ def simplify_enum(enum):
     # Enum(NdArray, SparseMatrix) is annoying because it is all over
     # the place, and SparseMatrix is not easy to use from
     # OCaml. Keeping only NdArray for now.
-    if len(enum.elements) == 2:
-        a, b = enum.elements
-        if ((isinstance(a, Ndarray) and isinstance(b, SparseMatrix))
-                or (isinstance(b, Ndarray) and isinstance(a, SparseMatrix))):
-            return builtin['ndarray']
+    # OK sparse matrices seem useful in some cases, and are exposed through Sklearn.Csr_matrix.
+    # if len(enum.elements) == 2:
+    #     a, b = enum.elements
+    #     if ((isinstance(a, Ndarray) and isinstance(b, SparseMatrix))
+    #             or (isinstance(b, Ndarray) and isinstance(a, SparseMatrix))):
+    #         return builtin['ndarray']
 
     # There is no point having more than one Py.Object tag in an enum.
     is_obj, is_not_obj = partition(
@@ -956,6 +963,9 @@ class Module:
         for name in dir(module):
             if name.startswith('_'):
                 continue
+            # emit this one separately, not inside sklearn.metrics
+            if name == "csr_matrix":
+                continue
             item = getattr(module, name)
             parent_name = self.full_ml_name
             if inspect.ismodule(item):
@@ -963,7 +973,7 @@ class Module:
             elif inspect.isclass(item):
                 append(elts, Class, item, parent_name)
             elif callable(item):
-                append(elts, Function, name, item)
+                append(elts, Function, name, item, self.ml_name)
         return elts
 
     def __str__(self):
@@ -983,7 +993,6 @@ class Module:
         return False
 
     def write_header(self, f):
-        # f.write("type t = Py.Object.t\n") # not type t in Python module, this is for a class
         if self.has_callables():
             f.write("let () = Wrap_utils.init ();;\n")
             f.write(f'let ns = Py.import "{self.module.__name__}"\n\n')
@@ -999,21 +1008,18 @@ class Module:
                 element.write_to_ml(f)
         mli = f"{path / self.python_name}.mli"
         with open(mli, 'w') as f:
-            # f.write("type t\n\n")
             for element in self.elements:
                 element.write_to_mli(f)
 
     def write_doc(self, path):
         md = f"{path / self.python_name}.md"
         with open(md, 'w') as f:
-            # f.write("```ocaml\ntype t\n```\n")
             for element in self.elements:
                 element.write_to_md(f)
 
     def write_examples(self, path):
         md = f"{path / self.python_name}.ml"
         with open(md, 'w') as f:
-            # f.write("```ocaml\ntype t\n```\n")
             for element in self.elements:
                 element.write_examples_to(f)
 
@@ -1026,7 +1032,6 @@ class Module:
 
     def write_to_mli(self, f):
         f.write(f"module {self.ml_name} : sig\n")
-        # f.write("type t\n\n")
         for element in self.elements:
             element.write_to_mli(f)
         f.write("\nend\n\n")
@@ -1049,7 +1054,7 @@ class Class:
     def __init__(self, klass, parent_name):
         self.klass = klass
         self.parent_name = parent_name
-        self.constructor = Ctor(self.klass.__name__, self.klass)
+        self.constructor = Ctor(self.klass.__name__, self.klass, ucfirst(self.klass.__name__))
         self.elements = self._list_elements()
 
     def _list_elements(self):
@@ -1063,7 +1068,7 @@ class Class:
             if item is None:
                 continue
             if callable(item) and item not in callables:
-                append(elts, Method, name, item)
+                append(elts, Method, name, item, ucfirst(self.klass.__name__))
                 # assert item not in callables, (item, dir(self.klass))
                 callables.add(item)
         attributes = parse_types(self.klass,
@@ -1086,25 +1091,44 @@ class Class:
 
     def write_header(self, f):
         f.write("type t = Py.Object.t\n")
+        f.write("let of_pyobject x = x\n")
+        f.write("let to_pyobject x = x\n")
         # A class needs no import.
         # if self.elements:
         #     f.write(f'let ns = Py.import "{self.klass.__module__}.{self.klass.__name__}"\n\n')
 
     # XXX TODO there is some copy-paste with Module, share it
-    def write(self, path):
+    # XXX TODO also there is some ugly copy-paste with write_to_ml/mli
+    def write(self, path, module):
         name = self.klass.__name__
         ml = f"{path / name}.ml"
         with open(ml, 'w') as f:
+            f.write("let () = Wrap_utils.init ();;\n")
+            f.write(f'let ns = Py.import "{module.__name__}"\n\n')
+            
             self.write_header(f)
             self.constructor.write_to_ml(f)
             for element in self.elements:
                 element.write_to_ml(f)
+            f.write('let show self = to_string self\n')
+            f.write(
+                'let pp formatter self = Format.fprintf formatter "%s" (show self)\n'
+            )
+                
         mli = f"{path / name}.mli"
         with open(mli, 'w') as f:
-            f.write("type t\n\n")
+            f.write("type t\n")
+            f.write("val of_pyobject : Py.Object.t -> t\n")
+            f.write("val to_pyobject : t -> Py.Object.t\n\n")
             self.constructor.write_to_mli(f)
             for element in self.elements:
                 element.write_to_mli(f)
+            f.write(
+                "\n(** Print the object to a human-readable representation. *)\n")
+            f.write("val show : t -> string\n\n")
+            f.write("(** Pretty-print the object to a formatter. *)\n")
+            f.write("val pp : Format.formatter -> t -> unit\n\n")
+
 
     def write_doc(self, path):
         name = self.klass.__name__
@@ -1132,7 +1156,9 @@ class Class:
         name = self.klass.__name__
         name = ucfirst(name)
         f.write(f"module {name} : sig\n")
-        f.write("type t\n\n")
+        f.write("type t\n")
+        f.write("val of_pyobject : Py.Object.t -> t\n")
+        f.write("val to_pyobject : t -> Py.Object.t\n\n")
         self.constructor.write_to_mli(f)
         for element in self.elements:
             element.write_to_mli(f)
@@ -1390,9 +1416,10 @@ class NoSignature(Exception):
 
 
 class Function:
-    def __init__(self, python_name, function):
+    def __init__(self, python_name, function, module_name):
         self.function = function
         self.python_name = python_name
+        self.module_name = module_name
         try:
             self.signature = inspect.signature(self.function)
         except ValueError:
@@ -1518,18 +1545,25 @@ class Function:
             # the arg to get_function_with_keywords()
             if param == "self":
                 continue
+            ml_type = ty.ml_type
+            if ml_type == f"{self.module_name}.t":
+                ml_type = 't'
             param_ml = mlid(param)
+            ty_wrap = re.sub('^' + f'{self.module_name}' + '\\.', '', ty.wrap)
             if fixed_value is not None:
-                f.write(f'"{param}", Some ({ty.wrap} {fixed_value});\n')
+                f.write(f'"{param}", Some ({ty_wrap} {fixed_value});\n')
                 continue
 
             if has_default:
                 f.write(
-                    f'"{param}", Wrap_utils.Option.map {param_ml} {ty.wrap};\n'
+                    f'"{param}", Wrap_utils.Option.map {param_ml} {ty_wrap};\n'
                 )
             else:
-                f.write(f'"{param}", Some({param_ml} |> {ty.wrap});\n')
-        f.write(f"]) |> {self.return_type.unwrap}\n")
+                f.write(f'"{param}", Some({param_ml} |> {ty_wrap});\n')
+
+        # XXX TODO factor out this manipulation
+        unwrap = re.sub('^' + f'{self.module_name}' + '\\.', '', self.return_type.unwrap)
+        f.write(f"]) |> {unwrap}\n")
 
     def write_to_mli(self, f):
         f.write(f"(** {self.doc}\n**)\n")
@@ -1539,13 +1573,18 @@ class Function:
                 continue
             param_ml = mlid(param)
             default_mark = ['', '?'][has_default]
+            ml_type = ty.ml_type
+            if ml_type == f"{self.module_name}.t":
+                ml_type = 't'
             if param == "self":
-                f.write(f" {ty.ml_type} ->")
+                f.write(f" {ml_type} ->")
             else:
-                f.write(f" {default_mark}{param_ml} : {ty.ml_type} ->")
+                f.write(f" {default_mark}{param_ml} : {ml_type} ->")
         if self.needs_unit_param():
             f.write(" unit ->")
         return_type = self.return_type.ml_type_ret
+        if return_type == f"{self.module_name}.t":
+            return_type = 't'
         f.write(f" {return_type}\n\n")
 
     def write_to_md(self, f):
@@ -1605,6 +1644,10 @@ def main():
     mode = sys.argv[1]
     if mode == "build":
         pkg.write(build_dir)
+        # Write this one separately, no sense having it in metrics and
+        # it causes cross dep problems.
+        # This is scipy.sparse.csr.csr_matrix.
+        Class(sklearn.metrics.pairwise.csr_matrix, "Sklearn").write(build_dir, sklearn.metrics.pairwise)
     elif mode == "doc":
         pkg.write_doc(pathlib.Path('./doc'))
     elif mode == "examples":

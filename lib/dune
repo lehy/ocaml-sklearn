@@ -18,6 +18,6 @@
   cluster.mli      datasets.ml              ensemble.mli               feature_selection.ml    isotonic.mli              metrics.ml        multioutput.mli      pipeline.ml         setup.mli
   compose.ml       datasets.mli             exceptions.ml              feature_selection.mli   kernel_approximation.ml   metrics.mli       naive_bayes.ml       pipeline.mli        svm.ml
   compose.mli      decomposition.ml         exceptions.mli             gaussian_process.ml     kernel_approximation.mli  mixture.ml        naive_bayes.mli      preprocessing.ml    svm.mli
-  conftest.ml      decomposition.mli        experimental.ml            gaussian_process.mli    kernel_ridge.ml           mixture.mli       preprocessing.mli   tests.ml)
+  conftest.ml      decomposition.mli        experimental.ml            gaussian_process.mli    kernel_ridge.ml           mixture.mli       preprocessing.mli   tests.ml     csr_matrix.ml              csr_matrix.mli)
  (deps    skdoc.sh skdoc.py)
  (action  (run bash skdoc.sh build)))
