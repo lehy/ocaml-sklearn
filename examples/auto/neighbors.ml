@@ -151,22 +151,21 @@ NearestNeighbors(n_neighbors=1)
 
 *)
 
-(* TEST TODO
 let%expect_test "KNeighborsMixin.kneighbors" =
-    samples = [[0., 0., 0.], [0., .5, 0.], [1., 1., .5]]    
-    let nearestNeighbors = Sklearn.Neighbors.nearestNeighbors in
-    neigh = NearestNeighbors(n_neighbors=1)    
-    print @@ fit neigh samples
-    [%expect {|
-            NearestNeighbors(n_neighbors=1)            
+  let samples = matrix [|[|0.; 0.; 0.|]; [|0.; 0.5; 0.|]; [|1.; 1.; 0.5|]|] in
+  let open Sklearn.Neighbors in
+  let neigh = NearestNeighbors.create ~n_neighbors:1 () in
+  print NearestNeighbors.pp @@ NearestNeighbors.fit neigh ~x:(`Ndarray samples) ();
+  [%expect {|
+            NearestNeighbors(algorithm='auto', leaf_size=30, metric='minkowski',
+                             metric_params=None, n_jobs=None, n_neighbors=1, p=2,
+                             radius=1.0)
+    |}];
+  let dist, ind = NearestNeighbors.kneighbors neigh ~x:(matrix [|[|1.; 1.; 1.|]|]) () in
+  Format.printf "(%a, %a)" Sklearn.Ndarray.pp dist Sklearn.Ndarrayi.pp ind;
+  [%expect {|
+            ([[0.5]], [[2]])
     |}]
-    print(neigh.kneighbors([[1., 1., 1.]]))    
-    [%expect {|
-            (array([[0.5]]), array([[2]]))            
-    |}]
-
-*)
-
 
 
 (* kneighbors_graph *)
