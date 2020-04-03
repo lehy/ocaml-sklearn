@@ -696,8 +696,12 @@ def parse_bunch(function, elements):
 
 def parse_types(function, doc, section='Parameters'):
     function_name = getattr(function, '__name__', '<no function name>')
+    qualname = getattr(function, '__qualname__', '<no function name>')
     if section == 'Returns':
-        if function_name in ['decision_function', 'predict', 'predict_proba']:
+        if qualname in ['NearestCentroid.predict', 'NearestCentroid.fit_predict']:
+            return {'y': builtin['ndarrayi']}
+        if function_name in ['decision_function', 'predict', 'predict_proba', 'fit_predict']:
+            # XXX too wide a net?
             return {'y': builtin['array']}
         if function_name in ['__str__']:
             return {'return': builtin['string']}
@@ -707,6 +711,9 @@ def parse_types(function, doc, section='Parameters'):
     if section == 'Parameters':
         if function_name in ['__str__']:
             return {'N_CHAR_MAX': builtin['int']}
+        if getattr(function, '__qualname__', None) == 'NearestCentroid.fit':
+            return { 'X': Enum([builtin['ndarray'], builtin['sparse matrix']]),
+                     'y': builtin['ndarrayi']}
         
     # print(doc)
     if doc is None:

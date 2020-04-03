@@ -19,9 +19,12 @@ LinearSVR(random_state=0, tol=1e-05)
 let print f x = Format.printf "%a" f x
 let print_py x = Format.printf "%s" (Py.Object.to_string x)
 let print_ndarray = print Sklearn.Ndarray.pp
+
 module Matrix = Owl.Dense.Matrix.D
-let matrix mat = Matrix.of_arrays mat;;
-let vector vec = Owl.Arr.of_array vec [|Array.length vec|];;
+let matrix = Sklearn.Ndarray.matrix
+let vector = Sklearn.Ndarray.vector
+let matrixi = Sklearn.Ndarrayi.matrix
+let vectori = Sklearn.Ndarrayi.vector
 
 let%expect_test "LinearSVR" =
   let x, y, _coef = Sklearn.Datasets.make_regression ~n_features:4 ~random_state:(`Int 0) () in

@@ -17,9 +17,11 @@ KNeighborsClassifier(...)
 let print f x = Format.printf "%a" f x
 let print_py x = Format.printf "%s" (Py.Object.to_string x)
 let print_ndarray = print Sklearn.Ndarray.pp
-module Matrix = Owl.Dense.Matrix.D
-let matrix mat = Matrix.of_arrays mat;;
-let vector vec = Owl.Arr.of_array vec [|Array.length vec|];;
+
+let matrix = Sklearn.Ndarray.matrix
+let vector = Sklearn.Ndarray.vector
+let matrixi = Sklearn.Ndarrayi.matrix
+let vectori = Sklearn.Ndarrayi.vector
 
 let%expect_test "KNeighborsClassifier" =
     let x = matrix [|[|0.|]; [|1.|]; [|2.|]; [|3.|]|] in
@@ -242,24 +244,19 @@ NearestCentroid()
 
 *)
 
-(* TEST TODO
 let%expect_test "NearestCentroid" =
-    let nearestCentroid = Sklearn.Neighbors.nearestCentroid in
-    import numpy as np    
-    X = np.array([[-1, -1], [-2, -1], [-3, -2], [1, 1], [2, 1], [3, 2]])    
-    y = np.array([1, 1, 1, 2, 2, 2])    
-    clf = NearestCentroid()    
-    print @@ fit clf x y
-    [%expect {|
-            NearestCentroid()            
-    |}]
-    print(clf.predict([[-0.8, -1]]))    
-    [%expect {|
+  let open Sklearn.Neighbors in
+  let x = matrix [|[|-1.; -1.|]; [|-2.; -1.|]; [|-3.; -2.|]; [|1.; 1.|]; [|2.; 1.|]; [|3.; 2.|]|] in
+  let y = vectori [|1; 1; 1; 2; 2; 2|] in
+  let clf = NearestCentroid.create () in
+  print NearestCentroid.pp @@ NearestCentroid.fit clf ~x:(`Ndarray x) ~y;
+  [%expect {|
+            NearestCentroid(metric='euclidean', shrink_threshold=None)
+    |}];
+  print Sklearn.Ndarrayi.pp @@ NearestCentroid.predict clf ~x:(matrix [|[|-0.8; -1.|]|]);
+  [%expect {|
             [1]            
     |}]
-
-*)
-
 
 
 (* kneighbors *)
