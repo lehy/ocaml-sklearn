@@ -122,24 +122,21 @@ KNeighborsRegressor(...)
 
 *)
 
-(* TEST TODO
 let%expect_test "KNeighborsRegressor" =
-    X = [[0], [1], [2], [3]]    
-    y = [0, 0, 1, 1]    
-    let kNeighborsRegressor = Sklearn.Neighbors.kNeighborsRegressor in
-    neigh = KNeighborsRegressor(n_neighbors=2)    
-    print @@ fit neigh x y
+    let x = matrix [|[|0.|]; [|1.|]; [|2.|]; [|3.|]|] in
+    let y = vector [|0.; 0.; 1.; 1.|] in
+    let open Sklearn.Neighbors in
+    let neigh = KNeighborsRegressor.create ~n_neighbors:2 () in 
+    print KNeighborsRegressor.pp @@ KNeighborsRegressor.fit neigh ~x:(`Ndarray x) ~y:(`Ndarray y);
     [%expect {|
-            KNeighborsRegressor(...)            
-    |}]
-    print(neigh.predict([[1.5]]))    
+            KNeighborsRegressor(algorithm='auto', leaf_size=30, metric='minkowski',
+                                metric_params=None, n_jobs=None, n_neighbors=2, p=2,
+                                weights='uniform')
+    |}];
+    print_ndarray @@ KNeighborsRegressor.predict neigh ~x:(matrix [|[|1.5|]|]);
     [%expect {|
             [0.5]            
     |}]
-
-*)
-
-
 
 (* kneighbors *)
 (*
