@@ -2,7 +2,7 @@ import re
 import pkgutil
 import importlib
 import inspect
-
+import collections
 
 class Section:
     def __init__(self):
@@ -311,7 +311,8 @@ class JoblibMemory(Builtin):
 
 
 class SparseMatrix(Builtin):
-    names = ['sparse matrix', 'sparse-matrix', 'CSR matrix', 'sparse graph in CSR format']
+    names = ['sparse matrix', 'sparse-matrix', 'CSR matrix',
+             'sparse graph in CSR format']
     ml_type = 'Csr_matrix.t'
     wrap = 'Csr_matrix.to_pyobject'
     ml_type_ret = 'Csr_matrix.t'
@@ -636,7 +637,7 @@ def parse_type(t, function, param_name):
         if isinstance(ret, (Ndarray, ArrayLike)):
             if param_name in ['feature_names', 'target_names']:
                 ret = builtin['list of string']
-            if param_name in ['neigh_ind']:
+            if param_name in ['neigh_ind', 'is_inlier']:
                 ret = builtin['ndarrayi']
         return ret
 
@@ -1048,7 +1049,13 @@ class Module:
         for element in self.elements:
             element.write_examples_to(f)
 
-
+def is_hashable(x):
+   try:
+       hash(x)
+   except TypeError:
+       return False
+   return True 
+            
 # Major Major
 class Class:
     def __init__(self, klass, parent_name):
@@ -1056,21 +1063,35 @@ class Class:
         self.parent_name = parent_name
         self.constructor = Ctor(self.klass.__name__, self.klass, ucfirst(self.klass.__name__))
         self.elements = self._list_elements()
-
+        
     def _list_elements(self):
         elts = []
         callables = set(
-        )  # there may be several times the same function behind the same name
-        for name in dir(self.klass):
-            if name.startswith('_') and name not in ['__str__']:
+        )  # there may be several times the same function behind the
+        # same name Some classes don't have all the methods ready, you
+        # need to instantiate an object. For instance,
+        # sklearn.neighbors.LocalOutlierFactor has fit_predict as a
+        # property (not yet a method), so taking its signature does
+        # not work.  So we attempt to instantiate an object and work
+        # on that, and fallback on the class if that fails.
+        try:
+            proto = self.klass()
+        except Exception as e:
+            print(f"instantiating {self.klass.__name__} did not work: {e}")
+            proto = self.klass
+        for name in dir(proto):
+            if name.startswith('_'):  # and name not in ['__str__']:
                 continue
-            item = getattr(self.klass, name, None)
+            item = getattr(proto, name, None)
             if item is None:
                 continue
-            if callable(item) and item not in callables:
-                append(elts, Method, name, item, ucfirst(self.klass.__name__))
-                # assert item not in callables, (item, dir(self.klass))
-                callables.add(item)
+            if callable(item):
+                if is_hashable(item):
+                    if item not in callables:
+                        append(elts, Method, name, item, ucfirst(self.klass.__name__))
+                        callables.add(item)
+                else:
+                    append(elts, Method, name, item, ucfirst(self.klass.__name__))
         attributes = parse_types(self.klass,
                                  self.klass.__doc__,
                                  section="Attributes")
@@ -1110,6 +1131,7 @@ class Class:
             self.constructor.write_to_ml(f)
             for element in self.elements:
                 element.write_to_ml(f)
+            f.write("let to_string self = Py.Object.to_string self\n")
             f.write('let show self = to_string self\n')
             f.write(
                 'let pp formatter self = Format.fprintf formatter "%s" (show self)\n'
@@ -1123,6 +1145,9 @@ class Class:
             self.constructor.write_to_mli(f)
             for element in self.elements:
                 element.write_to_mli(f)
+            f.write(
+                "\n(** Print the object to a human-readable representation. *)\n")
+            f.write("val to_string : t -> string\n\n")
             f.write(
                 "\n(** Print the object to a human-readable representation. *)\n")
             f.write("val show : t -> string\n\n")
@@ -1146,6 +1171,7 @@ class Class:
         self.constructor.write_to_ml(f)
         for element in self.elements:
             element.write_to_ml(f)
+        f.write("let to_string self = Py.Object.to_string self\n")
         f.write('let show self = to_string self\n')
         f.write(
             'let pp formatter self = Format.fprintf formatter "%s" (show self)\n'
@@ -1162,6 +1188,9 @@ class Class:
         self.constructor.write_to_mli(f)
         for element in self.elements:
             element.write_to_mli(f)
+        f.write(
+            "\n(** Print the object to a human-readable representation. *)\n")
+        f.write("val to_string : t -> string\n\n")
         f.write(
             "\n(** Print the object to a human-readable representation. *)\n")
         f.write("val show : t -> string\n\n")
@@ -1513,12 +1542,18 @@ class Function:
                 return True
         return False
 
+    def num_params(self):
+        ret = len(self.signature.parameters)
+        if getattr(self.function, '__self__', None) is not None:
+            ret += 1
+        return ret
+    
     def needs_unit_param(self):
-        return self.has_default() or not len(self.signature.parameters)
+        return self.has_default() or not self.num_params()
 
     def ml_name(self):
-        if self.python_name == '__str__':
-            return 'to_string'
+        # if self.python_name == '__str__':
+        #     return 'to_string'
         return mlid(self.python_name)
 
     def ns(self):
@@ -1614,11 +1649,17 @@ class Method(Function):
         super().__init__(*args, **kwargs)
         self.types['self'] = builtin['self']
         args = list(self.arguments())
-        if (not args) or args[0][0] != 'self':
+        if getattr(self.function, '__self__', None) is None and ((not args) or args[0][0] != 'self'):
             print(
                 f"!! skipping {self.function}({args}): first arg is not self")
             raise OutsideScope()
 
+    def arguments(self):
+        if getattr(self.function, '__self__', None) is not None:
+            yield 'self', False, builtin['self'], None
+        for arg in super().arguments():
+            yield arg
+        
     def ns(self):
         return 'self'
 

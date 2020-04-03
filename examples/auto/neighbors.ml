@@ -266,7 +266,6 @@ let%expect_test "KNeighborsMixin.kneighbors_graph" =
              [1. 0. 1.]]
     |}]
 
-
 (* LocalOutlierFactor *)
 (*
 >>> import numpy as np
@@ -281,23 +280,18 @@ array([ -0.9821...,  -1.0370..., -73.3697...,  -0.9821...])
 
 *)
 
-(* TEST TODO
 let%expect_test "LocalOutlierFactor" =
-    import numpy as np    
-    let localOutlierFactor = Sklearn.Neighbors.localOutlierFactor in
-    X = [[-1.1], [0.2], [101.1], [0.3]]    
-    clf = LocalOutlierFactor(n_neighbors=2)    
-    print @@ fit_predict clf x
-    [%expect {|
-            array([ 1,  1, -1,  1])            
+  let open Sklearn.Neighbors in
+  let x = matrix [|[|-1.1|]; [|0.2|]; [|101.1|]; [|0.3|]|] in
+  let clf = LocalOutlierFactor.create ~n_neighbors:2 () in
+  print Sklearn.Ndarrayi.pp @@ LocalOutlierFactor.fit_predict clf ~x ();
+  [%expect {|
+            [ 1  1 -1  1]
+    |}];
+  print_ndarray @@ LocalOutlierFactor.negative_outlier_factor_ clf;
+  [%expect {|
+            [ -0.98214286  -1.03703704 -73.36970899  -0.98214286]
     |}]
-    clf.negative_outlier_factor_    
-    [%expect {|
-            array([ -0.9821...,  -1.0370..., -73.3697...,  -0.9821...])            
-    |}]
-
-*)
-
 
 
 (* kneighbors *)
