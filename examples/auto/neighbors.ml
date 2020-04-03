@@ -232,8 +232,6 @@ let%expect_test "KNeighborsMixin.kneighbors" =
             ([[0.5]], [[2]])
     |}]
 
-
-
 (* kneighbors_graph *)
 (*
 >>> X = [[0], [3], [1]]
@@ -250,25 +248,23 @@ array([[1., 0., 1.],
 
 *)
 
-(* TEST TODO
 let%expect_test "KNeighborsMixin.kneighbors_graph" =
-    X = [[0], [3], [1]]    
-    let nearestNeighbors = Sklearn.Neighbors.nearestNeighbors in
-    neigh = NearestNeighbors(n_neighbors=2)    
-    print @@ fit neigh x
+    let x = matrix [|[|0.|]; [|3.|]; [|1.|]|] in
+    let open Sklearn.Neighbors in
+    let neigh = NearestNeighbors.create ~n_neighbors:2 () in
+    print NearestNeighbors.pp @@ NearestNeighbors.fit neigh ~x:(`Ndarray x) ();
     [%expect {|
-            NearestNeighbors(n_neighbors=2)            
-    |}]
-    A = neigh.kneighbors_graph(X)    
-    A.toarray()    
+            NearestNeighbors(algorithm='auto', leaf_size=30, metric='minkowski',
+                             metric_params=None, n_jobs=None, n_neighbors=2, p=2,
+                             radius=1.0)
+    |}];
+    let a = NearestNeighbors.kneighbors_graph neigh ~x () in
+    print_ndarray @@ Sklearn.Csr_matrix.toarray a ();
     [%expect {|
-            array([[1., 0., 1.],            
-                   [0., 1., 1.],            
-                   [1., 0., 1.]])            
+            [[1. 0. 1.]
+             [0. 1. 1.]
+             [1. 0. 1.]]
     |}]
-
-*)
-
 
 
 (* LocalOutlierFactor *)
