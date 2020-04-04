@@ -253,26 +253,21 @@ array([[1., 0., 1.],
 
 *)
 
-(* TEST TODO
 let%expect_test "RadiusNeighborsMixin.radius_neighbors_graph" =
-    X = [[0], [3], [1]]
-    let nearestNeighbors = Sklearn.Neighbors.nearestNeighbors in
-    neigh = NearestNeighbors(radius=1.5)
-    print @@ fit neigh x
-    [%expect {|
+  let x = matrix [|[|0.|]; [|3.|]; [|1.|]|] in
+  let open Sklearn.Neighbors in
+  let neigh = NearestNeighbors.create ~radius:1.5 () in
+  print NearestNeighbors.pp @@ NearestNeighbors.fit neigh ~x:(`Ndarray x) ();
+  [%expect {|
             NearestNeighbors(radius=1.5)
-    |}]
-    A = neigh.radius_neighbors_graph(X)
-    A.toarray()
-    [%expect {|
+    |}];
+  let a = NearestNeighbors.radius_neighbors_graph neigh ~x () in
+  print_ndarray @@ Sklearn.Csr_matrix.toarray a ();
+  [%expect {|
             array([[1., 0., 1.],
                    [0., 1., 0.],
                    [1., 0., 1.]])
     |}]
-
-*)
-
-
 
 (* NeighborhoodComponentsAnalysis *)
 (*
