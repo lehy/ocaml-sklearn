@@ -40,7 +40,7 @@ let%expect_test "KNeighborsClassifier" =
     |}];
     print_ndarray @@ KNeighborsClassifier.predict_proba neigh ~x:(matrix [|[|0.9|]|]);
     [%expect {|
-            [[0.66666667 0.33333333]]            
+            [[0.66666667 0.33333333]]
     |}]
 
 
@@ -125,7 +125,7 @@ let%expect_test "KNeighborsRegressor" =
     let x = matrix [|[|0.|]; [|1.|]; [|2.|]; [|3.|]|] in
     let y = vector [|0.; 0.; 1.; 1.|] in
     let open Sklearn.Neighbors in
-    let neigh = KNeighborsRegressor.create ~n_neighbors:2 () in 
+    let neigh = KNeighborsRegressor.create ~n_neighbors:2 () in
     print KNeighborsRegressor.pp @@ KNeighborsRegressor.fit neigh ~x:(`Ndarray x) ~y:(`Ndarray y);
     [%expect {|
             KNeighborsRegressor(algorithm='auto', leaf_size=30, metric='minkowski',
@@ -134,7 +134,7 @@ let%expect_test "KNeighborsRegressor" =
     |}];
     print_ndarray @@ KNeighborsRegressor.predict neigh ~x:(matrix [|[|1.5|]|]);
     [%expect {|
-            [0.5]            
+            [0.5]
     |}]
 
 
@@ -196,13 +196,13 @@ let%expect_test "NearestCentroid" =
     |}];
   print Sklearn.Ndarrayi.pp @@ NearestCentroid.predict clf ~x:(matrix [|[|-0.8; -1.|]|]);
   [%expect {|
-            [1]            
+            [1]
     |}]
 
 
 (* radius_neighbors *)
 (*
- >>> import numpy as np
+>>> import numpy as np
 >>> samples = [[0., 0., 0.], [0., .5, 0.], [1., 1., .5]]
 >>> from sklearn.neighbors import NearestNeighbors
 >>> neigh = NearestNeighbors(radius=1.6)
@@ -217,29 +217,25 @@ NearestNeighbors(radius=1.6)
 
 *)
 
-(* TEST TODO
 let%expect_test "RadiusNeighborsMixin.radius_neighbors" =
-    import numpy as np    
-    samples = [[0., 0., 0.], [0., .5, 0.], [1., 1., .5]]    
-    let nearestNeighbors = Sklearn.Neighbors.nearestNeighbors in
-    neigh = NearestNeighbors(radius=1.6)    
-    print @@ fit neigh samples
+    let samples = matrix [|[|0.; 0.; 0.|]; [|0.; 0.5; 0.|]; [|1.; 1.; 0.5|]|] in
+    let open Sklearn.Neighbors in
+    let neigh = NearestNeighbors.create ~radius:1.6 () in
+    print NearestNeighbors.pp @@ NearestNeighbors.fit neigh ~x:(`Ndarray samples) ();
     [%expect {|
-            NearestNeighbors(radius=1.6)            
-    |}]
-    rng = neigh.radius_neighbors([[1., 1., 1.]])    
-    print(np.asarray(rng[0][0]))    
+            NearestNeighbors(algorithm='auto', leaf_size=30, metric='minkowski',
+                             metric_params=None, n_jobs=None, n_neighbors=5, p=2,
+                             radius=1.6)
+    |}];
+    let dist, ind = NearestNeighbors.radius_neighbors neigh ~x:(`Ndarray (matrix [|[|1.; 1.; 1.|]|])) () in
+    print_ndarray @@ dist.(0);
     [%expect {|
-            [1.5 0.5]            
-    |}]
-    print(np.asarray(rng[1][0]))    
+            [1.5 0.5]
+    |}];
+    print Sklearn.Ndarrayi.pp @@ ind.(0);
     [%expect {|
-            [1 2]            
+            [1 2]
     |}]
-
-*)
-
-
 
 (* radius_neighbors_graph *)
 (*
@@ -259,19 +255,19 @@ array([[1., 0., 1.],
 
 (* TEST TODO
 let%expect_test "RadiusNeighborsMixin.radius_neighbors_graph" =
-    X = [[0], [3], [1]]    
+    X = [[0], [3], [1]]
     let nearestNeighbors = Sklearn.Neighbors.nearestNeighbors in
-    neigh = NearestNeighbors(radius=1.5)    
+    neigh = NearestNeighbors(radius=1.5)
     print @@ fit neigh x
     [%expect {|
-            NearestNeighbors(radius=1.5)            
+            NearestNeighbors(radius=1.5)
     |}]
-    A = neigh.radius_neighbors_graph(X)    
-    A.toarray()    
+    A = neigh.radius_neighbors_graph(X)
+    A.toarray()
     [%expect {|
-            array([[1., 0., 1.],            
-                   [0., 1., 0.],            
-                   [1., 0., 1.]])            
+            array([[1., 0., 1.],
+                   [0., 1., 0.],
+                   [1., 0., 1.]])
     |}]
 
 *)
@@ -311,27 +307,27 @@ let%expect_test "NeighborhoodComponentsAnalysis" =
     let train_test_split = Sklearn.Model_selection.train_test_split in
     let x, y = load_iris return_X_y=True in
     let n, y_test = train_test_split x y stratify=y test_size=0.7 random_state=42 in
-    nca = NeighborhoodComponentsAnalysis(random_state=42)    
+    nca = NeighborhoodComponentsAnalysis(random_state=42)
     print @@ fit nca x_train y_train
     [%expect {|
-            NeighborhoodComponentsAnalysis(...)            
+            NeighborhoodComponentsAnalysis(...)
     |}]
-    knn = KNeighborsClassifier(n_neighbors=3)    
+    knn = KNeighborsClassifier(n_neighbors=3)
     print @@ fit knn x_train y_train
     [%expect {|
-            KNeighborsClassifier(...)            
+            KNeighborsClassifier(...)
     |}]
-    print(knn.score(X_test, y_test))    
+    print(knn.score(X_test, y_test))
     [%expect {|
-            0.933333...            
+            0.933333...
     |}]
-    knn.fit(nca.transform(X_train), y_train)    
+    knn.fit(nca.transform(X_train), y_train)
     [%expect {|
-            KNeighborsClassifier(...)            
+            KNeighborsClassifier(...)
     |}]
-    print(knn.score(nca.transform(X_test), y_test))    
+    print(knn.score(nca.transform(X_test), y_test))
     [%expect {|
-            0.961904...            
+            0.961904...
     |}]
 
 *)
@@ -356,21 +352,21 @@ RadiusNeighborsClassifier(...)
 
 (* TEST TODO
 let%expect_test "RadiusNeighborsClassifier" =
-    X = [[0], [1], [2], [3]]    
-    y = [0, 0, 1, 1]    
+    X = [[0], [1], [2], [3]]
+    y = [0, 0, 1, 1]
     let radiusNeighborsClassifier = Sklearn.Neighbors.radiusNeighborsClassifier in
-    neigh = RadiusNeighborsClassifier(radius=1.0)    
+    neigh = RadiusNeighborsClassifier(radius=1.0)
     print @@ fit neigh x y
     [%expect {|
-            RadiusNeighborsClassifier(...)            
+            RadiusNeighborsClassifier(...)
     |}]
-    print(neigh.predict([[1.5]]))    
+    print(neigh.predict([[1.5]]))
     [%expect {|
-            [0]            
+            [0]
     |}]
-    print(neigh.predict_proba([[1.0]]))    
+    print(neigh.predict_proba([[1.0]]))
     [%expect {|
-            [[0.66666667 0.33333333]]            
+            [[0.66666667 0.33333333]]
     |}]
 
 *)
@@ -391,17 +387,17 @@ RadiusNeighborsRegressor(...)
 
 (* TEST TODO
 let%expect_test "RadiusNeighborsRegressor" =
-    X = [[0], [1], [2], [3]]    
-    y = [0, 0, 1, 1]    
+    X = [[0], [1], [2], [3]]
+    y = [0, 0, 1, 1]
     let radiusNeighborsRegressor = Sklearn.Neighbors.radiusNeighborsRegressor in
-    neigh = RadiusNeighborsRegressor(radius=1.0)    
+    neigh = RadiusNeighborsRegressor(radius=1.0)
     print @@ fit neigh x y
     [%expect {|
-            RadiusNeighborsRegressor(...)            
+            RadiusNeighborsRegressor(...)
     |}]
-    print(neigh.predict([[1.5]]))    
+    print(neigh.predict([[1.5]]))
     [%expect {|
-            [0.5]            
+            [0.5]
     |}]
 
 *)
@@ -422,14 +418,14 @@ array([[1., 0., 1.],
 
 (* TEST TODO
 let%expect_test "kneighbors_graph" =
-    X = [[0], [3], [1]]    
+    X = [[0], [3], [1]]
     let kneighbors_graph = Sklearn.Neighbors.kneighbors_graph in
-    A = kneighbors_graph(X, 2, mode='connectivity', include_self=True)    
-    A.toarray()    
+    A = kneighbors_graph(X, 2, mode='connectivity', include_self=True)
+    A.toarray()
     [%expect {|
-            array([[1., 0., 1.],            
-                   [0., 1., 1.],            
-                   [1., 0., 1.]])            
+            array([[1., 0., 1.],
+                   [0., 1., 1.],
+                   [1., 0., 1.]])
     |}]
 
 *)
@@ -452,17 +448,14 @@ array([[1., 0., 1.],
 
 (* TEST TODO
 let%expect_test "radius_neighbors_graph" =
-    X = [[0], [3], [1]]    
+    X = [[0], [3], [1]]
     let radius_neighbors_graph = Sklearn.Neighbors.radius_neighbors_graph in
-    A = radius_neighbors_graph(X, 1.5, mode='connectivity',include_self=True)    
-    A.toarray()    
+    A = radius_neighbors_graph(X, 1.5, mode='connectivity',include_self=True)
+    A.toarray()
     [%expect {|
-            array([[1., 0., 1.],            
-                   [0., 1., 0.],            
-                   [1., 0., 1.]])            
+            array([[1., 0., 1.],
+                   [0., 1., 0.],
+                   [1., 0., 1.]])
     |}]
 
 *)
-
-
-

@@ -244,7 +244,21 @@ class Ndarrayi64(Builtin):
     ml_type_ret = 'Ndarrayi64.t'
     unwrap = '(Numpy.to_bigarray Bigarray.int64 Bigarray.c_layout)'
 
+class List(Builtin):
+    def __init__(self, t):
+        self.t = t
+        self.names = []
+        self.ml_type = f"{t.ml_type} array"
+        self.wrap = f'(fun ml -> Py.Array.of_array {t.wrap} (fun _ -> invalid_argument "read-only") ml)'
+        self.ml_type_ret = f"{t.ml_type} array"
+        self.unwrap = f"(fun py -> let len = Py.Sequence.length py in Array.init len (fun i -> {t.unwrap} (Py.Sequence.get_item py i)))"
 
+    def __str__(self):
+        return repr(self)
+
+    def __repr__(self):
+        return f"List[{str(self.t)}]"
+        
 class FloatList(Builtin):
     names = ['list of floats']
     ml_type = 'float list'
@@ -697,7 +711,11 @@ def parse_bunch(function, elements):
 def parse_types(function, doc, section='Parameters'):
     function_name = getattr(function, '__name__', '<no function name>')
     qualname = getattr(function, '__qualname__', '<no function name>')
+
     if section == 'Returns':
+        if qualname in ['RadiusNeighborsMixin.radius_neighbors']:
+            return {'ret': RetTuple([List(Ndarray()), List(Ndarrayi())])}
+        # 'neigh_ind': builtin['ndarrayi']}
         if qualname in ['NearestCentroid.predict', 'NearestCentroid.fit_predict']:
             return {'y': builtin['ndarrayi']}
         if function_name in ['decision_function', 'predict', 'predict_proba', 'fit_predict']:
