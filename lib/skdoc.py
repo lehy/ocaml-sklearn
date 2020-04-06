@@ -4,6 +4,7 @@ import importlib
 import inspect
 import collections
 
+
 class Section:
     def __init__(self):
         pass
@@ -63,26 +64,29 @@ class Type:
         destruct = f"`{ta} x -> {self.wrap} x"
         return t, destruct
 
+
 class Bunch(Type):
     def __init__(self, elements):
         self.elements = elements
         self.ml_type = ("< " +
-                        '; '.join(f"{mlid(name)}: {t.ml_type_ret}" for name, t in self.elements.items()) +
-                        " >")
+                        '; '.join(f"{mlid(name)}: {t.ml_type_ret}"
+                                  for name, t in self.elements.items()) + " >")
         # for now Bunch is only for returning things
-        self.wrap = 'Wrap_utils.id' 
+        self.wrap = 'Wrap_utils.id'
 
         self.ml_type_ret = self.ml_type
-        unwrap_methods = [f'method {mlid(name)} = {t.unwrap} (Py.Object.get_attr_string bunch "{name}" |> Wrap_utils.Option.get)'
-                          for name, t in self.elements.items()]
+        unwrap_methods = [
+            f'method {mlid(name)} = {t.unwrap} (Py.Object.get_attr_string bunch "{name}" |> Wrap_utils.Option.get)'
+            for name, t in self.elements.items()
+        ]
         self.unwrap = f'(fun bunch -> object {" ".join(unwrap_methods)} end)'
-        
+
     def visit(self, f):
         f(self)
         for child in self.elements.values():
             f(child)
 
-        
+
 class UnknownType(Type):
     def __init__(self, text):
         self.text = text
@@ -212,44 +216,17 @@ class Ndarray(Builtin):
         'array', 'array_like', 'indexable', 'float ndarray'
     ]
     ml_type = 'Ndarray.t'
-    wrap = 'Ndarray.to_pyobject'  # 'Numpy.of_bigarray'
+    wrap = 'Ndarray.to_pyobject'
     ml_type_ret = 'Ndarray.t'
-    unwrap = 'Ndarray.of_pyobject'  #'(Numpy.to_bigarray Bigarray.float64 Bigarray.c_layout)'
+    unwrap = 'Ndarray.of_pyobject'
 
-    
-class Ndarrayi(Builtin):
-    names = [
-        'ndarrayi',
-    ]
-    ml_type = 'Ndarrayi.t'
-    wrap = 'Numpy.of_bigarray'
-    ml_type_ret = 'Ndarrayi.t'
-    unwrap = '(Numpy.to_bigarray Bigarray.nativeint Bigarray.c_layout)'
-    
-class Ndarrayi32(Builtin):
-    names = [
-        'ndarrayi32',
-    ]
-    ml_type = 'Ndarrayi32.t'
-    wrap = 'Numpy.of_bigarray'
-    ml_type_ret = 'Ndarrayi32.t'
-    unwrap = '(Numpy.to_bigarray Bigarray.int32 Bigarray.c_layout)'
-
-class Ndarrayi64(Builtin):
-    names = [
-        'ndarrayi64',
-    ]
-    ml_type = 'Ndarrayi64.t'
-    wrap = 'Numpy.of_bigarray'
-    ml_type_ret = 'Ndarrayi64.t'
-    unwrap = '(Numpy.to_bigarray Bigarray.int64 Bigarray.c_layout)'
 
 class List(Builtin):
     def __init__(self, t):
         self.t = t
         self.names = []
         self.ml_type = f"{t.ml_type} array"
-        self.wrap = f'(fun ml -> Py.Array.of_array {t.wrap} (fun _ -> invalid_argument "read-only") ml)'
+        self.wrap = f'(fun ml -> Py.Array.of_array {t.wrap} (fun _ -> invalid_arg "read-only") ml)'
         self.ml_type_ret = f"{t.ml_type} array"
         self.unwrap = f"(fun py -> let len = Py.Sequence.length py in Array.init len (fun i -> {t.unwrap} (Py.Sequence.get_item py i)))"
 
@@ -258,7 +235,8 @@ class List(Builtin):
 
     def __repr__(self):
         return f"List[{str(self.t)}]"
-        
+
+
 class FloatList(Builtin):
     names = ['list of floats']
     ml_type = 'float list'
@@ -291,13 +269,22 @@ class ArrayLike(Builtin):
 class NoneValue(Builtin):
     names = ['None', 'none']
 
+    def tag(self):
+        return '`None', '`None -> Py.none'
+
 
 class TrueValue(Builtin):
     names = ['True', 'true']
 
+    def tag(self):
+        return '`True', '`True -> Py.Bool.t'
+
 
 class FalseValue(Builtin):
     names = ['False', 'false']
+
+    def tag(self):
+        return '`False', '`False -> Py.Bool.f'
 
 
 class RandomState(Builtin):
@@ -325,14 +312,16 @@ class JoblibMemory(Builtin):
 
 
 class SparseMatrix(Builtin):
-    names = ['sparse matrix', 'sparse-matrix', 'CSR matrix',
-             'sparse graph in CSR format']
+    names = [
+        'sparse matrix', 'sparse-matrix', 'CSR matrix',
+        'sparse graph in CSR format'
+    ]
     ml_type = 'Csr_matrix.t'
     wrap = 'Csr_matrix.to_pyobject'
     ml_type_ret = 'Csr_matrix.t'
     unwrap = 'Csr_matrix.of_pyobject'
 
-    
+
 class PyObject(Builtin):
     names = ['object']
 
@@ -343,8 +332,8 @@ class Self(Builtin):
     ml_type_ret = 't'
 
 
-class DType(Builtin):
-    names = ['type']
+class Dtype(Builtin):
+    names = ['type', 'dtype']
 
 
 class TypeList(Builtin):
@@ -505,9 +494,6 @@ builtin_types = [
     Float(),
     Bool(),
     Ndarray(),
-    Ndarrayi(),
-    Ndarrayi32(),
-    Ndarrayi64(),
     FloatList(),
     StringList(),
     SparseMatrix(),
@@ -516,7 +502,7 @@ builtin_types = [
     DictIntToFloat(),
     Callable(),
     Iterable(),
-    DType(),
+    Dtype(),
     TypeList(),
     ArrayLike(),
     NoneValue(),
@@ -652,7 +638,7 @@ def parse_type(t, function, param_name):
             if param_name in ['feature_names', 'target_names']:
                 ret = builtin['list of string']
             if param_name in ['neigh_ind', 'is_inlier']:
-                ret = builtin['ndarrayi']
+                ret = builtin['ndarray']
         return ret
 
     if param_name in ['DESCR']:
@@ -671,7 +657,7 @@ def parse_type(t, function, param_name):
 
     if param_name in ['intercept_', 'coef_']:
         return builtin['ndarray']
-        
+
     elts = parse_enum(t)
     if elts is not None:
         if all([is_string(elt) for elt in elts]):
@@ -686,7 +672,7 @@ def parse_type(t, function, param_name):
     else:
         return UnknownType(t)
 
-    
+
 def parse_bunch(function, elements):
     print(f"parsing bunch: {elements}")
     ret = {}
@@ -714,32 +700,53 @@ def parse_types(function, doc, section='Parameters'):
 
     if section == 'Returns':
         if qualname in ['RadiusNeighborsMixin.radius_neighbors']:
-            return {'ret': RetTuple([List(Ndarray()), List(Ndarrayi())])}
-        # 'neigh_ind': builtin['ndarrayi']}
-        if qualname in ['NearestCentroid.predict', 'NearestCentroid.fit_predict']:
-            return {'y': builtin['ndarrayi']}
-        if function_name in ['decision_function', 'predict', 'predict_proba', 'fit_predict']:
+            return {'ret': RetTuple([List(Ndarray()), List(Ndarray())])}
+        if qualname in [
+                'NearestCentroid.predict', 'NearestCentroid.fit_predict'
+        ]:
+            return {'y': builtin['ndarray']}
+        if function_name in [
+                'decision_function', 'predict', 'predict_proba', 'fit_predict'
+        ]:
             # XXX too wide a net?
             return {'y': builtin['array']}
         if function_name in ['__str__']:
             return {'return': builtin['string']}
         if function_name in ['fit']:
             return {'self': builtin['self']}
-        
+
     if section == 'Parameters':
         if function_name in ['__str__']:
             return {'N_CHAR_MAX': builtin['int']}
         if getattr(function, '__qualname__', None) == 'NearestCentroid.fit':
-            return { 'X': Enum([builtin['ndarray'], builtin['sparse matrix']]),
-                     'y': builtin['ndarrayi']}
-        
+            return {
+                'X': Enum([builtin['ndarray'], builtin['sparse matrix']]),
+                'y': builtin['ndarray']
+            }
+
     # print(doc)
     if doc is None:
         return {}
     elements = parse_params(doc, section)
 
-    if section == 'Returns' and function_name.startswith('fetch_'):
-        return {'data': parse_bunch(function, elements) }
+    if section == 'Returns':
+        if (function_name.startswith('fetch_') or
+                function_name.startswith('load_')) and function_name not in [
+                    'load_svmlight_files'
+                ]:
+            if function_name == 'load_iris':
+                return {
+                    'data':
+                    Bunch({
+                        'data': Ndarray(),
+                        'target': Ndarray(),
+                        'target_names': List(String()),
+                        'feature_names': List(String()),
+                        'DESCR': String(),
+                        'filename': String()
+                    })
+                }
+            return {'data': parse_bunch(function, elements)}
 
     # if section == 'Returns':
     #     print(elements)
@@ -858,7 +865,7 @@ def append(container, ctor, *args, **kwargs):
     try:
         elt = ctor(*args, **kwargs)
     except (NoSignature, OutsideScope, NoDoc) as e:
-        # print(f"WW append: caught error building {ctor}: {e}")
+        # print(f"WW append: caught error building {ctor}: {type(e)}({e})")
         return
     container.append(elt)
 
@@ -1074,21 +1081,24 @@ class Module:
         for element in self.elements:
             element.write_examples_to(f)
 
+
 def is_hashable(x):
-   try:
-       hash(x)
-   except TypeError:
-       return False
-   return True 
-            
+    try:
+        hash(x)
+    except TypeError:
+        return False
+    return True
+
+
 # Major Major
 class Class:
     def __init__(self, klass, parent_name):
         self.klass = klass
         self.parent_name = parent_name
-        self.constructor = Ctor(self.klass.__name__, self.klass, ucfirst(self.klass.__name__))
+        self.constructor = Ctor(self.klass.__name__, self.klass,
+                                ucfirst(self.klass.__name__))
         self.elements = self._list_elements()
-        
+
     def _list_elements(self):
         elts = []
         callables = set(
@@ -1102,21 +1112,33 @@ class Class:
         try:
             proto = self.klass()
         except Exception as e:
-            print(f"instantiating {self.klass.__name__} did not work: {e}")
+            # print(f"instantiating {self.klass.__name__} did not work: {e}")
             proto = self.klass
         for name in dir(proto):
+            # print(f"name: {name}")
             if name.startswith('_'):  # and name not in ['__str__']:
+                # print(f"-> discarding, starts with _")
                 continue
             item = getattr(proto, name, None)
             if item is None:
+                # print(f" -> discarding, not found in proto attributes")
                 continue
             if callable(item):
+                # print(f"-> is callable")
                 if is_hashable(item):
+                    # print(f" -> is hashable")
                     if item not in callables:
-                        append(elts, Method, name, item, ucfirst(self.klass.__name__))
+                        # print(f" -> not yet in known callables, appending")
+                        append(elts, Method, name, item,
+                               ucfirst(self.klass.__name__))
                         callables.add(item)
                 else:
-                    append(elts, Method, name, item, ucfirst(self.klass.__name__))
+                    # print(f" -> not hashable, appending")
+                    append(elts, Method, name, item,
+                           ucfirst(self.klass.__name__))
+            else:
+                # print(f"-> discarding, not callable: {item}")
+                pass
         attributes = parse_types(self.klass,
                                  self.klass.__doc__,
                                  section="Attributes")
@@ -1151,7 +1173,7 @@ class Class:
         with open(ml, 'w') as f:
             f.write("let () = Wrap_utils.init ();;\n")
             f.write(f'let ns = Py.import "{module.__name__}"\n\n')
-            
+
             self.write_header(f)
             self.constructor.write_to_ml(f)
             for element in self.elements:
@@ -1161,7 +1183,7 @@ class Class:
             f.write(
                 'let pp formatter self = Format.fprintf formatter "%s" (show self)\n'
             )
-                
+
         mli = f"{path / name}.mli"
         with open(mli, 'w') as f:
             f.write("type t\n")
@@ -1171,14 +1193,15 @@ class Class:
             for element in self.elements:
                 element.write_to_mli(f)
             f.write(
-                "\n(** Print the object to a human-readable representation. *)\n")
+                "\n(** Print the object to a human-readable representation. *)\n"
+            )
             f.write("val to_string : t -> string\n\n")
             f.write(
-                "\n(** Print the object to a human-readable representation. *)\n")
+                "\n(** Print the object to a human-readable representation. *)\n"
+            )
             f.write("val show : t -> string\n\n")
             f.write("(** Pretty-print the object to a formatter. *)\n")
             f.write("val pp : Format.formatter -> t -> unit\n\n")
-
 
     def write_doc(self, path):
         name = self.klass.__name__
@@ -1474,60 +1497,77 @@ class Function:
         self.function = function
         self.python_name = python_name
         self.module_name = module_name
-        try:
-            self.signature = inspect.signature(self.function)
-        except ValueError:
-            raise NoSignature(self.function)
         if python_name is None:
             raise NoSignature(self.function)
         self.doc = clean_doc(inspect.getdoc(self.function))
         if self.doc is None or not self.doc:
             raise NoDoc()
-        # does not work atm with getdoc() because of indentation
-        # parsing in my code
-        doc = str(self.function.__doc__)
-        self.types = parse_types(self.function, doc)
+
+        if self.python_name == 'train_test_split':
+
+            def dummy(*arrays,
+                      test_size=None,
+                      train_size=None,
+                      random_state=None,
+                      shuffle=True,
+                      stratify=None):
+                pass
+
+            self.signature = inspect.signature(dummy)
+            # XXX TODO it might be possible to support Ndarray|List[int]|Csr_matrix
+            # but it needs implementation of returning an enum of these
+            self.types = {
+                'arrays': List(Ndarray()),
+                'test_size': Enum([Float(), Int(), NoneValue()]),
+                'train_size': Enum([Float(), Int(),
+                                    NoneValue()]),
+                'random_state': Enum([Int(), RandomState(),
+                                      NoneValue()]),
+                'shuffle': Bool(),
+                'stratify': Enum([Ndarray(),
+                                  NoneValue()])
+            }
+            return_values = {'splitting': List(Ndarray())}
+        else:
+            try:
+                self.signature = inspect.signature(self.function)
+            except ValueError:
+                raise NoSignature(self.function)
+            # does not work atm with getdoc() because of indentation
+            # parsing in my code
+            doc = str(self.function.__doc__)
+            self.types = parse_types(self.function, doc)
+            return_values = parse_types(self.function, doc, section="Returns")
+
         # print(f"return type for {self.function.__name__}: {self.return_type}")
         for k, v in self.signature.parameters.items():
             if k not in self.types:
                 self.types[k] = UnknownType('<not found in doc>')
                 # self.types[' return'] = builtin['object']
 
-        return_values = parse_types(self.function, doc, section="Returns")
         # print(f"{self.python_name} return values: {return_values}")
 
         self.return_type = "<not yet determined>"
 
         function_name = getattr(self.function, '__name__', '<no name>')
-        
-        # XXX TODO idea for return_: fix everything to true,
+
+        # idea for return_: fix everything to true,
         # unless return_X_y: fix to false
         self.fixed_values = {'return_X_y': ('false', True)}
-        
+
         if function_name == 'make_regression':
             self.fixed_values['coef'] = ('true', False)
 
         # kneighbors()
         self.fixed_values['return_distance'] = ('true', False)
-        
-        for name, has_default, t, fixed_value in self.arguments():
+
+        for name, has_default, t, fixed_value, is_positional in self.arguments():
             if name in self.fixed_values:
                 continue
             if 'return' in name:
                 print(
                     f"WW {self.function}: return arg {name}, {has_default}, {t}: {self}"
                 )
-                # m = re.match(r'^return_(.*)$', name)
-                # assert m is not None
-                # ret_name = m.group(1)
-                # if ret_name not in return_values:
-                #     print(
-                #         f"!! {ret_name} not in return values {return_values}")
-                # else:
-                #     print(
-                #         f"II removing {ret_name} from return values {return_values}"
-                #     )
-                #     del return_values[ret_name]
         for name in self.fixed_values:
             _, remove = self.fixed_values[name]
             if remove and name in return_values:
@@ -1535,6 +1575,9 @@ class Function:
 
         self.return_type = make_return_type(return_values)
 
+        # at most one positional arg
+        assert(sum([1 for x in self.arguments() if x[-1]]) <= 1)
+        
     def __str__(self):
         return repr(self)
 
@@ -1553,16 +1596,31 @@ class Function:
 
     def arguments(self):
         for k, v in self.signature.parameters.items():
-            if v.kind == inspect.Parameter.VAR_KEYWORD: # **kwargs
+            if v.kind == inspect.Parameter.VAR_KEYWORD:  # **kwargs
                 continue
+
             has_default = (v.default is not inspect.Parameter.empty)
             ty = self.types[k]
             fixed_value, _ = self.fixed_values.get(k, (None, False))
-            yield k, has_default, ty, fixed_value
+            is_positional = v.kind == inspect.Parameter.VAR_POSITIONAL
 
+            if is_positional:
+                if not ty.ml_type.endswith(' array'):
+                    ty = List(ty)
+            
+            yield k, has_default, ty, fixed_value, is_positional
+
+    def star_arg(self):
+        for k, _, ty, _, is_positional in self.arguments():
+            if is_positional:
+                # return f"({ty.wrap} {k})"
+                # XXX this assumes that isinstance(ty, List)
+                return f"(Array.map {ty.t.wrap} {k})"
+        return '[||]'
+            
     def has_default(self):
         "Whether the function has any default argument."
-        for k, has_default, ty, fixed_value in self.arguments():
+        for k, has_default, ty, fixed_value, is_positional in self.arguments():
             if has_default:
                 return True
         return False
@@ -1572,7 +1630,7 @@ class Function:
         if getattr(self.function, '__self__', None) is not None:
             ret += 1
         return ret
-    
+
     def needs_unit_param(self):
         return self.has_default() or not self.num_params()
 
@@ -1583,27 +1641,29 @@ class Function:
 
     def ns(self):
         return 'ns'
-
+    
     def write_to_ml(self, f):
         f.write(f"let {self.ml_name()}")
-        for param, has_default, ty, fixed_value in self.arguments():
+        for param, has_default, ty, fixed_value, is_positional in self.arguments():
             if fixed_value is not None:
                 continue
             param_ml = mlid(param)
             default_mark = ['~', '?'][has_default]
-            if param == 'self':
+            if param == 'self' or is_positional:
                 default_mark = ''
             f.write(f" {default_mark}{param_ml}")
         if self.needs_unit_param():
             f.write(" ()")
         f.write(" =\n")
         f.write(
-            f'Py.Module.get_function_with_keywords {self.ns()} "{self.python_name}" [||] (Wrap_utils.keyword_args [\n'
+            f'Py.Module.get_function_with_keywords {self.ns()} "{self.python_name}" {self.star_arg()} (Wrap_utils.keyword_args [\n'
         )
-        for param, has_default, ty, fixed_value in self.arguments():
+        for param, has_default, ty, fixed_value, is_positional in self.arguments():
             # self is not passed as an arg to Python, it is already
             # the arg to get_function_with_keywords()
             if param == "self":
+                continue
+            if is_positional:
                 continue
             ml_type = ty.ml_type
             if ml_type == f"{self.module_name}.t":
@@ -1622,13 +1682,14 @@ class Function:
                 f.write(f'"{param}", Some({param_ml} |> {ty_wrap});\n')
 
         # XXX TODO factor out this manipulation
-        unwrap = re.sub('^' + f'{self.module_name}' + '\\.', '', self.return_type.unwrap)
+        unwrap = re.sub('^' + f'{self.module_name}' + '\\.', '',
+                        self.return_type.unwrap)
         f.write(f"]) |> {unwrap}\n")
 
     def write_to_mli(self, f):
         f.write(f"(** {self.doc}\n**)\n")
         f.write(f"val {self.ml_name()} : ")
-        for param, has_default, ty, fixed_value in self.arguments():
+        for param, has_default, ty, fixed_value, is_positional in self.arguments():
             if fixed_value is not None:
                 continue
             param_ml = mlid(param)
@@ -1636,7 +1697,7 @@ class Function:
             ml_type = ty.ml_type
             if ml_type == f"{self.module_name}.t":
                 ml_type = 't'
-            if param == "self":
+            if param == "self" or is_positional:
                 f.write(f" {ml_type} ->")
             else:
                 f.write(f" {default_mark}{param_ml} : {ml_type} ->")
@@ -1651,12 +1712,15 @@ class Function:
         f.write(f"### {self.ml_name()}\n")
         f.write("```ocaml\n")
         f.write(f"val {self.ml_name()} : ")
-        for param, has_default, ty, fixed_value in self.arguments():
+        for param, has_default, ty, fixed_value, is_positional in self.arguments():
             if fixed_value is not None:
                 continue
             param_ml = mlid(param)
             default_mark = ['', '?'][has_default]
-            f.write(f"\n    {default_mark}{param_ml} : {ty.ml_type} ->")
+            if is_positional:
+                f.write(f"\n    {ty.ml_type} ->")
+            else:
+                f.write(f"\n    {default_mark}{param_ml} : {ty.ml_type} ->")
         if self.needs_unit_param():
             f.write("\n    unit ->")
         return_type = self.return_type.ml_type_ret
@@ -1674,17 +1738,18 @@ class Method(Function):
         super().__init__(*args, **kwargs)
         self.types['self'] = builtin['self']
         args = list(self.arguments())
-        if getattr(self.function, '__self__', None) is None and ((not args) or args[0][0] != 'self'):
+        if getattr(self.function, '__self__', None) is None and (
+            (not args) or args[0][0] != 'self'):
             print(
                 f"!! skipping {self.function}({args}): first arg is not self")
             raise OutsideScope()
 
     def arguments(self):
         if getattr(self.function, '__self__', None) is not None:
-            yield 'self', False, builtin['self'], None
+            yield 'self', False, builtin['self'], None, False
         for arg in super().arguments():
             yield arg
-        
+
     def ns(self):
         return 'self'
 
@@ -1713,7 +1778,8 @@ def main():
         # Write this one separately, no sense having it in metrics and
         # it causes cross dep problems.
         # This is scipy.sparse.csr.csr_matrix.
-        Class(sklearn.metrics.pairwise.csr_matrix, "Sklearn").write(build_dir, sklearn.metrics.pairwise)
+        Class(sklearn.metrics.pairwise.csr_matrix,
+              "Sklearn").write(build_dir, sklearn.metrics.pairwise)
     elif mode == "doc":
         pkg.write_doc(pathlib.Path('./doc'))
     elif mode == "examples":
