@@ -21,10 +21,10 @@ let print_py x = Format.printf "%s" (Py.Object.to_string x)
 let print_ndarray = print Sklearn.Ndarray.pp
 
 module Matrix = Owl.Dense.Matrix.D
-let matrix = Sklearn.Ndarray.matrix
-let vector = Sklearn.Ndarray.vector
-let matrixi = Sklearn.Ndarrayi.matrix
-let vectori = Sklearn.Ndarrayi.vector
+let matrix = Sklearn.Ndarray.Float.matrix
+let vector = Sklearn.Ndarray.Float.vector
+let matrixi = Sklearn.Ndarray.Float.matrix
+let vectori = Sklearn.Ndarray.Float.vector
 
 let%expect_test "LinearSVR" =
   let x, y, _coef = Sklearn.Datasets.make_regression ~n_features:4 ~random_state:(`Int 0) () in
@@ -104,8 +104,8 @@ let%expect_test "NuSVR" =
   let open Sklearn.Svm in
   let n_samples, n_features = 10, 5 in
   Random.init 0;
-  let y = Owl.Arr.uniform [|n_samples|] in
-  let x = Matrix.uniform n_samples n_features in
+  let y = Sklearn.Ndarray.of_bigarray @@ Owl.Arr.uniform [|n_samples|] in
+  let x = Sklearn.Ndarray.of_bigarray @@ Matrix.uniform n_samples n_features in
   let clf = NuSVR.create ~c:1.0 ~nu:0.1 () in
   print NuSVR.pp @@ NuSVR.fit clf ~x:(`Ndarray x) ~y ();
   [%expect {|
@@ -167,8 +167,8 @@ SVR(epsilon=0.2)
 let%expect_test "SVR" =
   let n_samples, n_features = 10, 5 in
   Random.init 0;
-  let y = Owl.Arr.uniform [|n_samples|] in
-  let x = Matrix.uniform n_samples n_features in
+  let y = Sklearn.Ndarray.of_bigarray @@ Owl.Arr.uniform [|n_samples|] in
+  let x = Sklearn.Ndarray.of_bigarray @@ Matrix.uniform n_samples n_features in
   let open Sklearn.Svm in
   let clf = SVR.create ~c:1.0 ~epsilon:0.2 () in
   print SVR.pp @@ SVR.fit clf ~x:(`Ndarray x) ~y ();
