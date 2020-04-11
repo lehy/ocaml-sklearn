@@ -1,3 +1,13 @@
+let print f x = Format.printf "%a" f x
+let print_py x = Format.printf "%s" (Py.Object.to_string x)
+let print_ndarray = print Sklearn.Ndarray.pp
+
+let matrix = Sklearn.Ndarray.Float.matrix
+let vector = Sklearn.Ndarray.Float.vector
+let matrixi = Sklearn.Ndarray.Int.matrix
+let vectori = Sklearn.Ndarray.Int.vector
+let vectors = Sklearn.Ndarray.String.vector
+
 (* Binarizer *)
 (*
 >>> from sklearn.preprocessing import Binarizer
@@ -15,24 +25,20 @@ array([[1., 0., 1.],
 
 *)
 
-(* TEST TODO
-let%expect_text "Binarizer" =
-    let binarizer = Sklearn.Preprocessing.binarizer in
-    X = [[ 1., -1.,  2.],[ 2.,  0.,  0.],[ 0.,  1., -1.]]    
-    transformer = Binarizer().fit(X)  # fit does nothing.    
-    transformer    
-    [%expect {|
-            Binarizer()            
+let%expect_test "Binarizer" =
+  let open Sklearn.Preprocessing in
+  let x = matrix [|[| 1.; -1.;  2.|];[| 2.;  0.;  0.|];[| 0.;  1.; -1.|]|] in
+  let transformer = Binarizer.(create () |> fit ~x) in  (* fit does nothing.     *)
+  print Binarizer.pp transformer;
+  [%expect {|
+            Binarizer(copy=True, threshold=0.0)
+    |}];
+  print_ndarray @@ Binarizer.transform transformer ~x:(`Ndarray x);
+  [%expect {|
+            [[1. 0. 1.]
+             [1. 0. 0.]
+             [0. 1. 0.]]
     |}]
-    print @@ transform transformer x
-    [%expect {|
-            array([[1., 0., 1.],            
-                   [1., 0., 0.],            
-                   [0., 1., 0.]])            
-    |}]
-
-*)
-
 
 
 (* KBinsDiscretizer *)
@@ -54,25 +60,22 @@ array([[ 0., 0., 0., 0.],
 
 *)
 
-(* TEST TODO
-let%expect_text "KBinsDiscretizer" =
-    X = [[-2, 1, -4,   -1],[-1, 2, -3, -0.5],[ 0, 3, -2,  0.5],[ 1, 4, -1,    2]]    
-    est = KBinsDiscretizer(n_bins=3, encode='ordinal', strategy='uniform')    
-    print @@ fit est x
-    [%expect {|
-            KBinsDiscretizer(...)            
+let%expect_test "KBinsDiscretizer" =
+  let open Sklearn.Preprocessing in
+  let x = matrix [|[|-2.; 1.; -4.; -1.|]; [|-1.; 2.; -3.; -0.5|]; [| 0.; 3.; -2.;  0.5|]; [| 1.; 4.; -1.; 2.|]|] in
+  let est = KBinsDiscretizer.create ~n_bins:(`Int 3) ~encode:`Ordinal ~strategy:`Uniform () in
+  print KBinsDiscretizer.pp @@ KBinsDiscretizer.fit est ~x;
+  [%expect {|
+            KBinsDiscretizer(encode='ordinal', n_bins=3, strategy='uniform')
+    |}];
+  let xt = KBinsDiscretizer.transform est ~x in
+  print_ndarray xt;
+  [%expect {|
+            [[0. 0. 0. 0.]
+             [1. 1. 1. 0.]
+             [2. 2. 2. 1.]
+             [2. 2. 2. 2.]]
     |}]
-    Xt = est.transform(X)    
-    Xt  # doctest: +SKIP    
-    [%expect {|
-            array([[ 0., 0., 0., 0.],            
-                   [ 1., 1., 1., 0.],            
-                   [ 2., 2., 2., 1.],            
-                   [ 2., 2., 2., 2.]])            
-    |}]
-
-*)
-
 
 
 (* LabelBinarizer *)
@@ -90,25 +93,22 @@ array([[1, 0, 0, 0],
 
 *)
 
-(* TEST TODO
-let%expect_text "LabelBinarizer" =
-    let preprocessing = Sklearn.preprocessing in
-    lb = preprocessing.LabelBinarizer()    
-    print @@ fit lb [1 2 6 4 2]
-    [%expect {|
-            LabelBinarizer()            
+let%expect_test "LabelBinarizer" =
+  let open Sklearn.Preprocessing in
+  let lb = LabelBinarizer.create () in
+  print LabelBinarizer.pp @@ LabelBinarizer.fit lb ~y:(vectori [|1; 2; 6; 4; 2|]);
+  [%expect {|
+            LabelBinarizer(neg_label=0, pos_label=1, sparse_output=False)
+    |}];
+  print_ndarray @@ LabelBinarizer.classes_ lb;
+  [%expect {|
+            [1 2 4 6]
+    |}];
+  print_ndarray @@ LabelBinarizer.transform lb ~y:(`Ndarray (vectori [|1; 6|]));
+  [%expect {|
+            [[1 0 0 0]
+             [0 0 0 1]]
     |}]
-    lb.classes_    
-    [%expect {|
-            array([1, 2, 4, 6])            
-    |}]
-    print @@ transform lb [1 6]
-    [%expect {|
-            array([[1, 0, 0, 0],            
-                   [0, 0, 0, 1]])            
-    |}]
-
-*)
 
 
 
@@ -124,25 +124,21 @@ array([[1],
 
 *)
 
-(* TEST TODO
-let%expect_text "LabelBinarizer" =
-    lb = preprocessing.LabelBinarizer()    
-    print @@ fit_transform lb ['yes' 'no' 'no' 'yes']
-    [%expect {|
-            array([[1],            
-                   [0],            
-                   [0],            
-                   [1]])            
+let%expect_test "LabelBinarizer" =
+  let open Sklearn.Preprocessing in
+  let lb = LabelBinarizer.create () in
+  print_ndarray @@ LabelBinarizer.fit_transform lb ~y:(`Ndarray (vectors [|"yes"; "no"; "no"; "yes"|]));
+  [%expect {|
+            [[1]
+             [0]
+             [0]
+             [1]]
     |}]
-
-*)
-
-
 
 (* LabelBinarizer *)
 (*
 >>> import numpy as np
->>> lb.fit(np.array([[0, 1, 1], [1, 0, 0]]))
+>>> lb.fit(np.array([|[0, 1, 1], [|1, 0, 0]]))
 LabelBinarizer()
 >>> lb.classes_
 array([0, 1, 2])
@@ -155,27 +151,24 @@ array([[1, 0, 0],
 
 *)
 
-(* TEST TODO
-let%expect_text "LabelBinarizer" =
-    import numpy as np    
-    lb.fit(np.array([[0, 1, 1], [1, 0, 0]]))    
-    [%expect {|
-            LabelBinarizer()            
+let%expect_test "LabelBinarizer" =
+  let open Sklearn.Preprocessing in
+  let lb = LabelBinarizer.create () in
+  print LabelBinarizer.pp @@ LabelBinarizer.fit lb ~y:(matrixi ([|[|0; 1; 1|]; [|1; 0; 0|]|]));
+  [%expect {|
+            LabelBinarizer(neg_label=0, pos_label=1, sparse_output=False)
+    |}];
+  print_ndarray @@ LabelBinarizer.classes_ lb;
+  [%expect {|
+            [0 1 2]
+    |}];
+  print_ndarray @@ LabelBinarizer.transform lb ~y:(`Ndarray (vectori [|0; 1; 2; 1|]));
+  [%expect {|
+            [[1 0 0]
+             [0 1 0]
+             [0 0 1]
+             [0 1 0]]
     |}]
-    lb.classes_    
-    [%expect {|
-            array([0, 1, 2])            
-    |}]
-    print @@ transform lb [0 1 2 1]
-    [%expect {|
-            array([[1, 0, 0],            
-                   [0, 1, 0],            
-                   [0, 0, 1],            
-                   [0, 1, 0]])            
-    |}]
-
-*)
-
 
 
 (* LabelEncoder *)
@@ -194,29 +187,25 @@ array([1, 1, 2, 6])
 
 *)
 
-(* TEST TODO
-let%expect_text "LabelEncoder" =
-    let preprocessing = Sklearn.preprocessing in
-    le = preprocessing.LabelEncoder()    
-    print @@ fit le [1 2 2 6]
-    [%expect {|
-            LabelEncoder()            
+let%expect_test "LabelEncoder" =
+  let open Sklearn.Preprocessing in
+  let le = LabelEncoder.create () in
+  print LabelEncoder.pp @@ LabelEncoder.fit le ~y:(vectori [|1; 2; 2; 6|]);
+  [%expect {|
+            LabelEncoder()
+    |}];
+  print_ndarray @@ LabelEncoder.classes_ le;
+  [%expect {|
+            [1 2 6]
+    |}];
+  print_ndarray @@ LabelEncoder.transform le ~y:(vectori [|1; 1; 2; 6|]);
+  [%expect {|
+            [0 0 1 2]
+    |}];
+  print_ndarray @@ LabelEncoder.inverse_transform le ~y:(vectori [|0; 0; 1; 2|]);
+  [%expect {|
+            [1 1 2 6]
     |}]
-    le.classes_    
-    [%expect {|
-            array([1, 2, 6])            
-    |}]
-    print @@ transform le [1 1 2 6]
-    [%expect {|
-            array([0, 0, 1, 2]...)            
-    |}]
-    print @@ inverse_transform le [0 0 1 2]
-    [%expect {|
-            array([1, 1, 2, 6])            
-    |}]
-
-*)
-
 
 
 (* LabelEncoder *)
@@ -234,36 +223,34 @@ array([2, 2, 1]...)
 
 *)
 
-(* TEST TODO
-let%expect_text "LabelEncoder" =
-    le = preprocessing.LabelEncoder()    
-    print @@ fit le ["paris" "paris" "tokyo" "amsterdam"]
-    [%expect {|
-            LabelEncoder()            
+let%expect_test "LabelEncoder" =
+  let open Sklearn.Preprocessing in
+  let le = LabelEncoder.create () in
+  print LabelEncoder.pp @@ LabelEncoder.fit le ~y:(vectors [|"paris"; "paris"; "tokyo"; "amsterdam"|]);
+  [%expect {|
+            LabelEncoder()
+    |}];
+  print_ndarray @@ LabelEncoder.classes_ le;
+  [%expect {|
+            ['amsterdam' 'paris' 'tokyo']
+    |}];
+  print_ndarray @@ LabelEncoder.transform le ~y:(vectors [|"tokyo"; "tokyo"; "paris"|]);
+  [%expect {|
+            [2 2 1]
+    |}];
+  print_ndarray @@ LabelEncoder.inverse_transform le ~y:(vectori [|2; 2; 1|]);
+  [%expect {|
+            ['tokyo' 'tokyo' 'paris']
     |}]
-    list(le.classes_)    
-    [%expect {|
-            ['amsterdam', 'paris', 'tokyo']            
-    |}]
-    print @@ transform le ["tokyo" "tokyo" "paris"]
-    [%expect {|
-            array([2, 2, 1]...)            
-    |}]
-    list(le.inverse_transform([2, 2, 1]))    
-    [%expect {|
-            ['tokyo', 'tokyo', 'paris']            
-    |}]
-
-*)
 
 
 
 (* MaxAbsScaler *)
 (*
 >>> from sklearn.preprocessing import MaxAbsScaler
->>> X = [[ 1., -1.,  2.],
-...      [ 2.,  0.,  0.],
-...      [ 0.,  1., -1.]]
+>>> X = [|[ 1., -1.,  2.],
+...      [| 2.,  0.,  0.],
+...      [| 0.,  1., -1.]]
 >>> transformer = MaxAbsScaler().fit(X)
 >>> transformer
 MaxAbsScaler()
@@ -275,24 +262,20 @@ array([[ 0.5, -1. ,  1. ],
 
 *)
 
-(* TEST TODO
-let%expect_text "MaxAbsScaler" =
-    let maxAbsScaler = Sklearn.Preprocessing.maxAbsScaler in
-    X = [[ 1., -1.,  2.],[ 2.,  0.,  0.],[ 0.,  1., -1.]]    
-    transformer = MaxAbsScaler().fit(X)    
-    transformer    
-    [%expect {|
-            MaxAbsScaler()            
+let%expect_test "MaxAbsScaler" =
+  let open Sklearn.Preprocessing in
+  let x = matrix [|[| 1.; -1.;  2.|];[| 2.;  0.;  0.|];[| 0.;  1.; -1.|]|] in
+  let transformer = MaxAbsScaler.(create () |> fit ~x:(`Ndarray x)) in
+  print MaxAbsScaler.pp transformer;
+  [%expect {|
+            MaxAbsScaler(copy=True)
+    |}];
+  print_ndarray @@ MaxAbsScaler.transform transformer ~x:(`Ndarray x);
+  [%expect {|
+            [[ 0.5 -1.   1. ]
+             [ 1.   0.   0. ]
+             [ 0.   1.  -0.5]]
     |}]
-    print @@ transform transformer x
-    [%expect {|
-            array([[ 0.5, -1. ,  1. ],            
-                   [ 1. ,  0. ,  0. ],            
-                   [ 0. ,  1. , -0.5]])            
-    |}]
-
-*)
-
 
 
 (* MinMaxScaler *)
@@ -315,33 +298,29 @@ MinMaxScaler()
 
 *)
 
-(* TEST TODO
-let%expect_text "MinMaxScaler" =
-    let minMaxScaler = Sklearn.Preprocessing.minMaxScaler in
-    data = [[-1, 2], [-0.5, 6], [0, 10], [1, 18]]    
-    scaler = MinMaxScaler()    
-    print(scaler.fit(data))    
-    [%expect {|
-            MinMaxScaler()            
+let%expect_test "MinMaxScaler" =
+  let open Sklearn.Preprocessing in
+  let data = matrix [|[|-1.; 2.|]; [|-0.5; 6.|]; [|0.; 10.|]; [|1.; 18.|]|] in
+  let scaler = MinMaxScaler.create () in
+  print MinMaxScaler.pp @@ MinMaxScaler.fit scaler ~x:data;
+  [%expect {|
+            MinMaxScaler(copy=True, feature_range=(0, 1))
+    |}];
+  print_ndarray @@ MinMaxScaler.data_max_ scaler;
+  [%expect {|
+            [ 1. 18.]
+    |}];
+  print_ndarray @@ MinMaxScaler.transform scaler ~x:data;
+  [%expect {|
+            [[0.   0.  ]
+             [0.25 0.25]
+             [0.5  0.5 ]
+             [1.   1.  ]]
+    |}];
+  print_ndarray @@ MinMaxScaler.transform scaler ~x:(matrixi [|[|2; 2|]|]);
+  [%expect {|
+            [[1.5 0. ]]
     |}]
-    print(scaler.data_max_)    
-    [%expect {|
-            [ 1. 18.]            
-    |}]
-    print(scaler.transform(data))    
-    [%expect {|
-            [[0.   0.  ]            
-             [0.25 0.25]            
-             [0.5  0.5 ]            
-             [1.   1.  ]]            
-    |}]
-    print(scaler.transform([[2, 2]]))    
-    [%expect {|
-            [[1.5 0. ]]            
-    |}]
-
-*)
-
 
 
 (* MultiLabelBinarizer *)
@@ -357,23 +336,20 @@ array([1, 2, 3])
 
 *)
 
-(* TEST TODO
-let%expect_text "MultiLabelBinarizer" =
-    let multiLabelBinarizer = Sklearn.Preprocessing.multiLabelBinarizer in
-    mlb = MultiLabelBinarizer()    
-    mlb.fit_transform([(1, 2), (3,)])    
-    [%expect {|
-            array([[1, 1, 0],            
-                   [0, 0, 1]])            
-    |}]
-    mlb.classes_    
-    [%expect {|
-            array([1, 2, 3])            
-    |}]
-
-*)
-
-
+(* let%expect_test "MultiLabelBinarizer" =
+ *   let open Sklearn.Preprocessing in
+ *   let mlb = MultiLabelBinarizer.create () in
+ *   (\* arg could be List(Ndarray()) ? *\)
+ *   print MultiLabelBinarizer.pp @@ MultiLabelBinarizer.fit_transform mlb ~x:(matrixi [|[|1; 2|]; [|3|]|]);
+ *     [%expect {|
+ *             array([[1, 1, 0],
+ *                    [0, 0, 1]])
+ *     |}]
+ *     mlb.classes_
+ *     [%expect {|
+ *             array([1, 2, 3])
+ *     |}]
+ * a *)
 
 (* MultiLabelBinarizer *)
 (*
@@ -387,15 +363,15 @@ array([[0, 1, 1],
 *)
 
 (* TEST TODO
-let%expect_text "MultiLabelBinarizer" =
+let%expect_test "MultiLabelBinarizer" =
     print @@ fit_transform mlb [{'sci-fi' 'thriller'} {'comedy'}]
     [%expect {|
-            array([[0, 1, 1],            
-                   [1, 0, 0]])            
+            array([[0, 1, 1],
+                   [1, 0, 0]])
     |}]
-    list(mlb.classes_)    
+    list(mlb.classes_)
     [%expect {|
-            ['comedy', 'sci-fi', 'thriller']            
+            ['comedy', 'sci-fi', 'thriller']
     |}]
 
 *)
@@ -415,16 +391,16 @@ array(['-', 'c', 'd', 'e', 'f', 'h', 'i', 'l', 'm', 'o', 'r', 's', 't',
 *)
 
 (* TEST TODO
-let%expect_text "MultiLabelBinarizer" =
-    mlb = MultiLabelBinarizer()    
+let%expect_test "MultiLabelBinarizer" =
+    mlb = MultiLabelBinarizer()
     print @@ fit mlb ['sci-fi' 'thriller' 'comedy']
     [%expect {|
-            MultiLabelBinarizer()            
+            MultiLabelBinarizer()
     |}]
-    mlb.classes_    
+    mlb.classes_
     [%expect {|
-            array(['-', 'c', 'd', 'e', 'f', 'h', 'i', 'l', 'm', 'o', 'r', 's', 't',            
-                'y'], dtype=object)            
+            array(['-', 'c', 'd', 'e', 'f', 'h', 'i', 'l', 'm', 'o', 'r', 's', 't',
+                'y'], dtype=object)
     |}]
 
 *)
@@ -443,15 +419,15 @@ array(['comedy', 'sci-fi', 'thriller'], dtype=object)
 *)
 
 (* TEST TODO
-let%expect_text "MultiLabelBinarizer" =
-    mlb = MultiLabelBinarizer()    
+let%expect_test "MultiLabelBinarizer" =
+    mlb = MultiLabelBinarizer()
     print @@ fit mlb [['sci-fi' 'thriller' 'comedy']]
     [%expect {|
-            MultiLabelBinarizer()            
+            MultiLabelBinarizer()
     |}]
-    mlb.classes_    
+    mlb.classes_
     [%expect {|
-            array(['comedy', 'sci-fi', 'thriller'], dtype=object)            
+            array(['comedy', 'sci-fi', 'thriller'], dtype=object)
     |}]
 
 *)
@@ -476,19 +452,19 @@ array([[0.8, 0.2, 0.4, 0.4],
 *)
 
 (* TEST TODO
-let%expect_text "Normalizer" =
+let%expect_test "Normalizer" =
     let normalizer = Sklearn.Preprocessing.normalizer in
-    X = [[4, 1, 2, 2],[1, 3, 9, 3],[5, 7, 5, 1]]    
-    transformer = Normalizer().fit(X)  # fit does nothing.    
-    transformer    
+    let x = [[4, 1, 2, 2],[1, 3, 9, 3],[5, 7, 5, 1]]
+    transformer = Normalizer().fit(X)  # fit does nothing.
+    transformer
     [%expect {|
-            Normalizer()            
+            Normalizer()
     |}]
     print @@ transform transformer x
     [%expect {|
-            array([[0.8, 0.2, 0.4, 0.4],            
-                   [0.1, 0.3, 0.9, 0.3],            
-                   [0.5, 0.7, 0.5, 0.1]])            
+            array([[0.8, 0.2, 0.4, 0.4],
+                   [0.1, 0.3, 0.9, 0.3],
+                   [0.5, 0.7, 0.5, 0.1]])
     |}]
 
 *)
@@ -512,22 +488,22 @@ array([[0., 2.],
 *)
 
 (* TEST TODO
-let%expect_text "OrdinalEncoder" =
+let%expect_test "OrdinalEncoder" =
     let ordinalEncoder = Sklearn.Preprocessing.ordinalEncoder in
-    enc = OrdinalEncoder()    
-    X = [['Male', 1], ['Female', 3], ['Female', 2]]    
+    enc = OrdinalEncoder()
+    let x = [['Male', 1], ['Female', 3], ['Female', 2]]
     print @@ fit enc x
     [%expect {|
-            OrdinalEncoder()            
+            OrdinalEncoder()
     |}]
-    enc.categories_    
+    enc.categories_
     [%expect {|
-            [array(['Female', 'Male'], dtype=object), array([1, 2, 3], dtype=object)]            
+            [array(['Female', 'Male'], dtype=object), array([1, 2, 3], dtype=object)]
     |}]
     print @@ transform enc [['Female' 3] ['Male' 1]]
     [%expect {|
-            array([[0., 2.],            
-                   [1., 0.]])            
+            array([[0., 2.],
+                   [1., 0.]])
     |}]
 
 *)
@@ -558,29 +534,29 @@ array([[ 1.,  0.,  1.,  0.],
 *)
 
 (* TEST TODO
-let%expect_text "PolynomialFeatures" =
-    import numpy as np    
+let%expect_test "PolynomialFeatures" =
+    import numpy as np
     let polynomialFeatures = Sklearn.Preprocessing.polynomialFeatures in
-    X = np.arange(6).reshape(3, 2)    
-    X    
+    let x = np.arange(6).reshape(3, 2)
+    X
     [%expect {|
-            array([[0, 1],            
-                   [2, 3],            
-                   [4, 5]])            
+            array([[0, 1],
+                   [2, 3],
+                   [4, 5]])
     |}]
-    poly = PolynomialFeatures(2)    
+    poly = PolynomialFeatures(2)
     print @@ fit_transform poly x
     [%expect {|
-            array([[ 1.,  0.,  1.,  0.,  0.,  1.],            
-                   [ 1.,  2.,  3.,  4.,  6.,  9.],            
-                   [ 1.,  4.,  5., 16., 20., 25.]])            
+            array([[ 1.,  0.,  1.,  0.,  0.,  1.],
+                   [ 1.,  2.,  3.,  4.,  6.,  9.],
+                   [ 1.,  4.,  5., 16., 20., 25.]])
     |}]
-    poly = PolynomialFeatures(interaction_only=True)    
+    poly = PolynomialFeatures(interaction_only=True)
     print @@ fit_transform poly x
     [%expect {|
-            array([[ 1.,  0.,  1.,  0.],            
-                   [ 1.,  2.,  3.,  6.],            
-                   [ 1.,  4.,  5., 20.]])            
+            array([[ 1.,  0.,  1.,  0.],
+                   [ 1.,  2.,  3.,  6.],
+                   [ 1.,  4.,  5., 20.]])
     |}]
 
 *)
@@ -606,24 +582,24 @@ PowerTransformer()
 *)
 
 (* TEST TODO
-let%expect_text "PowerTransformer" =
-    import numpy as np    
+let%expect_test "PowerTransformer" =
+    import numpy as np
     let powerTransformer = Sklearn.Preprocessing.powerTransformer in
-    pt = PowerTransformer()    
-    data = [[1, 2], [3, 2], [4, 5]]    
-    print(pt.fit(data))    
+    pt = PowerTransformer()
+    data = [[1, 2], [3, 2], [4, 5]]
+    print(pt.fit(data))
     [%expect {|
-            PowerTransformer()            
+            PowerTransformer()
     |}]
-    print(pt.lambdas_)    
+    print(pt.lambdas_)
     [%expect {|
-            [ 1.386... -3.100...]            
+            [ 1.386... -3.100...]
     |}]
-    print(pt.transform(data))    
+    print(pt.transform(data))
     [%expect {|
-            [[-1.316... -0.707...]            
-             [ 0.209... -0.707...]            
-             [ 1.106...  1.414...]]            
+            [[-1.316... -0.707...]
+             [ 0.209... -0.707...]
+             [ 1.106...  1.414...]]
     |}]
 
 *)
@@ -644,15 +620,15 @@ array([...])
 *)
 
 (* TEST TODO
-let%expect_text "QuantileTransformer" =
-    import numpy as np    
+let%expect_test "QuantileTransformer" =
+    import numpy as np
     let quantileTransformer = Sklearn.Preprocessing.quantileTransformer in
-    rng = np.random.RandomState(0)    
-    X = np.sort(rng.normal(loc=0.5, scale=0.25, size=(25, 1)), axis=0)    
-    qt = QuantileTransformer(n_quantiles=10, random_state=0)    
+    rng = np.random.RandomState(0)
+    let x = np.sort(rng.normal(loc=0.5, scale=0.25, size=(25, 1)), axis=0)
+    qt = QuantileTransformer(n_quantiles=10, random_state=0)
     print @@ fit_transform qt x
     [%expect {|
-            array([...])            
+            array([...])
     |}]
 
 *)
@@ -677,19 +653,19 @@ array([[ 0. , -2. ,  0. ],
 *)
 
 (* TEST TODO
-let%expect_text "RobustScaler" =
+let%expect_test "RobustScaler" =
     let robustScaler = Sklearn.Preprocessing.robustScaler in
-    X = [[ 1., -2.,  2.],[ -2.,  1.,  3.],[ 4.,  1., -2.]]    
-    transformer = RobustScaler().fit(X)    
-    transformer    
+    let x = [[ 1., -2.,  2.],[ -2.,  1.,  3.],[ 4.,  1., -2.]]
+    transformer = RobustScaler().fit(X)
+    transformer
     [%expect {|
-            RobustScaler()            
+            RobustScaler()
     |}]
     print @@ transform transformer x
     [%expect {|
-            array([[ 0. , -2. ,  0. ],            
-                   [-1. ,  0. ,  0.4],            
-                   [ 1. ,  0. , -1.6]])            
+            array([[ 0. , -2. ,  0. ],
+                   [-1. ,  0. ,  0.4],
+                   [ 1. ,  0. , -1.6]])
     |}]
 
 *)
@@ -717,28 +693,28 @@ StandardScaler()
 *)
 
 (* TEST TODO
-let%expect_text "StandardScaler" =
+let%expect_test "StandardScaler" =
     let standardScaler = Sklearn.Preprocessing.standardScaler in
-    data = [[0, 0], [0, 0], [1, 1], [1, 1]]    
-    scaler = StandardScaler()    
-    print(scaler.fit(data))    
+    data = [[0, 0], [0, 0], [1, 1], [1, 1]]
+    scaler = StandardScaler()
+    print(scaler.fit(data))
     [%expect {|
-            StandardScaler()            
+            StandardScaler()
     |}]
-    print(scaler.mean_)    
+    print(scaler.mean_)
     [%expect {|
-            [0.5 0.5]            
+            [0.5 0.5]
     |}]
-    print(scaler.transform(data))    
+    print(scaler.transform(data))
     [%expect {|
-            [[-1. -1.]            
-             [-1. -1.]            
-             [ 1.  1.]            
-             [ 1.  1.]]            
+            [[-1. -1.]
+             [-1. -1.]
+             [ 1.  1.]
+             [ 1.  1.]]
     |}]
-    print(scaler.transform([[2, 2]]))    
+    print(scaler.transform([[2, 2]]))
     [%expect {|
-            [[3. 3.]]            
+            [[3. 3.]]
     |}]
 
 *)
@@ -756,12 +732,12 @@ array([[1, 0, 0, 0],
 *)
 
 (* TEST TODO
-let%expect_text "label_binarize" =
+let%expect_test "label_binarize" =
     let label_binarize = Sklearn.Preprocessing.label_binarize in
-    label_binarize([1, 6], classes=[1, 2, 4, 6])    
+    label_binarize([1, 6], classes=[1, 2, 4, 6])
     [%expect {|
-            array([[1, 0, 0, 0],            
-                   [0, 0, 0, 1]])            
+            array([[1, 0, 0, 0],
+                   [0, 0, 0, 1]])
     |}]
 
 *)
@@ -778,11 +754,11 @@ array([[1, 0, 0, 0],
 *)
 
 (* TEST TODO
-let%expect_text "label_binarize" =
-    label_binarize([1, 6], classes=[1, 6, 4, 2])    
+let%expect_test "label_binarize" =
+    label_binarize([1, 6], classes=[1, 6, 4, 2])
     [%expect {|
-            array([[1, 0, 0, 0],            
-                   [0, 1, 0, 0]])            
+            array([[1, 0, 0, 0],
+                   [0, 1, 0, 0]])
     |}]
 
 *)
@@ -801,13 +777,13 @@ array([[1],
 *)
 
 (* TEST TODO
-let%expect_text "label_binarize" =
-    label_binarize(['yes', 'no', 'no', 'yes'], classes=['no', 'yes'])    
+let%expect_test "label_binarize" =
+    label_binarize(['yes', 'no', 'no', 'yes'], classes=['no', 'yes'])
     [%expect {|
-            array([[1],            
-                   [0],            
-                   [0],            
-                   [1]])            
+            array([[1],
+                   [0],
+                   [0],
+                   [1]])
     |}]
 
 *)
@@ -828,15 +804,15 @@ let%expect_text "label_binarize" =
 *)
 
 (* TEST TODO
-let%expect_text "power_transform" =
-    import numpy as np    
+let%expect_test "power_transform" =
+    import numpy as np
     let power_transform = Sklearn.Preprocessing.power_transform in
-    data = [[1, 2], [3, 2], [4, 5]]    
-    print(power_transform(data, method='box-cox'))    
+    data = [[1, 2], [3, 2], [4, 5]]
+    print(power_transform(data, method='box-cox'))
     [%expect {|
-            [[-1.332... -0.707...]            
-             [ 0.256... -0.707...]            
-             [ 1.076...  1.414...]]            
+            [[-1.332... -0.707...]
+             [ 0.256... -0.707...]
+             [ 1.076...  1.414...]]
     |}]
 
 *)
@@ -856,17 +832,14 @@ array([...])
 *)
 
 (* TEST TODO
-let%expect_text "quantile_transform" =
-    import numpy as np    
+let%expect_test "quantile_transform" =
+    import numpy as np
     let quantile_transform = Sklearn.Preprocessing.quantile_transform in
-    rng = np.random.RandomState(0)    
-    X = np.sort(rng.normal(loc=0.5, scale=0.25, size=(25, 1)), axis=0)    
-    quantile_transform(X, n_quantiles=10, random_state=0, copy=True)    
+    rng = np.random.RandomState(0)
+    let x = np.sort(rng.normal(loc=0.5, scale=0.25, size=(25, 1)), axis=0)
+    quantile_transform(X, n_quantiles=10, random_state=0, copy=True)
     [%expect {|
-            array([...])            
+            array([...])
     |}]
 
 *)
-
-
-

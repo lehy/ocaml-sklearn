@@ -30,7 +30,7 @@ let%expect_test "LinearSVR" =
   let x, y, _coef = Sklearn.Datasets.make_regression ~n_features:4 ~random_state:(`Int 0) () in
   let open Sklearn.Svm in
   let regr = LinearSVR.create ~random_state:(`Int 0) ~tol:1e-5 () in
-  print LinearSVR.pp (LinearSVR.fit regr ~x:(`Ndarray x) ~y ());
+  print LinearSVR.pp (LinearSVR.fit regr ~x:(`Ndarray x) ~y);
   [%expect {|
           LinearSVR(C=1.0, dual=True, epsilon=0.0, fit_intercept=True,
                     intercept_scaling=1.0, loss='epsilon_insensitive', max_iter=1000,
@@ -71,7 +71,7 @@ let%expect_test "NuSVC" =
   let y = vector [|1.; 1.; 2.; 2.|] in
   let open Sklearn.Svm in
   let clf = NuSVC.create () in
-  print NuSVC.pp @@ NuSVC.fit clf ~x:(`Ndarray x) ~y ();
+  print NuSVC.pp @@ NuSVC.fit clf ~x:(`Ndarray x) ~y;
   [%expect {|
             NuSVC(break_ties=False, cache_size=200, class_weight=None, coef0=0.0,
                   decision_function_shape='ovr', degree=3, gamma='scale', kernel='rbf',
@@ -107,7 +107,7 @@ let%expect_test "NuSVR" =
   let y = Sklearn.Ndarray.of_bigarray @@ Owl.Arr.uniform [|n_samples|] in
   let x = Sklearn.Ndarray.of_bigarray @@ Matrix.uniform n_samples n_features in
   let clf = NuSVR.create ~c:1.0 ~nu:0.1 () in
-  print NuSVR.pp @@ NuSVR.fit clf ~x:(`Ndarray x) ~y ();
+  print NuSVR.pp @@ NuSVR.fit clf ~x:(`Ndarray x) ~y;
   [%expect {|
             NuSVR(C=1.0, cache_size=200, coef0=0.0, degree=3, gamma='scale', kernel='rbf',
                   max_iter=-1, nu=0.1, shrinking=True, tol=0.001, verbose=False)
@@ -134,7 +134,7 @@ let%expect_test "SVC" =
   let x = matrix [|[|-1.; -1.|]; [|-2.; -1.|]; [|1.; 1.|]; [|2.; 1.|]|] in
   let y = vector [|1.; 1.; 2.; 2.|] in
   let clf = SVC.create ~gamma:`Auto () in    
-  print SVC.pp @@ SVC.fit clf ~x:(`Ndarray x) ~y ();
+  print SVC.pp @@ SVC.fit clf ~x:(`Ndarray x) ~y;
   [%expect {|
             SVC(C=1.0, break_ties=False, cache_size=200, class_weight=None, coef0=0.0,
                 decision_function_shape='ovr', degree=3, gamma='auto', kernel='rbf',
@@ -171,7 +171,7 @@ let%expect_test "SVR" =
   let x = Sklearn.Ndarray.of_bigarray @@ Matrix.uniform n_samples n_features in
   let open Sklearn.Svm in
   let clf = SVR.create ~c:1.0 ~epsilon:0.2 () in
-  print SVR.pp @@ SVR.fit clf ~x:(`Ndarray x) ~y ();
+  print SVR.pp @@ SVR.fit clf ~x:(`Ndarray x) ~y;
   [%expect {|
             SVR(C=1.0, cache_size=200, coef0=0.0, degree=3, epsilon=0.2, gamma='scale',
                 kernel='rbf', max_iter=-1, shrinking=True, tol=0.001, verbose=False)

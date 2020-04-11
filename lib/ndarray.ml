@@ -1,3 +1,6 @@
+Wrap_utils.init ()
+let numpy = Py.import "numpy"
+
 type t = Py.Object.t
 let show x = Py.Object.to_string x
 let pp fmt x = Format.fprintf fmt "%s" (Py.Object.to_string x)
@@ -24,3 +27,15 @@ module Int = struct
     |> Bigarray.genarray_of_array2 |> Numpy.of_bigarray
   let of_bigarray ba = Numpy.of_bigarray ba
 end
+
+module String = struct
+  let vector ia =
+    (* XXX TODO figure out a way to do this with one copy less *)
+    Py.Module.get_function numpy "array" [|Py.List.of_array_map Py.String.of_string ia|]
+end
+
+
+let shape self =
+  match Py.Object.get_attr_string self "shape" with
+  | None -> raise (Wrap_utils.Attribute_not_found "shape")
+  | Some x -> Py.List.to_array_map Py.Int.to_int x

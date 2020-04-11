@@ -61,13 +61,13 @@ let%expect_test "KNeighborsMixin.kneighbors" =
   let samples = matrix [|[|0.; 0.; 0.|]; [|0.; 0.5; 0.|]; [|1.; 1.; 0.5|]|] in
   let open Sklearn.Neighbors in
   let neigh = NearestNeighbors.create ~n_neighbors:1 () in
-  print NearestNeighbors.pp @@ NearestNeighbors.fit neigh ~x:(`Ndarray samples) ();
+  print NearestNeighbors.pp @@ NearestNeighbors.fit neigh ~x:(`Ndarray samples);
   [%expect {|
             NearestNeighbors(algorithm='auto', leaf_size=30, metric='minkowski',
                              metric_params=None, n_jobs=None, n_neighbors=1, p=2,
                              radius=1.0)
     |}];
-  let neigh_dist, neigh_ind = NearestNeighbors.kneighbors neigh ~x:(matrix [|[|1.; 1.; 1.|]|]) () in
+  let neigh_dist, neigh_ind = NearestNeighbors.kneighbors neigh ~x:(matrix [|[|1.; 1.; 1.|]|]) in
   Format.printf "(%a, %a)" Sklearn.Ndarray.pp neigh_dist Sklearn.Ndarray.pp neigh_ind;
   [%expect {|
             ([[0.5]], [[2]])
@@ -93,14 +93,14 @@ let%expect_test "KNeighborsMixin.kneighbors_graph" =
   let x = matrix [|[|0.|]; [|3.|]; [|1.|]|] in
   let open Sklearn.Neighbors in
   let neigh = NearestNeighbors.create ~n_neighbors:2 () in
-  print NearestNeighbors.pp @@ NearestNeighbors.fit neigh ~x:(`Ndarray x) ();
+  print NearestNeighbors.pp @@ NearestNeighbors.fit neigh ~x:(`Ndarray x);
   [%expect {|
             NearestNeighbors(algorithm='auto', leaf_size=30, metric='minkowski',
                              metric_params=None, n_jobs=None, n_neighbors=2, p=2,
                              radius=1.0)
     |}];
-  let a = NearestNeighbors.kneighbors_graph neigh ~x () in
-  print_ndarray @@ Sklearn.Csr_matrix.toarray a ();
+  let a = NearestNeighbors.kneighbors_graph neigh ~x in
+  print_ndarray @@ Sklearn.Csr_matrix.toarray a;
   [%expect {|
             [[1. 0. 1.]
              [0. 1. 1.]
@@ -157,7 +157,7 @@ let%expect_test "LocalOutlierFactor" =
   let open Sklearn.Neighbors in
   let x = matrix [|[|-1.1|]; [|0.2|]; [|101.1|]; [|0.3|]|] in
   let clf = LocalOutlierFactor.create ~n_neighbors:2 () in
-  print Sklearn.Ndarray.pp @@ LocalOutlierFactor.fit_predict clf ~x ();
+  print Sklearn.Ndarray.pp @@ LocalOutlierFactor.fit_predict clf ~x;
   [%expect {|
             [ 1  1 -1  1]
     |}];
@@ -221,13 +221,13 @@ let%expect_test "RadiusNeighborsMixin.radius_neighbors" =
     let samples = matrix [|[|0.; 0.; 0.|]; [|0.; 0.5; 0.|]; [|1.; 1.; 0.5|]|] in
     let open Sklearn.Neighbors in
     let neigh = NearestNeighbors.create ~radius:1.6 () in
-    print NearestNeighbors.pp @@ NearestNeighbors.fit neigh ~x:(`Ndarray samples) ();
+    print NearestNeighbors.pp @@ NearestNeighbors.fit neigh ~x:(`Ndarray samples);
     [%expect {|
             NearestNeighbors(algorithm='auto', leaf_size=30, metric='minkowski',
                              metric_params=None, n_jobs=None, n_neighbors=5, p=2,
                              radius=1.6)
     |}];
-    let dist, ind = NearestNeighbors.radius_neighbors neigh ~x:(`Ndarray (matrix [|[|1.; 1.; 1.|]|])) () in
+    let dist, ind = NearestNeighbors.radius_neighbors neigh ~x:(`Ndarray (matrix [|[|1.; 1.; 1.|]|])) in
     print_ndarray @@ dist.(0);
     [%expect {|
             [1.5 0.5]
@@ -257,14 +257,14 @@ let%expect_test "RadiusNeighborsMixin.radius_neighbors_graph" =
   let x = matrix [|[|0.|]; [|3.|]; [|1.|]|] in
   let open Sklearn.Neighbors in
   let neigh = NearestNeighbors.create ~radius:1.5 () in
-  print NearestNeighbors.pp @@ NearestNeighbors.fit neigh ~x:(`Ndarray x) ();
+  print NearestNeighbors.pp @@ NearestNeighbors.fit neigh ~x:(`Ndarray x);
   [%expect {|
             NearestNeighbors(algorithm='auto', leaf_size=30, metric='minkowski',
                              metric_params=None, n_jobs=None, n_neighbors=5, p=2,
                              radius=1.5)
     |}];
-  let a = NearestNeighbors.radius_neighbors_graph neigh ~x () in
-  print_ndarray @@ Sklearn.Csr_matrix.toarray a ();
+  let a = NearestNeighbors.radius_neighbors_graph neigh ~x in
+  print_ndarray @@ Sklearn.Csr_matrix.toarray a;
   [%expect {|
             [[1. 0. 1.]
              [0. 1. 0.]
@@ -303,7 +303,7 @@ let%expect_test "NeighborhoodComponentsAnalysis" =
   let iris = load_iris () in
   let x, y = iris#data, iris#target in
   let [@ocaml.warning "-8"] [|x_train; x_test; y_train; y_test|] =
-    train_test_split [|x; y|] ~stratify:(`Ndarray y) ~test_size:(`Float 0.7) ~random_state:(`Int 42) ()
+    train_test_split [x; y] ~stratify:(`Ndarray y) ~test_size:(`Float 0.7) ~random_state:(`Int 42)
   in
   let nca = NeighborhoodComponentsAnalysis.create ~random_state:(`Int 42) () in
   print NeighborhoodComponentsAnalysis.pp @@ NeighborhoodComponentsAnalysis.fit nca ~x:x_train ~y:y_train;
@@ -319,7 +319,7 @@ let%expect_test "NeighborhoodComponentsAnalysis" =
                                  metric_params=None, n_jobs=None, n_neighbors=3, p=2,
                                  weights='uniform')
     |}];
-  Format.printf "%g" @@ KNeighborsClassifier.score knn ~x:x_test ~y:y_test ();
+  Format.printf "%g" @@ KNeighborsClassifier.score knn ~x:x_test ~y:y_test;
     [%expect {|
             0.933333
     |}];
@@ -330,7 +330,7 @@ let%expect_test "NeighborhoodComponentsAnalysis" =
                                  metric_params=None, n_jobs=None, n_neighbors=3, p=2,
                                  weights='uniform')
     |}];
-  Format.printf "%g" @@ KNeighborsClassifier.score knn ~x:(NeighborhoodComponentsAnalysis.transform nca ~x:x_test) ~y:y_test ();
+  Format.printf "%g" @@ KNeighborsClassifier.score knn ~x:(NeighborhoodComponentsAnalysis.transform nca ~x:x_test) ~y:y_test;
   [%expect {|
             0.961905
     |}]
@@ -352,26 +352,26 @@ RadiusNeighborsClassifier(...)
 
 *)
 
-(* TEST TODO
 let%expect_test "RadiusNeighborsClassifier" =
-    X = [[0], [1], [2], [3]]
-    y = [0, 0, 1, 1]
-    let radiusNeighborsClassifier = Sklearn.Neighbors.radiusNeighborsClassifier in
-    neigh = RadiusNeighborsClassifier(radius=1.0)
-    print @@ fit neigh x y
-    [%expect {|
-            RadiusNeighborsClassifier(...)
-    |}]
-    print(neigh.predict([[1.5]]))
-    [%expect {|
+   let x = matrixi [|[|0|]; [|1|]; [|2|]; [|3|]|] in
+   let y = vectori [|0; 0; 1; 1|] in
+   let open Sklearn.Neighbors in
+   let neigh = RadiusNeighborsClassifier.create ~radius:1.0 () in
+   print RadiusNeighborsClassifier.pp @@ RadiusNeighborsClassifier.fit neigh ~x:(`Ndarray x) ~y:(`Ndarray y);
+   [%expect {|
+            RadiusNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski',
+                                      metric_params=None, n_jobs=None, outlier_label=None,
+                                      p=2, radius=1.0, weights='uniform')
+    |}];
+   print_ndarray @@ RadiusNeighborsClassifier.predict neigh ~x:(matrix [|[|1.5|]|]);
+   [%expect {|
             [0]
-    |}]
-    print(neigh.predict_proba([[1.0]]))
-    [%expect {|
+    |}];
+   print_ndarray @@ RadiusNeighborsClassifier.predict_proba neigh ~x:(matrix [|[|1.0|]|]);
+   [%expect {|
             [[0.66666667 0.33333333]]
     |}]
-
-*)
+   
 
 (* RadiusNeighborsRegressor *)
 (*
@@ -387,22 +387,21 @@ RadiusNeighborsRegressor(...)
 
 *)
 
-(* TEST TODO
 let%expect_test "RadiusNeighborsRegressor" =
-    X = [[0], [1], [2], [3]]
-    y = [0, 0, 1, 1]
-    let radiusNeighborsRegressor = Sklearn.Neighbors.radiusNeighborsRegressor in
-    neigh = RadiusNeighborsRegressor(radius=1.0)
-    print @@ fit neigh x y
-    [%expect {|
-            RadiusNeighborsRegressor(...)
-    |}]
-    print(neigh.predict([[1.5]]))
-    [%expect {|
+  let x = matrixi [|[|0|]; [|1|]; [|2|]; [|3|]|] in
+  let y = vectori [|0; 0; 1; 1|] in
+  let open Sklearn.Neighbors in
+  let neigh = RadiusNeighborsRegressor.create ~radius:1.0 () in
+  print RadiusNeighborsRegressor.pp @@ RadiusNeighborsRegressor.fit neigh ~x:(`Ndarray x) ~y:(`Ndarray y);
+  [%expect {|
+            RadiusNeighborsRegressor(algorithm='auto', leaf_size=30, metric='minkowski',
+                                     metric_params=None, n_jobs=None, p=2, radius=1.0,
+                                     weights='uniform')
+    |}];
+  print_ndarray @@ RadiusNeighborsRegressor.predict neigh ~x:(matrix [|[|1.5|]|]);
+  [%expect {|
             [0.5]
     |}]
-
-*)
 
 
 (* kneighbors_graph *)
@@ -418,20 +417,18 @@ array([[1., 0., 1.],
 
 *)
 
-(* TEST TODO
 let%expect_test "kneighbors_graph" =
-    X = [[0], [3], [1]]
-    let kneighbors_graph = Sklearn.Neighbors.kneighbors_graph in
-    A = kneighbors_graph(X, 2, mode='connectivity', include_self=True)
-    A.toarray()
-    [%expect {|
-            array([[1., 0., 1.],
-                   [0., 1., 1.],
-                   [1., 0., 1.]])
+  let x = matrixi [|[|0|]; [|3|]; [|1|]|] in
+  let a =
+    Sklearn.Neighbors.kneighbors_graph ~x:(`Ndarray x) ~n_neighbors:2
+      ~mode:`Connectivity ~include_self:(`Bool true) ()
+  in
+  print_ndarray @@ Sklearn.Csr_matrix.toarray a;
+  [%expect {|
+            [[1. 0. 1.]
+             [0. 1. 1.]
+             [1. 0. 1.]]
     |}]
-
-*)
-
 
 
 (* radius_neighbors_graph *)
@@ -448,16 +445,14 @@ array([[1., 0., 1.],
 
 *)
 
-(* TEST TODO
 let%expect_test "radius_neighbors_graph" =
-    X = [[0], [3], [1]]
-    let radius_neighbors_graph = Sklearn.Neighbors.radius_neighbors_graph in
-    A = radius_neighbors_graph(X, 1.5, mode='connectivity',include_self=True)
-    A.toarray()
-    [%expect {|
-            array([[1., 0., 1.],
-                   [0., 1., 0.],
-                   [1., 0., 1.]])
+  let x = matrixi [|[|0|]; [|3|]; [|1|]|] in
+  let a = Sklearn.Neighbors.radius_neighbors_graph ~x:(`Ndarray x) ~radius:1.5
+      ~mode:`Connectivity ~include_self:(`Bool true) ()
+  in
+  print_ndarray @@ Sklearn.Csr_matrix.toarray a;
+  [%expect {|
+            [[1. 0. 1.]
+             [0. 1. 0.]
+             [1. 0. 1.]]
     |}]
-
-*)
