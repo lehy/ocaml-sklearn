@@ -1,2 +1,5 @@
 *~
 .merlin
+_build/
+.venv/
+.mypy_cache
