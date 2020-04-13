@@ -5,9 +5,10 @@
 
 (rule
  (alias extract-doc)
- (deps lib/skdoc.sh lib/skdoc.py mkdocs.yml)
+ (deps lib/skdoc.sh lib/skdoc.py mkdocs.yml README.md)
  (action
   (progn
     (run bash lib/skdoc.sh doc)
+    (run cp README.md doc/)
     (run mkdocs build))
   ))
