@@ -336,20 +336,19 @@ array([1, 2, 3])
 
 *)
 
-(* let%expect_test "MultiLabelBinarizer" =
- *   let open Sklearn.Preprocessing in
- *   let mlb = MultiLabelBinarizer.create () in
- *   (\* arg could be List(Ndarray()) ? *\)
- *   print MultiLabelBinarizer.pp @@ MultiLabelBinarizer.fit_transform mlb ~x:(matrixi [|[|1; 2|]; [|3|]|]);
- *     [%expect {|
- *             array([[1, 1, 0],
- *                    [0, 0, 1]])
- *     |}]
- *     mlb.classes_
- *     [%expect {|
- *             array([1, 2, 3])
- *     |}]
- * a *)
+let%expect_test "MultiLabelBinarizer" =
+  let open Sklearn.Preprocessing in
+  let mlb = MultiLabelBinarizer.create () in
+  (* arg could be List(Ndarray()) ? *)
+  print_ndarray @@ MultiLabelBinarizer.fit_transform mlb ~y:(Sklearn.Ndarray.Int.vectors [[|1; 2|]; [|3|]]);
+  [%expect {|
+            [[1 1 0]
+             [0 0 1]]
+    |}];
+  print_ndarray @@ MultiLabelBinarizer.classes_ mlb;
+    [%expect {|
+            [1 2 3]
+    |}]
 
 (* MultiLabelBinarizer *)
 (*
@@ -362,20 +361,19 @@ array([[0, 1, 1],
 
 *)
 
-(* TEST TODO
 let%expect_test "MultiLabelBinarizer" =
-    print @@ fit_transform mlb [{'sci-fi' 'thriller'} {'comedy'}]
-    [%expect {|
-            array([[0, 1, 1],
-                   [1, 0, 0]])
+  let open Sklearn.Preprocessing in
+  let mlb = MultiLabelBinarizer.create () in
+  print_ndarray @@ MultiLabelBinarizer.fit_transform mlb
+    ~y:(Sklearn.Ndarray.String.vectors [[|"sci-fi"; "thriller"|]; [|"comedy"|]]);
+  [%expect {|
+            [[0 1 1]
+             [1 0 0]]
+    |}];
+  print_ndarray @@ MultiLabelBinarizer.classes_ mlb;
+  [%expect {|
+            ['comedy' 'sci-fi' 'thriller']
     |}]
-    list(mlb.classes_)
-    [%expect {|
-            ['comedy', 'sci-fi', 'thriller']
-    |}]
-
-*)
-
 
 
 (* MultiLabelBinarizer *)
@@ -390,21 +388,21 @@ array(['-', 'c', 'd', 'e', 'f', 'h', 'i', 'l', 'm', 'o', 'r', 's', 't',
 
 *)
 
-(* TEST TODO
-let%expect_test "MultiLabelBinarizer" =
-    mlb = MultiLabelBinarizer()
-    print @@ fit mlb ['sci-fi' 'thriller' 'comedy']
-    [%expect {|
-            MultiLabelBinarizer()
-    |}]
-    mlb.classes_
-    [%expect {|
-            array(['-', 'c', 'd', 'e', 'f', 'h', 'i', 'l', 'm', 'o', 'r', 's', 't',
-                'y'], dtype=object)
-    |}]
-
-*)
-
+(* This is a example showing what not to do. In OCaml the below fails,
+   rightfully.  *)
+(* let%expect_test "MultiLabelBinarizer" =
+ *   let open Sklearn.Preprocessing in
+ *   let mlb = MultiLabelBinarizer.create () in
+ *   print MultiLabelBinarizer.pp @@ MultiLabelBinarizer.fit mlb
+ *     ~y:(Sklearn.Ndarray.String.vector [|"sci-fi"; "thriller"; "comedy"|]);
+ *   [%expect {|
+ *             MultiLabelBinarizer()
+ *     |}];
+ *   print_ndarray @@ MultiLabelBinarizer.classes_ mlb;
+ *   [%expect {|
+ *             array(['-', 'c', 'd', 'e', 'f', 'h', 'i', 'l', 'm', 'o', 'r', 's', 't',
+ *                 'y'], dtype=object)
+ *     |}] *)
 
 
 (* MultiLabelBinarizer *)
@@ -431,8 +429,18 @@ let%expect_test "MultiLabelBinarizer" =
     |}]
 
 *)
-
-
+let%expect_test "MultiLabelBinarizer" =
+  let open Sklearn.Preprocessing in
+  let mlb = MultiLabelBinarizer.create () in
+  print MultiLabelBinarizer.pp @@ MultiLabelBinarizer.fit mlb
+    ~y:(Sklearn.Ndarray.String.vectors [[|"sci-fi"; "thriller"; "comedy"|]]);
+  [%expect {|
+            MultiLabelBinarizer(classes=None, sparse_output=False)
+    |}];
+  print_ndarray @@ MultiLabelBinarizer.classes_ mlb;
+  [%expect {|
+            ['comedy' 'sci-fi' 'thriller']
+    |}]
 
 (* Normalizer *)
 (*

@@ -208,6 +208,15 @@ class Array(Type):
     def __repr__(self):
         return f"List[{str(self.t)}]"
 
+
+class ArrayList(Type):
+    names = ['iterable of iterables']
+    ml_type = 'Sklearn.Ndarray.List.t'
+    ml_type_ret = 'Sklearn.Ndarray.List.t'
+    wrap = 'Sklearn.Ndarray.List.to_pyobject'
+    unwrap = 'Sklearn.Ndarray.List.of_pyobject'
+
+
 class List(Type):
     """list when argument, array when returned (more convenient?)
     """
@@ -224,7 +233,7 @@ class List(Type):
 
     def __repr__(self):
         return f"List[{str(self.t)}]"
-    
+
 
 class StarStar(Type):
     def __init__(self):
@@ -1999,6 +2008,8 @@ overrides = {
     dict(ret_type=Tuple([List(Ndarray()), List(Ndarray())])),
     r'^NearestCentroid\.fit$':
     dict(param_types=dict(X=Enum([Ndarray(), SparseMatrix()]), y=Ndarray())),
+    r'MultiLabelBinarizer\.(fit_transform|fit)':
+    dict(types={'^y$': ArrayList()}),
     r'\.(decision_function|predict|predict_proba|fit_predict|transform|fit_transform)$':
     dict(ret_type=Ndarray()),
     r'\.fit$':
@@ -2032,7 +2043,7 @@ overrides = {
              '^shape$': List(Int()),
              '^DESCR$': String(),
              '^target_names$': List(String()),
-             '^(intercept_|coef_)$': Ndarray()
+             '^(intercept_|coef_|classes_)$': Ndarray()
          }),
 }
 
