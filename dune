@@ -2,3 +2,12 @@
  (alias extract-examples)
  (deps lib/skdoc.sh lib/skdoc.py)
  (action (run bash lib/skdoc.sh examples)))
+
+(rule
+ (alias extract-doc)
+ (deps lib/skdoc.sh lib/skdoc.py mkdocs.yml)
+ (action
+  (progn
+    (run bash lib/skdoc.sh doc)
+    (run mkdocs build))
+  ))

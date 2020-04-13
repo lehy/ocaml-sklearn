@@ -1,5 +1,6 @@
 site_name: OCaml scikit-learn interface
-docs_dir: build/doc/sklearn/
+docs_dir: doc/
+site_dir: html_doc/
 theme:
   name: 'material'
   palette:
