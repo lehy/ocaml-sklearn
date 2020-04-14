@@ -10,7 +10,11 @@ homepage: "https://github.com/lehy/ocaml-sklearn"
 bug-reports: "https://github.com/lehy/ocaml-sklearn/issues"
 depends: [
   "dune" {>= "2.4"}
-  "pyml"
+  "ocaml" {>= "4.07.1"}
+  "ppx_expect" {with-test}
+  "owl" {with-test}
+  "re" {with-test}
+  "pyml" {>= "20200222"}
 ]
 build: [
   ["dune" "subst"] {pinned}

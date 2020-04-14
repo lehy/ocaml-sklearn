@@ -15,4 +15,8 @@
  (synopsis "scikit-learn machine learning library")
  (description "These are bindings to Python's scikit-learn.")
  (depends
-  pyml))
+  (ocaml (>= 4.07.1))
+  (ppx_expect :with-test)
+  (owl :with-test)
+  (re :with-test)
+  (pyml (>= 20200222))))
