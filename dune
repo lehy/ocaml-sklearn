@@ -5,10 +5,12 @@
 
 (rule
  (alias extract-doc)
- (deps lib/skdoc.sh lib/skdoc.py mkdocs.yml README.md)
+ (deps lib/skdoc.sh lib/skdoc.py lib/ndarray.mli mkdocs.yml README.md)
  (action
   (progn
     (run bash lib/skdoc.sh doc)
     (run cp README.md doc/)
+    (with-stdin-from lib/ndarray.mli (with-stdout-to ndarray.md (run lib/mli2md)))
+    (run cp ndarray.md doc/)
     (run mkdocs build))
   ))

@@ -26,13 +26,15 @@ let runtime_sklearn_version () =
     | [major; minor; revision] -> Ok (major, minor, revision)
     | _ -> Error version
 
+exception OCaml_sklearn_version_error of string
 
 let do_check_version () =
   let (wanted_major, wanted_minor) = Version.version in
   match runtime_sklearn_version () with
   | Ok (major, minor, _) ->
     if (major, minor) = (wanted_major, wanted_minor) then `Ok
-    else `Version_mismatch (Printf.sprintf "wanted: %d.%d, running: %d.%d" wanted_major wanted_minor major minor)
+    else `Version_mismatch (Printf.sprintf "ocaml-sklearn version error: wanted: %d.%d, running: %d.%d"
+                              wanted_major wanted_minor major minor)
   | Error version -> `Cannot_determine_runtime_version (Printf.sprintf "cannot parse runtime sklearn version %s" version)
 
 let version_checked = ref false
@@ -42,7 +44,7 @@ let check_version () =
     version_checked := true;
     match do_check_version () with
     | `Ok -> ()
-    | `Version_mismatch msg -> failwith msg
+    | `Version_mismatch msg -> raise (OCaml_sklearn_version_error msg)
     | `Cannot_determine_runtime_version msg ->
       Printf.eprintf "ocaml-sklearn: warning: %s\n" msg
   end
