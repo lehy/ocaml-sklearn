@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -e
+set -x
+
+ROOT=$(realpath $(dirname "$0"))/..
+# echo "ROOT from $0 is $ROOT"
+
+if [[ $(git status -s) ]]; then
+    echo "There are some uncommitted changes, finish them:"
+    git status -s
+    exit 1
+fi
+
+dune build @mkdocs
+ghp-import -np "$ROOT/_build/default/html_doc/"
