@@ -99,8 +99,9 @@ incomplete.
 ## Development notes
 
 ocaml-sklearn's sources are generated using a Python program (see
-`lib/skdoc.py`) that loads up sklearn and uses introspection to generate
-bindings based on `pyml`.
+`lib/skdoc.py`) that loads up sklearn and uses introspection to
+generate bindings based on `pyml`. To determine types, it parses
+scikit-learn's documentation.
 
 ### Python requirements
 
