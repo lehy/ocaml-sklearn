@@ -51,7 +51,7 @@ fi
 dune build @all @runtest @mkdocs
 
 cp "$ROOT/_build/default/lib/"*.{ml,mli} "$ROOT/lib/"
-git add "$ROOT"/lib/*.{ml,mli}
+git add "$ROOT"/lib/*.{ml,mli} "$ROOT/sklearn.opam"
 git diff-index --quiet HEAD || git commit -m 'add generated files to release branch'
 
 git tag -a "$TAG" -m "Tag release $TAG."
