@@ -44,7 +44,6 @@ fi
 
 dune build @all @runtest @extract-doc
 
-# XXX TODO: doc?
 cp "$ROOT/_build/default/lib/"*.{ml,mli} "$ROOT/lib/"
 git add "$ROOT"/lib/*.{ml,mli}
 git commit -m 'add generated files to release branch'
