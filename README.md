@@ -1,7 +1,8 @@
 # scikit-learn for OCaml, version %%OCAML_SKLEARN_FULL_VERSION%%
 
-ocaml-sklearn allows using Python's [scikit-learn](https://scikit-learn.org/) machine learning
-library from OCaml.
+ocaml-sklearn allows using Python's
+[scikit-learn](https://scikit-learn.org/) machine learning library
+from OCaml.
 
 **The current API is not complete. It covers most parts of
 scikit-learn and what is accessible should work, but some
@@ -127,3 +128,7 @@ it locally with something like:
 python3 -mhttp.server --directory _build/default/html_doc
 xdg-open http://localhost:8000
 ~~~
+
+## License
+
+BSD-3. See file [LICENSE](LICENSE).
