@@ -1,0 +1,2865 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1, mkdocs-material-5.1.0">
+    
+    
+      
+        <title>Pipeline - OCaml scikit-learn interface</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.89dc9fe3.min.css">
+      
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ecd4686e.min.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#3f51b5">
+      
+    
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    <body dir="ltr" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#module-sklearnpipelinebunch" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href=".." title="OCaml scikit-learn interface" class="md-header-nav__button md-logo" aria-label="OCaml scikit-learn interface">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,8A3,3 0 0,0 15,5A3,3 0 0,0 12,2A3,3 0 0,0 9,5A3,3 0 0,0 12,8M12,11.54C9.64,9.35 6.5,8 3,8V19C6.5,19 9.64,20.35 12,22.54C14.36,20.35 17.5,19 21,19V8C17.5,8 14.36,9.35 12,11.54Z" /></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" /></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            OCaml scikit-learn interface
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Pipeline
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/lehy/ocaml-sklearn/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    lehy/ocaml-sklearn
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="OCaml scikit-learn interface" class="md-nav__button md-logo" aria-label="OCaml scikit-learn interface">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,8A3,3 0 0,0 15,5A3,3 0 0,0 12,2A3,3 0 0,0 9,5A3,3 0 0,0 12,8M12,11.54C9.64,9.35 6.5,8 3,8V19C6.5,19 9.64,20.35 12,22.54C14.36,20.35 17.5,19 21,19V8C17.5,8 14.36,9.35 12,11.54Z" /></svg>
+
+    </a>
+    OCaml scikit-learn interface
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/lehy/ocaml-sklearn/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    lehy/ocaml-sklearn
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href=".." title="scikit-learn for OCaml, version 0.22-0.0.1" class="md-nav__link">
+      scikit-learn for OCaml, version 0.22-0.0.1
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../base/" title="Base" class="md-nav__link">
+      Base
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../calibration/" title="Calibration" class="md-nav__link">
+      Calibration
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../cluster/" title="Cluster" class="md-nav__link">
+      Cluster
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../compose/" title="Compose" class="md-nav__link">
+      Compose
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../conftest/" title="Conftest" class="md-nav__link">
+      Conftest
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../covariance/" title="Covariance" class="md-nav__link">
+      Covariance
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../cross_decomposition/" title="Cross decomposition" class="md-nav__link">
+      Cross decomposition
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../datasets/" title="Datasets" class="md-nav__link">
+      Datasets
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../decomposition/" title="Decomposition" class="md-nav__link">
+      Decomposition
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../discriminant_analysis/" title="Discriminant analysis" class="md-nav__link">
+      Discriminant analysis
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../dummy/" title="Dummy" class="md-nav__link">
+      Dummy
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../ensemble/" title="Ensemble" class="md-nav__link">
+      Ensemble
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../exceptions/" title="Exceptions" class="md-nav__link">
+      Exceptions
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../experimental/" title="Experimental" class="md-nav__link">
+      Experimental
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../externals/" title="Externals" class="md-nav__link">
+      Externals
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../feature_extraction/" title="Feature extraction" class="md-nav__link">
+      Feature extraction
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../feature_selection/" title="Feature selection" class="md-nav__link">
+      Feature selection
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../gaussian_process/" title="Gaussian process" class="md-nav__link">
+      Gaussian process
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../impute/" title="Impute" class="md-nav__link">
+      Impute
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../inspection/" title="Inspection" class="md-nav__link">
+      Inspection
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../isotonic/" title="Isotonic" class="md-nav__link">
+      Isotonic
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../kernel_approximation/" title="Kernel approximation" class="md-nav__link">
+      Kernel approximation
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../kernel_ridge/" title="Kernel ridge" class="md-nav__link">
+      Kernel ridge
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../linear_model/" title="Linear model" class="md-nav__link">
+      Linear model
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../manifold/" title="Manifold" class="md-nav__link">
+      Manifold
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../metrics/" title="Metrics" class="md-nav__link">
+      Metrics
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../mixture/" title="Mixture" class="md-nav__link">
+      Mixture
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../model_selection/" title="Model selection" class="md-nav__link">
+      Model selection
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../multiclass/" title="Multiclass" class="md-nav__link">
+      Multiclass
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../multioutput/" title="Multioutput" class="md-nav__link">
+      Multioutput
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../naive_bayes/" title="Naive bayes" class="md-nav__link">
+      Naive bayes
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../ndarray/" title="Ndarray" class="md-nav__link">
+      Ndarray
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../neighbors/" title="Neighbors" class="md-nav__link">
+      Neighbors
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../neural_network/" title="Neural network" class="md-nav__link">
+      Neural network
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Pipeline
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3,9H17V7H3V9M3,13H17V11H3V13M3,17H17V15H3V17M19,17H21V15H19V17M19,7V9H21V7H19M19,13H21V11H19V13Z" /></svg>
+        </span>
+      </label>
+    
+    <a href="./" title="Pipeline" class="md-nav__link md-nav__link--active">
+      Pipeline
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#module-sklearnpipelinebunch" class="md-nav__link">
+    module Sklearn.​Pipeline.​Bunch
+  </a>
+  
+    <nav class="md-nav" aria-label="module Sklearn.​Pipeline.​Bunch">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create" class="md-nav__link">
+    create
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#to_string" class="md-nav__link">
+    to_string
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show" class="md-nav__link">
+    show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pp" class="md-nav__link">
+    pp
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#module-sklearnpipelinefeatureunion" class="md-nav__link">
+    module Sklearn.​Pipeline.​FeatureUnion
+  </a>
+  
+    <nav class="md-nav" aria-label="module Sklearn.​Pipeline.​FeatureUnion">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create_1" class="md-nav__link">
+    create
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit" class="md-nav__link">
+    fit
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit_transform" class="md-nav__link">
+    fit_transform
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_feature_names" class="md-nav__link">
+    get_feature_names
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_params" class="md-nav__link">
+    get_params
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set_params" class="md-nav__link">
+    set_params
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transform" class="md-nav__link">
+    transform
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#to_string_1" class="md-nav__link">
+    to_string
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show_1" class="md-nav__link">
+    show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pp_1" class="md-nav__link">
+    pp
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#module-sklearnpipelineparallel" class="md-nav__link">
+    module Sklearn.​Pipeline.​Parallel
+  </a>
+  
+    <nav class="md-nav" aria-label="module Sklearn.​Pipeline.​Parallel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create_2" class="md-nav__link">
+    create
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debug" class="md-nav__link">
+    debug
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dispatch_next" class="md-nav__link">
+    dispatch_next
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dispatch_one_batch" class="md-nav__link">
+    dispatch_one_batch
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format" class="md-nav__link">
+    format
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#print_progress" class="md-nav__link">
+    print_progress
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retrieve" class="md-nav__link">
+    retrieve
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warn" class="md-nav__link">
+    warn
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#to_string_2" class="md-nav__link">
+    to_string
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show_2" class="md-nav__link">
+    show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pp_2" class="md-nav__link">
+    pp
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#module-sklearnpipelinepipeline" class="md-nav__link">
+    module Sklearn.​Pipeline.​Pipeline
+  </a>
+  
+    <nav class="md-nav" aria-label="module Sklearn.​Pipeline.​Pipeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create_3" class="md-nav__link">
+    create
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_item" class="md-nav__link">
+    get_item
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision_function" class="md-nav__link">
+    decision_function
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit_1" class="md-nav__link">
+    fit
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit_predict" class="md-nav__link">
+    fit_predict
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit_transform_1" class="md-nav__link">
+    fit_transform
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_params_1" class="md-nav__link">
+    get_params
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inverse_transform" class="md-nav__link">
+    inverse_transform
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#predict" class="md-nav__link">
+    predict
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#predict_log_proba" class="md-nav__link">
+    predict_log_proba
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#predict_proba" class="md-nav__link">
+    predict_proba
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#score" class="md-nav__link">
+    score
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#score_samples" class="md-nav__link">
+    score_samples
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set_params_1" class="md-nav__link">
+    set_params
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#named_steps" class="md-nav__link">
+    named_steps
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#to_string_3" class="md-nav__link">
+    to_string
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show_3" class="md-nav__link">
+    show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pp_3" class="md-nav__link">
+    pp
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#module-sklearnpipelinetransformermixin" class="md-nav__link">
+    module Sklearn.​Pipeline.​TransformerMixin
+  </a>
+  
+    <nav class="md-nav" aria-label="module Sklearn.​Pipeline.​TransformerMixin">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create_4" class="md-nav__link">
+    create
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit_transform_2" class="md-nav__link">
+    fit_transform
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#to_string_4" class="md-nav__link">
+    to_string
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show_4" class="md-nav__link">
+    show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pp_4" class="md-nav__link">
+    pp
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check_memory" class="md-nav__link">
+    check_memory
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clone" class="md-nav__link">
+    clone
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delayed" class="md-nav__link">
+    delayed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#if_delegate_has_method" class="md-nav__link">
+    if_delegate_has_method
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#make_pipeline" class="md-nav__link">
+    make_pipeline
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#make_union" class="md-nav__link">
+    make_union
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../preprocessing/" title="Preprocessing" class="md-nav__link">
+      Preprocessing
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../random_projection/" title="Random projection" class="md-nav__link">
+      Random projection
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../semi_supervised/" title="Semi supervised" class="md-nav__link">
+      Semi supervised
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../setup/" title="Setup" class="md-nav__link">
+      Setup
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../svm/" title="Svm" class="md-nav__link">
+      Svm
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../tests/" title="Tests" class="md-nav__link">
+      Tests
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../tree/" title="Tree" class="md-nav__link">
+      Tree
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../utils/" title="Utils" class="md-nav__link">
+      Utils
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../version/" title="Version" class="md-nav__link">
+      Version
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#module-sklearnpipelinebunch" class="md-nav__link">
+    module Sklearn.​Pipeline.​Bunch
+  </a>
+  
+    <nav class="md-nav" aria-label="module Sklearn.​Pipeline.​Bunch">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create" class="md-nav__link">
+    create
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#to_string" class="md-nav__link">
+    to_string
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show" class="md-nav__link">
+    show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pp" class="md-nav__link">
+    pp
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#module-sklearnpipelinefeatureunion" class="md-nav__link">
+    module Sklearn.​Pipeline.​FeatureUnion
+  </a>
+  
+    <nav class="md-nav" aria-label="module Sklearn.​Pipeline.​FeatureUnion">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create_1" class="md-nav__link">
+    create
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit" class="md-nav__link">
+    fit
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit_transform" class="md-nav__link">
+    fit_transform
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_feature_names" class="md-nav__link">
+    get_feature_names
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_params" class="md-nav__link">
+    get_params
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set_params" class="md-nav__link">
+    set_params
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transform" class="md-nav__link">
+    transform
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#to_string_1" class="md-nav__link">
+    to_string
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show_1" class="md-nav__link">
+    show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pp_1" class="md-nav__link">
+    pp
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#module-sklearnpipelineparallel" class="md-nav__link">
+    module Sklearn.​Pipeline.​Parallel
+  </a>
+  
+    <nav class="md-nav" aria-label="module Sklearn.​Pipeline.​Parallel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create_2" class="md-nav__link">
+    create
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debug" class="md-nav__link">
+    debug
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dispatch_next" class="md-nav__link">
+    dispatch_next
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dispatch_one_batch" class="md-nav__link">
+    dispatch_one_batch
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format" class="md-nav__link">
+    format
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#print_progress" class="md-nav__link">
+    print_progress
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retrieve" class="md-nav__link">
+    retrieve
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warn" class="md-nav__link">
+    warn
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#to_string_2" class="md-nav__link">
+    to_string
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show_2" class="md-nav__link">
+    show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pp_2" class="md-nav__link">
+    pp
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#module-sklearnpipelinepipeline" class="md-nav__link">
+    module Sklearn.​Pipeline.​Pipeline
+  </a>
+  
+    <nav class="md-nav" aria-label="module Sklearn.​Pipeline.​Pipeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create_3" class="md-nav__link">
+    create
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_item" class="md-nav__link">
+    get_item
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision_function" class="md-nav__link">
+    decision_function
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit_1" class="md-nav__link">
+    fit
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit_predict" class="md-nav__link">
+    fit_predict
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit_transform_1" class="md-nav__link">
+    fit_transform
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_params_1" class="md-nav__link">
+    get_params
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inverse_transform" class="md-nav__link">
+    inverse_transform
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#predict" class="md-nav__link">
+    predict
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#predict_log_proba" class="md-nav__link">
+    predict_log_proba
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#predict_proba" class="md-nav__link">
+    predict_proba
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#score" class="md-nav__link">
+    score
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#score_samples" class="md-nav__link">
+    score_samples
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set_params_1" class="md-nav__link">
+    set_params
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#named_steps" class="md-nav__link">
+    named_steps
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#to_string_3" class="md-nav__link">
+    to_string
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show_3" class="md-nav__link">
+    show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pp_3" class="md-nav__link">
+    pp
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#module-sklearnpipelinetransformermixin" class="md-nav__link">
+    module Sklearn.​Pipeline.​TransformerMixin
+  </a>
+  
+    <nav class="md-nav" aria-label="module Sklearn.​Pipeline.​TransformerMixin">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create_4" class="md-nav__link">
+    create
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit_transform_2" class="md-nav__link">
+    fit_transform
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#to_string_4" class="md-nav__link">
+    to_string
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show_4" class="md-nav__link">
+    show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pp_4" class="md-nav__link">
+    pp
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check_memory" class="md-nav__link">
+    check_memory
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clone" class="md-nav__link">
+    clone
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delayed" class="md-nav__link">
+    delayed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#if_delegate_has_method" class="md-nav__link">
+    if_delegate_has_method
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#make_pipeline" class="md-nav__link">
+    make_pipeline
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#make_union" class="md-nav__link">
+    make_union
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/lehy/ocaml-sklearn/edit/master/docs/pipeline.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" /></svg>
+                  </a>
+                
+                
+                  
+                
+                
+                  <h1>Pipeline</h1>
+                
+                <h2 id="module-sklearnpipelinebunch">module Sklearn.​Pipeline.​Bunch<a class="headerlink" href="#module-sklearnpipelinebunch" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="k">type</span> <span class="n">t</span>
+</code></pre></div>
+
+<h3 id="create">create<a class="headerlink" href="#create" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">kwargs</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
+  <span class="kt">unit</span> <span class="o">-&gt;</span>
+  <span class="n">t</span>
+</code></pre></div>
+
+<p>Container object for datasets</p>
+<p>Dictionary-like object that exposes its keys as attributes.</p>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">b</span> <span class="o">=</span> <span class="n">Bunch</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">b</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span>
+<span class="mi">2</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">b</span><span class="o">.</span><span class="n">b</span>
+<span class="mi">2</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">b</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">b</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span>
+<span class="mi">3</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">b</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">b</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span>
+<span class="mi">6</span>
+</code></pre></div>
+
+</details>
+<h3 id="to_string">to_string<a class="headerlink" href="#to_string" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+</details>
+<h3 id="show">show<a class="headerlink" href="#show" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+</details>
+<h3 id="pp">pp<a class="headerlink" href="#pp" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+</code></pre></div>
+
+<p>Pretty-print the object to a formatter.</p>
+</details>
+<h2 id="module-sklearnpipelinefeatureunion">module Sklearn.​Pipeline.​FeatureUnion<a class="headerlink" href="#module-sklearnpipelinefeatureunion" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="k">type</span> <span class="n">t</span>
+</code></pre></div>
+
+<h3 id="create_1">create<a class="headerlink" href="#create_1" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">n_jobs</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">transformer_weights</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">verbose</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
+  <span class="n">transformer_list</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
+  <span class="kt">unit</span> <span class="o">-&gt;</span>
+  <span class="n">t</span>
+</code></pre></div>
+
+<p>Concatenates results of multiple transformer objects.</p>
+<p>This estimator applies a list of transformer objects in parallel to the
+input data, then concatenates the results. This is useful to combine
+several feature extraction mechanisms into a single transformer.</p>
+<p>Parameters of the transformers may be set using its name and the parameter
+name separated by a '__'. A transformer may be replaced entirely by
+setting the parameter with its name to another transformer,
+or removed by setting to 'drop'.</p>
+<p>Read more in the :ref:<code>User Guide &lt;feature_union&gt;</code>.</p>
+<p>.. versionadded:: 0.13</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>transformer_list : list of (string, transformer) tuples</summary><p>List of transformer objects to be applied to the data. The first
+half of each tuple is the name of the transformer.</p>
+<p>.. versionchanged:: 0.22
+   Deprecated <code>None</code> as a transformer in favor of 'drop'.</p>
+</details>
+<details class="info" open="open"><summary>n_jobs : int or None, optional (default=None)</summary><p>Number of jobs to run in parallel.
+<code>None</code> means 1 unless in a :obj:<code>joblib.parallel_backend</code> context.
+<code>-1</code> means using all processors. See :term:<code>Glossary &lt;n_jobs&gt;</code>
+for more details.</p>
+</details>
+<details class="info" open="open"><summary>transformer_weights : dict, optional</summary><p>Multiplicative weights for features per transformer.
+Keys are transformer names, values the weights.</p>
+</details>
+<details class="info" open="open"><summary>verbose : boolean, optional(default=False)</summary><p>If True, the time elapsed while fitting each transformer will be
+printed as it is completed.</p>
+</details>
+<h4>See Also</h4>
+<details class="info" open="open"><summary>sklearn.pipeline.make_union : Convenience function for simplified</summary><p>feature union construction.</p>
+</details>
+<h4>Examples</h4>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">FeatureUnion</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span><span class="p">,</span> <span class="n">TruncatedSVD</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">union</span> <span class="o">=</span> <span class="n">FeatureUnion</span><span class="p">([(</span><span class="s2">&quot;pca&quot;</span><span class="p">,</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">1</span><span class="p">)),</span>
+<span class="o">...</span>                       <span class="p">(</span><span class="s2">&quot;svd&quot;</span><span class="p">,</span> <span class="n">TruncatedSVD</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">))])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">X</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mi">5</span><span class="p">]]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">union</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">array</span><span class="p">([[</span> <span class="mf">1.5</span>       <span class="p">,</span>  <span class="mf">3.0</span><span class="o">...</span><span class="p">,</span>  <span class="mf">0.8</span><span class="o">...</span><span class="p">],</span>
+       <span class="p">[</span><span class="o">-</span><span class="mf">1.5</span>       <span class="p">,</span>  <span class="mf">5.7</span><span class="o">...</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.4</span><span class="o">...</span><span class="p">]])</span>
+</code></pre></div>
+
+</details>
+<h3 id="fit">fit<a class="headerlink" href="#fit" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">fit_params</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">t</span>
+</code></pre></div>
+
+<p>Fit all transformers using X.</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>X : iterable or array-like, depending on transformers</summary><p>Input data, used to fit transformers.</p>
+</details>
+<details class="info" open="open"><summary>y : array-like, shape (n_samples, ...), optional</summary><p>Targets for supervised learning.</p>
+</details>
+<h4>Returns</h4>
+<details class="info" open="open"><summary>self : FeatureUnion</summary><p>This estimator</p>
+</details>
+</details>
+<h3 id="fit_transform">fit_transform<a class="headerlink" href="#fit_transform" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit_transform</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">fit_params</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Fit all transformers, transform the data and concatenate results.</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>X : iterable or array-like, depending on transformers</summary><p>Input data to be transformed.</p>
+</details>
+<details class="info" open="open"><summary>y : array-like, shape (n_samples, ...), optional</summary><p>Targets for supervised learning.</p>
+</details>
+<h4>Returns</h4>
+<details class="info" open="open"><summary>X_t : array-like or sparse matrix, shape (n_samples, sum_n_components)</summary><p>hstack of results of transformers. sum_n_components is the
+sum of n_components (output dimension) over transformers.</p>
+</details>
+</details>
+<h3 id="get_feature_names">get_feature_names<a class="headerlink" href="#get_feature_names" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_feature_names</span> <span class="o">:</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="kt">string</span> <span class="kt">list</span>
+</code></pre></div>
+
+<p>Get feature names from all transformers.</p>
+<h4>Returns</h4>
+<details class="info" open="open"><summary>feature_names : list of strings</summary><p>Names of the features produced by transform.</p>
+</details>
+</details>
+<h3 id="get_params">get_params<a class="headerlink" href="#get_params" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Get parameters for this estimator.</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>deep : boolean, optional</summary><p>If True, will return the parameters for this estimator and
+contained subobjects that are estimators.</p>
+</details>
+<h4>Returns</h4>
+<details class="info" open="open"><summary>params : mapping of string to any</summary><p>Parameter names mapped to their values.</p>
+</details>
+</details>
+<h3 id="set_params">set_params<a class="headerlink" href="#set_params" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_params</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">kwargs</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">t</span>
+</code></pre></div>
+
+<p>Set the parameters of this estimator.</p>
+<p>Valid parameter keys can be listed with <code>get_params()</code>.</p>
+<h4>Returns</h4>
+<p>self</p>
+</details>
+<h3 id="transform">transform<a class="headerlink" href="#transform" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">transform</span> <span class="o">:</span>
+  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Transform X separately by each transformer, concatenate results.</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>X : iterable or array-like, depending on transformers</summary><p>Input data to be transformed.</p>
+</details>
+<h4>Returns</h4>
+<details class="info" open="open"><summary>X_t : array-like or sparse matrix, shape (n_samples, sum_n_components)</summary><p>hstack of results of transformers. sum_n_components is the
+sum of n_components (output dimension) over transformers.</p>
+</details>
+</details>
+<h3 id="to_string_1">to_string<a class="headerlink" href="#to_string_1" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+</details>
+<h3 id="show_1">show<a class="headerlink" href="#show_1" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+</details>
+<h3 id="pp_1">pp<a class="headerlink" href="#pp_1" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+</code></pre></div>
+
+<p>Pretty-print the object to a formatter.</p>
+</details>
+<h2 id="module-sklearnpipelineparallel">module Sklearn.​Pipeline.​Parallel<a class="headerlink" href="#module-sklearnpipelineparallel" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="k">type</span> <span class="n">t</span>
+</code></pre></div>
+
+<h3 id="create_2">create<a class="headerlink" href="#create_2" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">n_jobs</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">backend</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">verbose</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">timeout</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">pre_dispatch</span><span class="o">:[`</span><span class="nc">All</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">batch_size</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Auto</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">temp_folder</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">max_nbytes</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">mmap_mode</span><span class="o">:[`</span><span class="nc">R_</span> <span class="o">|</span> <span class="o">`</span><span class="nc">R</span> <span class="o">|</span> <span class="o">`</span><span class="nc">W_</span> <span class="o">|</span> <span class="o">`</span><span class="nc">C</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">prefer</span><span class="o">:[`</span><span class="nc">Processes</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Threads</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">require</span><span class="o">:[`</span><span class="nc">Sharedmem</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="kt">unit</span> <span class="o">-&gt;</span>
+  <span class="n">t</span>
+</code></pre></div>
+
+<p>Helper class for readable parallel mapping.</p>
+<p>Read more in the :ref:<code>User Guide &lt;parallel&gt;</code>.</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>n_jobs: int, default: None</summary><p>The maximum number of concurrently running jobs, such as the number
+of Python worker processes when backend="multiprocessing"
+or the size of the thread-pool when backend="threading".
+If -1 all CPUs are used. If 1 is given, no parallel computing code
+is used at all, which is useful for debugging. For n_jobs below -1,
+(n_cpus + 1 + n_jobs) are used. Thus for n_jobs = -2, all
+CPUs but one are used.
+None is a marker for 'unset' that will be interpreted as n_jobs=1
+(sequential execution) unless the call is performed under a
+parallel_backend context manager that sets another value for
+n_jobs.</p>
+</details>
+<details class="info" open="open"><summary>backend: str, ParallelBackendBase instance or None, default: 'loky'</summary><p>Specify the parallelization backend implementation.
+Supported backends are:</p>
+<ul>
+<li>"loky" used by default, can induce some
+  communication and memory overhead when exchanging input and
+  output data with the worker Python processes.</li>
+<li>"multiprocessing" previous process-based backend based on
+  <code>multiprocessing.Pool</code>. Less robust than <code>loky</code>.</li>
+<li>"threading" is a very low-overhead backend but it suffers
+  from the Python Global Interpreter Lock if the called function
+  relies a lot on Python objects. "threading" is mostly useful
+  when the execution bottleneck is a compiled extension that
+  explicitly releases the GIL (for instance a Cython loop wrapped
+  in a "with nogil" block or an expensive call to a library such
+  as NumPy).</li>
+<li>finally, you can register backends by calling
+  register_parallel_backend. This will allow you to implement
+  a backend of your liking.</li>
+</ul>
+<p>It is not recommended to hard-code the backend name in a call to
+Parallel in a library. Instead it is recommended to set soft hints
+(prefer) or hard constraints (require) so as to make it possible
+for library users to change the backend from the outside using the
+parallel_backend context manager.</p>
+</details>
+<details class="info" open="open"><summary>prefer: str in {'processes', 'threads'} or None, default: None</summary><p>Soft hint to choose the default backend if no specific backend
+was selected with the parallel_backend context manager. The
+default process-based backend is 'loky' and the default
+thread-based backend is 'threading'. Ignored if the <code>backend</code>
+parameter is specified.</p>
+</details>
+<details class="info" open="open"><summary>require: 'sharedmem' or None, default None</summary><p>Hard constraint to select the backend. If set to 'sharedmem',
+the selected backend will be single-host and thread-based even
+if the user asked for a non-thread based backend with
+parallel_backend.</p>
+</details>
+<details class="info" open="open"><summary>verbose: int, optional</summary><p>The verbosity level: if non zero, progress messages are
+printed. Above 50, the output is sent to stdout.
+The frequency of the messages increases with the verbosity level.
+If it more than 10, all iterations are reported.</p>
+</details>
+<details class="info" open="open"><summary>timeout: float, optional</summary><p>Timeout limit for each task to complete.  If any task takes longer
+a TimeOutError will be raised. Only applied when n_jobs != 1</p>
+</details>
+<details class="info" open="open"><summary>pre_dispatch: {'all', integer, or expression, as in '3*n_jobs'}</summary><p>The number of batches (of tasks) to be pre-dispatched.
+Default is '2*n_jobs'. When batch_size="auto" this is reasonable
+default and the workers should never starve.</p>
+</details>
+<details class="info" open="open"><summary>batch_size: int or 'auto', default: 'auto'</summary><p>The number of atomic tasks to dispatch at once to each
+worker. When individual evaluations are very fast, dispatching
+calls to workers can be slower than sequential computation because
+of the overhead. Batching fast computations together can mitigate
+this.
+The <code>'auto'</code> strategy keeps track of the time it takes for a batch
+to complete, and dynamically adjusts the batch size to keep the time
+on the order of half a second, using a heuristic. The initial batch
+size is 1.
+<code>batch_size="auto"</code> with <code>backend="threading"</code> will dispatch
+batches of a single task at a time as the threading backend has
+very little overhead and using larger batch size has not proved to
+bring any gain in that case.</p>
+</details>
+<details class="info" open="open"><summary>temp_folder: str, optional</summary><p>Folder to be used by the pool for memmapping large arrays
+for sharing memory with worker processes. If None, this will try in
+order:</p>
+<ul>
+<li>a folder pointed by the JOBLIB_TEMP_FOLDER environment
+  variable,</li>
+<li>/dev/shm if the folder exists and is writable: this is a
+  RAM disk filesystem available by default on modern Linux
+  distributions,</li>
+<li>the default system temporary folder that can be
+  overridden with TMP, TMPDIR or TEMP environment
+  variables, typically /tmp under Unix operating systems.</li>
+</ul>
+<p>Only active when backend="loky" or "multiprocessing".</p>
+</details>
+<p>max_nbytes int, str, or None, optional, 1M by default
+    Threshold on the size of arrays passed to the workers that
+    triggers automated memory mapping in temp_folder. Can be an int
+    in Bytes, or a human-readable string, e.g., '1M' for 1 megabyte.
+    Use None to disable memmapping of large arrays.
+    Only active when backend="loky" or "multiprocessing".</p>
+<details class="info" open="open"><summary>mmap_mode: {None, 'r+', 'r', 'w+', 'c'}</summary><p>Memmapping mode for numpy arrays passed to workers.
+See 'max_nbytes' parameter documentation for more details.</p>
+</details>
+<h4>Notes</h4>
+<p>This object uses workers to compute in parallel the application of a
+function to many different arguments. The main functionality it brings
+in addition to using the raw multiprocessing or concurrent.futures API
+are (see examples for details):</p>
+<ul>
+<li>
+<p>More readable code, in particular since it avoids
+  constructing list of arguments.</p>
+</li>
+<li>
+<p>Easier debugging:</p>
+<ul>
+<li>informative tracebacks even when the error happens on
+  the client side</li>
+<li>using 'n_jobs=1' enables to turn off parallel computing
+  for debugging without changing the codepath</li>
+<li>early capture of pickling errors</li>
+</ul>
+</li>
+<li>
+<p>An optional progress meter.</p>
+</li>
+<li>
+<p>Interruption of multiprocesses jobs with 'Ctrl-C'</p>
+</li>
+<li>
+<p>Flexible pickling control for the communication to and from
+  the worker processes.</p>
+</li>
+<li>
+<p>Ability to use shared memory efficiently with worker
+  processes for large numpy-based datastructures.</p>
+</li>
+</ul>
+<h4>Examples</h4>
+<p>A simple example:</p>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="n">sqrt</span><span class="p">)(</span><span class="n">i</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">]</span>
+</code></pre></div>
+
+<p>Reshaping the output when the function has several return
+values:</p>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">modf</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">r</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="n">modf</span><span class="p">)(</span><span class="n">i</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">res</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span> <span class="o">*</span><span class="n">r</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">res</span>
+<span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">i</span>
+<span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)</span>
+</code></pre></div>
+
+<p>The progress meter: the higher the value of <code>verbose</code>, the more
+messages:</p>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">r</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">10</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="n">sleep</span><span class="p">)(</span><span class="o">.</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="c1">#doctest: +SKIP</span>
+<span class="p">[</span><span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">2</span><span class="p">)]:</span> <span class="n">Done</span>   <span class="mi">1</span> <span class="n">tasks</span>      <span class="o">|</span> <span class="n">elapsed</span><span class="p">:</span>    <span class="mf">0.6</span><span class="n">s</span>
+<span class="p">[</span><span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">2</span><span class="p">)]:</span> <span class="n">Done</span>   <span class="mi">4</span> <span class="n">tasks</span>      <span class="o">|</span> <span class="n">elapsed</span><span class="p">:</span>    <span class="mf">0.8</span><span class="n">s</span>
+<span class="p">[</span><span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">2</span><span class="p">)]:</span> <span class="n">Done</span>  <span class="mi">10</span> <span class="n">out</span> <span class="n">of</span>  <span class="mi">10</span> <span class="o">|</span> <span class="n">elapsed</span><span class="p">:</span>    <span class="mf">1.4</span><span class="n">s</span> <span class="n">finished</span>
+</code></pre></div>
+
+<p>Traceback example, note how the line of the error is indicated
+as well as the values of the parameter passed to the function that
+triggered the exception, even though the traceback happens in the
+child process:</p>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">heapq</span> <span class="kn">import</span> <span class="n">nlargest</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">2</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="n">nlargest</span><span class="p">)(</span><span class="mi">2</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="s1">&#39;abcde&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> <span class="c1">#doctest: +SKIP</span>
+</code></pre></div>
+
+<h4>#...</h4>
+<h4>Sub-process traceback:</h4>
+<p>TypeError                                          Mon Nov 12 11:37:46 2012</p>
+<details class="info" open="open"><summary>PID: 12934                                    Python 2.7.3: /usr/bin/python</summary></details>
+<p>...........................................................................
+/usr/lib/python2.7/heapq.pyc in nlargest(n=2, iterable=3, key=None)
+    419         if n &gt;= size:
+    420             return sorted(iterable, key=key, reverse=True)[:n]
+    421
+    422     # When key is none, use simpler decoration
+    423     if key is None:
+--&gt; 424         it = izip(iterable, count(0,-1))                    # decorate
+    425         result = _nlargest(n, it)
+    426         return map(itemgetter(0), result)                   # undecorate
+    427
+    428     # General case, slowest method</p>
+<details class="info" open="open"><summary>TypeError: izip argument #1 must support iteration</summary></details>
+<hr />
+<p>Using pre_dispatch in a producer/consumer situation, where the
+data is generated on the fly. Note how the producer is first
+called 3 times before the parallel loop is initiated, and then
+called to generate new data on the fly:</p>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">producer</span><span class="p">():</span>
+<span class="o">...</span>     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
+<span class="o">...</span>         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Produced </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+<span class="o">...</span>         <span class="k">yield</span> <span class="n">i</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">out</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">pre_dispatch</span><span class="o">=</span><span class="s1">&#39;1.5*n_jobs&#39;</span><span class="p">)(</span>
+<span class="o">...</span>                <span class="n">delayed</span><span class="p">(</span><span class="n">sqrt</span><span class="p">)(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">producer</span><span class="p">())</span> <span class="c1">#doctest: +SKIP</span>
+<span class="n">Produced</span> <span class="mi">0</span>
+<span class="n">Produced</span> <span class="mi">1</span>
+<span class="n">Produced</span> <span class="mi">2</span>
+<span class="p">[</span><span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">2</span><span class="p">)]:</span> <span class="n">Done</span> <span class="mi">1</span> <span class="n">jobs</span>     <span class="o">|</span> <span class="n">elapsed</span><span class="p">:</span>  <span class="mf">0.0</span><span class="n">s</span>
+<span class="n">Produced</span> <span class="mi">3</span>
+<span class="p">[</span><span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">2</span><span class="p">)]:</span> <span class="n">Done</span> <span class="mi">2</span> <span class="n">jobs</span>     <span class="o">|</span> <span class="n">elapsed</span><span class="p">:</span>  <span class="mf">0.0</span><span class="n">s</span>
+<span class="n">Produced</span> <span class="mi">4</span>
+<span class="p">[</span><span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">2</span><span class="p">)]:</span> <span class="n">Done</span> <span class="mi">3</span> <span class="n">jobs</span>     <span class="o">|</span> <span class="n">elapsed</span><span class="p">:</span>  <span class="mf">0.0</span><span class="n">s</span>
+<span class="n">Produced</span> <span class="mi">5</span>
+<span class="p">[</span><span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">2</span><span class="p">)]:</span> <span class="n">Done</span> <span class="mi">4</span> <span class="n">jobs</span>     <span class="o">|</span> <span class="n">elapsed</span><span class="p">:</span>  <span class="mf">0.0</span><span class="n">s</span>
+<span class="p">[</span><span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">2</span><span class="p">)]:</span> <span class="n">Done</span> <span class="mi">6</span> <span class="n">out</span> <span class="n">of</span> <span class="mi">6</span> <span class="o">|</span> <span class="n">elapsed</span><span class="p">:</span>  <span class="mf">0.0</span><span class="n">s</span> <span class="n">remaining</span><span class="p">:</span> <span class="mf">0.0</span><span class="n">s</span>
+<span class="p">[</span><span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">2</span><span class="p">)]:</span> <span class="n">Done</span> <span class="mi">6</span> <span class="n">out</span> <span class="n">of</span> <span class="mi">6</span> <span class="o">|</span> <span class="n">elapsed</span><span class="p">:</span>  <span class="mf">0.0</span><span class="n">s</span> <span class="n">finished</span>
+</code></pre></div>
+
+</details>
+<h3 id="debug">debug<a class="headerlink" href="#debug" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">debug</span> <span class="o">:</span>
+  <span class="n">msg</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+</details>
+<h3 id="dispatch_next">dispatch_next<a class="headerlink" href="#dispatch_next" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">dispatch_next</span> <span class="o">:</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Dispatch more data for parallel processing</p>
+<p>This method is meant to be called concurrently by the multiprocessing
+callback. We rely on the thread-safety of dispatch_one_batch to protect
+against concurrent consumption of the unprotected iterator.</p>
+</details>
+<h3 id="dispatch_one_batch">dispatch_one_batch<a class="headerlink" href="#dispatch_one_batch" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">dispatch_one_batch</span> <span class="o">:</span>
+  <span class="n">iterator</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Prefetch the tasks for the next batch and dispatch them.</p>
+<p>The effective size of the batch is computed here.
+If there are no more jobs to dispatch, return False, else return True.</p>
+<p>The iterator consumption and dispatching is protected by the same
+lock so calling this function should be thread safe.</p>
+</details>
+<h3 id="format">format<a class="headerlink" href="#format" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">format</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">indent</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">obj</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Return the formatted representation of the object.</p>
+</details>
+<h3 id="print_progress">print_progress<a class="headerlink" href="#print_progress" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">print_progress</span> <span class="o">:</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Display the process of the parallel execution only a fraction
+of time, controlled by self.verbose.</p>
+</details>
+<h3 id="retrieve">retrieve<a class="headerlink" href="#retrieve" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">retrieve</span> <span class="o">:</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+</details>
+<h3 id="warn">warn<a class="headerlink" href="#warn" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">warn</span> <span class="o">:</span>
+  <span class="n">msg</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+</details>
+<h3 id="to_string_2">to_string<a class="headerlink" href="#to_string_2" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+</details>
+<h3 id="show_2">show<a class="headerlink" href="#show_2" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+</details>
+<h3 id="pp_2">pp<a class="headerlink" href="#pp_2" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+</code></pre></div>
+
+<p>Pretty-print the object to a formatter.</p>
+</details>
+<h2 id="module-sklearnpipelinepipeline">module Sklearn.​Pipeline.​Pipeline<a class="headerlink" href="#module-sklearnpipelinepipeline" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="k">type</span> <span class="n">t</span>
+</code></pre></div>
+
+<h3 id="create_3">create<a class="headerlink" href="#create_3" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">memory</span><span class="o">:[`</span><span class="nc">None</span> <span class="o">|</span> <span class="o">`</span><span class="nc">String</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">JoblibMemory</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">verbose</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
+  <span class="n">steps</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
+  <span class="kt">unit</span> <span class="o">-&gt;</span>
+  <span class="n">t</span>
+</code></pre></div>
+
+<p>Pipeline of transforms with a final estimator.</p>
+<p>Sequentially apply a list of transforms and a final estimator.
+Intermediate steps of the pipeline must be 'transforms', that is, they
+must implement fit and transform methods.
+The final estimator only needs to implement fit.
+The transformers in the pipeline can be cached using <code>memory</code> argument.</p>
+<p>The purpose of the pipeline is to assemble several steps that can be
+cross-validated together while setting different parameters.
+For this, it enables setting parameters of the various steps using their
+names and the parameter name separated by a '__', as in the example below.
+A step's estimator may be replaced entirely by setting the parameter
+with its name to another estimator, or a transformer removed by setting
+it to 'passthrough' or <code>None</code>.</p>
+<p>Read more in the :ref:<code>User Guide &lt;pipeline&gt;</code>.</p>
+<p>.. versionadded:: 0.5</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>steps : list</summary><p>List of (name, transform) tuples (implementing fit/transform) that are
+chained, in the order in which they are chained, with the last object
+an estimator.</p>
+</details>
+<details class="info" open="open"><summary>memory : None, str or object with the joblib.Memory interface, optional</summary><p>Used to cache the fitted transformers of the pipeline. By default,
+no caching is performed. If a string is given, it is the path to
+the caching directory. Enabling caching triggers a clone of
+the transformers before fitting. Therefore, the transformer
+instance given to the pipeline cannot be inspected
+directly. Use the attribute <code>named_steps</code> or <code>steps</code> to
+inspect estimators within the pipeline. Caching the
+transformers is advantageous when fitting is time consuming.</p>
+</details>
+<details class="info" open="open"><summary>verbose : bool, default=False</summary><p>If True, the time elapsed while fitting each step will be printed as it
+is completed.</p>
+</details>
+<h4>Attributes</h4>
+<details class="info" open="open"><summary>named_steps : bunch object, a dictionary with attribute access</summary><p>Read-only attribute to access any step parameter by user given name.
+Keys are step names and values are steps parameters.</p>
+</details>
+<h4>See Also</h4>
+<details class="info" open="open"><summary>sklearn.pipeline.make_pipeline : Convenience function for simplified</summary><p>pipeline construction.</p>
+</details>
+<h4>Examples</h4>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">svm</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">make_classification</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">SelectKBest</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">f_regression</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c1"># generate some data to play with</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_classification</span><span class="p">(</span>
+<span class="o">...</span>     <span class="n">n_informative</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">n_redundant</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c1"># ANOVA SVM-C</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">anova_filter</span> <span class="o">=</span> <span class="n">SelectKBest</span><span class="p">(</span><span class="n">f_regression</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">clf</span> <span class="o">=</span> <span class="n">svm</span><span class="o">.</span><span class="n">SVC</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">anova_svm</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([(</span><span class="s1">&#39;anova&#39;</span><span class="p">,</span> <span class="n">anova_filter</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;svc&#39;</span><span class="p">,</span> <span class="n">clf</span><span class="p">)])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c1"># You can set the parameters using the names issued</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c1"># For instance, fit using a k of 10 in the SelectKBest</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c1"># and a parameter &#39;C&#39; of the svm</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">anova_svm</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="n">anova__k</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">svc__C</span><span class="o">=.</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;anova&#39;</span><span class="p">,</span> <span class="n">SelectKBest</span><span class="p">(</span><span class="o">...</span><span class="p">)),</span> <span class="p">(</span><span class="s1">&#39;svc&#39;</span><span class="p">,</span> <span class="n">SVC</span><span class="p">(</span><span class="o">...</span><span class="p">))])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">prediction</span> <span class="o">=</span> <span class="n">anova_svm</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">anova_svm</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="mf">0.83</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c1"># getting the selected features chosen by anova_filter</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">anova_svm</span><span class="p">[</span><span class="s1">&#39;anova&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get_support</span><span class="p">()</span>
+<span class="n">array</span><span class="p">([</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span>
+       <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span>
+       <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c1"># Another way to get selected features chosen by anova_filter</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">anova_svm</span><span class="o">.</span><span class="n">named_steps</span><span class="o">.</span><span class="n">anova</span><span class="o">.</span><span class="n">get_support</span><span class="p">()</span>
+<span class="n">array</span><span class="p">([</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span>
+       <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span>
+       <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c1"># Indexing can also be used to extract a sub-pipeline.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">sub_pipeline</span> <span class="o">=</span> <span class="n">anova_svm</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">sub_pipeline</span>
+<span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;anova&#39;</span><span class="p">,</span> <span class="n">SelectKBest</span><span class="p">(</span><span class="o">...</span><span class="p">))])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">coef</span> <span class="o">=</span> <span class="n">anova_svm</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">coef_</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">anova_svm</span><span class="p">[</span><span class="s1">&#39;svc&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="n">anova_svm</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="kc">True</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">coef</span><span class="o">.</span><span class="n">shape</span>
+<span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">sub_pipeline</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">coef</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+<span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+</code></pre></div>
+
+</details>
+<h3 id="get_item">get_item<a class="headerlink" href="#get_item" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_item</span> <span class="o">:</span>
+  <span class="n">ind</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">String</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Slice</span> <span class="k">of</span> <span class="o">([`</span><span class="nc">None</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span><span class="o">])</span> <span class="o">*</span> <span class="o">([`</span><span class="nc">None</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span><span class="o">])</span> <span class="o">*</span> <span class="o">([`</span><span class="nc">None</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span><span class="o">])]</span> <span class="o">-&gt;</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Returns a sub-pipeline or a single esimtator in the pipeline</p>
+<p>Indexing with an integer will return an estimator; using a slice
+returns another Pipeline instance which copies a slice of this
+Pipeline. This copy is shallow: modifying (or fitting) estimators in
+the sub-pipeline will affect the larger pipeline and vice-versa.
+However, replacing a value in <code>step</code> will not affect a copy.</p>
+</details>
+<h3 id="decision_function">decision_function<a class="headerlink" href="#decision_function" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">decision_function</span> <span class="o">:</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Apply transforms, and decision_function of the final estimator</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>X : iterable</summary><p>Data to predict on. Must fulfill input requirements of first step
+of the pipeline.</p>
+</details>
+<h4>Returns</h4>
+<details class="info" open="open"><summary>y_score : array-like of shape (n_samples, n_classes)</summary></details>
+</details>
+<h3 id="fit_1">fit<a class="headerlink" href="#fit_1" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">fit_params</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">t</span>
+</code></pre></div>
+
+<p>Fit the model</p>
+<p>Fit all the transforms one after the other and transform the
+data, then fit the transformed data using the final estimator.</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>X : iterable</summary><p>Training data. Must fulfill input requirements of first step of the
+pipeline.</p>
+</details>
+<details class="info" open="open"><summary>y : iterable, default=None</summary><p>Training targets. Must fulfill label requirements for all steps of
+the pipeline.</p>
+</details>
+<details class="info" open="open"><summary>**fit_params : dict of string -&gt; object</summary><p>Parameters passed to the <code>fit</code> method of each step, where
+each parameter name is prefixed such that parameter <code>p</code> for step
+<code>s</code> has key <code>s__p</code>.</p>
+</details>
+<h4>Returns</h4>
+<details class="info" open="open"><summary>self : Pipeline</summary><p>This estimator</p>
+</details>
+</details>
+<h3 id="fit_predict">fit_predict<a class="headerlink" href="#fit_predict" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit_predict</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">fit_params</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Applies fit_predict of last step in pipeline after transforms.</p>
+<p>Applies fit_transforms of a pipeline to the data, followed by the
+fit_predict method of the final estimator in the pipeline. Valid
+only if the final estimator implements fit_predict.</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>X : iterable</summary><p>Training data. Must fulfill input requirements of first step of
+the pipeline.</p>
+</details>
+<details class="info" open="open"><summary>y : iterable, default=None</summary><p>Training targets. Must fulfill label requirements for all steps
+of the pipeline.</p>
+</details>
+<details class="info" open="open"><summary>**fit_params : dict of string -&gt; object</summary><p>Parameters passed to the <code>fit</code> method of each step, where
+each parameter name is prefixed such that parameter <code>p</code> for step
+<code>s</code> has key <code>s__p</code>.</p>
+</details>
+<h4>Returns</h4>
+<details class="info" open="open"><summary>y_pred : array-like</summary></details>
+</details>
+<h3 id="fit_transform_1">fit_transform<a class="headerlink" href="#fit_transform_1" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit_transform</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">fit_params</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Fit the model and transform with the final estimator</p>
+<p>Fits all the transforms one after the other and transforms the
+data, then uses fit_transform on transformed data with the final
+estimator.</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>X : iterable</summary><p>Training data. Must fulfill input requirements of first step of the
+pipeline.</p>
+</details>
+<details class="info" open="open"><summary>y : iterable, default=None</summary><p>Training targets. Must fulfill label requirements for all steps of
+the pipeline.</p>
+</details>
+<details class="info" open="open"><summary>**fit_params : dict of string -&gt; object</summary><p>Parameters passed to the <code>fit</code> method of each step, where
+each parameter name is prefixed such that parameter <code>p</code> for step
+<code>s</code> has key <code>s__p</code>.</p>
+</details>
+<h4>Returns</h4>
+<details class="info" open="open"><summary>Xt : array-like of shape  (n_samples, n_transformed_features)</summary><p>Transformed samples</p>
+</details>
+</details>
+<h3 id="get_params_1">get_params<a class="headerlink" href="#get_params_1" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Get parameters for this estimator.</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>deep : boolean, optional</summary><p>If True, will return the parameters for this estimator and
+contained subobjects that are estimators.</p>
+</details>
+<h4>Returns</h4>
+<details class="info" open="open"><summary>params : mapping of string to any</summary><p>Parameter names mapped to their values.</p>
+</details>
+</details>
+<h3 id="inverse_transform">inverse_transform<a class="headerlink" href="#inverse_transform" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">inverse_transform</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Apply inverse transformations in reverse order</p>
+<p>All estimators in the pipeline must support <code>inverse_transform</code>.</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>Xt : array-like of shape  (n_samples, n_transformed_features)</summary><p>Data samples, where <code>n_samples</code> is the number of samples and
+<code>n_features</code> is the number of features. Must fulfill
+input requirements of last step of pipeline's
+<code>inverse_transform</code> method.</p>
+</details>
+<h4>Returns</h4>
+<details class="info" open="open"><summary>Xt : array-like of shape (n_samples, n_features)</summary></details>
+</details>
+<h3 id="predict">predict<a class="headerlink" href="#predict" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">predict_params</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Apply transforms to the data, and predict with the final estimator</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>X : iterable</summary><p>Data to predict on. Must fulfill input requirements of first step
+of the pipeline.</p>
+</details>
+<details class="info" open="open"><summary>**predict_params : dict of string -&gt; object</summary><p>Parameters to the <code>predict</code> called at the end of all
+transformations in the pipeline. Note that while this may be
+used to return uncertainties from some models with return_std
+or return_cov, uncertainties that are generated by the
+transformations in the pipeline are not propagated to the
+final estimator.</p>
+</details>
+<h4>Returns</h4>
+<details class="info" open="open"><summary>y_pred : array-like</summary></details>
+</details>
+<h3 id="predict_log_proba">predict_log_proba<a class="headerlink" href="#predict_log_proba" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict_log_proba</span> <span class="o">:</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Apply transforms, and predict_log_proba of the final estimator</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>X : iterable</summary><p>Data to predict on. Must fulfill input requirements of first step
+of the pipeline.</p>
+</details>
+<h4>Returns</h4>
+<details class="info" open="open"><summary>y_score : array-like of shape (n_samples, n_classes)</summary></details>
+</details>
+<h3 id="predict_proba">predict_proba<a class="headerlink" href="#predict_proba" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict_proba</span> <span class="o">:</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Apply transforms, and predict_proba of the final estimator</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>X : iterable</summary><p>Data to predict on. Must fulfill input requirements of first step
+of the pipeline.</p>
+</details>
+<h4>Returns</h4>
+<details class="info" open="open"><summary>y_proba : array-like of shape (n_samples, n_classes)</summary></details>
+</details>
+<h3 id="score">score<a class="headerlink" href="#score" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="kt">float</span>
+</code></pre></div>
+
+<p>Apply transforms, and score with the final estimator</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>X : iterable</summary><p>Data to predict on. Must fulfill input requirements of first step
+of the pipeline.</p>
+</details>
+<details class="info" open="open"><summary>y : iterable, default=None</summary><p>Targets used for scoring. Must fulfill label requirements for all
+steps of the pipeline.</p>
+</details>
+<details class="info" open="open"><summary>sample_weight : array-like, default=None</summary><p>If not None, this argument is passed as <code>sample_weight</code> keyword
+argument to the <code>score</code> method of the final estimator.</p>
+</details>
+<h4>Returns</h4>
+<details class="info" open="open"><summary>score : float</summary></details>
+</details>
+<h3 id="score_samples">score_samples<a class="headerlink" href="#score_samples" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score_samples</span> <span class="o">:</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Apply transforms, and score_samples of the final estimator.</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>X : iterable</summary><p>Data to predict on. Must fulfill input requirements of first step
+of the pipeline.</p>
+</details>
+<h4>Returns</h4>
+<details class="info" open="open"><summary>y_score : ndarray, shape (n_samples,)</summary></details>
+</details>
+<h3 id="set_params_1">set_params<a class="headerlink" href="#set_params_1" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_params</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">kwargs</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">t</span>
+</code></pre></div>
+
+<p>Set the parameters of this estimator.</p>
+<p>Valid parameter keys can be listed with <code>get_params()</code>.</p>
+<h4>Returns</h4>
+<p>self</p>
+</details>
+<h3 id="named_steps">named_steps<a class="headerlink" href="#named_steps" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">named_steps</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>This attribute is documented in <code>create</code> above.</p>
+</details>
+<h3 id="to_string_3">to_string<a class="headerlink" href="#to_string_3" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+</details>
+<h3 id="show_3">show<a class="headerlink" href="#show_3" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+</details>
+<h3 id="pp_3">pp<a class="headerlink" href="#pp_3" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+</code></pre></div>
+
+<p>Pretty-print the object to a formatter.</p>
+</details>
+<h2 id="module-sklearnpipelinetransformermixin">module Sklearn.​Pipeline.​TransformerMixin<a class="headerlink" href="#module-sklearnpipelinetransformermixin" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="k">type</span> <span class="n">t</span>
+</code></pre></div>
+
+<h3 id="create_4">create<a class="headerlink" href="#create_4" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
+  <span class="kt">unit</span> <span class="o">-&gt;</span>
+  <span class="n">t</span>
+</code></pre></div>
+
+<p>Mixin class for all transformers in scikit-learn.</p>
+</details>
+<h3 id="fit_transform_2">fit_transform<a class="headerlink" href="#fit_transform_2" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit_transform</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">fit_params</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Fit to data, then transform it.</p>
+<p>Fits transformer to X and y with optional parameters fit_params
+and returns a transformed version of X.</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>X : numpy array of shape [n_samples, n_features]</summary><p>Training set.</p>
+</details>
+<details class="info" open="open"><summary>y : numpy array of shape [n_samples]</summary><p>Target values.</p>
+</details>
+<details class="info" open="open"><summary>**fit_params : dict</summary><p>Additional fit parameters.</p>
+</details>
+<h4>Returns</h4>
+<details class="info" open="open"><summary>X_new : numpy array of shape [n_samples, n_features_new]</summary><p>Transformed array.</p>
+</details>
+</details>
+<h3 id="to_string_4">to_string<a class="headerlink" href="#to_string_4" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+</details>
+<h3 id="show_4">show<a class="headerlink" href="#show_4" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+</details>
+<h3 id="pp_4">pp<a class="headerlink" href="#pp_4" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+</code></pre></div>
+
+<p>Pretty-print the object to a formatter.</p>
+</details>
+<h3 id="check_memory">check_memory<a class="headerlink" href="#check_memory" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">check_memory</span> <span class="o">:</span>
+  <span class="n">memory</span><span class="o">:[`</span><span class="nc">String</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">JoblibMemory</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="kt">unit</span> <span class="o">-&gt;</span>
+  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Check that <code>memory</code> is joblib.Memory-like.</p>
+<p>joblib.Memory-like means that <code>memory</code> can be converted into a
+joblib.Memory instance (typically a str denoting the <code>location</code>)
+or has the same interface (has a <code>cache</code> method).</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>memory : None, str or object with the joblib.Memory interface</summary></details>
+<h4>Returns</h4>
+<details class="info" open="open"><summary>memory : object with the joblib.Memory interface</summary></details>
+<h4>Raises</h4>
+<p>ValueError
+    If <code>memory</code> is not joblib.Memory-like.</p>
+</details>
+<h3 id="clone">clone<a class="headerlink" href="#clone" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">clone</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">safe</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
+  <span class="n">estimator</span><span class="o">:[`</span><span class="nc">Estimator</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">ArrayLike</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="kt">unit</span> <span class="o">-&gt;</span>
+  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Constructs a new estimator with the same parameters.</p>
+<p>Clone does a deep copy of the model in an estimator
+without actually copying attached data. It yields a new estimator
+with the same parameters that has not been fit on any data.</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>estimator : estimator object, or list, tuple or set of objects</summary><p>The estimator or group of estimators to be cloned</p>
+</details>
+<details class="info" open="open"><summary>safe : boolean, optional</summary><p>If safe is false, clone will fall back to a deep copy on objects
+that are not estimators.</p>
+</details>
+</details>
+<h3 id="delayed">delayed<a class="headerlink" href="#delayed" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">delayed</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">check_pickle</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">function_</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="kt">unit</span> <span class="o">-&gt;</span>
+  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Decorator used to capture the arguments of a function.</p>
+</details>
+<h3 id="if_delegate_has_method">if_delegate_has_method<a class="headerlink" href="#if_delegate_has_method" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">if_delegate_has_method</span> <span class="o">:</span>
+  <span class="n">delegate</span><span class="o">:[`</span><span class="nc">String</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">StringList</span> <span class="k">of</span> <span class="kt">string</span> <span class="kt">list</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="kt">unit</span> <span class="o">-&gt;</span>
+  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Create a decorator for methods that are delegated to a sub-estimator</p>
+<p>This enables ducktyping by hasattr returning True according to the
+sub-estimator.</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>delegate : string, list of strings or tuple of strings</summary><p>Name of the sub-estimator that can be accessed as an attribute of the
+base object. If a list or a tuple of names are provided, the first
+sub-estimator that is an attribute of the base object will be used.</p>
+</details>
+</details>
+<h3 id="make_pipeline">make_pipeline<a class="headerlink" href="#make_pipeline" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">make_pipeline</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">kwargs</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
+  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span> <span class="o">-&gt;</span>
+  <span class="nn">Pipeline</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Construct a Pipeline from the given estimators.</p>
+<p>This is a shorthand for the Pipeline constructor; it does not require, and
+does not permit, naming the estimators. Instead, their names will be set
+to the lowercase of their types automatically.</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>*steps : list of estimators.</summary></details>
+<details class="info" open="open"><summary>memory : None, str or object with the joblib.Memory interface, optional</summary><p>Used to cache the fitted transformers of the pipeline. By default,
+no caching is performed. If a string is given, it is the path to
+the caching directory. Enabling caching triggers a clone of
+the transformers before fitting. Therefore, the transformer
+instance given to the pipeline cannot be inspected
+directly. Use the attribute <code>named_steps</code> or <code>steps</code> to
+inspect estimators within the pipeline. Caching the
+transformers is advantageous when fitting is time consuming.</p>
+</details>
+<details class="info" open="open"><summary>verbose : boolean, default=False</summary><p>If True, the time elapsed while fitting each step will be printed as it
+is completed.</p>
+</details>
+<h4>See Also</h4>
+<details class="info" open="open"><summary>sklearn.pipeline.Pipeline : Class for creating a pipeline of</summary><p>transforms with a final estimator.</p>
+</details>
+<h4>Examples</h4>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.naive_bayes</span> <span class="kn">import</span> <span class="n">GaussianNB</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">GaussianNB</span><span class="p">(</span><span class="n">priors</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span>
+<span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;standardscaler&#39;</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+                <span class="p">(</span><span class="s1">&#39;gaussiannb&#39;</span><span class="p">,</span> <span class="n">GaussianNB</span><span class="p">())])</span>
+</code></pre></div>
+
+<h4>Returns</h4>
+<details class="info" open="open"><summary>p : Pipeline</summary></details>
+</details>
+<h3 id="make_union">make_union<a class="headerlink" href="#make_union" title="Permanent link">&para;</a></h3>
+<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">make_union</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">kwargs</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
+  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span> <span class="o">-&gt;</span>
+  <span class="nn">FeatureUnion</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Construct a FeatureUnion from the given transformers.</p>
+<p>This is a shorthand for the FeatureUnion constructor; it does not require,
+and does not permit, naming the transformers. Instead, they will be given
+names automatically based on their types. It also does not allow weighting.</p>
+<h4>Parameters</h4>
+<details class="info" open="open"><summary>*transformers : list of estimators</summary></details>
+<details class="info" open="open"><summary>n_jobs : int or None, optional (default=None)</summary><p>Number of jobs to run in parallel.
+<code>None</code> means 1 unless in a :obj:<code>joblib.parallel_backend</code> context.
+<code>-1</code> means using all processors. See :term:<code>Glossary &lt;n_jobs&gt;</code>
+for more details.</p>
+</details>
+<details class="info" open="open"><summary>verbose : boolean, optional(default=False)</summary><p>If True, the time elapsed while fitting each transformer will be
+printed as it is completed.</p>
+</details>
+<h4>Returns</h4>
+<details class="info" open="open"><summary>f : FeatureUnion</summary></details>
+<h4>See Also</h4>
+<details class="info" open="open"><summary>sklearn.pipeline.FeatureUnion : Class for concatenating the results</summary><p>of multiple transformer objects.</p>
+</details>
+<h4>Examples</h4>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span><span class="p">,</span> <span class="n">TruncatedSVD</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">make_union</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">make_union</span><span class="p">(</span><span class="n">PCA</span><span class="p">(),</span> <span class="n">TruncatedSVD</span><span class="p">())</span>
+ <span class="n">FeatureUnion</span><span class="p">(</span><span class="n">transformer_list</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;pca&#39;</span><span class="p">,</span> <span class="n">PCA</span><span class="p">()),</span>
+                               <span class="p">(</span><span class="s1">&#39;truncatedsvd&#39;</span><span class="p">,</span> <span class="n">TruncatedSVD</span><span class="p">())])</span>
+</code></pre></div>
+
+</details>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../neural_network/" title="Neural network" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Neural network
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../preprocessing/" title="Preprocessing" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Preprocessing
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z" /></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/vendor.36cbf620.min.js"></script>
+      <script src="../assets/javascripts/bundle.00c583dd.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      
+      <script>
+        app = initialize({
+          base: "..",
+          features: ["instant"],
+          search: Object.assign({
+            worker: "../assets/javascripts/worker/search.7f7c8775.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      
+    
+  </body>
+</html>
