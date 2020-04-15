@@ -1062,7 +1062,7 @@ class Class:
             "\n(** Print the object to a human-readable representation. *)\n")
         f.write("val show : t -> string\n\n")
         f.write("(** Pretty-print the object to a formatter. *)\n")
-        f.write("val pp : Format.formatter -> t -> unit\n\n")
+        f.write("val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]\n\n")
         if wrap:
             f.write("\nend\n\n")
 

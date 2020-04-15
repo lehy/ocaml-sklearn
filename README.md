@@ -50,7 +50,7 @@ scikit-learn inside:
 ```sh
 python3 -mvenv .venv
 source .venv/bin/activate
-pip install scikit-learn==%%SKLEARN_FULL_VERSION%%
+pip install scikit-learn==%%SKLEARN_FULL_VERSION%% pytest
 ```
 
 Then run your compiled OCaml program inside the virtualenv:
