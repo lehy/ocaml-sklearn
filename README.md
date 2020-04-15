@@ -10,22 +10,30 @@ from OCaml.
 scikit-learn and what is accessible should work, but some
 functionalities may be hard to use or inaccessible yet.**
 
-## Example
+## Example : support vector regresion with RBF kernel
 
 ```ocaml
 let n_samples, n_features = 10, 5 in
 Random.init 0;
 let y = Sklearn.Ndarray.of_bigarray @@ Owl.Arr.uniform [|n_samples|] in
-let x = Sklearn.Ndarray.of_bigarray @@ Matrix.uniform n_samples n_features in
+let x = Sklearn.Ndarray.of_bigarray @@ Owl.Dense.Matrix.D.uniform n_samples n_features in
 let open Sklearn.Svm in
 let clf = SVR.create ~c:1.0 ~epsilon:0.2 () in
-Format.printf "%a" SVR.pp @@ SVR.fit clf ~x:(`Ndarray x) ~y;
+Format.printf "%a\n" SVR.pp @@ SVR.fit clf ~x:(`Ndarray x) ~y;
+Format.printf "%a\n" Sklearn.Ndarray.pp @@ SVR.support_vectors_ clf;;
 ```
 
 This outputs:
 ```
 SVR(C=1.0, cache_size=200, coef0=0.0, degree=3, epsilon=0.2, gamma='scale',
     kernel='rbf', max_iter=-1, shrinking=True, tol=0.001, verbose=False)
+[[0.14509922 0.16277752 0.99033894 0.84013554 0.96508279]
+ [0.8865312  0.80655193 0.07459775 0.36058768 0.22130337]
+ [0.21844203 0.09612442 0.49908686 0.1154579  0.98202969]
+ [0.07306658 0.97225754 0.20558949 0.16423512 0.57400651]
+ [0.08153976 0.41462111 0.66190418 0.70208221 0.3600998 ]
+ [0.20502873 0.04244781 0.21800856 0.28184598 0.4282653 ]
+ [0.89211037 0.51466381 0.23432621 0.29850877 0.13323457]]
 ```
 
 There are more examples in
