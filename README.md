@@ -97,4 +97,33 @@ ocaml-sklearn's sources are generated using a Python program (see
 `lib/skdoc.py`) that loads up sklearn and uses introspection to generate
 bindings based on `pyml`.
 
+### Python requirements
 
+The requirements for developing (not using) the bindings are in file
+`requirements-dev.txt`. Install it using:
+
+~~~sh
+python3 -mvenv .venv
+source .venv/bin/activate
+pip install -r requirements-dev.txt
+~~~
+
+### Running tests
+
+~~~sh
+dune runtest
+~~~
+
+### Generating documentation
+
+~~~sh
+dune build @mkdocs
+~~~
+
+Documentation can then be found in `_build/default/html_doc/`. Serve
+it locally with something like:
+
+~~~sh
+python3 -mhttp.server --directory _build/default/html_doc
+xdg-open http://localhost:8000
+~~~
