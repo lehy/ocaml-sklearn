@@ -35,21 +35,27 @@ if [[ "$UNTRACKED" != "" ]]; then
     exit 1
 fi
 
-CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-if [[ "$CURRENT_BRANCH" != "$BRANCH" ]]; then
-    # echo "You are not on branch $BRANCH but you should be."
-    # exit 1
-    echo "Checking out branch $BRANCH"
-    git checkout "$BRANCH"
-fi
+# CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+# if [[ "$CURRENT_BRANCH" != "$BRANCH" ]]; then
+#     echo "Checking out branch $BRANCH"
+#     git checkout "$BRANCH"
+# fi
 
 if [[ $(git tag -l "$TAG") ]]; then
     echo "Tag $TAG already exists. Maybe bump the version in lib/version.sh?"
     exit 1
 fi
 
+INITIAL_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+
+git checkout master
+
+# Make sure everything builds in master, and generate the generated
+# files.
 dune build @install @runtest
 "$ROOT/lib/build-doc"
+
+git checkout "$BRANCH"
 
 cp "$ROOT/_build/default/lib/"*.{ml,mli} "$ROOT/lib/"
 git add "$ROOT"/lib/*.{ml,mli} "$ROOT/sklearn.opam"
@@ -57,3 +63,5 @@ git diff-index --quiet HEAD || git commit -m 'add generated files to release bra
 
 git tag -a "$TAG" -m "Tag release $TAG."
 
+# Come back to where we were.
+git checkout "$INITIAL_BRANCH"
