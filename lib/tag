@@ -57,6 +57,8 @@ dune build @install @runtest
 
 git checkout "$BRANCH"
 
+git merge master -m 'merge from master'
+
 cp "$ROOT/_build/default/lib/"*.{ml,mli} "$ROOT/lib/"
 git add "$ROOT"/lib/*.{ml,mli} "$ROOT/sklearn.opam"
 git diff-index --quiet HEAD || git commit -m 'add generated files to release branch'
