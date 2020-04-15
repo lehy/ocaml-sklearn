@@ -1,0 +1,58 @@
+#!/bin/bash
+# tagging for release
+# - are we on the right branch?
+# - have we committed generated .py and .md files?
+# - does the tag not exist yet?
+
+set -e
+# set -x
+
+ROOT=$(realpath $(dirname "$0"))/..
+# echo "ROOT from $0 is $ROOT"
+
+source "$ROOT/lib/version.sh"
+
+TAG="$OCAML_SKLEARN_FULL_VERSION"
+BRANCH="$SKLEARN_BASIC_VERSION"
+echo "Attempting to tag version $TAG on branch $BRANCH."
+
+if [[ $(git status -s) ]]; then
+    echo "There are some uncommitted changes, finish them:"
+    git status -s
+    exit 1
+fi
+
+UNTRACKED=$(git ls-files --other --directory --exclude-standard)
+if [[ "$UNTRACKED" != "" ]]; then
+    echo "There are untracked files, do something about it:"
+    echo "$UNTRACKED"
+    exit 1
+fi
+
+CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+if [[ "$CURRENT_BRANCH" != "$BRANCH" ]]; then
+    # echo "You are not on branch $BRANCH but you should be."
+    # exit 1
+    echo "Checking out branch $BRANCH"
+    git checkout "$BRANCH"
+fi
+
+if [[ $(git tag -l "$TAG") ]]; then
+    echo "Tag $TAG already exists. Maybe bump the version in lib/version.sh?"
+    exit 1
+fi
+
+dune build @all @runtest @extract-doc
+
+# XXX TODO: doc?
+cp "$ROOT/_build/default/lib/"*.{ml,mli} "$ROOT/lib/"
+git add "$ROOT"/lib/*.{ml,mli}
+git commit -m 'add generated files to release branch'
+
+if ! git ls-files --error-unmatch "$ROOT/lib/svm.ml" "$ROOT/lib/neighbors.ml"; then
+    echo "It seems you forgot to commit generated files in the release branch."
+    exit 1
+fi
+
+git tag -a "$TAG"
+
