@@ -90,6 +90,13 @@ module Float : sig
       may find Owl useful for building the bigarray. *)
   val of_bigarray : (float, Bigarray.float64_elt, Bigarray.c_layout) Bigarray.Genarray.t -> t
 
+  (** ### to_bigarray
+
+      Build a bigarray that shares the same data as the
+      Ndarray. Raises an exception if the Ndarray has the wrong dtype
+      or layout. *)
+  val to_bigarray : t -> (float, Bigarray.float64_elt, Bigarray.c_layout) Bigarray.Genarray.t
+  
   (** ### matrices
 
       Build a Python list of Ndarrays, with each Ndarray being a
@@ -126,6 +133,13 @@ module Int : sig
       may find Owl useful for building the bigarray. *)
   val of_bigarray : (nativeint, Bigarray.nativeint_elt, Bigarray.c_layout) Bigarray.Genarray.t -> t
 
+  (** ### to_bigarray
+
+      Build a bigarray that shares the same data as the
+      Ndarray. Raises an exception if the Ndarray has the wrong dtype
+      or layout. *)
+  val to_bigarray : t -> (nativeint, Bigarray.nativeint_elt, Bigarray.c_layout) Bigarray.Genarray.t
+
   (** ### matrices
 
       Build a Python list of Ndarrays, with each Ndarray being a
@@ -155,4 +169,3 @@ module String : sig
       vector initialized from an OCaml string array. *)
   val vectors : string array list -> List.t
 end
-

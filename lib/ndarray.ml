@@ -23,6 +23,8 @@ module Float = struct
     |> Bigarray.genarray_of_array1 |> Numpy.of_bigarray
   let of_bigarray ba = Numpy.of_bigarray ba
 
+  let to_bigarray x = Numpy.to_bigarray Bigarray.float64 Bigarray.c_layout x
+ 
   let matrices values =
     List.of_list_map matrix values
   let vectors values =
@@ -38,6 +40,8 @@ module Int = struct
     |> Bigarray.genarray_of_array2 |> Numpy.of_bigarray
   let of_bigarray ba = Numpy.of_bigarray ba
 
+  let to_bigarray x = Numpy.to_bigarray Bigarray.nativeint Bigarray.c_layout x
+  
   let matrices values =
     List.of_list_map matrix values
   let vectors values =
