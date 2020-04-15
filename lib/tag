@@ -12,6 +12,12 @@ ROOT=$(realpath $(dirname "$0"))/..
 
 source "$ROOT/lib/version.sh"
 
+DUNE_VERSION="$(grep version "$ROOT/dune-project")"
+if [[ "$DUNE_VERSION" != "(version $OCAML_SKLEARN_FULL_VERSION)" ]]; then
+    echo "The version in $ROOT/dune-project is wrong $DUNE_VERSION, set it to $OCAML_SKLEARN_FULL_VERSION"
+    exit 1
+fi
+
 TAG="$OCAML_SKLEARN_FULL_VERSION"
 BRANCH="$SKLEARN_BASIC_VERSION"
 echo "Attempting to tag version $TAG on branch $BRANCH."
