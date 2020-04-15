@@ -53,5 +53,5 @@ if ! git ls-files --error-unmatch "$ROOT/lib/svm.ml" "$ROOT/lib/neighbors.ml"; t
     exit 1
 fi
 
-git tag -a "$TAG"
+git tag -a "$TAG" -m "Tag release $TAG."
 
