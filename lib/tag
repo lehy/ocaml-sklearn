@@ -42,7 +42,7 @@ if [[ $(git tag -l "$TAG") ]]; then
     exit 1
 fi
 
-dune build @all @runtest @extract-doc
+dune build @all @runtest @mkdocs
 
 cp "$ROOT/_build/default/lib/"*.{ml,mli} "$ROOT/lib/"
 git add "$ROOT"/lib/*.{ml,mli}
