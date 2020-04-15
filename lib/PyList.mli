@@ -18,7 +18,7 @@ module type S = sig
   val append : t -> elt -> unit
 
   val show : t -> string
-  val pp : Format.formatter -> t -> unit
+  val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 end
 
 module Make : functor (X : ELEMENT) -> (S with type elt := X.t)

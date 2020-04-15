@@ -41,7 +41,7 @@ val show : t -> string
 (** ### pp
 
     Pretty-print the Ndarray.  *)
-val pp : Format.formatter -> t -> unit
+val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 (** ### to_pyobject
 
