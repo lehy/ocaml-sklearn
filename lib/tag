@@ -48,7 +48,7 @@ if [[ $(git tag -l "$TAG") ]]; then
     exit 1
 fi
 
-dune build @all @runtest
+dune build @install @runtest
 "$ROOT/lib/build-doc"
 
 cp "$ROOT/_build/default/lib/"*.{ml,mli} "$ROOT/lib/"
