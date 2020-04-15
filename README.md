@@ -123,14 +123,14 @@ dune runtest
 ### Generating documentation
 
 ~~~sh
-dune build @mkdocs
+lib/build-doc
 ~~~
 
-Documentation can then be found in `_build/default/html_doc/`. Serve
+Documentation can then be found in `html_doc/`. Serve
 it locally with something like:
 
 ~~~sh
-python3 -mhttp.server --directory _build/default/html_doc
+python3 -mhttp.server --directory html_doc
 xdg-open http://localhost:8000
 ~~~
 

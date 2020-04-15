@@ -12,5 +12,5 @@ if [[ $(git status -s) ]]; then
     exit 1
 fi
 
-dune build @mkdocs
-ghp-import -np "$ROOT/_build/default/html_doc/"
+"$ROOT/lib/build-doc"
+ghp-import -np "$ROOT/html_doc/"

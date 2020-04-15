@@ -3,6 +3,8 @@
  (deps lib/version.sh lib/skdoc.sh lib/skdoc.py)
  (action (run bash lib/skdoc.sh examples)))
 
+;; XXX Running once works, but running a second time does nothing and
+;; erases the output of the first run in _build/default/html_doc.
 (rule
  (alias mkdocs)
  (deps lib/version.sh lib/skdoc.sh lib/skdoc.py lib/ndarray.mli
