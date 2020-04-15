@@ -1,5 +1,7 @@
 # scikit-learn for OCaml, version %%OCAML_SKLEARN_FULL_VERSION%%
 
+[Read the online documentation here.](https://lehy.github.io/ocaml-sklearn/)
+
 ocaml-sklearn allows using Python's
 [scikit-learn](https://scikit-learn.org/) machine learning library
 from OCaml.
@@ -26,8 +28,10 @@ SVR(C=1.0, cache_size=200, coef0=0.0, degree=3, epsilon=0.2, gamma='scale',
     kernel='rbf', max_iter=-1, shrinking=True, tol=0.001, verbose=False)
 ```
 
-There are more examples in `examples/auto`, for instance
-`examples/auto/svm.ml`.
+There are more examples in
+[`examples/auto`](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/),
+for instance
+[`examples/auto/svm.ml`](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/svm.ml).
 
 ## Installation
 
