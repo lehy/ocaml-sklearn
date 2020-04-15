@@ -1,6 +1,6 @@
 (lang dune 2.4)
 (name sklearn)
-(version 0.22.2.post1-0.0.1)
+(version 0.22-0.1.0)
 
 (generate_opam_files true)
 
@@ -11,8 +11,8 @@
 
 (package
  (name sklearn)
- (synopsis "scikit-learn machine learning library for OCaml")
- (description "scikit-learn machine learning library for OCaml
+ (synopsis "Scikit-learn machine learning library for OCaml")
+ (description "Scikit-learn machine learning library for OCaml
 These are bindings to Python's scikit-learn machine learning library:
 - Simple and efficient tools for predictive data analysis
 - Accessible to everybody, and reusable in various contexts
