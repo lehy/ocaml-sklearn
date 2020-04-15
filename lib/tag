@@ -48,10 +48,5 @@ cp "$ROOT/_build/default/lib/"*.{ml,mli} "$ROOT/lib/"
 git add "$ROOT"/lib/*.{ml,mli}
 git commit -m 'add generated files to release branch'
 
-if ! git ls-files --error-unmatch "$ROOT/lib/svm.ml" "$ROOT/lib/neighbors.ml"; then
-    echo "It seems you forgot to commit generated files in the release branch."
-    exit 1
-fi
-
 git tag -a "$TAG" -m "Tag release $TAG."
 

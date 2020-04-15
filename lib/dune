@@ -32,4 +32,5 @@
                csr_matrix.mli version.ml)
 
       (deps version.sh skdoc.sh skdoc.py)
-      (action (run bash skdoc.sh build)))
+      (action (run bash skdoc.sh build))
+      (mode fallback))
