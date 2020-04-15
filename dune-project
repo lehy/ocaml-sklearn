@@ -1,6 +1,6 @@
 (lang dune 2.4)
 (name sklearn)
-(version 0.22-0.1.1)
+(version 0.22-0.1.2)
 
 (generate_opam_files true)
 
