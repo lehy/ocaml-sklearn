@@ -12,13 +12,13 @@
 (package
  (name sklearn)
  (synopsis "scikit-learn machine learning library for OCaml")
- (description """scikit-learn machine learning library for OCaml
+ (description "scikit-learn machine learning library for OCaml
 These are bindings to Python's scikit-learn machine learning library:
 - Simple and efficient tools for predictive data analysis
 - Accessible to everybody, and reusable in various contexts
 - Built on NumPy, SciPy, and matplotlib
 - Open source, commercially usable - BSD license
-""")
+")
  (depends
   (ocaml (>= 4.07.1))
   (ppx_expect :with-test)
