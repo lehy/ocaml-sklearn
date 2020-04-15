@@ -6,6 +6,8 @@ theme:
   palette:
     primary: 'indigo'
     accent: 'indigo'
+  features:
+    - instant
 markdown_extensions:
   - admonition
   - pymdownx.superfences
@@ -20,3 +22,5 @@ plugins:
   - search
 extra_javascript:
   - 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML'
+repo_name: lehy/ocaml-sklearn
+repo_url: https://github.com/lehy/ocaml-sklearn
