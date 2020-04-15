@@ -3,3 +3,5 @@
 _build/
 .venv/
 .mypy_cache
+_disabled
+compile_commands.json
