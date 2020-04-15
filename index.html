@@ -84,7 +84,7 @@
           </span>
           <span class="md-header-nav__topic md-ellipsis">
             
-              scikit-learn for OCaml, version 0.22-0.0.1
+              scikit-learn for OCaml, version 0.22-0.1.0
             
           </span>
         </div>
@@ -191,14 +191,14 @@
     
     
       <label class="md-nav__link md-nav__link--active" for="__toc">
-        scikit-learn for OCaml, version 0.22-0.0.1
+        scikit-learn for OCaml, version 0.22-0.1.0
         <span class="md-nav__icon md-icon">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3,9H17V7H3V9M3,13H17V11H3V13M3,17H17V15H3V17M19,17H21V15H19V17M19,7V9H21V7H19M19,13H21V11H19V13Z" /></svg>
         </span>
       </label>
     
-    <a href="." title="scikit-learn for OCaml, version 0.22-0.0.1" class="md-nav__link md-nav__link--active">
-      scikit-learn for OCaml, version 0.22-0.0.1
+    <a href="." title="scikit-learn for OCaml, version 0.22-0.1.0" class="md-nav__link md-nav__link--active">
+      scikit-learn for OCaml, version 0.22-0.1.0
     </a>
     
       
@@ -668,18 +668,6 @@
 
 
   <li class="md-nav__item">
-    <a href="ndarray/" title="Ndarray" class="md-nav__link">
-      Ndarray
-    </a>
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
     <a href="neighbors/" title="Neighbors" class="md-nav__link">
       Neighbors
     </a>
@@ -806,18 +794,6 @@
   </li>
 
     
-      
-      
-      
-
-
-  <li class="md-nav__item">
-    <a href="version/" title="Version" class="md-nav__link">
-      Version
-    </a>
-  </li>
-
-    
   </ul>
 </nav>
                   </div>
@@ -930,7 +906,8 @@
                   
                 
                 
-                <h1>scikit-learn for OCaml, version 0.22-0.0.1</h1>
+                <h1>scikit-learn for OCaml, version 0.22-0.1.0</h1>
+<p><a href="https://lehy.github.io/ocaml-sklearn/">Read the online documentation here.</a></p>
 <p>ocaml-sklearn allows using Python's
 <a href="https://scikit-learn.org/">scikit-learn</a> machine learning library
 from OCaml.</p>
@@ -951,8 +928,10 @@ functionalities may be hard to use or inaccessible yet.</strong></p>
 <div class="highlight"><pre><span></span><code>SVR(C=1.0, cache_size=200, coef0=0.0, degree=3, epsilon=0.2, gamma=&#39;scale&#39;,
     kernel=&#39;rbf&#39;, max_iter=-1, shrinking=True, tol=0.001, verbose=False)
 </code></pre></div></p>
-<p>There are more examples in <code>examples/auto</code>, for instance
-<code>examples/auto/svm.ml</code>.</p>
+<p>There are more examples in
+<a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/"><code>examples/auto</code></a>,
+for instance
+<a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/svm.ml"><code>examples/auto/svm.ml</code></a>.</p>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
 <p>(TODO, need to publish on opam)</p>
 <h2 id="finding-pythons-scikit-learn-at-runtime">Finding Python's scikit-learn at runtime<a class="headerlink" href="#finding-pythons-scikit-learn-at-runtime" title="Permanent link">&para;</a></h2>
@@ -964,7 +943,7 @@ your OCaml program in the activated virtualenv.</p>
 scikit-learn inside:</p>
 <div class="highlight"><pre><span></span><code>python3 -mvenv .venv
 <span class="nb">source</span> .venv/bin/activate
-pip install scikit-learn<span class="o">==</span><span class="m">0</span>.22.2.post1
+pip install scikit-learn<span class="o">==</span><span class="m">0</span>.22.2.post1 pytest
 </code></pre></div>
 
 <p>Then run your compiled OCaml program inside the virtualenv:</p>
@@ -1002,8 +981,9 @@ can always escape and use <code>pyml</code> directly if the API provided here is
 incomplete.</p>
 <h2 id="development-notes">Development notes<a class="headerlink" href="#development-notes" title="Permanent link">&para;</a></h2>
 <p>ocaml-sklearn's sources are generated using a Python program (see
-<code>lib/skdoc.py</code>) that loads up sklearn and uses introspection to generate
-bindings based on <code>pyml</code>.</p>
+<code>lib/skdoc.py</code>) that loads up sklearn and uses introspection to
+generate bindings based on <code>pyml</code>. To determine types, it parses
+scikit-learn's documentation.</p>
 <h3 id="python-requirements">Python requirements<a class="headerlink" href="#python-requirements" title="Permanent link">&para;</a></h3>
 <p>The requirements for developing (not using) the bindings are in file
 <code>requirements-dev.txt</code>. Install it using:</p>
@@ -1017,12 +997,12 @@ pip install -r requirements-dev.txt
 </code></pre></div>
 
 <h3 id="generating-documentation">Generating documentation<a class="headerlink" href="#generating-documentation" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>dune build @mkdocs
+<div class="highlight"><pre><span></span><code>lib/build-doc
 </code></pre></div>
 
-<p>Documentation can then be found in <code>_build/default/html_doc/</code>. Serve
+<p>Documentation can then be found in <code>html_doc/</code>. Serve
 it locally with something like:</p>
-<div class="highlight"><pre><span></span><code>python3 -mhttp.server --directory _build/default/html_doc
+<div class="highlight"><pre><span></span><code>python3 -mhttp.server --directory html_doc
 xdg-open http://localhost:8000
 </code></pre></div>
 
