@@ -1,4 +1,5 @@
 flake8
+ghp-import
 jedi
 ipython
 mkdocs
