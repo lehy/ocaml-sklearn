@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -e
+set -x
+
+ROOT=$(realpath $(dirname "$0"))/..
+# echo "ROOT from $0 is $ROOT"
+
+DOC_DIR="$ROOT/doc"
+HTML_DOC_DIR="$ROOT/html_doc"
+rm -rf "$DOC_DIR" "$HTML_DOC_DIR"
+mkdir -p "$DOC_DIR" "$HTML_DOC_DIR"
+
+"$ROOT/lib/skdoc.sh" doc
+"$ROOT/lib/replace-variables.sh" "$ROOT/README.md" "$DOC_DIR/README.md"
+for i in ndarray.mli PyList.mli version.mli; do
+    "$ROOT/lib/mli2md" < "$ROOT/lib/$i" > "$DOC_DIR/$i"
+done
+
+mkdocs build

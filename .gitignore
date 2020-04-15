@@ -5,3 +5,5 @@ _build/
 .mypy_cache
 _disabled
 compile_commands.json
+doc/
+html_doc/
