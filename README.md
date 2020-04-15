@@ -1,7 +1,11 @@
-# Bindings to Python's scikit-learn for OCaml
+# scikit-learn for OCaml, version %%OCAML_SKLEARN_FULL_VERSION%%
 
-This OCaml library allows using Python's scikit-learn/sklearn machine learning
-library.
+ocaml-sklearn allows using Python's [scikit-learn](https://scikit-learn.org/) machine learning
+library from OCaml.
+
+**The current API is not complete. It covers most parts of
+scikit-learn and what is accessible should work, but some
+functionalities may be hard to use or inaccessible yet.**
 
 ## Example
 
@@ -12,7 +16,7 @@ let y = Sklearn.Ndarray.of_bigarray @@ Owl.Arr.uniform [|n_samples|] in
 let x = Sklearn.Ndarray.of_bigarray @@ Matrix.uniform n_samples n_features in
 let open Sklearn.Svm in
 let clf = SVR.create ~c:1.0 ~epsilon:0.2 () in
-print SVR.pp @@ SVR.fit clf ~x:(`Ndarray x) ~y;
+Format.printf "%a" SVR.pp @@ SVR.fit clf ~x:(`Ndarray x) ~y;
 ```
 
 This outputs:
@@ -26,7 +30,36 @@ There are more examples in `examples/auto`, for instance
 
 ## Installation
 
-(TODO)
+(TODO, need to publish on opam)
+
+## Finding Python's scikit-learn at runtime
+
+At runtime, ocaml-sklearn expects to load the right version of
+Python's scikit-learn. One way to do that is to create a virtualenv,
+install scikit-learn version %%SKLEARN_FULL_VERSION%% inside, and run
+your OCaml program in the activated virtualenv.
+
+Do this once to create the virtualenv in `.venv` and install
+scikit-learn inside:
+
+```sh
+python3 -mvenv .venv
+source .venv/bin/activate
+pip install scikit-learn==%%SKLEARN_FULL_VERSION%%
+```
+
+Then run your compiled OCaml program inside the virtualenv:
+
+```sh
+source .venv/bin/activate
+./my_ocaml_program.exe
+```
+
+A version of ocaml-sklearn is tied to a version of Python's
+sklearn. For instance, a version of ocaml-sklearn for Python's
+scikit-learn 0.22.2 will refuse to initialize (by throwing an
+exception) if scikit-learn's version is not 0.22 (it can be 0.22.1,
+0.22.2 or 0.22.2.post1).
 
 ## API
 
