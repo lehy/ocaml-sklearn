@@ -59,7 +59,7 @@ val to_string : t -> string
 val show : t -> string
 
 (** Pretty-print the object to a formatter. *)
-val pp : Format.formatter -> t -> unit
+val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 
 end
@@ -279,7 +279,7 @@ val to_string : t -> string
 val show : t -> string
 
 (** Pretty-print the object to a formatter. *)
-val pp : Format.formatter -> t -> unit
+val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 
 end
@@ -328,7 +328,7 @@ val to_string : t -> string
 val show : t -> string
 
 (** Pretty-print the object to a formatter. *)
-val pp : Format.formatter -> t -> unit
+val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 
 end
@@ -604,7 +604,7 @@ val to_string : t -> string
 val show : t -> string
 
 (** Pretty-print the object to a formatter. *)
-val pp : Format.formatter -> t -> unit
+val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 
 end
@@ -849,7 +849,7 @@ val to_string : t -> string
 val show : t -> string
 
 (** Pretty-print the object to a formatter. *)
-val pp : Format.formatter -> t -> unit
+val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 
 end
@@ -1016,7 +1016,7 @@ val to_string : t -> string
 val show : t -> string
 
 (** Pretty-print the object to a formatter. *)
-val pp : Format.formatter -> t -> unit
+val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 
 end
@@ -1373,7 +1373,7 @@ val to_string : t -> string
 val show : t -> string
 
 (** Pretty-print the object to a formatter. *)
-val pp : Format.formatter -> t -> unit
+val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 
 end
@@ -1397,7 +1397,7 @@ val to_string : t -> string
 val show : t -> string
 
 (** Pretty-print the object to a formatter. *)
-val pp : Format.formatter -> t -> unit
+val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 
 end
@@ -1466,7 +1466,7 @@ val to_string : t -> string
 val show : t -> string
 
 (** Pretty-print the object to a formatter. *)
-val pp : Format.formatter -> t -> unit
+val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 
 end
