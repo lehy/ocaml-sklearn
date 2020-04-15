@@ -55,7 +55,11 @@ git checkout master
 dune build @install @runtest
 "$ROOT/lib/build-doc"
 
+mv "$ROOT/sklearn.opam" "$ROOT/sklearn.opam.master"
+
 git checkout "$BRANCH"
+
+mv "$ROOT/sklearn.opam.master" "$ROOT/sklearn.opam"
 
 git merge master -m 'merge from master'
 
