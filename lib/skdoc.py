@@ -658,8 +658,8 @@ def append(container, ctor, *args, **kwargs):
 class Package:
     def __init__(self, pkg, overrides):
         self.pkg = pkg
-        self.modules = self._list_modules(pkg, overrides)
         self.ml_name = ucfirst(self.pkg.__name__)
+        self.modules = self._list_modules(pkg, overrides)
 
     def _list_modules(self, pkg, overrides):
         ret = []
@@ -669,8 +669,8 @@ class Package:
                 continue
             full_name = f"{pkg.__name__}.{name}"
             module = importlib.import_module(full_name)
-            ret.append(Module(module, parent_name="", overrides=overrides)
-                       )  # not passing Sklearn as parent, too long
+            ret.append(
+                Module(module, parent_name=self.ml_name, overrides=overrides))
         return ret
 
     def __str__(self):
@@ -783,7 +783,10 @@ class Module:
         self.parent_name = parent_name
         self.python_name = module.__name__.split('.')[-1]
         self.ml_name = ucfirst(self.python_name)
-        self.full_ml_name = f"{parent_name}.{self.ml_name}"
+        if parent_name:
+            self.full_ml_name = f"{parent_name}.{self.ml_name}"
+        else:
+            self.full_ml_name = self.ml_name
         # print(f"building module {self.full_python_name}")
         self.module = module
         self.elements = self._list_elements(module, overrides)
@@ -802,7 +805,8 @@ class Module:
             if inspect.ismodule(item):
                 append(elts, Module, item, parent_name, overrides)
             elif inspect.isclass(item):
-                append(elts, Class, item, parent_name, overrides)
+                if not inspect.isabstract(item):
+                    append(elts, Class, item, parent_name, overrides)
             elif callable(item):
                 append(elts, Function, name, qualname, item, overrides)
         return elts
@@ -844,7 +848,10 @@ class Module:
                 element.write_to_mli(f, module_path)
 
     def write_doc(self, path, module_path):
-        module_path = f"{module_path}.{self.ml_name}"
+        if module_path:
+            module_path = f"{module_path}.{self.ml_name}"
+        else:
+            module_path = self.ml_name
         md = f"{path / self.python_name}.md"
         with open(md, 'w') as f:
             for element in self.elements:
@@ -872,8 +879,15 @@ class Module:
         f.write("\nend\n\n")
 
     def write_to_md(self, f, module_path):
-        module_path = f"{module_path}.{self.ml_name}"
-        full_name = f"{self.parent_name}.{self.ml_name}"
+        if module_path:
+            module_path = f"{module_path}.{self.ml_name}"
+        else:
+            module_path = self.ml_name
+        if self.parent_name:
+            full_name = f"{self.parent_name}.{self.ml_name}"
+        else:
+            full_name = self.ml_name
+        full_name = re.sub(r'\.', ".\u200b", full_name)
         f.write(f"## module {full_name}\n")
         for element in self.elements:
             element.write_to_md(f, module_path)
@@ -906,6 +920,12 @@ class Class:
     def _list_elements(self, overrides):
         elts = []
 
+        # Parse attributes first, so that we avoid warning about them
+        # when listing methods.
+        attributes = parse_types_simple(self.klass.__doc__,
+                                        section="Attributes")
+        attributes = overrides.types(self.klass.__name__, attributes)
+
         # There may be several times the same function behind the same
         # name. Track elements already seen.
         callables = set()
@@ -924,10 +944,12 @@ class Class:
                 raise Deprecated()
             except Exception as e:
                 # print(f"WW cannot create proto for {self.klass.__name__}: {e}")
-                print(f"WW could not create proto for {self.klass.__name__}")
+                # print(f"WW could not create proto for {self.klass.__name__}")
                 proto = self.klass
 
         for name in dir(proto):
+            if name in attributes:
+                continue
             # Build our own qualname instead of relying on
             # item.__name__/item.__qualname__, which are unreliable.
             qualname = f"{self.klass.__name__}.{name}"
@@ -964,9 +986,6 @@ class Class:
             else:
                 pass
 
-        attributes = parse_types_simple(self.klass.__doc__,
-                                        section="Attributes")
-        attributes = overrides.types(self.klass.__name__, attributes)
         for name, ty in attributes.items():
             append(elts, Attribute, name, ty)
         return elts
@@ -1048,16 +1067,29 @@ class Class:
             f.write("\nend\n\n")
 
     def _write_fun_md(self, f, name, sig, doc):
-        f.write(f"### {name}\n")
-        f.write("```ocaml\n")
-        f.write(f"val {name} : {sig}\n")
-        f.write("```\n")
-        f.write(doc)
-        f.write("\n")
+        valsig = indent(f"val {name}: {sig}")
+        doc = indent(doc)
+        f.write(f"""
+### {name}
+
+???+ note "method"
+    ~~~ocaml
+{valsig}
+    ~~~
+
+{doc}
+""")
 
     def write_to_md(self, f, module_path):
-        module_path = f"{module_path}.{self.ml_name}"
-        full_name = f"{self.parent_name}.{self.ml_name}"
+        if module_path:
+            module_path = f"{module_path}.{self.ml_name}"
+        else:
+            module_path = self.ml_name
+        if self.parent_name:
+            full_name = f"{self.parent_name}.{self.ml_name}"
+        else:
+            full_name = self.ml_name
+        full_name = re.sub(r'\.', ".\u200b", full_name)
         f.write(f"## module {full_name}\n")
         f.write("```ocaml\n")
         f.write("type t\n")
@@ -1104,14 +1136,17 @@ class Attribute:
         f.write(f"val {self.ml_name} : t -> {ml_type_ret}\n")
 
     def write_to_md(self, f, module_path):
-        f.write(f"### {self.ml_name}\n")
-        f.write(
-            f"See the constructor above for documentation for this attribute.\n"
-        )
         ml_type_ret = _localize(self.typ.ml_type_ret, module_path)
-        f.write("```ocaml\n")
-        f.write(f"val {self.ml_name} : t -> {ml_type_ret}\n")
-        f.write("```\n\n")
+        f.write(f"""
+### {self.ml_name}
+
+???+ note "attribute"
+    ~~~ocaml
+    val {self.ml_name} : t -> {ml_type_ret}
+    ~~~
+
+    This attribute is documented in `create` above.
+""")
 
     def write_examples_to(self, f):
         pass
@@ -1140,7 +1175,7 @@ def format_md_doc(doc):
     doc = re.sub(r'^(.+)\n---+\n', r'\n#### \1\n\n', doc, flags=re.MULTILINE)
     # doc = re.sub(r'^(\s*)(\S+)(\s*:)', r'\1**\2**\3', doc, flags=re.MULTILINE)
     doc = re.sub(r'^(\s*)([\w*]\S*\s*:[^\n]+)',
-                 r'\n???+ note "\2"',
+                 r'\n???+ info "\2"',
                  doc,
                  flags=re.MULTILINE)
     doc = re.sub(r'^.. math::\n(([^\n]|\n[^\n])+)',
@@ -1497,12 +1532,14 @@ class Return:
 
 
 class Wrapper:
-    def __init__(self, python_name, ml_name, doc, parameters, ret, namespace):
+    def __init__(self, python_name, ml_name, doc, parameters, ret, doc_type,
+                 namespace):
         self.parameters = self._fix_parameters(parameters)
         self.ret = ret
         self.python_name = python_name
         self.ml_name = ml_name
         self.doc = clean_doc(doc)
+        self.doc_type = doc_type
         self.namespace = namespace
 
     def _fix_parameters(self, parameters):
@@ -1535,22 +1572,36 @@ class Wrapper:
         sig = self._join_not_none(
             " ->\n", [x.sig(module_path)
                       for x in self.parameters] + [self.ret.sig(module_path)])
-        sig = indent(sig)
+        sig = indent(sig, 6)
         if self.doc is None:
             doc = ''
         else:
             doc = format_md_doc(self.doc)
+        doc = indent(doc)
         return f"""
 ### {self.ml_name}
 
-```ocaml
-val {self.ml_name} :
+???+ note "{self.doc_type}"
+    ~~~ocaml
+    val {self.ml_name} :
 {sig}
-```
+    ~~~
 
 {doc}
-
 """
+
+
+#         return f"""
+# ### {self.ml_name}
+
+# ```ocaml
+# val {self.ml_name} :
+# {sig}
+# ```
+
+# {doc}
+
+# """
 
     def _pos_args(self, module_path):
         pos_args = None
@@ -1723,7 +1774,7 @@ class Function:
         parameters = self._build_parameters(signature, raw_doc, fixed_values)
         ret = self._build_ret(signature, raw_doc, fixed_values)
         self.wrapper = Wrapper(python_name, self._ml_name(python_name), doc,
-                               parameters, ret, namespace)
+                               parameters, ret, "function", namespace)
 
     def _ml_name(self, python_name):
         # warning: all overrides are resolved based on the function
@@ -1834,6 +1885,7 @@ class Method(Function):
                          function,
                          overrides,
                          namespace='self')
+        self.wrapper.doc_type = "method"
 
     def _build_parameters(self, *args, **kwargs):
         super_params = super()._build_parameters(*args, **kwargs)
@@ -1855,6 +1907,7 @@ class Ctor(Function):
                          function,
                          overrides,
                          namespace='ns')
+        self.wrapper.doc_type = "constructor and attributes"
 
     def _build_ret(self, _signature, _doc, _fixed_values):
         return Return(Self())
@@ -2087,13 +2140,11 @@ def write_version(build_dir):
     import sklearn.utils
     full_version = sklearn.utils.validation.LooseVersion(
         sklearn.__version__).version
-    full_version = [str(x) for x in full_version]
-    version = full_version[:2]
-    assert len(full_version) == 3, full_version
-    assert len(version) == 2, version
+    full_version_ml = '[' + '; '.join([f'"{x}"' for x in full_version]) + ']'
+    version_ml = '(' + ', '.join(str(x) for x in full_version[:2]) + ')'
     with open(build_dir / 'version.ml', 'w') as f:
-        f.write(f'let full_version = ({",".join(full_version)})\n')
-        f.write(f'let version = ({",".join(version)})\n')
+        f.write(f'let full_version = {full_version_ml}\n')
+        f.write(f'let version = {version_ml}\n')
 
 
 def main():

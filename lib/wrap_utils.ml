@@ -21,9 +21,9 @@ let runtime_sklearn_version () =
   | None -> raise Not_found
   | Some version ->
     let version = Py.String.to_string version in
-    let vlist = version |> String.split_on_char '.' |> List.map int_of_string in
-    match vlist with
-    | [major; minor; revision] -> Ok (major, minor, revision)
+    match String.split_on_char '.' version with
+    | major::minor::revision::_ ->
+      Ok (int_of_string major, int_of_string minor, int_of_string revision)
     | _ -> Error version
 
 exception OCaml_sklearn_version_error of string

@@ -1,0 +1,55 @@
+#!/usr/bin/python3
+# A stupid filter for converting an .mli interface with Markdown
+# inside the comments to a Markdown file.
+# This assumes many things about the format of the mli and its comments.
+# Ronan Le Hy, 2020
+
+import sys
+
+def emit_code(block):
+    block = [x for x in block if x != "end"]
+    while block and not block[-1]:
+        block = block[:-1]
+    if not block:
+        return
+    print(f"""
+```ocaml
+{chr(10).join(line for line in block)}
+```
+""")
+
+def emit_doc(block):
+    if not block:
+        return
+    for line in block:
+        print(line)
+
+def main():
+    block = []
+    emit = emit_code
+    for line in sys.stdin:
+        line = line.strip()
+        if line.startswith('(**'):
+            emit(block)
+            block = []
+            emit = emit_doc
+            line = line[3:].strip()
+            if line.endswith('*)'):
+                line = line[:-2].strip()
+                emit([line])
+                emit = emit_code
+            else:
+                block.append(line)
+        elif line.endswith('*)'):
+            line = line[:-2].strip()
+            block.append(line)
+            emit(block)
+            emit = emit_code
+            block = []
+        else:
+            block.append(line)
+    if block:
+        emit(block)
+
+if __name__ == '__main__':
+    main()

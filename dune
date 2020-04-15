@@ -1,16 +1,17 @@
 (rule
  (alias extract-examples)
- (deps lib/skdoc.sh lib/skdoc.py)
+ (deps lib/version.sh lib/skdoc.sh lib/skdoc.py)
  (action (run bash lib/skdoc.sh examples)))
 
 (rule
- (alias extract-doc)
- (deps lib/skdoc.sh lib/skdoc.py lib/ndarray.mli mkdocs.yml README.md)
+ (alias mkdocs)
+ (deps lib/version.sh lib/skdoc.sh lib/skdoc.py lib/ndarray.mli mkdocs.yml README.md)
  (action
   (progn
     (run bash lib/skdoc.sh doc)
-    (run cp README.md doc/)
+    (run lib/replace-variables.sh README.md doc/README.md)
     (with-stdin-from lib/ndarray.mli (with-stdout-to ndarray.md (run lib/mli2md)))
-    (run cp ndarray.md doc/)
+    (with-stdin-from lib/version.mli (with-stdout-to version.md (run lib/mli2md)))
+    (run cp ndarray.md version.md doc/)
     (run mkdocs build))
   ))

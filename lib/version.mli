@@ -1,7 +1,9 @@
-val full_version : int * int * int
-(** The full (major, minor, revision) sklearn version for which this
-   package was created. *)
-                   
+(** ### full_version
+
+    The full sklearn version for which this package was created. *)
+val full_version : string list
+
+(** ### version
+
+    The (major, minor) sklearn version for which this package was created. *)
 val version : int * int
-(** The (major, minor) sklearn version for which this package was
-   created. *)

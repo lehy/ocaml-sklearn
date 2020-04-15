@@ -31,5 +31,5 @@
                kernel_ridge.ml mixture.mli preprocessing.mli tests.ml csr_matrix.ml
                csr_matrix.mli version.ml)
 
-      (deps skdoc.sh skdoc.py)
+      (deps version.sh skdoc.sh skdoc.py)
       (action (run bash skdoc.sh build)))
