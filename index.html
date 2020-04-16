@@ -907,13 +907,17 @@
                 
                 
                 <h1>scikit-learn for OCaml, version 0.22-0.1.2</h1>
-<p><a href="https://lehy.github.io/ocaml-sklearn/">Read the online documentation here.</a></p>
 <p>ocaml-sklearn allows using Python's
 <a href="https://scikit-learn.org/">scikit-learn</a> machine learning library
 from OCaml.</p>
-<p><strong>The current API is not complete. It covers most parts of
-scikit-learn and what is accessible should work, but some
-functionalities may be hard to use or inaccessible yet.</strong></p>
+<p><a href="https://lehy.github.io/ocaml-sklearn/">Read the online scikit-learn OCaml API documentation
+here.</a></p>
+<p>If you are not familiar with scikit-learn, consult its Python <a href="https://scikit-learn.org/stable/getting_started.html">getting
+started documentation</a>
+and <a href="https://scikit-learn.org/stable/user_guide.html">user guide</a>.</p>
+<p><strong>The current OCaml API is not complete. Some functions may be hard or
+impossible to use. Also, the existing API is not stable, it may change
+to accomodate more functionality or make things easier to use.</strong></p>
 <h2 id="example-support-vector-regresion-with-rbf-kernel">Example : support vector regresion with RBF kernel<a class="headerlink" href="#example-support-vector-regresion-with-rbf-kernel" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="k">let</span> <span class="n">n_samples</span><span class="o">,</span> <span class="n">n_features</span> <span class="o">=</span> <span class="mi">10</span><span class="o">,</span> <span class="mi">5</span> <span class="k">in</span>
 <span class="nn">Random</span><span class="p">.</span><span class="n">init</span> <span class="mi">0</span><span class="o">;</span>
@@ -1004,6 +1008,11 @@ pip install -r requirements-dev.txt
 <div class="highlight"><pre><span></span><code>dune runtest
 </code></pre></div>
 
+<p>The tests are in <code>examples/auto</code>. They are based on examples extracted
+from the Python documentation. A good way to develop is to pick one of
+the files and start porting examples. One can refer to
+<code>examples/auto/svm.ml</code> or <code>examples/auto/pipeline.ml</code>, whose examples
+have already been ported (almost) completely.</p>
 <h3 id="generating-documentation">Generating documentation<a class="headerlink" href="#generating-documentation" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>lib/build-doc
 </code></pre></div>
