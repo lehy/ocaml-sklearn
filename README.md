@@ -15,7 +15,7 @@ and [user guide](https://scikit-learn.org/stable/user_guide.html).
 impossible to use. Also, the existing API is not stable, it may change
 to accomodate more functionality or make things easier to use.**
 
-## Example : support vector regresion with RBF kernel
+## Example : support vector regression with RBF kernel
 
 ```ocaml
 let n_samples, n_features = 10, 5 in
