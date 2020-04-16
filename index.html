@@ -56,7 +56,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#example-support-vector-regresion-with-rbf-kernel" class="md-skip">
+        <a href="#example-support-vector-regression-with-rbf-kernel" class="md-skip">
           Skip to content
         </a>
       
@@ -215,8 +215,8 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#example-support-vector-regresion-with-rbf-kernel" class="md-nav__link">
-    Example : support vector regresion with RBF kernel
+  <a href="#example-support-vector-regression-with-rbf-kernel" class="md-nav__link">
+    Example : support vector regression with RBF kernel
   </a>
   
 </li>
@@ -818,8 +818,8 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#example-support-vector-regresion-with-rbf-kernel" class="md-nav__link">
-    Example : support vector regresion with RBF kernel
+  <a href="#example-support-vector-regression-with-rbf-kernel" class="md-nav__link">
+    Example : support vector regression with RBF kernel
   </a>
   
 </li>
@@ -918,7 +918,7 @@ and <a href="https://scikit-learn.org/stable/user_guide.html">user guide</a>.</p
 <p><strong>The current OCaml API is not complete. Some functions may be hard or
 impossible to use. Also, the existing API is not stable, it may change
 to accomodate more functionality or make things easier to use.</strong></p>
-<h2 id="example-support-vector-regresion-with-rbf-kernel">Example : support vector regresion with RBF kernel<a class="headerlink" href="#example-support-vector-regresion-with-rbf-kernel" title="Permanent link">&para;</a></h2>
+<h2 id="example-support-vector-regression-with-rbf-kernel">Example : support vector regression with RBF kernel<a class="headerlink" href="#example-support-vector-regression-with-rbf-kernel" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="k">let</span> <span class="n">n_samples</span><span class="o">,</span> <span class="n">n_features</span> <span class="o">=</span> <span class="mi">10</span><span class="o">,</span> <span class="mi">5</span> <span class="k">in</span>
 <span class="nn">Random</span><span class="p">.</span><span class="n">init</span> <span class="mi">0</span><span class="o">;</span>
 <span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="nn">Sklearn</span><span class="p">.</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">of_bigarray</span> <span class="o">@@</span> <span class="nn">Owl</span><span class="p">.</span><span class="nn">Arr</span><span class="p">.</span><span class="n">uniform</span> <span class="o">[|</span><span class="n">n_samples</span><span class="o">|]</span> <span class="k">in</span>
