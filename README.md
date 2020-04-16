@@ -48,7 +48,9 @@ for instance
 
 ## Installation
 
-(TODO, need to publish on opam)
+~~~sh
+opam install sklearn
+~~~
 
 ## Finding Python's scikit-learn at runtime
 
