@@ -12,9 +12,9 @@ ROOT=$(realpath $(dirname "$0"))/..
 
 source "$ROOT/lib/version.sh"
 
-DUNE_VERSION="$(grep version "$ROOT/dune-project")"
-if [[ "$DUNE_VERSION" != "(version $OCAML_SKLEARN_FULL_VERSION)" ]]; then
-    echo "The version in $ROOT/dune-project is wrong $DUNE_VERSION, set it to $OCAML_SKLEARN_FULL_VERSION"
+OPAM_VERSION="$(egrep '^version' "$ROOT/sklearn.opam")"
+if [[ "$OPAM_VERSION" != "version: \"$OCAML_SKLEARN_FULL_VERSION\"" ]]; then
+    echo "The version in $ROOT/sklearn.opam is wrong ($OPAM_VERSION), set it to $OCAML_SKLEARN_FULL_VERSION"
     exit 1
 fi
 
@@ -55,11 +55,7 @@ git checkout master
 dune build @install @runtest
 "$ROOT/lib/build-doc"
 
-mv "$ROOT/sklearn.opam" "$ROOT/sklearn.opam.master"
-
 git checkout "$BRANCH"
-
-mv "$ROOT/sklearn.opam.master" "$ROOT/sklearn.opam"
 
 git merge master -m 'merge from master'
 
