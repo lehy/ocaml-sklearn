@@ -1,14 +1,19 @@
 # scikit-learn for OCaml, version %%OCAML_SKLEARN_FULL_VERSION%%
 
-[Read the online documentation here.](https://lehy.github.io/ocaml-sklearn/)
-
 ocaml-sklearn allows using Python's
 [scikit-learn](https://scikit-learn.org/) machine learning library
 from OCaml.
 
-**The current API is not complete. It covers most parts of
-scikit-learn and what is accessible should work, but some
-functionalities may be hard to use or inaccessible yet.**
+[Read the online scikit-learn OCaml API documentation
+here.](https://lehy.github.io/ocaml-sklearn/)
+
+If you are not familiar with scikit-learn, consult its Python [getting
+started documentation](https://scikit-learn.org/stable/getting_started.html)
+and [user guide](https://scikit-learn.org/stable/user_guide.html).
+
+**The current OCaml API is not complete. Some functions may be hard or
+impossible to use. Also, the existing API is not stable, it may change
+to accomodate more functionality or make things easier to use.**
 
 ## Example : support vector regresion with RBF kernel
 
@@ -127,6 +132,12 @@ pip install -r requirements-dev.txt
 ~~~sh
 dune runtest
 ~~~
+
+The tests are in `examples/auto`. They are based on examples extracted
+from the Python documentation. A good way to develop is to pick one of
+the files and start porting examples. One can refer to
+`examples/auto/svm.ml` or `examples/auto/pipeline.ml`, whose examples
+have already been ported (almost) completely.
 
 ### Generating documentation
 
