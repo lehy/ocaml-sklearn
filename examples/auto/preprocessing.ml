@@ -583,29 +583,24 @@ PowerTransformer()
 
 *)
 
-(* TEST TODO
 let%expect_test "PowerTransformer" =
-    import numpy as np
-    let powerTransformer = Sklearn.Preprocessing.powerTransformer in
-    pt = PowerTransformer()
-    data = [[1, 2], [3, 2], [4, 5]]
-    print(pt.fit(data))
-    [%expect {|
-            PowerTransformer()
+  let open Sklearn.Preprocessing in
+  let pt = PowerTransformer.create () in
+  let data = matrixi [|[|1; 2|]; [|3; 2|]; [|4; 5|]|] in
+  print PowerTransformer.pp @@ PowerTransformer.fit pt ~x:data;
+  [%expect {|
+            PowerTransformer(copy=True, method='yeo-johnson', standardize=True)
+    |}];
+  print_ndarray @@ PowerTransformer.lambdas_ pt;
+  [%expect {|
+            [ 1.38668178 -3.10053309]
+    |}];
+  print_ndarray @@ PowerTransformer.transform pt ~x:data;
+  [%expect {|
+            [[-1.31616039 -0.70710678]
+             [ 0.20998268 -0.70710678]
+             [ 1.1061777   1.41421356]]
     |}]
-    print(pt.lambdas_)
-    [%expect {|
-            [ 1.386... -3.100...]
-    |}]
-    print(pt.transform(data))
-    [%expect {|
-            [[-1.316... -0.707...]
-             [ 0.209... -0.707...]
-             [ 1.106...  1.414...]]
-    |}]
-
-*)
-
 
 
 (* QuantileTransformer *)

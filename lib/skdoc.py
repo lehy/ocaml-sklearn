@@ -185,7 +185,7 @@ class Ndarray(Type):
     names = [
         'ndarray', 'numpy array', 'array of floats', 'nd-array', 'array-like',
         'array', 'array_like', 'indexable', 'float ndarray', 'iterable',
-        'an iterable', 'numeric array-like'
+        'an iterable', 'numeric array-like', 'array of float'
     ]
     ml_type = 'Ndarray.t'
     wrap = 'Ndarray.to_pyobject'
