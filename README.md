@@ -101,6 +101,15 @@ bigarrays. A way to create bigarrays is to use `Owl`'s facilities. At
 the moment, the `Ndarray` functions exposed here are extremely minimal
 (no `np.zeros` or `np.ones`).
 
+Many functions accept either dense Ndarrays or sparse matrices. A
+sparse matrix can be constructed and accessed using module
+Sklearn.Csr_matrix. A parameter that can be dense or sparse will be
+typed like `x : [`Ndarray of Ndarray.t | `SparseMatrixx of
+Csr_matrix.t]`. At the moment, returning either a dense or sparse
+matrix is not supported; in these cases sparse return is disabled
+(either by forcing a boolean parameter like `sparse_return` to be
+`false`, or by forcing a parameter to be dense).
+
 Bunches (as returned from the sklearn.datasets APIs) are exposed as
 objects.
 
@@ -110,6 +119,8 @@ polymorphic variants.
 Each module has a conversion function to `Py.Object.t`, so that you
 can always escape and use `pyml` directly if the API provided here is
 incomplete.
+
+No attempt is made to expose features marked as deprecated.
 
 ## Development notes
 
@@ -140,6 +151,41 @@ from the Python documentation. A good way to develop is to pick one of
 the files and start porting examples. One can refer to
 `examples/auto/svm.ml` or `examples/auto/pipeline.ml`, whose examples
 have already been ported (almost) completely.
+
+The following examples have been ported completely:
+- [neighbors](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/neighbors.ml)
+- [pipeline](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/pipeline.ml)
+- [preprocessing](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/preprocessing.ml)
+- [svm](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/svm.ml)
+
+
+The following examples still need to be ported:
+- [calibration](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/calibration.ml)
+- [cluster](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/cluster.ml)
+- [compose](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/compose.ml)
+- [covariance](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/covariance.ml)
+- [cross_decomposition](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/cross_decomposition.ml)
+- [datasets](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/datasets.ml)
+- [decomposition](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/decomposition.ml)
+- [discriminant_analysis](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/discriminant_analysis.ml)
+- [ensemble](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/ensemble.ml)
+- [feature_extraction](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/feature_extraction.ml)
+- [gaussian_process](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/gaussian_process.ml)
+- [impute](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/impute.ml)
+- [inspection](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/inspection.ml)
+- [isotonic](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/isotonic.ml)
+- [kernel_approximation](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/kernel_approximation.ml)
+- [linear_model](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/linear_model.ml)
+- [manifold](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/manifold.ml)
+- [metrics](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/metrics.ml)
+- [model_selection](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/model_selection.ml)
+- [multiclass](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/multiclass.ml)
+- [multioutput](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/multioutput.ml)
+- [neural_network](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/neural_network.ml)
+- [random_projection](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/random_projection.ml)
+- [semi_supervised](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/semi_supervised.ml)
+- [tree](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/tree.ml)
+- [utils](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/utils.ml)
 
 ### Generating documentation
 
