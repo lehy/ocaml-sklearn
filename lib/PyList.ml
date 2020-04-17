@@ -5,7 +5,7 @@ module type ELEMENT = sig
 end
 
 module type S = sig
-  type t = Py.Object.t
+  type t
   type elt
 
   val of_pyobject : Py.Object.t -> t

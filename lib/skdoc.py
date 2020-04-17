@@ -210,7 +210,7 @@ class Array(Type):
 
 
 class ArrayList(Type):
-    names = ['iterable of iterables']
+    names = ['iterable of iterables', 'list of arrays']
     ml_type = 'Sklearn.Ndarray.List.t'
     ml_type_ret = 'Sklearn.Ndarray.List.t'
     wrap = 'Sklearn.Ndarray.List.to_pyobject'
@@ -520,6 +520,7 @@ builtin_types = [
     Ndarray(),
     FloatList(),
     StringList(),
+    ArrayList(),
     SparseMatrix(),
     String(),
     Dict(),
@@ -1062,7 +1063,9 @@ class Class:
             "\n(** Print the object to a human-readable representation. *)\n")
         f.write("val show : t -> string\n\n")
         f.write("(** Pretty-print the object to a formatter. *)\n")
-        f.write("val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]\n\n")
+        f.write(
+            "val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]\n\n"
+        )
         if wrap:
             f.write("\nend\n\n")
 
@@ -2163,6 +2166,10 @@ def main():
     # build_dir.mkdir(parents=True, exist_ok=True)
 
     import sys
+    if len(sys.argv) <= 1:
+        print("skdoc.py: not argument passed, not doing anything")
+        return
+
     mode = sys.argv[1]
     if mode == "build":
         pkg.write(build_dir)

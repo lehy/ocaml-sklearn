@@ -459,25 +459,20 @@ array([[0.8, 0.2, 0.4, 0.4],
 
 *)
 
-(* TEST TODO
 let%expect_test "Normalizer" =
-    let normalizer = Sklearn.Preprocessing.normalizer in
-    let x = [[4, 1, 2, 2],[1, 3, 9, 3],[5, 7, 5, 1]]
-    transformer = Normalizer().fit(X)  # fit does nothing.
-    transformer
-    [%expect {|
-            Normalizer()
+  let open Sklearn.Preprocessing in
+  let x = matrixi [|[|4; 1; 2; 2|]; [|1; 3; 9; 3|]; [|5; 7; 5; 1|]|] in
+  let transformer = Normalizer.(create () |> fit ~x) in  (* fit does nothing *)
+  print Normalizer.pp transformer;
+  [%expect {|
+            Normalizer(copy=True, norm='l2')
+    |}];
+  print_ndarray @@ Normalizer.transform transformer ~x:(`Ndarray x);
+  [%expect {|
+            [[0.8 0.2 0.4 0.4]
+             [0.1 0.3 0.9 0.3]
+             [0.5 0.7 0.5 0.1]]
     |}]
-    print @@ transform transformer x
-    [%expect {|
-            array([[0.8, 0.2, 0.4, 0.4],
-                   [0.1, 0.3, 0.9, 0.3],
-                   [0.5, 0.7, 0.5, 0.1]])
-    |}]
-
-*)
-
-
 
 (* OrdinalEncoder *)
 (*
@@ -495,27 +490,32 @@ array([[0., 2.],
 
 *)
 
-(* TEST TODO
 let%expect_test "OrdinalEncoder" =
-    let ordinalEncoder = Sklearn.Preprocessing.ordinalEncoder in
-    enc = OrdinalEncoder()
-    let x = [['Male', 1], ['Female', 3], ['Female', 2]]
-    print @@ fit enc x
-    [%expect {|
-            OrdinalEncoder()
-    |}]
-    enc.categories_
-    [%expect {|
+  let open Sklearn.Preprocessing in
+  let enc = OrdinalEncoder.create () in
+  let x = Sklearn.Ndarray.Object.matrix [|[|`S "Male";   `I 1|];
+                                          [|`S "Female"; `I 3|];
+                                          [|`S "Female"; `I 2|]|] in
+  print_ndarray x;
+  [%expect {|
+    [['Male' 1]
+     ['Female' 3]
+     ['Female' 2]] |}];
+  print OrdinalEncoder.pp @@ OrdinalEncoder.fit enc ~x;
+  [%expect {|
+            OrdinalEncoder(categories='auto', dtype=<class 'numpy.float64'>)
+    |}];
+  print Sklearn.Ndarray.List.pp @@ OrdinalEncoder.categories_ enc;
+  [%expect {|
             [array(['Female', 'Male'], dtype=object), array([1, 2, 3], dtype=object)]
+    |}];
+  print_ndarray @@ OrdinalEncoder.transform enc
+    ~x:(Sklearn.Ndarray.Object.matrix [|[|`S "Female"; `I 3|];
+                                        [|`S "Male"; `I 1|]|]);
+  [%expect {|
+            [[0. 2.]
+             [1. 0.]]
     |}]
-    print @@ transform enc [['Female' 3] ['Male' 1]]
-    [%expect {|
-            array([[0., 2.],
-                   [1., 0.]])
-    |}]
-
-*)
-
 
 
 (* PolynomialFeatures *)
@@ -541,35 +541,29 @@ array([[ 1.,  0.,  1.,  0.],
 
 *)
 
-(* TEST TODO
 let%expect_test "PolynomialFeatures" =
-    import numpy as np
-    let polynomialFeatures = Sklearn.Preprocessing.polynomialFeatures in
-    let x = np.arange(6).reshape(3, 2)
-    X
-    [%expect {|
-            array([[0, 1],
-                   [2, 3],
-                   [4, 5]])
+  let open Sklearn.Preprocessing in
+  let x =  Sklearn.Ndarray.(arange 6 |> reshape ~shape:[|3; 2|]) in
+  print_ndarray x;
+  [%expect {|
+            [[0 1]
+             [2 3]
+             [4 5]]
+    |}];
+  let poly = PolynomialFeatures.create ~degree:2 () in
+  print_ndarray @@ PolynomialFeatures.fit_transform poly ~x;
+  [%expect {|
+            [[ 1.  0.  1.  0.  0.  1.]
+             [ 1.  2.  3.  4.  6.  9.]
+             [ 1.  4.  5. 16. 20. 25.]]
+    |}];
+  let poly = PolynomialFeatures.create ~interaction_only:true () in
+  print_ndarray @@ PolynomialFeatures.fit_transform poly ~x;
+  [%expect {|
+            [[ 1.  0.  1.  0.]
+             [ 1.  2.  3.  6.]
+             [ 1.  4.  5. 20.]]
     |}]
-    poly = PolynomialFeatures(2)
-    print @@ fit_transform poly x
-    [%expect {|
-            array([[ 1.,  0.,  1.,  0.,  0.,  1.],
-                   [ 1.,  2.,  3.,  4.,  6.,  9.],
-                   [ 1.,  4.,  5., 16., 20., 25.]])
-    |}]
-    poly = PolynomialFeatures(interaction_only=True)
-    print @@ fit_transform poly x
-    [%expect {|
-            array([[ 1.,  0.,  1.,  0.],
-                   [ 1.,  2.,  3.,  6.],
-                   [ 1.,  4.,  5., 20.]])
-    |}]
-
-*)
-
-
 
 (* PowerTransformer *)
 (*

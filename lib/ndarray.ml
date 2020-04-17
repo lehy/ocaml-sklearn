@@ -12,6 +12,25 @@ end
 
 include M
 
+let shape self =
+  match Py.Object.get_attr_string self "shape" with
+  | None -> raise (Wrap_utils.Attribute_not_found "shape")
+  | Some x -> Py.List.to_array_map Py.Int.to_int x
+
+let arange ?start ?step stop =
+  let stop = Py.Int.of_int stop in
+  let args = match start, step with
+    | None, None -> [| stop |]
+    | Some start, None -> [| Py.Int.of_int start; stop |]
+    | None, Some step -> [| Py.Int.of_int 0; stop; Py.Int.of_int step |]
+    | Some start, Some step -> [| Py.Int.of_int start; stop; Py.Int.of_int step |]
+  in
+  Py.Module.get_function numpy "arange" args
+  |> of_pyobject
+
+let reshape ~shape x =
+  Py.Object.call_method x "reshape" [| Py.List.of_array_map Py.Int.of_int shape |] |> of_pyobject
+  
 module List = PyList.Make(M)
 
 module Float = struct
@@ -48,17 +67,41 @@ module Int = struct
     List.of_list_map vector values
 end
 
+module Dtype = struct
+  let rec to_pyobject = function
+    | `String s -> Py.Module.get_function numpy "dtype" [|Py.String.of_string s|]
+    | `Object -> to_pyobject (`String "object")
+end
+
+let numpy_array ?dtype a =
+  match dtype with
+  | None -> Py.Module.get_function numpy "array" [|a|]
+  | Some dtype ->
+    Py.Module.get_function_with_keywords numpy "array" [|a|] ["dtype", Dtype.to_pyobject dtype]
+
 module String = struct
+  let py_of_array a = Py.List.of_array_map Py.String.of_string a
+
   let vector ia =
     (* XXX TODO figure out a way to do this with one copy less *)
-    Py.Module.get_function numpy "array" [|Py.List.of_array_map Py.String.of_string ia|]
+    numpy_array @@ py_of_array ia
 
+  let matrix aa =
+    numpy_array @@ Py.List.of_array_map py_of_array aa
+  
   let vectors values =
     List.of_list_map vector values
 end
 
-
-let shape self =
-  match Py.Object.get_attr_string self "shape" with
-  | None -> raise (Wrap_utils.Attribute_not_found "shape")
-  | Some x -> Py.List.to_array_map Py.Int.to_int x
+module Object = struct
+  type elt = [`I of int | `F of float | `S of string]
+  let py_of_elt x = match x with
+    | `I x -> Py.Int.of_int x
+    | `F x -> Py.Float.of_float x
+    | `S x -> Py.String.of_string x
+  let py_of_array a = Py.List.of_array_map py_of_elt a
+  let vector a =
+    numpy_array ~dtype:`Object @@ py_of_array a
+  let matrix aa =
+    numpy_array ~dtype:`Object @@ Py.List.of_array_map py_of_array aa
+end

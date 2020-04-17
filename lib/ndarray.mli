@@ -63,6 +63,16 @@ val of_bigarray : ('a, 'b, 'c) Bigarray.Genarray.t -> t
     Shape (dimensions) of an Ndarray. *)
 val shape : t -> int array
 
+(** ### arange
+
+    TODO *)
+val arange : ?start : int -> ?step : int -> int -> t
+
+(** ### reshape
+
+    TODO *)
+val reshape : shape : int array -> t -> t
+
 (** ## module Ndarray.List
 
     This is a Python list of Ndarrays. This is `Sklearn.PyList.Make(Sklearn.Ndarray)`. *)
@@ -160,12 +170,72 @@ module String : sig
 
   (** ### vector
 
-      Build a vector from an OCaml string array. *)
+      Build a vector from an OCaml string array.
+
+      Example :
+
+      ~~~ocaml
+      let x = Ndarray.String.vector [|"a"; "answer"|]
+      ~~~
+  *)
   val vector : string array -> t
 
+  (** ### matrix
+
+      Build a matrix from an OCaml array of arrays.
+
+      Example :
+
+      ~~~ocaml
+      let x = Ndarray.String.matrix [| [|"a"; "answer"|]; [|"b"; `"lala"|] |]
+      ~~~
+  *)
+  val matrix : string array array -> t
+  
   (** ### vectors
 
       Build a Python list of Ndarrays, with each Ndarray being a
-      vector initialized from an OCaml string array. *)
+      vector initialized from an OCaml string array.
+
+      Example :
+
+      ~~~ocaml
+      let x = Ndarray.String.matrix [| [|"a"|]; [|"b"; `"lala"; "d"|] |]
+      ~~~
+  *)
   val vectors : string array list -> List.t
+end
+
+(** ## module Ndarray.Object
+
+    Build an Ndarray containing mixed ints, floats or strings. *)
+module Object : sig
+  (**
+     The type of an element: int (`I), float (`F) or string (`S).
+  *)
+  type elt = [`I of int | `F of float | `S of string]
+
+  (** ### vector
+
+      Build a vector from an OCaml array.
+
+      Example :
+      
+      ~~~ocaml
+      let x = Ndarray.Object.vector [| `I 42; `S "answer"; `F 12.3 |]
+      ~~~
+  *)
+  val vector : elt array -> t
+
+  (** ### matrix
+
+      Build a matrix from an OCaml array of arrays.
+
+      Example :
+
+      ~~~ocaml
+      let x = Ndarray.Object.matrix [| [|`I 42; `S "answer"|]; [|`I 43; `S "lala"|] |]
+      ~~~
+ *)
+  val matrix : elt array array -> t
 end
