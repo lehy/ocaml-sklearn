@@ -1114,11 +1114,15 @@ class Class:
         for element in self.elements:
             element.write_examples_to(f)
 
+
 def remove_none_from_enum(t):
     if not isinstance(t, Enum):
         return t
+
     def is_none(x):
-        return isinstance(x, NoneValue) or (isinstance(x, StringValue) and x.text == "None")
+        return isinstance(x, NoneValue) or (isinstance(x, StringValue)
+                                            and x.text == "None")
+
     none, not_none = partition(t.elements, is_none)
     return simplify_enum(type(t)(not_none))
 
@@ -2154,7 +2158,13 @@ overrides = {
          }),
     r'label_binarize$':
     dict(fixed_values=dict(sparse_output=('false', False)),
-         ret_type=Ndarray())
+         ret_type=Ndarray()),
+    r'power_transform$':
+    dict(types={
+        r'^method$':
+        Enum([StringValue("yeo-johnson"),
+              StringValue("box-cox")])
+    })
 }
 
 

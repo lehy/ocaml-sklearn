@@ -810,20 +810,15 @@ let%expect_test "label_binarize" =
 
 *)
 
-(* TEST TODO
 let%expect_test "power_transform" =
-    import numpy as np
-    let power_transform = Sklearn.Preprocessing.power_transform in
-    data = [[1, 2], [3, 2], [4, 5]]
-    print(power_transform(data, method='box-cox'))
-    [%expect {|
-            [[-1.332... -0.707...]
-             [ 0.256... -0.707...]
-             [ 1.076...  1.414...]]
+  let open Sklearn.Preprocessing in
+  let data = matrixi [|[|1; 2|]; [|3; 2|]; [|4; 5|]|] in
+  print_ndarray @@ power_transform ~x:data ~method_:`Box_cox ();
+  [%expect {|
+            [[-1.33269291 -0.70710678]
+             [ 0.25653283 -0.70710678]
+             [ 1.07616008  1.41421356]]
     |}]
-
-*)
-
 
 
 (* quantile_transform *)
