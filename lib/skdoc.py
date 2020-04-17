@@ -1114,21 +1114,37 @@ class Class:
         for element in self.elements:
             element.write_examples_to(f)
 
+def remove_none_from_enum(t):
+    if not isinstance(t, Enum):
+        return t
+    def is_none(x):
+        return isinstance(x, NoneValue) or (isinstance(x, StringValue) and x.text == "None")
+    none, not_none = partition(t.elements, is_none)
+    return simplify_enum(type(t)(not_none))
+
 
 class Attribute:
     def __init__(self, name, typ):
         self.name = name
         self.ml_name = mlid(self.name)
-        self.typ = typ
+        self.typ = remove_none_from_enum(typ)
 
     def write_to_ml(self, f, module_path):
-        f.write(f"let {self.ml_name} self =\n")
-        f.write(f'  match Py.Object.get_attr_string self "{self.name}" with\n')
-        f.write(
-            f'| None -> raise (Wrap_utils.Attribute_not_found "{self.name}")\n'
-        )
         unwrap = _localize(self.typ.unwrap, module_path)
-        f.write(f'| Some x -> {unwrap} x\n')
+        # Not sure whether we should raise or return None if the attribute is not found.
+        # Maybe conflating attribute not found with attribute is None is a bad idea?
+        #
+        # Some objects like StandardScaler specify that the attributes
+        # can be None is some configurations, but maybe this is more
+        # common and not all such cases are documented? In that case
+        # testing for "is None" seems like a good idea. On the other hand,
+        # it makes using the attributes more complicated.
+        f.write(f"""
+let {self.ml_name} self =
+  match Py.Object.get_attr_string self "{self.name}" with
+  | None -> None
+  | Some x -> if Py.is_none x then None else Some ({unwrap} x)
+""")
 
     def write_to_mli(self, f, module_path):
         #  XXX TODO extract doc and put it here
@@ -1136,7 +1152,7 @@ class Attribute:
             f"\n(** Attribute {self.name}: see constructor for documentation *)\n"
         )
         ml_type_ret = _localize(self.typ.ml_type_ret, module_path)
-        f.write(f"val {self.ml_name} : t -> {ml_type_ret}\n")
+        f.write(f"val {self.ml_name} : t -> ({ml_type_ret}) option\n")
 
     def write_to_md(self, f, module_path):
         ml_type_ret = _localize(self.typ.ml_type_ret, module_path)
@@ -1145,7 +1161,7 @@ class Attribute:
 
 ???+ note "attribute"
     ~~~ocaml
-    val {self.ml_name} : t -> {ml_type_ret}
+    val {self.ml_name} : t -> ({ml_type_ret}) option
     ~~~
 
     This attribute is documented in `create` above.

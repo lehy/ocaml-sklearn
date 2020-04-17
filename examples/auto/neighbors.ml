@@ -23,6 +23,10 @@ let vector = Sklearn.Ndarray.Float.vector
 let matrixi = Sklearn.Ndarray.Int.matrix
 let vectori = Sklearn.Ndarray.Int.vector
 
+let get x = match x with
+  | None -> failwith "Option.get"
+  | Some x -> x
+
 let%expect_test "KNeighborsClassifier" =
     let x = matrix [|[|0.|]; [|1.|]; [|2.|]; [|3.|]|] in
     let y = vector [|0.; 0.; 1.; 1.|] in
@@ -161,7 +165,7 @@ let%expect_test "LocalOutlierFactor" =
   [%expect {|
             [ 1  1 -1  1]
     |}];
-  print_ndarray @@ LocalOutlierFactor.negative_outlier_factor_ clf;
+  print_ndarray @@ get @@ LocalOutlierFactor.negative_outlier_factor_ clf;
   [%expect {|
             [ -0.98214286  -1.03703704 -73.36970899  -0.98214286]
     |}]

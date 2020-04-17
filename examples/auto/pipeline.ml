@@ -7,6 +7,9 @@ let vector = Sklearn.Ndarray.Float.vector
 let matrixi = Sklearn.Ndarray.Int.matrix
 let vectori = Sklearn.Ndarray.Int.vector
 
+let get x = match x with
+  | None -> failwith "Option.get"
+  | Some x -> x
 
 (* Parallel *)
 (*
@@ -281,7 +284,7 @@ let%expect_test "complex_pipeline" =
   (*  anova_svm.names_steps.anova: not wrapping that, won't be easier than the above  *)
   let sub_pipeline = Pipeline.get_item anova_svm ~ind:(`Slice(`None, `Int 1, `None)) |> Pipeline.of_pyobject in
   let svc = Pipeline.get_item anova_svm ~ind:(`Int (-1)) |> Svm.SVC.of_pyobject in
-  let coef = Svm.SVC.coef_ svc in
+  let coef = get @@ Svm.SVC.coef_ svc in
   Ndarray.shape coef |> Ndarray.Int.vector |> print_ndarray;
   [%expect {| [ 1 10] |}];
   Pipeline.inverse_transform sub_pipeline ~x:coef |> Ndarray.shape |> Ndarray.Int.vector |> print_ndarray;

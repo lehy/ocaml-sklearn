@@ -1,3 +1,17 @@
+let print f x = Format.printf "%a" f x
+let print_py x = Format.printf "%s" (Py.Object.to_string x)
+let print_ndarray = print Sklearn.Ndarray.pp
+
+module Matrix = Owl.Dense.Matrix.D
+let matrix = Sklearn.Ndarray.Float.matrix
+let vector = Sklearn.Ndarray.Float.vector
+let matrixi = Sklearn.Ndarray.Float.matrix
+let vectori = Sklearn.Ndarray.Float.vector
+
+let get x = match x with
+  | None -> failwith "Option.get"
+  | Some x -> x
+
 (* LinearSVR *)
 (*
 >>> from sklearn.svm import LinearSVR
@@ -16,15 +30,6 @@ LinearSVR(random_state=0, tol=1e-05)
 
 *)
 
-let print f x = Format.printf "%a" f x
-let print_py x = Format.printf "%s" (Py.Object.to_string x)
-let print_ndarray = print Sklearn.Ndarray.pp
-
-module Matrix = Owl.Dense.Matrix.D
-let matrix = Sklearn.Ndarray.Float.matrix
-let vector = Sklearn.Ndarray.Float.vector
-let matrixi = Sklearn.Ndarray.Float.matrix
-let vectori = Sklearn.Ndarray.Float.vector
 
 let%expect_test "LinearSVR" =
   let x, y, _coef = Sklearn.Datasets.make_regression ~n_features:4 ~random_state:(`Int 0) () in
@@ -36,11 +41,11 @@ let%expect_test "LinearSVR" =
                     intercept_scaling=1.0, loss='epsilon_insensitive', max_iter=1000,
                     random_state=0, tol=1e-05, verbose=0)
   |}];
-  print_ndarray @@ LinearSVR.coef_ regr;
+  print_ndarray @@ get @@ LinearSVR.coef_ regr;
   [%expect {|
             [16.35841504 26.91644036 42.30619026 60.47800997]
     |}];
-  print_ndarray @@ LinearSVR.intercept_ regr;
+  print_ndarray @@ get @@ LinearSVR.intercept_ regr;
   [%expect {|
             [-4.29622263]
     |}];
