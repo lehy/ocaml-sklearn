@@ -2157,14 +2157,21 @@ overrides = {
              '^(intercept_|coef_|classes_)$': Ndarray()
          }),
     r'label_binarize$':
-    dict(fixed_values=dict(sparse_output=('false', False)),
+    dict(fixed_values=dict(sparse_output=('false', False)), # XXX disable sparse return
          ret_type=Ndarray()),
     r'power_transform$':
     dict(types={
         r'^method$':
         Enum([StringValue("yeo-johnson"),
               StringValue("box-cox")])
-    })
+    }),
+    r'quantile_transform$':
+    dict(types={
+        r'^X$': Ndarray(), # XXX disable space return/input
+        r'^output_distribution$':
+        Enum([StringValue("uniform"),
+              StringValue("normal")])},
+         ret_type=Ndarray())
 }
 
 

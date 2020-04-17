@@ -833,15 +833,36 @@ array([...])
 
 *)
 
-(* TEST TODO
 let%expect_test "quantile_transform" =
-    import numpy as np
-    let quantile_transform = Sklearn.Preprocessing.quantile_transform in
-    rng = np.random.RandomState(0)
-    let x = np.sort(rng.normal(loc=0.5, scale=0.25, size=(25, 1)), axis=0)
-    quantile_transform(X, n_quantiles=10, random_state=0, copy=True)
-    [%expect {|
-            array([...])
+  let open Sklearn.Preprocessing in
+  let module Matrix = Owl.Dense.Matrix.D in
+  Owl_stats_prng.init 0;
+  let x = Matrix.(gaussian ~mu:0.5 ~sigma:0.25 25 1 |> sort) |> Sklearn.Ndarray.of_bigarray in
+  print_ndarray @@ quantile_transform ~x ~n_quantiles:10 ~random_state:(`Int 0) ~copy:true ();
+  [%expect {|
+            [[0.        ]
+             [0.0465588 ]
+             [0.07236635]
+             [0.13435383]
+             [0.19038255]
+             [0.20744256]
+             [0.27077313]
+             [0.3072948 ]
+             [0.33333333]
+             [0.40459044]
+             [0.4263402 ]
+             [0.46393428]
+             [0.52235714]
+             [0.54881137]
+             [0.59860807]
+             [0.60721673]
+             [0.66666667]
+             [0.69638456]
+             [0.74844166]
+             [0.78237337]
+             [0.80823856]
+             [0.86774379]
+             [0.90414956]
+             [0.95992288]
+             [1.        ]]
     |}]
-
-*)
