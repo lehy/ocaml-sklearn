@@ -748,17 +748,13 @@ array([[1, 0, 0, 0],
 
 *)
 
-(* TEST TODO
 let%expect_test "label_binarize" =
-    let label_binarize = Sklearn.Preprocessing.label_binarize in
-    label_binarize([1, 6], classes=[1, 2, 4, 6])
-    [%expect {|
-            array([[1, 0, 0, 0],
-                   [0, 0, 0, 1]])
+  let open Sklearn.Preprocessing in
+  print_ndarray @@ label_binarize ~y:(vectori [|1; 6|]) ~classes:(vectori [|1; 2; 4; 6|]) ();
+  [%expect {|
+            [[1 0 0 0]
+             [0 0 0 1]]
     |}]
-
-*)
-
 
 
 (* label_binarize *)
@@ -770,16 +766,13 @@ array([[1, 0, 0, 0],
 
 *)
 
-(* TEST TODO
 let%expect_test "label_binarize" =
-    label_binarize([1, 6], classes=[1, 6, 4, 2])
-    [%expect {|
-            array([[1, 0, 0, 0],
-                   [0, 1, 0, 0]])
+  let open Sklearn.Preprocessing in
+  print_ndarray @@ label_binarize ~y:(vectori [|1; 6|]) ~classes:(vectori [|1; 6; 4; 2|]) ();
+  [%expect {|
+            [[1 0 0 0]
+             [0 1 0 0]]
     |}]
-
-*)
-
 
 
 (* label_binarize *)
@@ -793,18 +786,15 @@ array([[1],
 
 *)
 
-(* TEST TODO
 let%expect_test "label_binarize" =
-    label_binarize(['yes', 'no', 'no', 'yes'], classes=['no', 'yes'])
-    [%expect {|
-            array([[1],
-                   [0],
-                   [0],
-                   [1]])
+  let open Sklearn.Preprocessing in
+  print_ndarray @@ label_binarize ~y:(vectors [|"yes"; "no"; "no"; "yes"|]) ~classes:(vectors [|"no"; "yes"|]) ();
+  [%expect {|
+            [[1]
+             [0]
+             [0]
+             [1]]
     |}]
-
-*)
-
 
 
 (* power_transform *)

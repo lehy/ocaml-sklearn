@@ -2152,6 +2152,9 @@ overrides = {
              '^target_names$': List(String()),
              '^(intercept_|coef_|classes_)$': Ndarray()
          }),
+    r'label_binarize$':
+    dict(fixed_values=dict(sparse_output=('false', False)),
+         ret_type=Ndarray())
 }
 
 
