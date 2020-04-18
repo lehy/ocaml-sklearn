@@ -4,6 +4,7 @@ import importlib
 import inspect
 import textwrap
 import io
+import os
 
 
 class Section_title:
@@ -1225,8 +1226,9 @@ def examples(doc):
 
 
 class Input:
-    def __init__(self):
+    def __init__(self, env):
         self.text = ''
+        self.env = env
 
     def append(self, line):
         line = re.sub(r'^(>>>|\.\.\.)\s*', '', line)
@@ -1234,34 +1236,112 @@ class Input:
         self.text += line
 
     def write(self, f):
-        m = re.match(r'^from (\S+)\s+import\s+(\S+)$', self.text)
-        if m is not None:
-            ns = '.'.join([ucfirst(x) for x in m.group(1).split('.')])
-            name = mlid(m.group(2))
-            f.write(f"let {name} = {ns}.{name} in\n")
-            return
+        self.text = re.sub(r'^\s*(from|import).+$',
+                           '',
+                           self.text,
+                           flags=re.MULTILINE)
 
-        m = re.match(r'^\s*(\w+(?:\s*,\s*\w+))*\s*=\s*(\w+)\((.*)\)\s*$',
-                     self.text)
-        if m is not None:
-            names = [mlid(x.strip()) for x in m.group(1).split(',')]
-            fun = m.group(2)
-            args = [mlid(x.strip()) for x in m.group(3).split(',')]
-            f.write(f"let {', '.join(names)} = {fun} {' '.join(args)} in\n")
-            return
+        constructions = re.findall(r'^\s*([a-w]\w+)\s*=\s*([A-Z]\w+)',
+                                   self.text,
+                                   flags=re.MULTILINE)
+        for construction in constructions:
+            var, klass = [x.strip() for x in construction]
+            self.env[var] = klass
 
-        m = re.match(
-            r'^\s*(\w+)\.(\w+)\(\s*([^(),]+(?:\s*,\s*[^(),]+)*)\s*\)\s*$',
-            self.text)
-        if m is not None:
+        def format_ml_args(args):
+            ret = re.sub(r'(,\s*)?(\w+)=([^=])', r' ~\2:\3', args)
+            ret = re.sub(r'(^|,\s*)(\w+)(\s*,|$)', r'\1~\2\3', ret)
+            ret = re.sub(r'\s*,\s*', ' ', ret)
+            ret = ret.strip()
+            return ret
+
+        def replace_ctor(m):
             obj = m.group(1)
-            meth = m.group(2)
-            args = ' '.join([mlid(x.strip()) for x in m.group(3).split(',')])
-            f.write(f"print @@ {meth} {obj} {args}\n")
-            return
+            klass = m.group(2)
+            ml_args = format_ml_args(m.group(3))
+            return f"{obj} = {klass}.create {ml_args} ()"
 
-        f.write(self.text)
-        f.write("\n")
+        def replace_method(m):
+            obj = m.group(1)
+            klass = ucfirst(self.env.get(obj, ''))
+            method = mlid(m.group(2))
+            ml_args = format_ml_args(m.group(3))
+            return f"{klass}.{method} {ml_args} {obj}"
+
+        def replace_attribute(m):
+            obj = m.group(1)
+            klass = ucfirst(self.env.get(obj, ''))
+            method = mlid(m.group(2))
+            return f"{klass}.{method} {obj}"
+
+        def replace_function(m):
+            fun = m.group(1)
+            ml_args = format_ml_args(m.group(2))
+            return f"{fun} {ml_args} ()"
+
+        def replace_array(m):
+            expr = m.group(0)
+            if re.search(r'^\s*\[\s*\[', expr):
+                wrap = 'matrix'
+            else:
+                wrap = 'vector'
+            expr = re.sub(r'\[', '[|', expr)
+            expr = re.sub(r'\]', '|]', expr)
+            expr = re.sub(r',', ';', expr)
+            if '.' not in expr:
+                wrap = f"{wrap}i"
+            return f"({wrap} {expr})"
+
+        # Array.
+        self.text = re.sub(
+            r'\[([^[\],]|\s*\[[^[\]]*\])(\s*,\s*[^[\],]|\s*\[[^[\]]*\])*\]',
+            replace_array, self.text)
+
+        self.text = re.sub(r'False', 'false', self.text)
+        self.text = re.sub(r'True', 'true', self.text)
+        self.text = re.sub(r'\bX\b', 'x', self.text)
+
+        # Constructor.
+        self.text = re.sub(
+            r'^\s*(\w+)\s*=\s*([A-Z][a-zA-Z_]+)\(([^()]*)\)\s*$',
+            replace_ctor,
+            self.text,
+            flags=re.MULTILINE)
+
+        # Method call.
+        self.text = re.sub(r'\b([a-z][a-zA-Z_]+)\.(\w+)\((.*)\)',
+                           replace_method, self.text)
+
+        # Attribute.
+        self.text = re.sub(r'\b([a-z][a-zA-Z_]+)\.(\w+)$', replace_attribute,
+                           self.text)
+
+        # Function call.
+        self.text = re.sub(r'\b([a-z][a-zA-Z_]+)\(([^()]*)\)',
+                           replace_function, self.text)
+
+        self.text = re.sub(r'^\s*([\w,\s]+)\s*=([^=].*)$',
+                           r'let \1 = \2 in',
+                           self.text,
+                           flags=re.MULTILINE)
+        if self.text and not self.text.endswith('in'):
+            m = re.search(r'^([A-Z]\w+)\.', self.text)
+            if m is not None and '.fit ' in self.text or '.create ' in self.text:
+                self.text = f"print {m.group(1)}.pp @@ {self.text}"
+            else:
+                self.text = f"print_ndarray @@ {self.text}"
+            self.text += ';'
+
+        self.text = re.sub(r'random_state:(\d+)', r'random_state:(`Int \1)',
+                           self.text)
+
+        # whitespace
+        self.text = re.sub(r'  +', ' ', self.text)
+        self.text = re.sub(r'^\s*$', "", self.text, flags=re.MULTILINE)
+
+        if self.text:
+            f.write(self.text)
+            f.write("\n")
 
 
 class Output:
@@ -1288,7 +1368,7 @@ class Output:
 
 
 class Indented:
-    def __init__(self, f, indent=4):
+    def __init__(self, f, indent=2):
         self.f = f
         self.indent = ' ' * indent
 
@@ -1301,9 +1381,10 @@ class Example:
     def __init__(self, source, name):
         self.name = name
         self.elements = []
+        self.env = {}
         for line in source.split("\n"):
             if line.startswith('>>>'):
-                element = Input()
+                element = Input(self.env)
                 element.append(line)
                 self.elements.append(element)
             elif line.startswith('...'):
@@ -1315,8 +1396,10 @@ class Example:
                 self.elements[-1].append(line)
 
     def write(self, f):
+        module = ucfirst(os.path.splitext(os.path.split(f.name)[-1])[0])
         f.write("(* TEST TODO\n")
         f.write(f'let%expect_test "{self.name}" =\n')
+        f.write(f"  let open Sklearn.{module} in\n")
         for element in self.elements:
             element.write(Indented(f))
         f.write("\n*)\n\n")
@@ -1334,6 +1417,8 @@ def qualname(obj):
 
 def write_examples(f, obj):
     doc = inspect.getdoc(obj)
+    if not doc:
+        return
     name = getattr(obj, '__name__', '<no name>')
     for example in examples(doc):
         f.write(f"(* {name} *)\n")
@@ -1888,6 +1973,9 @@ class Function:
     def write_to_md(self, f, module_path):
         f.write(self.md(module_path))
 
+    def write_examples_to(self, f):
+        write_examples(f, self.function)
+
     def __str__(self):
         return repr(self)
 
@@ -2157,8 +2245,10 @@ overrides = {
              '^(intercept_|coef_|classes_)$': Ndarray()
          }),
     r'label_binarize$':
-    dict(fixed_values=dict(sparse_output=('false', False)), # XXX disable sparse return
-         ret_type=Ndarray()),
+    dict(
+        fixed_values=dict(sparse_output=('false',
+                                         False)),  # XXX disable sparse return
+        ret_type=Ndarray()),
     r'power_transform$':
     dict(types={
         r'^method$':
@@ -2166,12 +2256,15 @@ overrides = {
               StringValue("box-cox")])
     }),
     r'quantile_transform$':
-    dict(types={
-        r'^X$': Ndarray(), # XXX disable space return/input
-        r'^output_distribution$':
-        Enum([StringValue("uniform"),
-              StringValue("normal")])},
-         ret_type=Ndarray())
+    dict(
+        types={
+            r'^X$':
+            Ndarray(),  # XXX disable space return/input
+            r'^output_distribution$':
+            Enum([StringValue("uniform"),
+                  StringValue("normal")])
+        },
+        ret_type=Ndarray())
 }
 
 
@@ -2218,7 +2311,7 @@ def main():
     elif mode == "doc":
         pkg.write_doc(pathlib.Path('./doc'))
     elif mode == "examples":
-        path = pathlib.Path('./examples/auto/')
+        path = pathlib.Path('./_build/examples/auto/')
         print(f"extracting examples to {path}")
         pkg.write_examples(path)
 

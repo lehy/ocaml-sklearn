@@ -8,20 +8,18 @@
 >>> X_transformed.shape
 (1797, 7)
 
-
 *)
 
 (* TEST TODO
-let%expect_text "FactorAnalysis" =
-    let load_digits = Sklearn.Datasets.load_digits in
-    let factorAnalysis = Sklearn.Decomposition.factorAnalysis in
-    let x, _ = load_digits return_X_y=True in
-    transformer = FactorAnalysis(n_components=7, random_state=0)    
-    X_transformed = transformer.fit_transform(X)    
-    X_transformed.shape    
-    [%expect {|
-            (1797, 7)            
-    |}]
+let%expect_test "FactorAnalysis" =
+  let open Sklearn.Decomposition in
+  let x, _ = load_digits ~return_X_y:true () in  
+  let transformer = FactorAnalysis.create ~n_components:7 ~random_state:(`Int 0) () in  
+  let X_transformed = FactorAnalysis.fit_transform ~x transformer in  
+  print_ndarray @@ X_transformed.shape;  
+  [%expect {|
+      (1797, 7)      
+  |}]
 
 *)
 
@@ -38,20 +36,18 @@ let%expect_text "FactorAnalysis" =
 >>> X_transformed.shape
 (1797, 7)
 
-
 *)
 
 (* TEST TODO
-let%expect_text "FastICA" =
-    let load_digits = Sklearn.Datasets.load_digits in
-    let fastICA = Sklearn.Decomposition.fastICA in
-    let x, _ = load_digits return_X_y=True in
-    transformer = FastICA(n_components=7,random_state=0)    
-    X_transformed = transformer.fit_transform(X)    
-    X_transformed.shape    
-    [%expect {|
-            (1797, 7)            
-    |}]
+let%expect_test "FastICA" =
+  let open Sklearn.Decomposition in
+  let x, _ = load_digits ~return_X_y:true () in  
+  let transformer = FastICA.create ~n_components:7 ~random_state:(`Int 0) () in  
+  let X_transformed = FastICA.fit_transform ~x transformer in  
+  print_ndarray @@ X_transformed.shape;  
+  [%expect {|
+      (1797, 7)      
+  |}]
 
 *)
 
@@ -73,28 +69,51 @@ IncrementalPCA(batch_size=200, n_components=7)
 >>> X_transformed.shape
 (1797, 7)
 
+*)
+
+(* TEST TODO
+let%expect_test "IncrementalPCA" =
+  let open Sklearn.Decomposition in
+  let x, _ = load_digits ~return_X_y:true () in  
+  let transformer = IncrementalPCA.create ~n_components:7 ~batch_size:200 () in  
+  print_ndarray @@ # either partially fit on smaller batches of data;  
+  print_ndarray @@ IncrementalPCA.partial_fit x[:100 :] transformer;  
+  [%expect {|
+      IncrementalPCA(batch_size=200, n_components=7)      
+  |}]
+  print_ndarray @@ # or let the fit function itself divide the data into batches;  
+  let X_sparse = .csr_matrix ~x sparse in  
+  let X_transformed = IncrementalPCA.fit_transform ~X_sparse transformer in  
+  print_ndarray @@ X_transformed.shape;  
+  [%expect {|
+      (1797, 7)      
+  |}]
+
+*)
+
+
+
+(* transform *)
+(*
+>>> import numpy as np
+>>> from sklearn.decomposition import IncrementalPCA
+>>> X = np.array([[-1, -1], [-2, -1], [-3, -2],
+...               [1, 1], [2, 1], [3, 2]])
+>>> ipca = IncrementalPCA(n_components=2, batch_size=3)
+>>> ipca.fit(X)
+IncrementalPCA(batch_size=3, n_components=2)
 
 *)
 
 (* TEST TODO
-let%expect_text "IncrementalPCA" =
-    let load_digits = Sklearn.Datasets.load_digits in
-    let incrementalPCA = Sklearn.Decomposition.incrementalPCA in
-    let sparse = Scipy.sparse in
-    let x, _ = load_digits return_X_y=True in
-    transformer = IncrementalPCA(n_components=7, batch_size=200)    
-    # either partially fit on smaller batches of data    
-    print @@ partial_fit transformer x[:100 :]
-    [%expect {|
-            IncrementalPCA(batch_size=200, n_components=7)            
-    |}]
-    # or let the fit function itself divide the data into batches    
-    X_sparse = sparse.csr_matrix(X)    
-    X_transformed = transformer.fit_transform(X_sparse)    
-    X_transformed.shape    
-    [%expect {|
-            (1797, 7)            
-    |}]
+let%expect_test "IncrementalPCA.transform" =
+  let open Sklearn.Decomposition in
+  let x = .array [[-1 -1] [-2 -1] [-3 -2] (vectori [|1; 1|]) (vectori [|2; 1|]) (vectori [|3; 2|])] np in  
+  let ipca = IncrementalPCA.create ~n_components:2 ~batch_size:3 () in  
+  print IncrementalPCA.pp @@ IncrementalPCA.fit ~x ipca;  
+  [%expect {|
+      IncrementalPCA(batch_size=3, n_components=2)      
+  |}]
 
 *)
 
@@ -110,20 +129,18 @@ let%expect_text "IncrementalPCA" =
 >>> X_transformed.shape
 (1797, 7)
 
-
 *)
 
 (* TEST TODO
-let%expect_text "KernelPCA" =
-    let load_digits = Sklearn.Datasets.load_digits in
-    let kernelPCA = Sklearn.Decomposition.kernelPCA in
-    let x, _ = load_digits return_X_y=True in
-    transformer = KernelPCA(n_components=7, kernel='linear')    
-    X_transformed = transformer.fit_transform(X)    
-    X_transformed.shape    
-    [%expect {|
-            (1797, 7)            
-    |}]
+let%expect_test "KernelPCA" =
+  let open Sklearn.Decomposition in
+  let x, _ = load_digits ~return_X_y:true () in  
+  let transformer = KernelPCA.create ~n_components:7 ~kernel:'linear' () in  
+  let X_transformed = KernelPCA.fit_transform ~x transformer in  
+  print_ndarray @@ X_transformed.shape;  
+  [%expect {|
+      (1797, 7)      
+  |}]
 
 *)
 
@@ -145,27 +162,25 @@ LatentDirichletAllocation(...)
 array([[0.00360392, 0.25499205, 0.0036211 , 0.64236448, 0.09541846],
        [0.15297572, 0.00362644, 0.44412786, 0.39568399, 0.003586  ]])
 
-
 *)
 
 (* TEST TODO
-let%expect_text "LatentDirichletAllocation" =
-    let latentDirichletAllocation = Sklearn.Decomposition.latentDirichletAllocation in
-    let make_multilabel_classification = Sklearn.Datasets.make_multilabel_classification in
-    # This produces a feature matrix of token counts, similar to what    
-    # CountVectorizer would produce on text.    
-    let x, _ = make_multilabel_classification random_state=0 in
-    lda = LatentDirichletAllocation(n_components=5,random_state=0)    
-    print @@ fit lda x
-    [%expect {|
-            LatentDirichletAllocation(...)            
-    |}]
-    # get topics for some given samples:    
-    print @@ transform lda x[-2:]
-    [%expect {|
-            array([[0.00360392, 0.25499205, 0.0036211 , 0.64236448, 0.09541846],            
-                   [0.15297572, 0.00362644, 0.44412786, 0.39568399, 0.003586  ]])            
-    |}]
+let%expect_test "LatentDirichletAllocation" =
+  let open Sklearn.Decomposition in
+  print_ndarray @@ # This produces a feature matrix of token counts, similar to what;  
+  print_ndarray @@ # CountVectorizer would produce on text.;  
+  let x, _ = make_multilabel_classification ~random_state:(`Int 0) () in  
+  let lda = LatentDirichletAllocation.create ~n_components:5 ~random_state:(`Int 0) () in  
+  print LatentDirichletAllocation.pp @@ LatentDirichletAllocation.fit ~x lda;  
+  [%expect {|
+      LatentDirichletAllocation(...)      
+  |}]
+  print_ndarray @@ # get topics for some given samples:;  
+  print_ndarray @@ LatentDirichletAllocation.transform x[-2:] lda;  
+  [%expect {|
+      array([[0.00360392, 0.25499205, 0.0036211 , 0.64236448, 0.09541846],      
+             [0.15297572, 0.00362644, 0.44412786, 0.39568399, 0.003586  ]])      
+  |}]
 
 *)
 
@@ -188,30 +203,27 @@ MiniBatchSparsePCA(...)
 >>> np.mean(transformer.components_ == 0)
 0.94
 
-
 *)
 
 (* TEST TODO
-let%expect_text "MiniBatchSparsePCA" =
-    import numpy as np    
-    let make_friedman1 = Sklearn.Datasets.make_friedman1 in
-    let miniBatchSparsePCA = Sklearn.Decomposition.miniBatchSparsePCA in
-    let x, _ = make_friedman1 n_samples=200 n_features=30 random_state=0 in
-    transformer = MiniBatchSparsePCA(n_components=5, batch_size=50,random_state=0)    
-    print @@ fit transformer x
-    [%expect {|
-            MiniBatchSparsePCA(...)            
-    |}]
-    X_transformed = transformer.transform(X)    
-    X_transformed.shape    
-    [%expect {|
-            (200, 5)            
-    |}]
-    # most values in the components_ are zero (sparsity)    
-    print @@ mean np transformer.components_ == 0
-    [%expect {|
-            0.94            
-    |}]
+let%expect_test "MiniBatchSparsePCA" =
+  let open Sklearn.Decomposition in
+  let x, _ = make_friedman1(n_samples=200, n_features=30, random_state=0) in  
+  let transformer = MiniBatchSparsePCA.create ~n_components:5 ~batch_size:50 ~random_state:(`Int 0) () in  
+  print MiniBatchSparsePCA.pp @@ MiniBatchSparsePCA.fit ~x transformer;  
+  [%expect {|
+      MiniBatchSparsePCA(...)      
+  |}]
+  let X_transformed = MiniBatchSparsePCA.transform ~x transformer in  
+  print_ndarray @@ X_transformed.shape;  
+  [%expect {|
+      (200, 5)      
+  |}]
+  print_ndarray @@ # most values in the components_ are zero (sparsity);  
+  print_ndarray @@ .mean transformer.components_ == 0 np;  
+  [%expect {|
+      0.94      
+  |}]
 
 *)
 
@@ -226,19 +238,17 @@ let%expect_text "MiniBatchSparsePCA" =
 >>> W = model.fit_transform(X)
 >>> H = model.components_
 
-
 *)
 
 (* TEST TODO
-let%expect_text "NMF" =
-    import numpy as np    
-    X = np.array([[1, 1], [2, 1], [3, 1.2], [4, 1], [5, 0.8], [6, 1]])    
-    let nmf = Sklearn.Decomposition.nmf in
-    model = NMF(n_components=2, init='random', random_state=0)    
-    W = model.fit_transform(X)    
-    H = model.components_    
-    [%expect {|
-    |}]
+let%expect_test "NMF" =
+  let open Sklearn.Decomposition in
+  let x = .array (matrix [|[|1; 1|]; [|2; 1|]; [|3; 1.2|]; [|4; 1|]; [|5; 0.8|]; [|6; 1|]|]) np in  
+  let model = NMF.create ~n_components:2 ~init:'random' ~random_state:(`Int 0) () in  
+  let W = NMF.fit_transform ~x model in  
+  let H = NMF.components_ model in  
+  [%expect {|
+  |}]
 
 *)
 
@@ -257,27 +267,25 @@ PCA(n_components=2)
 >>> print(pca.singular_values_)
 [6.30061... 0.54980...]
 
-
 *)
 
 (* TEST TODO
-let%expect_text "PCA" =
-    import numpy as np    
-    let pca = Sklearn.Decomposition.pca in
-    X = np.array([[-1, -1], [-2, -1], [-3, -2], [1, 1], [2, 1], [3, 2]])    
-    pca = PCA(n_components=2)    
-    print @@ fit pca x
-    [%expect {|
-            PCA(n_components=2)            
-    |}]
-    print(pca.explained_variance_ratio_)    
-    [%expect {|
-            [0.9924... 0.0075...]            
-    |}]
-    print(pca.singular_values_)    
-    [%expect {|
-            [6.30061... 0.54980...]            
-    |}]
+let%expect_test "PCA" =
+  let open Sklearn.Decomposition in
+  let x = .array (matrixi [|[|-1; -1|]; [|-2; -1|]; [|-3; -2|]; [|1; 1|]; [|2; 1|]; [|3; 2|]|]) np in  
+  let pca = PCA.create ~n_components:2 () in  
+  print PCA.pp @@ PCA.fit ~x pca;  
+  [%expect {|
+      PCA(n_components=2)      
+  |}]
+  print_ndarray @@ print pca.explained_variance_ratio_ ();  
+  [%expect {|
+      [0.9924... 0.0075...]      
+  |}]
+  print_ndarray @@ print pca.singular_values_ ();  
+  [%expect {|
+      [6.30061... 0.54980...]      
+  |}]
 
 *)
 
@@ -293,24 +301,80 @@ PCA(n_components=2, svd_solver='full')
 >>> print(pca.singular_values_)
 [6.30061... 0.54980...]
 
+*)
+
+(* TEST TODO
+let%expect_test "PCA" =
+  let open Sklearn.Decomposition in
+  let pca = PCA.create ~n_components:2 ~svd_solver:'full' () in  
+  print PCA.pp @@ PCA.fit ~x pca;  
+  [%expect {|
+      PCA(n_components=2, svd_solver='full')      
+  |}]
+  print_ndarray @@ print pca.explained_variance_ratio_ ();  
+  [%expect {|
+      [0.9924... 0.00755...]      
+  |}]
+  print_ndarray @@ print pca.singular_values_ ();  
+  [%expect {|
+      [6.30061... 0.54980...]      
+  |}]
+
+*)
+
+
+
+(* PCA *)
+(*
+>>> pca = PCA(n_components=1, svd_solver='arpack')
+>>> pca.fit(X)
+PCA(n_components=1, svd_solver='arpack')
+>>> print(pca.explained_variance_ratio_)
+[0.99244...]
+>>> print(pca.singular_values_)
 
 *)
 
 (* TEST TODO
-let%expect_text "PCA" =
-    pca = PCA(n_components=2, svd_solver='full')    
-    print @@ fit pca x
-    [%expect {|
-            PCA(n_components=2, svd_solver='full')            
-    |}]
-    print(pca.explained_variance_ratio_)    
-    [%expect {|
-            [0.9924... 0.00755...]            
-    |}]
-    print(pca.singular_values_)    
-    [%expect {|
-            [6.30061... 0.54980...]            
-    |}]
+let%expect_test "PCA" =
+  let open Sklearn.Decomposition in
+  let pca = PCA.create ~n_components:1 ~svd_solver:'arpack' () in  
+  print PCA.pp @@ PCA.fit ~x pca;  
+  [%expect {|
+      PCA(n_components=1, svd_solver='arpack')      
+  |}]
+  print_ndarray @@ print pca.explained_variance_ratio_ ();  
+  [%expect {|
+      [0.99244...]      
+  |}]
+  print_ndarray @@ print pca.singular_values_ ();  
+  [%expect {|
+  |}]
+
+*)
+
+
+
+(* transform *)
+(*
+>>> import numpy as np
+>>> from sklearn.decomposition import IncrementalPCA
+>>> X = np.array([[-1, -1], [-2, -1], [-3, -2], [1, 1], [2, 1], [3, 2]])
+>>> ipca = IncrementalPCA(n_components=2, batch_size=3)
+>>> ipca.fit(X)
+IncrementalPCA(batch_size=3, n_components=2)
+
+*)
+
+(* TEST TODO
+let%expect_test "_BasePCA.transform" =
+  let open Sklearn.Decomposition in
+  let x = .array (matrixi [|[|-1; -1|]; [|-2; -1|]; [|-3; -2|]; [|1; 1|]; [|2; 1|]; [|3; 2|]|]) np in  
+  let ipca = IncrementalPCA.create ~n_components:2 ~batch_size:3 () in  
+  print IncrementalPCA.pp @@ IncrementalPCA.fit ~x ipca;  
+  [%expect {|
+      IncrementalPCA(batch_size=3, n_components=2)      
+  |}]
 
 *)
 
@@ -332,30 +396,27 @@ SparsePCA(...)
 >>> np.mean(transformer.components_ == 0)
 0.9666...
 
-
 *)
 
 (* TEST TODO
-let%expect_text "SparsePCA" =
-    import numpy as np    
-    let make_friedman1 = Sklearn.Datasets.make_friedman1 in
-    let sparsePCA = Sklearn.Decomposition.sparsePCA in
-    let x, _ = make_friedman1 n_samples=200 n_features=30 random_state=0 in
-    transformer = SparsePCA(n_components=5, random_state=0)    
-    print @@ fit transformer x
-    [%expect {|
-            SparsePCA(...)            
-    |}]
-    X_transformed = transformer.transform(X)    
-    X_transformed.shape    
-    [%expect {|
-            (200, 5)            
-    |}]
-    # most values in the components_ are zero (sparsity)    
-    print @@ mean np transformer.components_ == 0
-    [%expect {|
-            0.9666...            
-    |}]
+let%expect_test "SparsePCA" =
+  let open Sklearn.Decomposition in
+  let x, _ = make_friedman1(n_samples=200, n_features=30, random_state=0) in  
+  let transformer = SparsePCA.create ~n_components:5 ~random_state:(`Int 0) () in  
+  print SparsePCA.pp @@ SparsePCA.fit ~x transformer;  
+  [%expect {|
+      SparsePCA(...)      
+  |}]
+  let X_transformed = SparsePCA.transform ~x transformer in  
+  print_ndarray @@ X_transformed.shape;  
+  [%expect {|
+      (200, 5)      
+  |}]
+  print_ndarray @@ # most values in the components_ are zero (sparsity);  
+  print_ndarray @@ .mean transformer.components_ == 0 np;  
+  [%expect {|
+      0.9666...      
+  |}]
 
 *)
 
@@ -378,32 +439,29 @@ TruncatedSVD(n_components=5, n_iter=7, random_state=42)
 >>> print(svd.singular_values_)
 [1.553... 1.512...  1.510... 1.370... 1.199...]
 
-
 *)
 
 (* TEST TODO
-let%expect_text "TruncatedSVD" =
-    let truncatedSVD = Sklearn.Decomposition.truncatedSVD in
-    from scipy.sparse import random as sparse_random    
-    let sparse_random_matrix = Sklearn.Random_projection.sparse_random_matrix in
-    X = sparse_random(100, 100, density=0.01, format='csr',random_state=42)    
-    svd = TruncatedSVD(n_components=5, n_iter=7, random_state=42)    
-    print @@ fit svd x
-    [%expect {|
-            TruncatedSVD(n_components=5, n_iter=7, random_state=42)            
-    |}]
-    print(svd.explained_variance_ratio_)    
-    [%expect {|
-            [0.0646... 0.0633... 0.0639... 0.0535... 0.0406...]            
-    |}]
-    print(svd.explained_variance_ratio_.sum())    
-    [%expect {|
-            0.286...            
-    |}]
-    print(svd.singular_values_)    
-    [%expect {|
-            [1.553... 1.512...  1.510... 1.370... 1.199...]            
-    |}]
+let%expect_test "TruncatedSVD" =
+  let open Sklearn.Decomposition in
+  let x = sparse_random ~100 100 ~density:0.01 ~format:'csr' ~random_state:(`Int 42) () in  
+  let svd = TruncatedSVD.create ~n_components:5 ~n_iter:7 ~random_state:(`Int 42) () in  
+  print TruncatedSVD.pp @@ TruncatedSVD.fit ~x svd;  
+  [%expect {|
+      TruncatedSVD(n_components=5, n_iter=7, random_state=42)      
+  |}]
+  print_ndarray @@ print svd.explained_variance_ratio_ ();  
+  [%expect {|
+      [0.0646... 0.0633... 0.0639... 0.0535... 0.0406...]      
+  |}]
+  print_ndarray @@ print svd..sum () explained_variance_ratio_;  
+  [%expect {|
+      0.286...      
+  |}]
+  print_ndarray @@ print svd.singular_values_ ();  
+  [%expect {|
+      [1.553... 1.512...  1.510... 1.370... 1.199...]      
+  |}]
 
 *)
 
@@ -417,17 +475,15 @@ let%expect_text "TruncatedSVD" =
 >>> W, H, n_iter = non_negative_factorization(X, n_components=2,
 ... init='random', random_state=0)
 
-
 *)
 
 (* TEST TODO
-let%expect_text "non_negative_factorization" =
-    import numpy as np    
-    X = np.array([[1,1], [2, 1], [3, 1.2], [4, 1], [5, 0.8], [6, 1]])    
-    let non_negative_factorization = Sklearn.Decomposition.non_negative_factorization in
-    W, H, n_iter = non_negative_factorization(X, n_components=2,init='random', random_state=0)    
-    [%expect {|
-    |}]
+let%expect_test "non_negative_factorization" =
+  let open Sklearn.Decomposition in
+  let x = .array (matrix [|[|1;1|]; [|2; 1|]; [|3; 1.2|]; [|4; 1|]; [|5; 0.8|]; [|6; 1|]|]) np in  
+  let W, H, n_iter = non_negative_factorization x ~n_components:2 ~init:'random' ~random_state:(`Int 0) () in  
+  [%expect {|
+  |}]
 
 *)
 

@@ -12,6 +12,45 @@ let get x = match x with
   | None -> failwith "Option.get"
   | Some x -> x
 
+(* LinearSVC *)
+(*
+>>> from sklearn.svm import LinearSVC
+>>> from sklearn.datasets import make_classification
+>>> X, y = make_classification(n_features=4, random_state=0)
+>>> clf = LinearSVC(random_state=0, tol=1e-5)
+>>> clf.fit(X, y)
+LinearSVC(random_state=0, tol=1e-05)
+>>> print(clf.coef_)
+[[0.085... 0.394... 0.498... 0.375...]]
+>>> print(clf.intercept_)
+[0.284...]
+>>> print(clf.predict([[0, 0, 0, 0]]))
+
+*)
+
+(* TEST TODO
+let%expect_test "LinearSVC" =
+  let open Sklearn.Svm in
+  let x, y = make_classification ~n_features:4 ~random_state:(`Int 0) () in  
+  let clf = LinearSVC.create ~random_state:(`Int 0) ~tol:1e-5 () in  
+  print LinearSVC.pp @@ LinearSVC.fit ~x y clf;  
+  [%expect {|
+      LinearSVC(random_state=0, tol=1e-05)      
+  |}]
+  print_ndarray @@ print clf.coef_ ();  
+  [%expect {|
+      [[0.085... 0.394... 0.498... 0.375...]]      
+  |}]
+  print_ndarray @@ print clf.intercept_ ();  
+  [%expect {|
+      [0.284...]      
+  |}]
+  print_ndarray @@ print(LinearSVC.predict (matrixi [|[|0; 0; 0; 0|]|])) clf;  
+  [%expect {|
+  |}]
+
+*)
+
 (* LinearSVR *)
 (*
 >>> from sklearn.svm import LinearSVR
@@ -117,6 +156,37 @@ let%expect_test "NuSVR" =
             NuSVR(C=1.0, cache_size=200, coef0=0.0, degree=3, gamma='scale', kernel='rbf',
                   max_iter=-1, nu=0.1, shrinking=True, tol=0.001, verbose=False)
     |}]
+
+
+
+
+
+(* OneClassSVM *)
+(*
+>>> from sklearn.svm import OneClassSVM
+>>> X = [[0], [0.44], [0.45], [0.46], [1]]
+>>> clf = OneClassSVM(gamma='auto').fit(X)
+>>> clf.predict(X)
+array([-1,  1,  1,  1, -1])
+>>> clf.score_samples(X)  # doctest: +ELLIPSIS
+
+*)
+
+(* TEST TODO
+let%expect_test "OneClassSVM" =
+  let open Sklearn.Svm in
+  let x = (matrix [|[|0|]; [|0.44|]; [|0.45|]; [|0.46|]; [|1|]|]) in  
+  let clf = OneClassSVM(gamma='auto').fit ~x () in  
+  print_ndarray @@ OneClassSVM.predict ~x clf;  
+  [%expect {|
+      array([-1,  1,  1,  1, -1])      
+  |}]
+  print_ndarray @@ OneClassSVM.score_samples ~x clf # doctest: +ELLIPSIS;  
+  [%expect {|
+  |}]
+
+*)
+
 
 
 (* SVC *)

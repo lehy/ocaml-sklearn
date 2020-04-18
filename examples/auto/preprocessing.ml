@@ -45,6 +45,141 @@ let%expect_test "Binarizer" =
     |}]
 
 
+(* FunctionTransformer *)
+(*
+>>> import numpy as np
+>>> from sklearn.preprocessing import FunctionTransformer
+>>> transformer = FunctionTransformer(np.log1p)
+>>> X = np.array([[0, 1], [2, 3]])
+>>> transformer.transform(X)
+array([[0.       , 0.6931...],
+
+*)
+
+(* TEST TODO
+let%expect_test "FunctionTransformer" =
+  let open Sklearn.Preprocessing in
+  let transformer = FunctionTransformer.create np.log1p () in  
+  let x = .array (matrixi [|[|0; 1|]; [|2; 3|]|]) np in  
+  print_ndarray @@ FunctionTransformer.transform ~x transformer;  
+  [%expect {|
+      array([[0.       , 0.6931...],      
+  |}]
+
+*)
+
+(* KBinsDiscretizer *)
+(*
+>>> X = [[-2, 1, -4,   -1],
+...      [-1, 2, -3, -0.5],
+...      [ 0, 3, -2,  0.5],
+...      [ 1, 4, -1,    2]]
+>>> est = KBinsDiscretizer(n_bins=3, encode='ordinal', strategy='uniform')
+>>> est.fit(X)
+KBinsDiscretizer(...)
+>>> Xt = est.transform(X)
+>>> Xt  # doctest: +SKIP
+array([[ 0., 0., 0., 0.],
+       [ 1., 1., 1., 0.],
+       [ 2., 2., 2., 1.],
+       [ 2., 2., 2., 2.]])
+
+*)
+
+(* TEST TODO
+let%expect_test "KBinsDiscretizer" =
+  let open Sklearn.Preprocessing in
+  let x = [[-2, 1, -4, -1],[-1, 2, -3, -0.5],[ 0, 3, -2, 0.5],[ 1, 4, -1, 2]] in  
+  let est = KBinsDiscretizer.create ~n_bins:3 ~encode:'ordinal' ~strategy:'uniform' () in  
+  print KBinsDiscretizer.pp @@ KBinsDiscretizer.fit ~x est;  
+  [%expect {|
+      KBinsDiscretizer(...)      
+  |}]
+  let Xt = KBinsDiscretizer.transform ~x est in  
+  print_ndarray @@ Xt # doctest: +SKIP;  
+  [%expect {|
+      array([[ 0., 0., 0., 0.],      
+             [ 1., 1., 1., 0.],      
+             [ 2., 2., 2., 1.],      
+             [ 2., 2., 2., 2.]])      
+  |}]
+
+*)
+
+
+(* KBinsDiscretizer *)
+(*
+>>> est.bin_edges_[0]
+array([-2., -1.,  0.,  1.])
+>>> est.inverse_transform(Xt)
+array([[-1.5,  1.5, -3.5, -0.5],
+       [-0.5,  2.5, -2.5, -0.5],
+       [ 0.5,  3.5, -1.5,  0.5],
+
+*)
+
+(* TEST TODO
+let%expect_test "KBinsDiscretizer" =
+  let open Sklearn.Preprocessing in
+  print_ndarray @@ .bin_edges_ vectori [|0|] est;  
+  [%expect {|
+      array([-2., -1.,  0.,  1.])      
+  |}]
+  print_ndarray @@ .inverse_transform ~Xt est;  
+  [%expect {|
+      array([[-1.5,  1.5, -3.5, -0.5],      
+             [-0.5,  2.5, -2.5, -0.5],      
+             [ 0.5,  3.5, -1.5,  0.5],      
+  |}]
+
+*)
+
+(* KernelCenterer *)
+(*
+>>> from sklearn.preprocessing import KernelCenterer
+>>> from sklearn.metrics.pairwise import pairwise_kernels
+>>> X = [[ 1., -2.,  2.],
+...      [ -2.,  1.,  3.],
+...      [ 4.,  1., -2.]]
+>>> K = pairwise_kernels(X, metric='linear')
+>>> K
+array([[  9.,   2.,  -2.],
+       [  2.,  14., -13.],
+       [ -2., -13.,  21.]])
+>>> transformer = KernelCenterer().fit(K)
+>>> transformer
+KernelCenterer()
+>>> transformer.transform(K)
+array([[  5.,   0.,  -5.],
+       [  0.,  14., -14.],
+
+*)
+
+(* TEST TODO
+let%expect_test "KernelCenterer" =
+  let open Sklearn.Preprocessing in
+  let x = [[ 1., -2., 2.],[ -2., 1., 3.],[ 4., 1., -2.]] in  
+  let K = pairwise_kernels x ~metric:'linear' () in  
+  print_ndarray @@ K;  
+  [%expect {|
+      array([[  9.,   2.,  -2.],      
+             [  2.,  14., -13.],      
+             [ -2., -13.,  21.]])      
+  |}]
+  let transformer = KernelCenterer().fit ~K () in  
+  print_ndarray @@ transformer;  
+  [%expect {|
+      KernelCenterer()      
+  |}]
+  print_ndarray @@ KernelCenterer.transform ~K transformer;  
+  [%expect {|
+      array([[  5.,   0.,  -5.],      
+             [  0.,  14., -14.],      
+  |}]
+
+*)
+
+
 (* KBinsDiscretizer *)
 (*
 >>> X = [[-2, 1, -4,   -1],
@@ -350,7 +485,7 @@ let%expect_test "MultiLabelBinarizer" =
              [0 0 1]]
     |}];
   print_ndarray @@ get @@ MultiLabelBinarizer.classes_ mlb;
-    [%expect {|
+  [%expect {|
             [1 2 3]
     |}]
 
@@ -421,7 +556,7 @@ array(['comedy', 'sci-fi', 'thriller'], dtype=object)
 *)
 
 (* TEST TODO
-let%expect_test "MultiLabelBinarizer" =
+   let%expect_test "MultiLabelBinarizer" =
     mlb = MultiLabelBinarizer()
     print @@ fit mlb [['sci-fi' 'thriller' 'comedy']]
     [%expect {|
@@ -478,6 +613,75 @@ let%expect_test "Normalizer" =
              [0.5 0.7 0.5 0.1]]
     |}]
 
+
+(* OneHotEncoder *)
+(*
+>>> from sklearn.preprocessing import OneHotEncoder
+>>> enc = OneHotEncoder(handle_unknown='ignore')
+>>> X = [['Male', 1], ['Female', 3], ['Female', 2]]
+>>> enc.fit(X)
+OneHotEncoder(handle_unknown='ignore')
+>>> enc.categories_
+[array(['Female', 'Male'], dtype=object), array([1, 2, 3], dtype=object)]
+>>> enc.transform([['Female', 1], ['Male', 4]]).toarray()
+array([[1., 0., 1., 0., 0.],
+       [0., 1., 0., 0., 0.]])
+>>> enc.inverse_transform([[0, 1, 1, 0, 0], [0, 0, 0, 1, 0]])
+array([['Male', 1],
+       [None, 2]], dtype=object)
+>>> enc.get_feature_names(['gender', 'group'])
+array(['gender_Female', 'gender_Male', 'group_1', 'group_2', 'group_3'],
+  dtype=object)
+>>> drop_enc = OneHotEncoder(drop='first').fit(X)
+>>> drop_enc.categories_
+[array(['Female', 'Male'], dtype=object), array([1, 2, 3], dtype=object)]
+>>> drop_enc.transform([['Female', 1], ['Male', 2]]).toarray()
+array([[0., 0., 0.],
+
+*)
+
+(* TEST TODO
+let%expect_test "OneHotEncoder" =
+  let open Sklearn.Preprocessing in
+  let enc = OneHotEncoder.create ~handle_unknown:'ignore' () in  
+  let x = (matrixi [|[|'Male'; 1|]; [|'Female'; 3|]; [|'Female'; 2|]|]) in  
+  print OneHotEncoder.pp @@ OneHotEncoder.fit ~x enc;  
+  [%expect {|
+      OneHotEncoder(handle_unknown='ignore')      
+  |}]
+  print_ndarray @@ OneHotEncoder.categories_ enc;  
+  [%expect {|
+      [array(['Female', 'Male'], dtype=object), array([1, 2, 3], dtype=object)]      
+  |}]
+  print_ndarray @@ OneHotEncoder.transform (matrixi [|[|'Female'; 1|]; [|'Male'; 4|]|])).toarray( enc;  
+  [%expect {|
+      array([[1., 0., 1., 0., 0.],      
+             [0., 1., 0., 0., 0.]])      
+  |}]
+  print_ndarray @@ OneHotEncoder.inverse_transform (matrixi [|[|0; 1; 1; 0; 0|]; [|0; 0; 0; 1; 0|]|]) enc;  
+  [%expect {|
+      array([['Male', 1],      
+             [None, 2]], dtype=object)      
+  |}]
+  print_ndarray @@ OneHotEncoder.get_feature_names ['gender' 'group'] enc;  
+  [%expect {|
+      array(['gender_Female', 'gender_Male', 'group_1', 'group_2', 'group_3'],      
+        dtype=object)      
+  |}]
+  let drop_enc = OneHotEncoder(drop='first').fit ~x () in  
+  print_ndarray @@ OneHotEncoder.categories_ drop_enc;  
+  [%expect {|
+      [array(['Female', 'Male'], dtype=object), array([1, 2, 3], dtype=object)]      
+  |}]
+  print_ndarray @@ OneHotEncoder.transform (matrixi [|[|'Female'; 1|]; [|'Male'; 2|]|])).toarray( drop_enc;  
+  [%expect {|
+      array([[0., 0., 0.],      
+  |}]
+
+*)
+
+
+
 (* OrdinalEncoder *)
 (*
 >>> from sklearn.preprocessing import OrdinalEncoder
@@ -520,6 +724,28 @@ let%expect_test "OrdinalEncoder" =
             [[0. 2.]
              [1. 0.]]
     |}]
+
+
+
+
+
+(* OrdinalEncoder *)
+(*
+>>> enc.inverse_transform([[1, 0], [0, 1]])
+array([['Male', 1],
+
+*)
+
+(* TEST TODO
+let%expect_test "OrdinalEncoder" =
+  let open Sklearn.Preprocessing in
+  print_ndarray @@ .inverse_transform (matrixi [|[|1; 0|]; [|0; 1|]|]) enc;  
+  [%expect {|
+      array([['Male', 1],      
+  |}]
+
+*)
+
 
 
 (* PolynomialFeatures *)
@@ -737,6 +963,23 @@ let%expect_test "StandardScaler" =
             [[3. 3.]]
     |}]
 
+(* add_dummy_feature *)
+(*
+>>> from sklearn.preprocessing import add_dummy_feature
+>>> add_dummy_feature([[0, 1], [1, 0]])
+array([[1., 0., 1.],
+
+*)
+
+(* TEST TODO
+let%expect_test "add_dummy_feature" =
+  let open Sklearn.Preprocessing in
+  print_ndarray @@ add_dummy_feature((matrixi [|[|0; 1|]; [|1; 0|]|]));  
+  [%expect {|
+      array([[1., 0., 1.],      
+  |}]
+
+*)
 
 (* label_binarize *)
 (*
