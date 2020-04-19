@@ -173,21 +173,18 @@ array([1])
 
 *)
 
-(* TEST TODO
-   let%expect_test "ExtraTreesClassifier" =
-   let open Sklearn.Ensemble in
-   let x, y = make_classification ~n_features:4 ~random_state:(`Int 0) () in
-   let clf = ExtraTreesClassifier.create ~n_estimators:100 ~random_state:(`Int 0) () in
-   print ExtraTreesClassifier.pp @@ ExtraTreesClassifier.fit ~x y clf;
-   [%expect {|
+let%expect_test "ExtraTreesClassifier" =
+  let open Sklearn.Ensemble in
+  let x, y = Sklearn.Datasets.make_classification ~n_features:4 ~random_state:(`Int 0) () in
+  let clf = ExtraTreesClassifier.create ~n_estimators:100 ~random_state:(`Int 0) () in
+  print ExtraTreesClassifier.pp @@ ExtraTreesClassifier.fit ~x:(`Ndarray x) ~y clf;
+  [%expect {|
       ExtraTreesClassifier(random_state=0)
    |}];
-   print_ndarray @@ ExtraTreesClassifier.predict (matrixi [|[|0; 0; 0; 0|]|]) clf;
-   [%expect {|
+  print_ndarray @@ ExtraTreesClassifier.predict ~x:(`Ndarray (matrixi [|[|0; 0; 0; 0|]|])) clf;
+  [%expect {|
       array([1])
-   |}];
-
-*)
+   |}]
 
 
 
@@ -200,34 +197,13 @@ array([1])
 
 *)
 
-(* TEST TODO
-   let%expect_test "IsolationForest" =
-   let open Sklearn.Ensemble in
-   let x = (matrix [|[|-1.1|]; [|0.3|]; [|0.5|]; [|100|]|]) in
-   let clf = IsolationForest(random_state=0).fit ~x () in
-   print_ndarray @@ IsolationForest.predict (matrix [|[|0.1|]; [|0|]; [|90|]|]) clf;
-   [%expect {|
-   |}];
-
-*)
-
-
-
-(* RandomForestClassifier *)
-(*
->>> from sklearn.ensemble import RandomForestClassifier
->>> from sklearn.datasets import make_classification
-
-*)
-
-(* TEST TODO
-   let%expect_test "RandomForestClassifier" =
-   let open Sklearn.Ensemble in
-   [%expect {|
-   |}];
-
-*)
-
+let%expect_test "IsolationForest" =
+  let open Sklearn.Ensemble in
+  let x = matrix [|[|-1.1|]; [|0.3|]; [|0.5|]; [|100.|]|] in
+  let clf = IsolationForest.(create ~random_state:(`Int 0) () |> fit ~x:(`Ndarray x)) in
+  print_ndarray @@ IsolationForest.predict ~x:(`Ndarray (matrix [|[|0.1|]; [|0.|]; [|90.|]|])) clf;
+  [%expect {|
+   |}]
 
 
 (* RandomForestClassifier *)
@@ -245,43 +221,24 @@ RandomForestClassifier(max_depth=2, random_state=0)
 
 *)
 
-(* TEST TODO
-   let%expect_test "RandomForestClassifier" =
-   let open Sklearn.Ensemble in
-   let x, y = make_classification ~n_samples:1000 ~n_features:4 ~n_informative:2 ~n_redundant:0 ~random_state:(`Int 0) ~shuffle:false () in
-   let clf = RandomForestClassifier.create ~max_depth:2 ~random_state:(`Int 0) () in
-   print RandomForestClassifier.pp @@ RandomForestClassifier.fit ~x y clf;
-   [%expect {|
+let%expect_test "RandomForestClassifier" =
+  let open Sklearn.Ensemble in
+  let x, y = Sklearn.Datasets.make_classification ~n_samples:1000 ~n_features:4 ~n_informative:2
+      ~n_redundant:0 ~random_state:(`Int 0) ~shuffle:false ()
+  in
+  let clf = RandomForestClassifier.create ~max_depth:(`Int 2) ~random_state:(`Int 0) () in
+  print RandomForestClassifier.pp @@ RandomForestClassifier.fit ~x:(`Ndarray x) ~y clf;
+  [%expect {|
       RandomForestClassifier(max_depth=2, random_state=0)
    |}];
-   print_ndarray @@ print clf.feature_importances_ ();
-   [%expect {|
+  print_ndarray @@ get @@ RandomForestClassifier.feature_importances_ clf;
+  [%expect {|
       [0.14205973 0.76664038 0.0282433  0.06305659]
    |}];
-   print_ndarray @@ print(RandomForestClassifier.predict (matrixi [|[|0; 0; 0; 0|]|])) clf;
-   [%expect {|
+  print_ndarray @@ RandomForestClassifier.predict ~x:(`Ndarray (matrixi [|[|0; 0; 0; 0|]|])) clf;
+  [%expect {|
       [1]
-   |}];
-
-*)
-
-
-
-(* RandomForestRegressor *)
-(*
->>> from sklearn.ensemble import RandomForestRegressor
->>> from sklearn.datasets import Sklearn.Datasets.make_regression
-
-*)
-
-(* TEST TODO
-   let%expect_test "RandomForestRegressor" =
-   let open Sklearn.Ensemble in
-   [%expect {|
-   |}];
-
-*)
-
+   |}]
 
 
 (* RandomForestRegressor *)
@@ -298,26 +255,22 @@ RandomForestRegressor(max_depth=2, random_state=0)
 
 *)
 
-(* TEST TODO
-   let%expect_test "RandomForestRegressor" =
-   let open Sklearn.Ensemble in
-   let x, y = Sklearn.Datasets.make_regression ~n_features:4 ~n_informative:2 ~random_state:(`Int 0) ~shuffle:false () in
-   let regr = RandomForestRegressor.create ~max_depth:2 ~random_state:(`Int 0) () in
-   print RandomForestRegressor.pp @@ RandomForestRegressor.fit ~x y regr;
-   [%expect {|
-      RandomForestRegressor(max_depth=2, random_state=0)
-   |}];
-   print_ndarray @@ print regr.feature_importances_ ();
-   [%expect {|
-      [0.18146984 0.81473937 0.00145312 0.00233767]
-   |}];
-   print_ndarray @@ print(RandomForestRegressor.predict (matrixi [|[|0; 0; 0; 0|]|])) regr;
-   [%expect {|
-      [-8.32987858]
-   |}];
-
-*)
-
+(* let%expect_test "RandomForestRegressor" =
+ *   let open Sklearn.Ensemble in
+ *   let x, y = Sklearn.Datasets.make_regression ~n_features:4 ~n_informative:2 ~random_state:(`Int 0) ~shuffle:false () in
+ *   let regr = RandomForestRegressor.create ~max_depth:2 ~random_state:(`Int 0) () in
+ *   print RandomForestRegressor.pp @@ RandomForestRegressor.fit ~x y regr;
+ *   [%expect {|
+ *       RandomForestRegressor(max_depth=2, random_state=0)
+ *    |}];
+ *   print_ndarray @@ print regr.feature_importances_ ();
+ *   [%expect {|
+ *       [0.18146984 0.81473937 0.00145312 0.00233767]
+ *    |}];
+ *   print_ndarray @@ print(RandomForestRegressor.predict (matrixi [|[|0; 0; 0; 0|]|])) regr;
+ *   [%expect {|
+ *       [-8.32987858]
+ *    |}] *)
 
 
 (* StackingClassifier *)
@@ -346,20 +299,15 @@ RandomForestRegressor(max_depth=2, random_state=0)
 
 *)
 
-(* TEST TODO
-   let%expect_test "StackingClassifier" =
-   let open Sklearn.Ensemble in
-   let x, y = load_iris ~return_X_y:true () in
-   let estimators = [('rf', RandomForestClassifier(n_estimators=10, random_state=42)),('svr', make_pipeline(StandardScaler(),LinearSVC(random_state=42)))] in
-   let clf = StackingClassifier(estimators=estimators, final_estimator=LogisticRegression()) in
-   let X_train, X_test, y_train, y_test = train_test_split ~x y ~stratify:y ~random_state:(`Int 42) () in
-   print StackingClassifier.pp @@ StackingClassifier.fit ~X_train y_train).score(X_test ~y_test clf;
-   [%expect {|
-   |}];
-
-*)
-
-
+(* let%expect_test "StackingClassifier" =
+ *   let open Sklearn.Ensemble in
+ *   let x, y = load_iris ~return_X_y:true () in
+ *   let estimators = [('rf', RandomForestClassifier(n_estimators=10, random_state=42)),('svr', make_pipeline(StandardScaler(),LinearSVC(random_state=42)))] in
+ *   let clf = StackingClassifier(estimators=estimators, final_estimator=LogisticRegression()) in
+ *   let X_train, X_test, y_train, y_test = train_test_split ~x y ~stratify:y ~random_state:(`Int 42) () in
+ *   print StackingClassifier.pp @@ StackingClassifier.fit ~X_train y_train .score(X_test ~y_test clf);
+ *   [%expect {|
+ *    |}] *)
 
 (* StackingRegressor *)
 (*
@@ -386,19 +334,15 @@ RandomForestRegressor(max_depth=2, random_state=0)
 
 *)
 
-(* TEST TODO
-   let%expect_test "StackingRegressor" =
-   let open Sklearn.Ensemble in
-   let x, y = load_diabetes ~return_X_y:true () in
-   let estimators = [('lr', RidgeCV()),('svr', LinearSVR(random_state=42))] in
-   let reg = StackingRegressor(estimators=estimators,final_estimator=RandomForestRegressor(n_estimators=10,random_state=42)) in
-   let X_train, X_test, y_train, y_test = train_test_split ~x y ~random_state:(`Int 42) () in
-   print StackingRegressor.pp @@ StackingRegressor.fit ~X_train y_train).score(X_test ~y_test reg;
-   [%expect {|
-   |}];
-
-*)
-
+(* let%expect_test "StackingRegressor" =
+ *   let open Sklearn.Ensemble in
+ *   let x, y = load_diabetes ~return_X_y:true () in
+ *   let estimators = [('lr', RidgeCV()),('svr', LinearSVR(random_state=42))] in
+ *   let reg = StackingRegressor(estimators=estimators,final_estimator=RandomForestRegressor(n_estimators=10,random_state=42)) in
+ *   let X_train, X_test, y_train, y_test = train_test_split ~x y ~random_state:(`Int 42) () in
+ *   print StackingRegressor.pp @@ StackingRegressor.fit ~X_train y_train.score X_test ~y_test reg;
+ *   [%expect {|
+ *    |}] *)
 
 
 (* VotingClassifier *)
@@ -437,42 +381,38 @@ True
 
 *)
 
-(* TEST TODO
-   let%expect_test "VotingClassifier" =
-   let open Sklearn.Ensemble in
-   let clf1 = LogisticRegression.create ~multi_class:'multinomial' ~random_state:(`Int 1) () in
-   let clf2 = RandomForestClassifier.create ~n_estimators:50 ~random_state:(`Int 1) () in
-   let clf3 = GaussianNB.create () in
-   let x = .array (matrixi [|[|-1; -1|]; [|-2; -1|]; [|-3; -2|]; [|1; 1|]; [|2; 1|]; [|3; 2|]|]) np in
-   let y = .array (vectori [|1; 1; 1; 2; 2; 2|]) np in
-   let eclf1 = VotingClassifier(estimators=[('lr', clf1), ('rf', clf2), ('gnb', clf3)], voting='hard') in
-   let eclf1 = eclf1.fit ~x y () in
-   print_ndarray @@ print(eclf1.predict ~x ());
-   [%expect {|
-      [1 1 1 2 2 2]
-   |}];
-   print_ndarray @@ .array_equal eclf1.named_estimators_.lr.predict ~x () eclf1.named_estimators_['lr'].predict ~x () np;
-   [%expect {|
-      True
-   |}];
-   let eclf2 = VotingClassifier(estimators=[('lr', clf1), ('rf', clf2), ('gnb', clf3)],voting='soft') in
-   let eclf2 = eclf2.fit ~x y () in
-   print_ndarray @@ print(eclf2.predict ~x ());
-   [%expect {|
-      [1 1 1 2 2 2]
-   |}];
-   let eclf3 = VotingClassifier(estimators=[('lr', clf1), ('rf', clf2), ('gnb', clf3)],voting='soft', weights=(vectori [|2;1;1|]),flatten_transform=true) in
-   let eclf3 = eclf3.fit ~x y () in
-   print_ndarray @@ print(eclf3.predict ~x ());
-   [%expect {|
-      [1 1 1 2 2 2]
-   |}];
-   print_ndarray @@ print(eclf3.transform ~x ().shape);
-   [%expect {|
-   |}];
-
-*)
-
+(* let%expect_test "VotingClassifier" =
+ *   let open Sklearn.Ensemble in
+ *   let clf1 = LogisticRegression.create ~multi_class:'multinomial' ~random_state:(`Int 1) () in
+ *   let clf2 = RandomForestClassifier.create ~n_estimators:50 ~random_state:(`Int 1) () in
+ *   let clf3 = GaussianNB.create () in
+ *   let x = .array (matrixi [|[|-1; -1|]; [|-2; -1|]; [|-3; -2|]; [|1; 1|]; [|2; 1|]; [|3; 2|]|]) np in
+ *   let y = .array (vectori [|1; 1; 1; 2; 2; 2|]) np in
+ *   let eclf1 = VotingClassifier(estimators=[('lr', clf1), ('rf', clf2), ('gnb', clf3)], voting='hard') in
+ *   let eclf1 = eclf1.fit ~x y () in
+ *   print_ndarray @@ print(eclf1.predict ~x ());
+ *   [%expect {|
+ *       [1 1 1 2 2 2]
+ *    |}];
+ *   print_ndarray @@ .array_equal eclf1.named_estimators_.lr.predict ~x () eclf1.named_estimators_['lr'].predict ~x () np;
+ *   [%expect {|
+ *       True
+ *    |}];
+ *   let eclf2 = VotingClassifier(estimators=[('lr', clf1), ('rf', clf2), ('gnb', clf3)],voting='soft') in
+ *   let eclf2 = eclf2.fit ~x y () in
+ *   print_ndarray @@ print(eclf2.predict ~x ());
+ *   [%expect {|
+ *       [1 1 1 2 2 2]
+ *    |}];
+ *   let eclf3 = VotingClassifier(estimators=[('lr', clf1), ('rf', clf2), ('gnb', clf3)],voting='soft', weights=(vectori [|2;1;1|]),flatten_transform=true) in
+ *   let eclf3 = eclf3.fit ~x y () in
+ *   print_ndarray @@ print(eclf3.predict ~x ());
+ *   [%expect {|
+ *       [1 1 1 2 2 2]
+ *    |}];
+ *   print_ndarray @@ print(eclf3.transform ~x ().shape);
+ *   [%expect {|
+ *    |}] *)
 
 
 (* VotingRegressor *)
@@ -490,20 +430,16 @@ True
 
 *)
 
-(* TEST TODO
-   let%expect_test "VotingRegressor" =
-   let open Sklearn.Ensemble in
-   let r1 = LinearRegression.create () in
-   let r2 = RandomForestRegressor.create ~n_estimators:10 ~random_state:(`Int 1) () in
-   let x = .array (matrixi [|[|1; 1|]; [|2; 4|]; [|3; 9|]; [|4; 16|]; [|5; 25|]; [|6; 36|]|]) np in
-   let y = .array [2 ~6 12 ~20 30 42] np in
-   let er = VotingRegressor([('lr', r1), ('rf', r2)]) in
-   print_ndarray @@ print VotingRegressor.fit ~x y ().predict ~x () er;
-   [%expect {|
-   |}];
-
-*)
-
+(* let%expect_test "VotingRegressor" =
+ *   let open Sklearn.Ensemble in
+ *   let r1 = LinearRegression.create () in
+ *   let r2 = RandomForestRegressor.create ~n_estimators:10 ~random_state:(`Int 1) () in
+ *   let x = .array (matrixi [|[|1; 1|]; [|2; 4|]; [|3; 9|]; [|4; 16|]; [|5; 25|]; [|6; 36|]|]) np in
+ *   let y = .array [2 ~6 12 ~20 30 42] np in
+ *   let er = VotingRegressor([('lr', r1), ('rf', r2)]) in
+ *   print_ndarray @@ print VotingRegressor.fit ~x y ().predict ~x () er;
+ *   [%expect {|
+ *    |}] *)
 
 
 (*--------- Examples for module Sklearn.Ensemble.Partial_dependence ----------*)
