@@ -1364,7 +1364,7 @@ class Output:
         for line in self.lines:
             ff.write(line)
             ff.write("\n")
-        f.write("|}]\n")
+        f.write("|}];\n")
 
 
 class Indented:
