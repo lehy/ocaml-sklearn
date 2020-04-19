@@ -114,6 +114,13 @@ let%expect_test "BaggingClassifier" =
   let x, y = Sklearn.Datasets.make_classification ~n_samples:100 ~n_features:4
       ~n_informative:2 ~n_redundant:0 ~random_state:(`Int 0) ~shuffle:false ()
   in
+  (* XXX The way SVC() is passed is not satisfying, but I fear that
+     most solutions (passsing a first-class module to the function,
+     complicating the Py.Object.t type to include some more
+     information + subtyping, exposing PYthon classes as OCaml
+     classes... would be a lot of work, probably harder to use, for a
+     benefit that is relatively mild. Suggestions welcome.  -- Ronan,
+     2020-04-19 *)
   let clf = BaggingClassifier.(create ~base_estimator:(`PyObject (Sklearn.Svm.SVC.(create () |> to_pyobject)))
                                  ~n_estimators:10 ~random_state:(`Int 0) ()
                                |> fit ~x:(`Ndarray x) ~y)
@@ -138,18 +145,19 @@ array([-2.8720...])
 
 *)
 
-(* TEST TODO
-   let%expect_test "BaggingRegressor" =
-   let open Sklearn.Ensemble in
-   let x, y = Sklearn.Datasets.make_regression ~n_samples:100 ~n_features:4 ~n_informative:2 ~n_targets:1 ~random_state:(`Int 0) ~shuffle:false () in
-   let regr = BaggingRegressor(base_estimator=SVR(),n_estimators=10, random_state=0).fit ~x y () in
-   print_ndarray @@ BaggingRegressor.predict (matrixi [|[|0; 0; 0; 0|]|]) regr;
-   [%expect {|
-      array([-2.8720...])
-   |}];
-
-*)
-
+let%expect_test "BaggingRegressor" =
+  let open Sklearn.Ensemble in
+  let x, y, _coefs = Sklearn.Datasets.make_regression ~n_samples:100 ~n_features:4
+      ~n_informative:2 ~n_targets:1 ~random_state:(`Int 0) ~shuffle:false ()
+  in
+  let regr = BaggingRegressor.(create ~base_estimator:(`PyObject (Sklearn.Svm.SVR.(create () |> to_pyobject)))
+                                 ~n_estimators:10 ~random_state:(`Int 0) ()
+                               |> fit ~x:(`Ndarray x) ~y)
+  in
+  print_ndarray @@ BaggingRegressor.predict ~x:(`Ndarray (matrixi [|[|0; 0; 0; 0|]|])) regr;
+  [%expect {|
+      [-2.87202411]
+   |}]
 
 
 (* ExtraTreesClassifier *)
