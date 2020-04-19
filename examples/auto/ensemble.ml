@@ -95,8 +95,6 @@ let%expect_test "AdaBoostRegressor" =
      |}]
 
 
-
-(* BaggingClassifier *)
 (*
 >>> from sklearn.svm import SVC
 >>> from sklearn.ensemble import BaggingClassifier
@@ -111,19 +109,19 @@ array([1])
 
 *)
 
-(* TEST TODO
-   let%expect_test "BaggingClassifier" =
-   let open Sklearn.Ensemble in
-   let x, y = make_classification ~n_samples:100 ~n_features:4 ~n_informative:2 ~n_redundant:0 ~random_state:(`Int 0) ~shuffle:false () in
-   let clf = BaggingClassifier(base_estimator=SVC(),n_estimators=10, random_state=0).fit ~x y () in
-   print_ndarray @@ BaggingClassifier.predict (matrixi [|[|0; 0; 0; 0|]|]) clf;
-   [%expect {|
-      array([1])
-   |}];
-
-*)
-
-
+let%expect_test "BaggingClassifier" =
+  let open Sklearn.Ensemble in
+  let x, y = Sklearn.Datasets.make_classification ~n_samples:100 ~n_features:4
+      ~n_informative:2 ~n_redundant:0 ~random_state:(`Int 0) ~shuffle:false ()
+  in
+  let clf = BaggingClassifier.(create ~base_estimator:(`PyObject (Sklearn.Svm.SVC.(create () |> to_pyobject)))
+                                 ~n_estimators:10 ~random_state:(`Int 0) ()
+                               |> fit ~x:(`Ndarray x) ~y)
+  in
+  print_ndarray @@ BaggingClassifier.predict ~x:(`Ndarray (matrixi [|[|0; 0; 0; 0|]|])) clf;
+  [%expect {|
+      [1]
+   |}]
 
 (* BaggingRegressor *)
 (*
