@@ -268,22 +268,30 @@ RandomForestRegressor(max_depth=2, random_state=0)
 
 *)
 
-(* let%expect_test "RandomForestRegressor" =
- *   let open Sklearn.Ensemble in
- *   let x, y = Sklearn.Datasets.make_regression ~n_features:4 ~n_informative:2 ~random_state:(`Int 0) ~shuffle:false () in
- *   let regr = RandomForestRegressor.create ~max_depth:2 ~random_state:(`Int 0) () in
- *   print RandomForestRegressor.pp @@ RandomForestRegressor.fit ~x y regr;
- *   [%expect {|
- *       RandomForestRegressor(max_depth=2, random_state=0)
- *    |}];
- *   print_ndarray @@ print regr.feature_importances_ ();
- *   [%expect {|
- *       [0.18146984 0.81473937 0.00145312 0.00233767]
- *    |}];
- *   print_ndarray @@ print(RandomForestRegressor.predict (matrixi [|[|0; 0; 0; 0|]|])) regr;
- *   [%expect {|
- *       [-8.32987858]
- *    |}] *)
+let%expect_test "RandomForestRegressor" =
+  let open Sklearn.Ensemble in
+  let x, y, _coefs =
+    Sklearn.Datasets.make_regression ~n_features:4 ~n_informative:2 ~random_state:(`Int 0) ~shuffle:false ()
+  in
+  let regr = RandomForestRegressor.create ~max_depth:(`Int 2) ~random_state:(`Int 0) () in
+  print RandomForestRegressor.pp @@ RandomForestRegressor.fit ~x ~y regr;
+  [%expect {|
+      RandomForestRegressor(bootstrap=True, ccp_alpha=0.0, criterion='mse',
+                            max_depth=2, max_features='auto', max_leaf_nodes=None,
+                            max_samples=None, min_impurity_decrease=0.0,
+                            min_impurity_split=None, min_samples_leaf=1,
+                            min_samples_split=2, min_weight_fraction_leaf=0.0,
+                            n_estimators=100, n_jobs=None, oob_score=False,
+                            random_state=0, verbose=0, warm_start=False)
+   |}];
+  print_ndarray @@ RandomForestRegressor.feature_importances_ regr;
+  [%expect {|
+      [0.18146984 0.81473937 0.00145312 0.00233767]
+   |}];
+  print_ndarray @@ RandomForestRegressor.predict ~x:(matrixi [|[|0; 0; 0; 0|]|]) regr;
+  [%expect {|
+      [-8.32987858]
+   |}]
 
 
 (* StackingClassifier *)
