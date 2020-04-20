@@ -28,7 +28,7 @@ let%expect_test "MultiOutputClassifier" =
 (* TEST TODO
 let%expect_test "MultiOutputClassifier" =
   let open Sklearn.Multioutput in
-  let x, y = make_multilabel_classification ~n_classes:3 ~random_state:(`Int 0) () in  
+  let x, y = make_multilabel_classification ~n_classes:3 ~random_state:0 () in  
   let clf = MultiOutputClassifier(KNeighborsClassifier()).fit ~x y () in  
   print_ndarray @@ MultiOutputClassifier.predict x[-2:] clf;  
   [%expect {|

@@ -191,7 +191,7 @@ array([0, 1, 2, 0, 2, 2, 2, 1, 1, 0])
 (* TEST TODO
 let%expect_test "make_blobs" =
   let open Sklearn.Datasets in
-  let x, y = make_blobs ~n_samples:10 ~centers:3 ~n_features:2 ~random_state:(`Int 0) () in  
+  let x, y = make_blobs ~n_samples:10 ~centers:3 ~n_features:2 ~random_state:0 () in  
   print_ndarray @@ print x.shape ();  
   [%expect {|
       (10, 2)      

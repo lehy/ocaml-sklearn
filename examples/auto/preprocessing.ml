@@ -479,7 +479,7 @@ let%expect_test "MultiLabelBinarizer" =
   let open Sklearn.Preprocessing in
   let mlb = MultiLabelBinarizer.create () in
   (* arg could be List(Ndarray()) ? *)
-  print_ndarray @@ MultiLabelBinarizer.fit_transform mlb ~y:(Sklearn.Ndarray.Int.vectors [[|1; 2|]; [|3|]]);
+  print_ndarray @@ MultiLabelBinarizer.fit_transform mlb ~y:(Sklearn.Arr.Int.vectors [[|1; 2|]; [|3|]]);
   [%expect {|
             [[1 1 0]
              [0 0 1]]
@@ -504,7 +504,7 @@ let%expect_test "MultiLabelBinarizer" =
   let open Sklearn.Preprocessing in
   let mlb = MultiLabelBinarizer.create () in
   print_ndarray @@ MultiLabelBinarizer.fit_transform mlb
-    ~y:(Sklearn.Ndarray.String.vectors [[|"sci-fi"; "thriller"|]; [|"comedy"|]]);
+    ~y:(Sklearn.Arr.String.vectors [[|"sci-fi"; "thriller"|]; [|"comedy"|]]);
   [%expect {|
             [[0 1 1]
              [1 0 0]]
@@ -572,7 +572,7 @@ let%expect_test "MultiLabelBinarizer" =
   let open Sklearn.Preprocessing in
   let mlb = MultiLabelBinarizer.create () in
   print MultiLabelBinarizer.pp @@ MultiLabelBinarizer.fit mlb
-    ~y:(Sklearn.Ndarray.String.vectors [[|"sci-fi"; "thriller"; "comedy"|]]);
+    ~y:(Sklearn.Arr.String.vectors [[|"sci-fi"; "thriller"; "comedy"|]]);
   [%expect {|
             MultiLabelBinarizer(classes=None, sparse_output=False)
     |}];
@@ -713,7 +713,7 @@ let%expect_test "OrdinalEncoder" =
   [%expect {|
             OrdinalEncoder(categories='auto', dtype=<class 'numpy.float64'>)
     |}];
-  print Sklearn.Ndarray.List.pp @@ OrdinalEncoder.categories_ enc;
+  print Sklearn.Arr.List.pp @@ OrdinalEncoder.categories_ enc;
   [%expect {|
             [array(['Female', 'Male'], dtype=object), array([1, 2, 3], dtype=object)]
     |}];
@@ -851,7 +851,7 @@ let%expect_test "QuantileTransformer" =
   let module Matrix = Owl.Dense.Matrix.D in
   Owl_stats_prng.init 0;
   let x = Matrix.(gaussian ~mu:0.5 ~sigma:0.25 25 1 |> sort) |> Sklearn.Arr.of_bigarray in
-  let qt = QuantileTransformer.create ~n_quantiles:10 ~random_state:(`Int 0) () in
+  let qt = QuantileTransformer.create ~n_quantiles:10 ~random_state:0 () in
   print_ndarray @@ QuantileTransformer.fit_transform qt ~x;
   [%expect {|
             [[0.        ]
@@ -1081,7 +1081,7 @@ let%expect_test "quantile_transform" =
   let module Matrix = Owl.Dense.Matrix.D in
   Owl_stats_prng.init 0;
   let x = Matrix.(gaussian ~mu:0.5 ~sigma:0.25 25 1 |> sort) |> Sklearn.Arr.of_bigarray in
-  print_ndarray @@ quantile_transform ~x ~n_quantiles:10 ~random_state:(`Int 0) ~copy:true ();
+  print_ndarray @@ quantile_transform ~x ~n_quantiles:10 ~random_state:0 ~copy:true ();
   [%expect {|
             [[0.        ]
              [0.0465588 ]

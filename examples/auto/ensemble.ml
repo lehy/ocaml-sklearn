@@ -32,9 +32,9 @@ array([1])
 let%expect_test "AdaBoostClassifier" =
   let open Sklearn.Ensemble in
   let x, y = Sklearn.Datasets.make_classification ~n_samples:1000 ~n_features:4 ~n_informative:2
-      ~n_redundant:0 ~random_state:(`Int 0) ~shuffle:false ()
+      ~n_redundant:0 ~random_state:0 ~shuffle:false ()
   in
-  let clf = AdaBoostClassifier.create ~n_estimators:100 ~random_state:(`Int 0) () in
+  let clf = AdaBoostClassifier.create ~n_estimators:100 ~random_state:0 () in
   print AdaBoostClassifier.pp @@ AdaBoostClassifier.fit ~x ~y clf;
   [%expect {|
       AdaBoostClassifier(algorithm='SAMME.R', base_estimator=None, learning_rate=1.0,
@@ -73,9 +73,9 @@ array([4.7972...])
 let%expect_test "AdaBoostRegressor" =
   let open Sklearn.Ensemble in
   let x, y, _coef = Sklearn.Datasets.make_regression ~n_features:4 ~n_informative:2
-      ~random_state:(`Int 0) ~shuffle:false ()
+      ~random_state:0 ~shuffle:false ()
   in
-  let regr = AdaBoostRegressor.create ~random_state:(`Int 0) ~n_estimators:100 () in
+  let regr = AdaBoostRegressor.create ~random_state:0 ~n_estimators:100 () in
   print AdaBoostRegressor.pp @@ AdaBoostRegressor.fit ~x ~y regr;
   [%expect {|
         AdaBoostRegressor(base_estimator=None, learning_rate=1.0, loss='linear',
@@ -112,7 +112,7 @@ array([1])
 let%expect_test "BaggingClassifier" =
   let open Sklearn.Ensemble in
   let x, y = Sklearn.Datasets.make_classification ~n_samples:100 ~n_features:4
-      ~n_informative:2 ~n_redundant:0 ~random_state:(`Int 0) ~shuffle:false ()
+      ~n_informative:2 ~n_redundant:0 ~random_state:0 ~shuffle:false ()
   in
   (* XXX The way SVC() is passed is not satisfying, but I fear that
      most solutions (passsing a first-class module to the function,
@@ -122,7 +122,7 @@ let%expect_test "BaggingClassifier" =
      benefit that is relatively mild. Suggestions welcome.  -- Ronan,
      2020-04-19 *)
   let clf = BaggingClassifier.(create ~base_estimator:Sklearn.Svm.SVC.(create () |> to_pyobject)
-                                 ~n_estimators:10 ~random_state:(`Int 0) ()
+                                 ~n_estimators:10 ~random_state:0 ()
                                |> fit ~x ~y)
   in
   print_ndarray @@ BaggingClassifier.predict ~x:(matrixi [|[|0; 0; 0; 0|]|]) clf;
@@ -148,10 +148,10 @@ array([-2.8720...])
 let%expect_test "BaggingRegressor" =
   let open Sklearn.Ensemble in
   let x, y, _coefs = Sklearn.Datasets.make_regression ~n_samples:100 ~n_features:4
-      ~n_informative:2 ~n_targets:1 ~random_state:(`Int 0) ~shuffle:false ()
+      ~n_informative:2 ~n_targets:1 ~random_state:0 ~shuffle:false ()
   in
   let regr = BaggingRegressor.(create ~base_estimator:Sklearn.Svm.SVR.(create () |> to_pyobject)
-                                 ~n_estimators:10 ~random_state:(`Int 0) ()
+                                 ~n_estimators:10 ~random_state:0 ()
                                |> fit ~x ~y)
   in
   print_ndarray @@ BaggingRegressor.predict ~x:(matrixi [|[|0; 0; 0; 0|]|]) regr;
@@ -175,8 +175,8 @@ array([1])
 
 let%expect_test "ExtraTreesClassifier" =
   let open Sklearn.Ensemble in
-  let x, y = Sklearn.Datasets.make_classification ~n_features:4 ~random_state:(`Int 0) () in
-  let clf = ExtraTreesClassifier.create ~n_estimators:100 ~random_state:(`Int 0) () in
+  let x, y = Sklearn.Datasets.make_classification ~n_features:4 ~random_state:0 () in
+  let clf = ExtraTreesClassifier.create ~n_estimators:100 ~random_state:0 () in
   print ExtraTreesClassifier.pp @@ ExtraTreesClassifier.fit ~x ~y clf;
   [%expect {|
       ExtraTreesClassifier(bootstrap=False, ccp_alpha=0.0, class_weight=None,
@@ -207,7 +207,7 @@ let%expect_test "ExtraTreesClassifier" =
 let%expect_test "IsolationForest" =
   let open Sklearn.Ensemble in
   let x = matrix [|[|-1.1|]; [|0.3|]; [|0.5|]; [|100.|]|] in
-  let clf = IsolationForest.(create ~random_state:(`Int 0) () |> fit ~x) in
+  let clf = IsolationForest.(create ~random_state:0 () |> fit ~x) in
   print_ndarray @@ IsolationForest.predict ~x:(matrix [|[|0.1|]; [|0.|]; [|90.|]|]) clf;
   [%expect {| [ 1  1 -1] |}]
 
@@ -230,9 +230,9 @@ RandomForestClassifier(max_depth=2, random_state=0)
 let%expect_test "RandomForestClassifier" =
   let open Sklearn.Ensemble in
   let x, y = Sklearn.Datasets.make_classification ~n_samples:1000 ~n_features:4 ~n_informative:2
-      ~n_redundant:0 ~random_state:(`Int 0) ~shuffle:false ()
+      ~n_redundant:0 ~random_state:0 ~shuffle:false ()
   in
-  let clf = RandomForestClassifier.create ~max_depth:2 ~random_state:(`Int 0) () in
+  let clf = RandomForestClassifier.create ~max_depth:2 ~random_state:0 () in
   print RandomForestClassifier.pp @@ RandomForestClassifier.fit ~x ~y clf;
   [%expect {|
       RandomForestClassifier(bootstrap=True, ccp_alpha=0.0, class_weight=None,
@@ -271,9 +271,9 @@ RandomForestRegressor(max_depth=2, random_state=0)
 let%expect_test "RandomForestRegressor" =
   let open Sklearn.Ensemble in
   let x, y, _coefs =
-    Sklearn.Datasets.make_regression ~n_features:4 ~n_informative:2 ~random_state:(`Int 0) ~shuffle:false ()
+    Sklearn.Datasets.make_regression ~n_features:4 ~n_informative:2 ~random_state:0 ~shuffle:false ()
   in
-  let regr = RandomForestRegressor.create ~max_depth:2 ~random_state:(`Int 0) () in
+  let regr = RandomForestRegressor.create ~max_depth:2 ~random_state:0 () in
   print RandomForestRegressor.pp @@ RandomForestRegressor.fit ~x ~y regr;
   [%expect {|
       RandomForestRegressor(bootstrap=True, ccp_alpha=0.0, criterion='mse',
@@ -320,15 +320,24 @@ let%expect_test "RandomForestRegressor" =
 
 *)
 
-(* let%expect_test "StackingClassifier" =
- *   let open Sklearn.Ensemble in
- *   let x, y = load_iris ~return_X_y:true () in
- *   let estimators = [('rf', RandomForestClassifier(n_estimators=10, random_state=42)),('svr', make_pipeline(StandardScaler(),LinearSVC(random_state=42)))] in
- *   let clf = StackingClassifier(estimators=estimators, final_estimator=LogisticRegression()) in
- *   let X_train, X_test, y_train, y_test = train_test_split ~x y ~stratify:y ~random_state:(`Int 42) () in
- *   print StackingClassifier.pp @@ StackingClassifier.fit ~X_train y_train .score(X_test ~y_test clf);
- *   [%expect {|
- *    |}] *)
+let%expect_test "StackingClassifier" =
+  let open Sklearn.Ensemble in
+  let open Sklearn.Pipeline in
+  let iris = Sklearn.Datasets.load_iris () in
+  let estimators = ["rf", RandomForestClassifier.(create ~n_estimators:10 ~random_state:42 () |> to_pyobject);
+                    "svr", make_pipeline [ Sklearn.Preprocessing.StandardScaler.(create () |> to_pyobject);
+                                           Sklearn.Svm.LinearSVC.(create ~random_state:42 () |> to_pyobject)]
+                           |> Pipeline.to_pyobject]
+  in
+  let clf = StackingClassifier.create ~estimators
+      ~final_estimator:Sklearn.Linear_model.LogisticRegression.(create () |> to_pyobject) ()
+  in
+  let [@ocaml.warning "-8"] [x_train; x_test; y_train; y_test] =
+    Sklearn.Model_selection.train_test_split [iris#data; iris#target] ~stratify:iris#target ~random_state:42
+  in
+  Format.printf "%g" @@ StackingClassifier.(fit ~x:x_train ~y:y_train clf |> score ~x:x_test ~y:y_test);
+  [%expect {|
+   |}]
 
 (* StackingRegressor *)
 (*
@@ -360,7 +369,7 @@ let%expect_test "RandomForestRegressor" =
  *   let x, y = load_diabetes ~return_X_y:true () in
  *   let estimators = [('lr', RidgeCV()),('svr', LinearSVR(random_state=42))] in
  *   let reg = StackingRegressor(estimators=estimators,final_estimator=RandomForestRegressor(n_estimators=10,random_state=42)) in
- *   let X_train, X_test, y_train, y_test = train_test_split ~x y ~random_state:(`Int 42) () in
+ *   let X_train, X_test, y_train, y_test = train_test_split ~x y ~random_state:42 () in
  *   print StackingRegressor.pp @@ StackingRegressor.fit ~X_train y_train.score X_test ~y_test reg;
  *   [%expect {|
  *    |}] *)
@@ -404,8 +413,8 @@ True
 
 (* let%expect_test "VotingClassifier" =
  *   let open Sklearn.Ensemble in
- *   let clf1 = LogisticRegression.create ~multi_class:'multinomial' ~random_state:(`Int 1) () in
- *   let clf2 = RandomForestClassifier.create ~n_estimators:50 ~random_state:(`Int 1) () in
+ *   let clf1 = LogisticRegression.create ~multi_class:'multinomial' ~random_state:1 () in
+ *   let clf2 = RandomForestClassifier.create ~n_estimators:50 ~random_state:1 () in
  *   let clf3 = GaussianNB.create () in
  *   let x = .array (matrixi [|[|-1; -1|]; [|-2; -1|]; [|-3; -2|]; [|1; 1|]; [|2; 1|]; [|3; 2|]|]) np in
  *   let y = .array (vectori [|1; 1; 1; 2; 2; 2|]) np in
@@ -454,7 +463,7 @@ True
 (* let%expect_test "VotingRegressor" =
  *   let open Sklearn.Ensemble in
  *   let r1 = LinearRegression.create () in
- *   let r2 = RandomForestRegressor.create ~n_estimators:10 ~random_state:(`Int 1) () in
+ *   let r2 = RandomForestRegressor.create ~n_estimators:10 ~random_state:1 () in
  *   let x = .array (matrixi [|[|1; 1|]; [|2; 4|]; [|3; 9|]; [|4; 16|]; [|5; 25|]; [|6; 36|]|]) np in
  *   let y = .array [2 ~6 12 ~20 30 42] np in
  *   let er = VotingRegressor([('lr', r1), ('rf', r2)]) in

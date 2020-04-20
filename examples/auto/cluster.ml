@@ -281,7 +281,7 @@ let%expect_test "MiniBatchKMeans" =
   let open Sklearn.Cluster in
   let x = .array [(vectori [|1; 2|]) (vectori [|1; 4|]) (vectori [|1; 0|]) (vectori [|4; 2|]) (vectori [|4; 0|]) (vectori [|4; 4|]) (vectori [|4; 5|]) (vectori [|0; 1|]) (vectori [|2; 2|]) (vectori [|3; 2|]) (vectori [|5; 5|]) [1 -1]] np in  
   print_ndarray @@ # manually fit on batches;  
-  let kmeans = MiniBatchKMeans.create ~n_clusters:2 ~random_state:(`Int 0) ~batch_size:6 () in  
+  let kmeans = MiniBatchKMeans.create ~n_clusters:2 ~random_state:0 ~batch_size:6 () in  
   let kmeans = MiniBatchKMeans.partial_fit x[0:6 :] kmeans in  
   let kmeans = MiniBatchKMeans.partial_fit x[6:12 :] kmeans in  
   print_ndarray @@ MiniBatchKMeans.cluster_centers_ kmeans;  

@@ -131,7 +131,7 @@ let%expect_test "GroupShuffleSplit" =
   [%expect {|
       (8,)      
   |}]
-  let gss = GroupShuffleSplit.create ~n_splits:2 ~train_size:.7 ~random_state:(`Int 42) () in  
+  let gss = GroupShuffleSplit.create ~n_splits:2 ~train_size:.7 ~random_state:42 () in  
   print_ndarray @@ GroupShuffleSplit.get_n_splits gss;  
   [%expect {|
       2      
@@ -569,9 +569,9 @@ let%expect_test "PredefinedSplit" =
 let%expect_test "RandomizedSearchCV" =
   let open Sklearn.Model_selection in
   let iris = load_iris () in  
-  let logistic = LogisticRegression.create ~solver:'saga' ~tol:1e-2 ~max_iter:200 ~random_state:(`Int 0) () in  
+  let logistic = LogisticRegression.create ~solver:'saga' ~tol:1e-2 ~max_iter:200 ~random_state:0 () in  
   let distributions = dict(C=uniform ~loc:0 ~scale:4 (),penalty=['l2', 'l1']) in  
-  let clf = RandomizedSearchCV.create ~logistic distributions ~random_state:(`Int 0) () in  
+  let clf = RandomizedSearchCV.create ~logistic distributions ~random_state:0 () in  
   let search = RandomizedSearchCV.fit iris.data iris.target clf in  
   print_ndarray @@ .best_params_ search;  
   [%expect {|
@@ -605,7 +605,7 @@ let%expect_test "RepeatedKFold" =
   let open Sklearn.Model_selection in
   let x = .array (matrixi [|[|1; 2|]; [|3; 4|]; [|1; 2|]; [|3; 4|]|]) np in  
   let y = .array (vectori [|0; 0; 1; 1|]) np in  
-  let rkf = RepeatedKFold.create ~n_splits:2 ~n_repeats:2 ~random_state:(`Int 2652124) () in  
+  let rkf = RepeatedKFold.create ~n_splits:2 ~n_repeats:2 ~random_state:2652124 () in  
   print_ndarray @@ for train_index, test_index in RepeatedKFold.split x):print("TRAIN:" ~train_index "TEST:" ~test_index rkfX_train, X_test = x[train_index], x[test_index]y_train, y_test = y[train_index], y[test_index];  
   [%expect {|
       TRAIN: [0 1] TEST: [2 3]      
@@ -643,7 +643,7 @@ let%expect_test "RepeatedStratifiedKFold" =
   let open Sklearn.Model_selection in
   let x = .array (matrixi [|[|1; 2|]; [|3; 4|]; [|1; 2|]; [|3; 4|]|]) np in  
   let y = .array (vectori [|0; 0; 1; 1|]) np in  
-  let rskf = RepeatedStratifiedKFold.create ~n_splits:2 ~n_repeats:2 ~random_state:(`Int 36851234) () in  
+  let rskf = RepeatedStratifiedKFold.create ~n_splits:2 ~n_repeats:2 ~random_state:36851234 () in  
   print_ndarray @@ for train_index, test_index in RepeatedStratifiedKFold.split ~x y):print("TRAIN:" ~train_index "TEST:" ~test_index rskfX_train, X_test = x[train_index], x[test_index]y_train, y_test = y[train_index], y[test_index];  
   [%expect {|
       TRAIN: [1 2] TEST: [0 3]      
@@ -690,7 +690,7 @@ let%expect_test "ShuffleSplit" =
   let open Sklearn.Model_selection in
   let x = .array (matrixi [|[|1; 2|]; [|3; 4|]; [|5; 6|]; [|7; 8|]; [|3; 4|]; [|5; 6|]|]) np in  
   let y = .array (vectori [|1; 2; 1; 2; 1; 2|]) np in  
-  let rs = ShuffleSplit.create ~n_splits:5 ~test_size:.25 ~random_state:(`Int 0) () in  
+  let rs = ShuffleSplit.create ~n_splits:5 ~test_size:.25 ~random_state:0 () in  
   print_ndarray @@ ShuffleSplit.get_n_splits ~x rs;  
   [%expect {|
       5      
@@ -707,7 +707,7 @@ let%expect_test "ShuffleSplit" =
       TRAIN: [3 4 1 0] TEST: [5 2]      
       TRAIN: [3 5 1 0] TEST: [2 4]      
   |}]
-  let rs = ShuffleSplit.create ~n_splits:5 ~train_size:0.5 ~test_size:.25 ~random_state:(`Int 0) () in  
+  let rs = ShuffleSplit.create ~n_splits:5 ~train_size:0.5 ~test_size:.25 ~random_state:0 () in  
   print_ndarray @@ for train_index, test_index in ShuffleSplit.split x):print("TRAIN:" ~train_index "TEST:" ~test_index rs;  
   [%expect {|
       TRAIN: [1 3 0] TEST: [5 2]      
@@ -791,7 +791,7 @@ let%expect_test "StratifiedShuffleSplit" =
   let open Sklearn.Model_selection in
   let x = .array (matrixi [|[|1; 2|]; [|3; 4|]; [|1; 2|]; [|3; 4|]; [|1; 2|]; [|3; 4|]|]) np in  
   let y = .array (vectori [|0; 0; 0; 1; 1; 1|]) np in  
-  let sss = StratifiedShuffleSplit.create ~n_splits:5 ~test_size:0.5 ~random_state:(`Int 0) () in  
+  let sss = StratifiedShuffleSplit.create ~n_splits:5 ~test_size:0.5 ~random_state:0 () in  
   print_ndarray @@ StratifiedShuffleSplit.get_n_splits ~x y sss;  
   [%expect {|
       5      
@@ -1053,7 +1053,7 @@ array([[2, 3],
 (* TEST TODO
 let%expect_test "train_test_split" =
   let open Sklearn.Model_selection in
-  let X_train, X_test, y_train, y_test = train_test_split ~x y ~test_size:0.33 ~random_state:(`Int 42) () in  
+  let X_train, X_test, y_train, y_test = train_test_split ~x y ~test_size:0.33 ~random_state:42 () in  
   X_train  
   [%expect {|
       array([[4, 5],      

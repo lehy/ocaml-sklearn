@@ -627,7 +627,7 @@ let%expect_test "hinge_loss" =
   let open Sklearn.Metrics in
   let x = (matrixi [|[|0|]; [|1|]|]) in  
   let y = [-1, 1] in  
-  let est = .linearSVC ~random_state:(`Int 0) svm in  
+  let est = .linearSVC ~random_state:0 svm in  
   print_ndarray @@ .fit ~x y est;  
   [%expect {|
       LinearSVC(random_state=0)      
@@ -2144,9 +2144,9 @@ SVC(random_state=0)
 (* TEST TODO
 let%expect_test "plot_roc_curve" =
   let open Sklearn.Metrics in
-  let x, y = .make_classification ~random_state:(`Int 0) datasets in  
-  let X_train, X_test, y_train, y_test = .train_test_split x y ~random_state:(`Int 0) model_selection in  
-  let clf = .svc ~random_state:(`Int 0) svm in  
+  let x, y = .make_classification ~random_state:0 datasets in  
+  let X_train, X_test, y_train, y_test = .train_test_split x y ~random_state:0 model_selection in  
+  let clf = .svc ~random_state:0 svm in  
   print_ndarray @@ .fit ~X_train y_train clf;  
   [%expect {|
       SVC(random_state=0)      

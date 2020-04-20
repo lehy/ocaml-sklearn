@@ -20,7 +20,7 @@ let%expect_test "AdditiveChi2Sampler" =
   let x, y = load_digits ~return_X_y:true () in  
   let chi2sampler = AdditiveChi2Sampler(sample_steps=2) in  
   let X_transformed = chi2sampler.fit_transform ~x y () in  
-  let clf = SGDClassifier.create ~max_iter:5 ~random_state:(`Int 0) ~tol:1e-3 () in  
+  let clf = SGDClassifier.create ~max_iter:5 ~random_state:0 ~tol:1e-3 () in  
   print SGDClassifier.pp @@ SGDClassifier.fit ~X_transformed y clf;  
   [%expect {|
       SGDClassifier(max_iter=5, random_state=0)      
@@ -58,7 +58,7 @@ let%expect_test "Nystroem" =
   let x, y = .load_digits ~n_class:9 ~return_X_y:true datasets in  
   let data = x / 16. in  
   let clf = .linearSVC svm in  
-  let feature_map_nystroem = Nystroem.create ~gamma:.2 ~random_state:(`Int 1) ~n_components:300 () in  
+  let feature_map_nystroem = Nystroem.create ~gamma:.2 ~random_state:1 ~n_components:300 () in  
   let data_transformed = Nystroem.fit_transform ~data feature_map_nystroem in  
   print_ndarray @@ .fit ~data_transformed y clf;  
   [%expect {|
@@ -94,7 +94,7 @@ let%expect_test "RBFSampler" =
   let open Sklearn.Kernel_approximation in
   let x = (matrixi [|[|0; 0|]; [|1; 1|]; [|1; 0|]; [|0; 1|]|]) in  
   let y = (vectori [|0; 0; 1; 1|]) in  
-  let rbf_feature = RBFSampler.create ~gamma:1 ~random_state:(`Int 1) () in  
+  let rbf_feature = RBFSampler.create ~gamma:1 ~random_state:1 () in  
   let X_features = RBFSampler.fit_transform ~x rbf_feature in  
   let clf = SGDClassifier.create ~max_iter:5 ~tol:1e-3 () in  
   print SGDClassifier.pp @@ SGDClassifier.fit ~X_features y clf;  

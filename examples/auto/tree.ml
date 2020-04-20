@@ -15,7 +15,7 @@ array([ 1.     ,  0.93...,  0.86...,  0.93...,  0.93...,
 (* TEST TODO
 let%expect_test "DecisionTreeClassifier" =
   let open Sklearn.Tree in
-  let clf = DecisionTreeClassifier.create ~random_state:(`Int 0) () in  
+  let clf = DecisionTreeClassifier.create ~random_state:0 () in  
   let iris = load_iris () in  
   print_ndarray @@ cross_val_score ~clf iris.data iris.target ~cv:10 ()# doctest: +SKIP;  
   [%expect {|
@@ -44,7 +44,7 @@ array([ 0.61..., 0.57..., -0.34..., 0.41..., 0.75...,
 let%expect_test "DecisionTreeRegressor" =
   let open Sklearn.Tree in
   let x, y = load_boston ~return_X_y:true () in  
-  let regressor = DecisionTreeRegressor.create ~random_state:(`Int 0) () in  
+  let regressor = DecisionTreeRegressor.create ~random_state:0 () in  
   print_ndarray @@ cross_val_score ~regressor x y ~cv:10 ()# doctest: +SKIP;  
   [%expect {|
       array([ 0.61..., 0.57..., -0.34..., 0.41..., 0.75...,      
@@ -74,8 +74,8 @@ let%expect_test "DecisionTreeRegressor" =
 let%expect_test "ExtraTreeRegressor" =
   let open Sklearn.Tree in
   let x, y = load_boston ~return_X_y:true () in  
-  let X_train, X_test, y_train, y_test = train_test_split ~x y ~random_state:(`Int 0) () in  
-  let extra_tree = ExtraTreeRegressor.create ~random_state:(`Int 0) () in  
+  let X_train, X_test, y_train, y_test = train_test_split ~x y ~random_state:0 () in  
+  let extra_tree = ExtraTreeRegressor.create ~random_state:0 () in  
   let reg = BaggingRegressor(extra_tree, random_state=0).fit ~X_train y_train () in  
   print_ndarray @@ BaggingRegressor.score ~X_test y_test reg;  
   [%expect {|
@@ -167,7 +167,7 @@ let%expect_test "export_text" =
   let iris = load_iris () in  
   let x = iris['data'] in  
   let y = iris['target'] in  
-  let decision_tree = DecisionTreeClassifier.create ~random_state:(`Int 0) ~max_depth:2 () in  
+  let decision_tree = DecisionTreeClassifier.create ~random_state:0 ~max_depth:2 () in  
   let decision_tree = DecisionTreeClassifier.fit ~x y decision_tree in  
   let r = export_text decision_tree ~feature_names:iris['feature_names'] () in  
   print_ndarray @@ print ~r ();  
@@ -211,7 +211,7 @@ let%expect_test "plot_tree" =
 (* TEST TODO
 let%expect_test "plot_tree" =
   let open Sklearn.Tree in
-  let clf = .decisionTreeClassifier ~random_state:(`Int 0) tree in  
+  let clf = .decisionTreeClassifier ~random_state:0 tree in  
   let iris = load_iris () in  
   [%expect {|
   |}]

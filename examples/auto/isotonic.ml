@@ -11,7 +11,7 @@
 (* TEST TODO
 let%expect_test "IsotonicRegression" =
   let open Sklearn.Isotonic in
-  let x, y = make_regression ~n_samples:10 ~n_features:1 ~random_state:(`Int 41) () in  
+  let x, y = make_regression ~n_samples:10 ~n_features:1 ~random_state:41 () in  
   let iso_reg = IsotonicRegression().fit(x.flatten (), y) in  
   print_ndarray @@ IsotonicRegression.predict [.1 .2] iso_reg;  
   [%expect {|

@@ -238,7 +238,7 @@ let%expect_test "FeatureUnion" =
 let%expect_test "complex_pipeline" =
   let open Sklearn in
   let open Sklearn.Pipeline in
-  let x, y = Datasets.make_classification ~n_informative:5 ~n_redundant:0 ~random_state:(`Int 42) () in
+  let x, y = Datasets.make_classification ~n_informative:5 ~n_redundant:0 ~random_state:42 () in
   (*  ANOVA SVM-C  *)
   let f_regression =
     let _ = Py.Run.eval ~start:Py.File "import sklearn.feature_selection" in

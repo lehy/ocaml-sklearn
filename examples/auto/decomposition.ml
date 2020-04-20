@@ -14,7 +14,7 @@
 let%expect_test "FactorAnalysis" =
   let open Sklearn.Decomposition in
   let x, _ = load_digits ~return_X_y:true () in  
-  let transformer = FactorAnalysis.create ~n_components:7 ~random_state:(`Int 0) () in  
+  let transformer = FactorAnalysis.create ~n_components:7 ~random_state:0 () in  
   let X_transformed = FactorAnalysis.fit_transform ~x transformer in  
   print_ndarray @@ X_transformed.shape;  
   [%expect {|
@@ -42,7 +42,7 @@ let%expect_test "FactorAnalysis" =
 let%expect_test "FastICA" =
   let open Sklearn.Decomposition in
   let x, _ = load_digits ~return_X_y:true () in  
-  let transformer = FastICA.create ~n_components:7 ~random_state:(`Int 0) () in  
+  let transformer = FastICA.create ~n_components:7 ~random_state:0 () in  
   let X_transformed = FastICA.fit_transform ~x transformer in  
   print_ndarray @@ X_transformed.shape;  
   [%expect {|
@@ -169,8 +169,8 @@ let%expect_test "LatentDirichletAllocation" =
   let open Sklearn.Decomposition in
   print_ndarray @@ # This produces a feature matrix of token counts, similar to what;  
   print_ndarray @@ # CountVectorizer would produce on text.;  
-  let x, _ = make_multilabel_classification ~random_state:(`Int 0) () in  
-  let lda = LatentDirichletAllocation.create ~n_components:5 ~random_state:(`Int 0) () in  
+  let x, _ = make_multilabel_classification ~random_state:0 () in  
+  let lda = LatentDirichletAllocation.create ~n_components:5 ~random_state:0 () in  
   print LatentDirichletAllocation.pp @@ LatentDirichletAllocation.fit ~x lda;  
   [%expect {|
       LatentDirichletAllocation(...)      
@@ -209,7 +209,7 @@ MiniBatchSparsePCA(...)
 let%expect_test "MiniBatchSparsePCA" =
   let open Sklearn.Decomposition in
   let x, _ = make_friedman1(n_samples=200, n_features=30, random_state=0) in  
-  let transformer = MiniBatchSparsePCA.create ~n_components:5 ~batch_size:50 ~random_state:(`Int 0) () in  
+  let transformer = MiniBatchSparsePCA.create ~n_components:5 ~batch_size:50 ~random_state:0 () in  
   print MiniBatchSparsePCA.pp @@ MiniBatchSparsePCA.fit ~x transformer;  
   [%expect {|
       MiniBatchSparsePCA(...)      
@@ -244,7 +244,7 @@ let%expect_test "MiniBatchSparsePCA" =
 let%expect_test "NMF" =
   let open Sklearn.Decomposition in
   let x = .array (matrix [|[|1; 1|]; [|2; 1|]; [|3; 1.2|]; [|4; 1|]; [|5; 0.8|]; [|6; 1|]|]) np in  
-  let model = NMF.create ~n_components:2 ~init:'random' ~random_state:(`Int 0) () in  
+  let model = NMF.create ~n_components:2 ~init:'random' ~random_state:0 () in  
   let W = NMF.fit_transform ~x model in  
   let H = NMF.components_ model in  
   [%expect {|
@@ -402,7 +402,7 @@ SparsePCA(...)
 let%expect_test "SparsePCA" =
   let open Sklearn.Decomposition in
   let x, _ = make_friedman1(n_samples=200, n_features=30, random_state=0) in  
-  let transformer = SparsePCA.create ~n_components:5 ~random_state:(`Int 0) () in  
+  let transformer = SparsePCA.create ~n_components:5 ~random_state:0 () in  
   print SparsePCA.pp @@ SparsePCA.fit ~x transformer;  
   [%expect {|
       SparsePCA(...)      
@@ -444,8 +444,8 @@ TruncatedSVD(n_components=5, n_iter=7, random_state=42)
 (* TEST TODO
 let%expect_test "TruncatedSVD" =
   let open Sklearn.Decomposition in
-  let x = sparse_random ~100 100 ~density:0.01 ~format:'csr' ~random_state:(`Int 42) () in  
-  let svd = TruncatedSVD.create ~n_components:5 ~n_iter:7 ~random_state:(`Int 42) () in  
+  let x = sparse_random ~100 100 ~density:0.01 ~format:'csr' ~random_state:42 () in  
+  let svd = TruncatedSVD.create ~n_components:5 ~n_iter:7 ~random_state:42 () in  
   print TruncatedSVD.pp @@ TruncatedSVD.fit ~x svd;  
   [%expect {|
       TruncatedSVD(n_components=5, n_iter=7, random_state=42)      
@@ -481,7 +481,7 @@ let%expect_test "TruncatedSVD" =
 let%expect_test "non_negative_factorization" =
   let open Sklearn.Decomposition in
   let x = .array (matrix [|[|1;1|]; [|2; 1|]; [|3; 1.2|]; [|4; 1|]; [|5; 0.8|]; [|6; 1|]|]) np in  
-  let W, H, n_iter = non_negative_factorization x ~n_components:2 ~init:'random' ~random_state:(`Int 0) () in  
+  let W, H, n_iter = non_negative_factorization x ~n_components:2 ~init:'random' ~random_state:0 () in  
   [%expect {|
   |}]
 

@@ -31,8 +31,8 @@ LinearSVC(random_state=0, tol=1e-05)
 (* TEST TODO
 let%expect_test "LinearSVC" =
   let open Sklearn.Svm in
-  let x, y = make_classification ~n_features:4 ~random_state:(`Int 0) () in  
-  let clf = LinearSVC.create ~random_state:(`Int 0) ~tol:1e-5 () in  
+  let x, y = make_classification ~n_features:4 ~random_state:0 () in  
+  let clf = LinearSVC.create ~random_state:0 ~tol:1e-5 () in  
   print LinearSVC.pp @@ LinearSVC.fit ~x y clf;  
   [%expect {|
       LinearSVC(random_state=0, tol=1e-05)      
@@ -71,9 +71,9 @@ LinearSVR(random_state=0, tol=1e-05)
 
 
 let%expect_test "LinearSVR" =
-  let x, y, _coef = Sklearn.Datasets.make_regression ~n_features:4 ~random_state:(`Int 0) () in
+  let x, y, _coef = Sklearn.Datasets.make_regression ~n_features:4 ~random_state:0 () in
   let open Sklearn.Svm in
-  let regr = LinearSVR.create ~random_state:(`Int 0) ~tol:1e-5 () in
+  let regr = LinearSVR.create ~random_state:0 ~tol:1e-5 () in
   print LinearSVR.pp @@ LinearSVR.fit regr ~x ~y;
   [%expect {|
           LinearSVR(C=1.0, dual=True, epsilon=0.0, fit_intercept=True,

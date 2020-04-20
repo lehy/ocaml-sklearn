@@ -151,7 +151,7 @@ array([1])
 (* TEST TODO
 let%expect_test "OutputCodeClassifier" =
   let open Sklearn.Multiclass in
-  let x, y = make_classification ~n_samples:100 ~n_features:4 ~n_informative:2 ~n_redundant:0 ~random_state:(`Int 0) ~shuffle:false () in  
+  let x, y = make_classification ~n_samples:100 ~n_features:4 ~n_informative:2 ~n_redundant:0 ~random_state:0 ~shuffle:false () in  
   let clf = OutputCodeClassifier(estimator=RandomForestClassifier(random_state=0),random_state=0).fit ~x y () in  
   print_ndarray @@ OutputCodeClassifier.predict (matrixi [|[|0; 0; 0; 0|]|]) clf;  
   [%expect {|

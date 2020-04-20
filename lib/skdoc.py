@@ -143,8 +143,6 @@ class Int(Type):
 
 class Pipeline(Type):
     names = ['Pipeline', 'pipeline']
-    # This is used by make_pipeline(), which lives in the Sklearn.Pipeline module.
-    # Won't work from outside the module :/.
     ml_type = 'Sklearn.Pipeline.Pipeline.t'
     wrap = 'Sklearn.Pipeline.Pipeline.to_pyobject'
     ml_type_ret = 'Sklearn.Pipeline.Pipeline.t'
@@ -155,8 +153,6 @@ class Pipeline(Type):
 # (need to figure out a clean way to have these work wherever they are used)
 class FeatureUnion(Type):
     names = ['FeatureUnion']
-    # This is used by make_pipeline(), which lives in the Sklearn.Pipeline module.
-    # Won't work from outside the module :/.
     ml_type = 'Sklearn.Pipeline.FeatureUnion.t'
     wrap = 'Sklearn.Pipeline.FeatureUnion.to_pyobject'
     ml_type_ret = 'Sklearn.Pipeline.FeatureUnion.t'
@@ -222,27 +218,27 @@ class Array(Type):
         return repr(self)
 
     def __repr__(self):
-        return f"List[{str(self.t)}]"
+        return f"Array[{str(self.t)}]"
 
 
 class ArrayList(Type):
     names = ['iterable of iterables', 'list of arrays']
-    ml_type = 'Sklearn.Ndarray.List.t'
-    ml_type_ret = 'Sklearn.Ndarray.List.t'
-    wrap = 'Sklearn.Ndarray.List.to_pyobject'
-    unwrap = 'Sklearn.Ndarray.List.of_pyobject'
+    ml_type = 'Sklearn.Arr.List.t'
+    ml_type_ret = 'Sklearn.Arr.List.t'
+    wrap = 'Sklearn.Arr.List.to_pyobject'
+    unwrap = 'Sklearn.Arr.List.of_pyobject'
 
 
 class List(Type):
-    """list when argument, array when returned (more convenient?)
-    """
     def __init__(self, t):
         self.t = t
         self.names = []
         self.ml_type = f"{t.ml_type} list"
         self.wrap = f'(fun ml -> Py.List.of_list_map {t.wrap} ml)'
-        self.ml_type_ret = f"{t.ml_type} array"
-        self.unwrap = f"(fun py -> let len = Py.Sequence.length py in Array.init len (fun i -> {t.unwrap} (Py.Sequence.get_item py i)))"
+        # self.ml_type_ret = f"{t.ml_type} array"
+        # self.unwrap = f"(fun py -> let len = Py.Sequence.length py in Array.init len (fun i -> {t.unwrap} (Py.Sequence.get_item py i)))"
+        self.ml_type_ret = f"{t.ml_type} list"
+        self.unwrap = f"(fun py -> Py.List.to_list_map ({t.unwrap}) py)"
 
     def __str__(self):
         return repr(self)
@@ -364,11 +360,6 @@ class Dtype(Type):
 
 class TypeList(Type):
     names = ['list of type', 'list of types']
-
-
-# class Iterable(Type):
-#     names = ['an iterable', 'iterable']
-# This is used by Pipeline.fit() for example. Wrapping as ndarray.
 
 
 class Dict(Type):
@@ -527,7 +518,7 @@ def parse_enum(t):
 
 
 transformer_list = List(Tuple([String(), PyObject()]))
-transformer_list.names = ['list of (string, transformer) tuples']
+transformer_list.names = ['list of (string, transformer) tuples', 'list of (str, estimator)']
 
 
 def init_builtins(builtin, builtin_types):
@@ -1384,9 +1375,6 @@ class Input:
                 self.text = f"print_ndarray @@ {self.text}"
             self.text += ';'
 
-        self.text = re.sub(r'random_state:(\d+)', r'random_state:(`Int \1)',
-                           self.text)
-
         # whitespace
         self.text = re.sub(r'  +', ' ', self.text)
         self.text = re.sub(r'^\s*$', "", self.text, flags=re.MULTILINE)
@@ -2208,12 +2196,8 @@ def dummy_inverse_transform(self, X=None, y=None):
 
 sig_inverse_transform = inspect.signature(dummy_inverse_transform)
 
-# import sklearn.pipeline
-# import sklearn.svm
 
 overrides = {
-    # sklearn.pipeline.Pipeline:
-    # dict(proto=sklearn.pipeline.Pipeline([('a', sklearn.svm.SVC())])),
     r'Pipeline\.inverse_transform$':
     dict(signature=sig_inverse_transform,
          param_types={
@@ -2238,8 +2222,7 @@ overrides = {
             'arrays': List(Arr()),
             'test_size': Enum([Float(), Int(), NoneValue()]),
             'train_size': Enum([Float(), Int(), NoneValue()]),
-            'random_state': Enum([Int(), RandomState(),
-                                  NoneValue()]),
+            'random_state': Int(),
             'shuffle': Bool(),
             'stratify': Arr()  # was Arr | None
         },
@@ -2247,7 +2230,8 @@ overrides = {
     r'make_regression$':
     dict(fixed_values=dict(coef=('true', False))),
     r'\.radius_neighbors$':
-    dict(ret_type=Tuple([List(Arr()), List(Arr())])),
+    # dict(ret_type=Tuple([List(Arr()), List(Arr())])),
+    dict(ret_type=Tuple([ArrayList(), ArrayList()])),
     r'^NearestCentroid\.fit$':
     dict(param_types=dict(X=Arr(), y=Arr())),
     r'MultiLabelBinarizer\.(fit_transform|fit)':
@@ -2265,8 +2249,8 @@ overrides = {
     dict(ret_type=Bunch({
         'data': Arr(),
         'target': Arr(),
-        'target_names': List(String()),
-        'feature_names': List(String()),
+        'target_names': Arr(),
+        'feature_names': Arr(),
         'DESCR': String(),
         'filename': String()
     })),
@@ -2278,10 +2262,13 @@ overrides = {
     dict(fixed_values=dict(return_X_y=('false', True),
                            return_distance=('true', False)),
          types={
-             '^shape$': List(Int()),
+             '^shape$': Array(Int()),
              '^DESCR$': String(),
-             '^target_names$': List(String()),
-             '^(intercept_|coef_|classes_)$': Arr()
+             '^target_names$': Arr(),
+             '^(intercept_|coef_|classes_)$': Arr(),
+               # using (`Int 42) instead of 42 is getting tiring, and
+               # RandomState does not seem necessary
+             '^random_state$': Int(),
          }),
     r'power_transform$':
     dict(types={

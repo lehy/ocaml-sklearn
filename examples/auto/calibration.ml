@@ -11,7 +11,7 @@
 (* TEST TODO
 let%expect_test "IsotonicRegression" =
   let open Sklearn.Calibration in
-  let x, y = make_regression ~n_samples:10 ~n_features:1 ~random_state:(`Int 41) () in  
+  let x, y = make_regression ~n_samples:10 ~n_features:1 ~random_state:41 () in  
   let iso_reg = IsotonicRegression().fit(x.flatten (), y) in  
   print_ndarray @@ IsotonicRegression.predict [.1 .2] iso_reg;  
   [%expect {|
@@ -220,8 +220,8 @@ LinearSVC(random_state=0, tol=1e-05)
 (* TEST TODO
 let%expect_test "LinearSVC" =
   let open Sklearn.Calibration in
-  let x, y = make_classification ~n_features:4 ~random_state:(`Int 0) () in  
-  let clf = LinearSVC.create ~random_state:(`Int 0) ~tol:1e-5 () in  
+  let x, y = make_classification ~n_features:4 ~random_state:0 () in  
+  let clf = LinearSVC.create ~random_state:0 ~tol:1e-5 () in  
   print LinearSVC.pp @@ LinearSVC.fit ~x y clf;  
   [%expect {|
       LinearSVC(random_state=0, tol=1e-05)      

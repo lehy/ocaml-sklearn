@@ -241,13 +241,13 @@ let%expect_test "RadiusNeighborsMixin.radius_neighbors" =
                              radius=1.6)
     |}];
     let dist, ind = NearestNeighbors.radius_neighbors neigh ~x:(`Arr (matrix [|[|1.; 1.; 1.|]|])) in
-    print_ndarray @@ dist.(0);
+    print Sklearn.Arr.List.pp @@ dist;
     [%expect {|
-            [1.5 0.5]
+            [array([1.5, 0.5])]
     |}];
-    print Sklearn.Arr.pp @@ ind.(0);
+    print Sklearn.Arr.List.pp @@ ind;
     [%expect {|
-            [1 2]
+            [array([1, 2])]
     |}]
 
 (* radius_neighbors_graph *)
@@ -315,10 +315,10 @@ let%expect_test "NeighborhoodComponentsAnalysis" =
   let open Sklearn.Model_selection in
   let iris = load_iris () in
   let x, y = iris#data, iris#target in
-  let [@ocaml.warning "-8"] [|x_train; x_test; y_train; y_test|] =
-    train_test_split [x; y] ~stratify:y ~test_size:(`Float 0.7) ~random_state:(`Int 42)
+  let [@ocaml.warning "-8"] [x_train; x_test; y_train; y_test] =
+    train_test_split [x; y] ~stratify:y ~test_size:(`Float 0.7) ~random_state:42
   in
-  let nca = NeighborhoodComponentsAnalysis.create ~random_state:(`Int 42) () in
+  let nca = NeighborhoodComponentsAnalysis.create ~random_state:42 () in
   print NeighborhoodComponentsAnalysis.pp @@ NeighborhoodComponentsAnalysis.fit nca ~x:x_train ~y:y_train;
   [%expect {|
             NeighborhoodComponentsAnalysis(callback=None, init='auto', max_iter=50,

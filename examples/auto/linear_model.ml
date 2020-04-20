@@ -89,8 +89,8 @@ ElasticNet(random_state=0)
 (* TEST TODO
 let%expect_test "ElasticNet" =
   let open Sklearn.Linear_model in
-  let x, y = make_regression ~n_features:2 ~random_state:(`Int 0) () in  
-  let regr = ElasticNet.create ~random_state:(`Int 0) () in  
+  let x, y = make_regression ~n_features:2 ~random_state:0 () in  
+  let regr = ElasticNet.create ~random_state:0 () in  
   print ElasticNet.pp @@ ElasticNet.fit ~x y regr;  
   [%expect {|
       ElasticNet(random_state=0)      
@@ -147,8 +147,8 @@ ElasticNetCV(cv=5, random_state=0)
 (* TEST TODO
 let%expect_test "ElasticNetCV" =
   let open Sklearn.Linear_model in
-  let x, y = make_regression ~n_features:2 ~random_state:(`Int 0) () in  
-  let regr = ElasticNetCV.create ~cv:5 ~random_state:(`Int 0) () in  
+  let x, y = make_regression ~n_features:2 ~random_state:0 () in  
+  let regr = ElasticNetCV.create ~cv:5 ~random_state:0 () in  
   print ElasticNetCV.pp @@ ElasticNetCV.fit ~x y regr;  
   [%expect {|
       ElasticNetCV(cv=5, random_state=0)      
@@ -199,7 +199,7 @@ Linear Regression coefficients: [-1.9221...  7.0226...]
 let%expect_test "HuberRegressor" =
   let open Sklearn.Linear_model in
   let rng = np..randomState ~0 random in  
-  let x, y, coef = make_regression ~n_samples:200 ~n_features:2 ~noise:4.0 ~coef:true ~random_state:(`Int 0) () in  
+  let x, y, coef = make_regression ~n_samples:200 ~n_features:2 ~noise:4.0 ~coef:true ~random_state:0 () in  
   print_ndarray @@ x[:4] = .uniform ~10 20 (4 2) rng;  
   print_ndarray @@ y[:4] = .uniform ~10 20 ~4 rng;  
   let huber = HuberRegressor().fit ~x y () in  
@@ -275,7 +275,7 @@ array([154.0842...])
 (* TEST TODO
 let%expect_test "LarsCV" =
   let open Sklearn.Linear_model in
-  let x, y = make_regression ~n_samples:200 ~noise:4.0 ~random_state:(`Int 0) () in  
+  let x, y = make_regression ~n_samples:200 ~noise:4.0 ~random_state:0 () in  
   let reg = LarsCV(cv=5).fit ~x y () in  
   print_ndarray @@ LarsCV.score ~x y reg;  
   [%expect {|
@@ -344,7 +344,7 @@ array([-78.4951...])
 (* TEST TODO
 let%expect_test "LassoCV" =
   let open Sklearn.Linear_model in
-  let x, y = make_regression ~noise:4 ~random_state:(`Int 0) () in  
+  let x, y = make_regression ~noise:4 ~random_state:0 () in  
   let reg = LassoCV(cv=5, random_state=0).fit ~x y () in  
   print_ndarray @@ LassoCV.score ~x y reg;  
   [%expect {|
@@ -405,7 +405,7 @@ array([-77.8723...])
 (* TEST TODO
 let%expect_test "LassoLarsCV" =
   let open Sklearn.Linear_model in
-  let x, y = make_regression ~noise:4.0 ~random_state:(`Int 0) () in  
+  let x, y = make_regression ~noise:4.0 ~random_state:0 () in  
   let reg = LassoLarsCV(cv=5).fit ~x y () in  
   print_ndarray @@ LassoLarsCV.score ~x y reg;  
   [%expect {|
@@ -699,7 +699,7 @@ array([[153.7971...,  94.9015...]])
 (* TEST TODO
 let%expect_test "MultiTaskLassoCV" =
   let open Sklearn.Linear_model in
-  let x, y = make_regression ~n_targets:2 ~noise:4 ~random_state:(`Int 0) () in  
+  let x, y = make_regression ~n_targets:2 ~noise:4 ~random_state:0 () in  
   let reg = MultiTaskLassoCV(cv=5, random_state=0).fit ~x y () in  
   print_ndarray @@ r2_score(y, MultiTaskLassoCV.predict x) reg;  
   [%expect {|
@@ -734,7 +734,7 @@ array([-78.3854...])
 (* TEST TODO
 let%expect_test "OrthogonalMatchingPursuit" =
   let open Sklearn.Linear_model in
-  let x, y = make_regression ~noise:4 ~random_state:(`Int 0) () in  
+  let x, y = make_regression ~noise:4 ~random_state:0 () in  
   let reg = OrthogonalMatchingPursuit().fit ~x y () in  
   print_ndarray @@ OrthogonalMatchingPursuit.score ~x y reg;  
   [%expect {|
@@ -768,7 +768,7 @@ array([-78.3854...])
 (* TEST TODO
 let%expect_test "OrthogonalMatchingPursuitCV" =
   let open Sklearn.Linear_model in
-  let x, y = make_regression ~n_features:100 ~n_informative:10 ~noise:4 ~random_state:(`Int 0) () in  
+  let x, y = make_regression ~n_features:100 ~n_informative:10 ~noise:4 ~random_state:0 () in  
   let reg = OrthogonalMatchingPursuitCV(cv=5).fit ~x y () in  
   print_ndarray @@ OrthogonalMatchingPursuitCV.score ~x y reg;  
   [%expect {|
@@ -823,8 +823,8 @@ PassiveAggressiveClassifier(random_state=0)
 (* TEST TODO
 let%expect_test "PassiveAggressiveClassifier" =
   let open Sklearn.Linear_model in
-  let x, y = make_classification ~n_features:4 ~random_state:(`Int 0) () in  
-  let clf = PassiveAggressiveClassifier.create ~max_iter:1000 ~random_state:(`Int 0) ~tol:1e-3 () in  
+  let x, y = make_classification ~n_features:4 ~random_state:0 () in  
+  let clf = PassiveAggressiveClassifier.create ~max_iter:1000 ~random_state:0 ~tol:1e-3 () in  
   print PassiveAggressiveClassifier.pp @@ PassiveAggressiveClassifier.fit ~x y clf;  
   [%expect {|
       PassiveAggressiveClassifier(random_state=0)      
@@ -882,8 +882,8 @@ PassiveAggressiveRegressor(max_iter=100, random_state=0)
 (* TEST TODO
 let%expect_test "PassiveAggressiveRegressor" =
   let open Sklearn.Linear_model in
-  let x, y = make_regression ~n_features:4 ~random_state:(`Int 0) () in  
-  let regr = PassiveAggressiveRegressor.create ~max_iter:100 ~random_state:(`Int 0) ~tol:1e-3 () in  
+  let x, y = make_regression ~n_features:4 ~random_state:0 () in  
+  let regr = PassiveAggressiveRegressor.create ~max_iter:100 ~random_state:0 ~tol:1e-3 () in  
   print PassiveAggressiveRegressor.pp @@ PassiveAggressiveRegressor.fit ~x y regr;  
   [%expect {|
       PassiveAggressiveRegressor(max_iter=100, random_state=0)      
@@ -922,7 +922,7 @@ Perceptron()
 let%expect_test "Perceptron" =
   let open Sklearn.Linear_model in
   let x, y = load_digits ~return_X_y:true () in  
-  let clf = Perceptron.create ~tol:1e-3 ~random_state:(`Int 0) () in  
+  let clf = Perceptron.create ~tol:1e-3 ~random_state:0 () in  
   print Perceptron.pp @@ Perceptron.fit ~x y clf;  
   [%expect {|
       Perceptron()      
@@ -953,7 +953,7 @@ array([-31.9417...])
 (* TEST TODO
 let%expect_test "RANSACRegressor" =
   let open Sklearn.Linear_model in
-  let x, y = make_regression ~n_samples:200 ~n_features:2 ~noise:4.0 ~random_state:(`Int 0) () in  
+  let x, y = make_regression ~n_samples:200 ~n_features:2 ~noise:4.0 ~random_state:0 () in  
   let reg = RANSACRegressor(random_state=0).fit ~x y () in  
   print_ndarray @@ RANSACRegressor.score ~x y reg;  
   [%expect {|
@@ -1162,7 +1162,7 @@ array([-31.5871...])
 (* TEST TODO
 let%expect_test "TheilSenRegressor" =
   let open Sklearn.Linear_model in
-  let x, y = make_regression ~n_samples:200 ~n_features:2 ~noise:4.0 ~random_state:(`Int 0) () in  
+  let x, y = make_regression ~n_samples:200 ~n_features:2 ~noise:4.0 ~random_state:0 () in  
   let reg = TheilSenRegressor(random_state=0).fit ~x y () in  
   print_ndarray @@ TheilSenRegressor.score ~x y reg;  
   [%expect {|
