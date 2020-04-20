@@ -40,7 +40,7 @@ let%expect_test "AdaBoostClassifier" =
       AdaBoostClassifier(algorithm='SAMME.R', base_estimator=None, learning_rate=1.0,
                          n_estimators=100, random_state=0)
   |}];
-  print_ndarray @@ get @@ AdaBoostClassifier.feature_importances_ clf;
+  print_ndarray @@ AdaBoostClassifier.feature_importances_ clf;
   [%expect {|
       [0.28 0.42 0.14 0.16]
   |}];
@@ -81,7 +81,7 @@ let%expect_test "AdaBoostRegressor" =
         AdaBoostRegressor(base_estimator=None, learning_rate=1.0, loss='linear',
                           n_estimators=100, random_state=0)
      |}];
-  print_ndarray @@ get @@ AdaBoostRegressor.feature_importances_ regr;
+  print_ndarray @@ AdaBoostRegressor.feature_importances_ regr;
   [%expect {|
         [0.27885832 0.71092234 0.00654703 0.00367231]
      |}];
@@ -244,7 +244,7 @@ let%expect_test "RandomForestClassifier" =
                              n_jobs=None, oob_score=False, random_state=0, verbose=0,
                              warm_start=False)
    |}];
-  print_ndarray @@ get @@ RandomForestClassifier.feature_importances_ clf;
+  print_ndarray @@ RandomForestClassifier.feature_importances_ clf;
   [%expect {|
       [0.14205973 0.76664038 0.0282433  0.06305659]
    |}];

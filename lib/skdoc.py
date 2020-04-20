@@ -1166,7 +1166,11 @@ class Attribute:
         self.name = name
         self.ml_name = mlid(self.name)
         self.typ = remove_none_from_enum(typ)
-
+        if self.name.endswith('_'):
+            self.ml_name_opt = self.ml_name + 'opt'
+        else:
+            self.ml_name_opt = self.ml_name + '_opt'
+            
     def write_to_ml(self, f, module_path):
         unwrap = _localize(self.typ.unwrap, module_path)
         # Not sure whether we should raise or return None if the attribute is not found.
@@ -1177,20 +1181,32 @@ class Attribute:
         # common and not all such cases are documented? In that case
         # testing for "is None" seems like a good idea. On the other hand,
         # it makes using the attributes more complicated.
+        #
+        # -> providing both raising + option getters
         f.write(f"""
-let {self.ml_name} self =
+let {self.ml_name_opt} self =
   match Py.Object.get_attr_string self "{self.name}" with
-  | None -> None
+  | None -> failwith "attribute {self.name} not found"
   | Some x -> if Py.is_none x then None else Some ({unwrap} x)
+
+let {self.ml_name} self = match {self.ml_name_opt} self with
+  | None -> raise Not_found
+  | Some x -> x
 """)
 
     def write_to_mli(self, f, module_path):
         #  XXX TODO extract doc and put it here
-        f.write(
-            f"\n(** Attribute {self.name}: see constructor for documentation *)\n"
-        )
         ml_type_ret = _localize(self.typ.ml_type_ret, module_path)
-        f.write(f"val {self.ml_name} : t -> ({ml_type_ret}) option\n")
+        f.write(
+            f"""
+(** Attribute {self.name}: get value or raise Not_found if None.*)
+val {self.ml_name} : t -> {ml_type_ret}
+
+(** Attribute {self.name}: get value as an option. *)
+val {self.ml_name_opt} : t -> ({ml_type_ret}) option
+
+"""
+        )
 
     def write_to_md(self, f, module_path):
         ml_type_ret = _localize(self.typ.ml_type_ret, module_path)
@@ -1199,10 +1215,12 @@ let {self.ml_name} self =
 
 ???+ note "attribute"
     ~~~ocaml
-    val {self.ml_name} : t -> ({ml_type_ret}) option
+    val {self.ml_name} : t -> {ml_type_ret}
+    val {self.ml_name_opt} : t -> ({ml_type_ret}) option
     ~~~
 
-    This attribute is documented in `create` above.
+    This attribute is documented in `create` above. The first version raises Not_found
+    if the attribute is None. The _opt version returns an option.
 """)
 
     def write_examples_to(self, f):

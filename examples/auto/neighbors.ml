@@ -174,7 +174,7 @@ let%expect_test "LocalOutlierFactor" =
   [%expect {|
             [ 1  1 -1  1]
     |}];
-  print_ndarray @@ get @@ LocalOutlierFactor.negative_outlier_factor_ clf;
+  print_ndarray @@ LocalOutlierFactor.negative_outlier_factor_ clf;
   [%expect {|
             [ -0.98214286  -1.03703704 -73.36970899  -0.98214286]
     |}]

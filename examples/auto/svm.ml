@@ -80,11 +80,11 @@ let%expect_test "LinearSVR" =
                     intercept_scaling=1.0, loss='epsilon_insensitive', max_iter=1000,
                     random_state=0, tol=1e-05, verbose=0)
   |}];
-  print_ndarray @@ get @@ LinearSVR.coef_ regr;
+  print_ndarray @@ LinearSVR.coef_ regr;
   [%expect {|
             [16.35841504 26.91644036 42.30619026 60.47800997]
     |}];
-  print_ndarray @@ get @@ LinearSVR.intercept_ regr;
+  print_ndarray @@ LinearSVR.intercept_ regr;
   [%expect {|
             [-4.29622263]
     |}];

@@ -239,7 +239,7 @@ let%expect_test "LabelBinarizer" =
   [%expect {|
             LabelBinarizer(neg_label=0, pos_label=1, sparse_output=False)
     |}];
-  print_ndarray @@ get @@ LabelBinarizer.classes_ lb;
+  print_ndarray @@ LabelBinarizer.classes_ lb;
   [%expect {|
             [1 2 4 6]
     |}];
@@ -297,7 +297,7 @@ let%expect_test "LabelBinarizer" =
   [%expect {|
             LabelBinarizer(neg_label=0, pos_label=1, sparse_output=False)
     |}];
-  print_ndarray @@ get @@ LabelBinarizer.classes_ lb;
+  print_ndarray @@ LabelBinarizer.classes_ lb;
   [%expect {|
             [0 1 2]
     |}];
@@ -333,7 +333,7 @@ let%expect_test "LabelEncoder" =
   [%expect {|
             LabelEncoder()
     |}];
-  print_ndarray @@ get @@ LabelEncoder.classes_ le;
+  print_ndarray @@ LabelEncoder.classes_ le;
   [%expect {|
             [1 2 6]
     |}];
@@ -369,7 +369,7 @@ let%expect_test "LabelEncoder" =
   [%expect {|
             LabelEncoder()
     |}];
-  print_ndarray @@ get @@ LabelEncoder.classes_ le;
+  print_ndarray @@ LabelEncoder.classes_ le;
   [%expect {|
             ['amsterdam' 'paris' 'tokyo']
     |}];
@@ -445,7 +445,7 @@ let%expect_test "MinMaxScaler" =
   [%expect {|
             MinMaxScaler(copy=True, feature_range=(0, 1))
     |}];
-  print_ndarray @@ get @@ MinMaxScaler.data_max_ scaler;
+  print_ndarray @@ MinMaxScaler.data_max_ scaler;
   [%expect {|
             [ 1. 18.]
     |}];
@@ -484,7 +484,7 @@ let%expect_test "MultiLabelBinarizer" =
             [[1 1 0]
              [0 0 1]]
     |}];
-  print_ndarray @@ get @@ MultiLabelBinarizer.classes_ mlb;
+  print_ndarray @@ MultiLabelBinarizer.classes_ mlb;
   [%expect {|
             [1 2 3]
     |}]
@@ -509,7 +509,7 @@ let%expect_test "MultiLabelBinarizer" =
             [[0 1 1]
              [1 0 0]]
     |}];
-  print_ndarray @@ get @@ MultiLabelBinarizer.classes_ mlb;
+  print_ndarray @@ MultiLabelBinarizer.classes_ mlb;
   [%expect {|
             ['comedy' 'sci-fi' 'thriller']
     |}]
@@ -576,7 +576,7 @@ let%expect_test "MultiLabelBinarizer" =
   [%expect {|
             MultiLabelBinarizer(classes=None, sparse_output=False)
     |}];
-  print_ndarray @@ get @@ MultiLabelBinarizer.classes_ mlb;
+  print_ndarray @@ MultiLabelBinarizer.classes_ mlb;
   [%expect {|
             ['comedy' 'sci-fi' 'thriller']
     |}]
@@ -713,7 +713,7 @@ let%expect_test "OrdinalEncoder" =
   [%expect {|
             OrdinalEncoder(categories='auto', dtype=<class 'numpy.float64'>)
     |}];
-  print Sklearn.Ndarray.List.pp @@ get @@ OrdinalEncoder.categories_ enc;
+  print Sklearn.Ndarray.List.pp @@ OrdinalEncoder.categories_ enc;
   [%expect {|
             [array(['Female', 'Male'], dtype=object), array([1, 2, 3], dtype=object)]
     |}];
@@ -821,7 +821,7 @@ let%expect_test "PowerTransformer" =
   [%expect {|
             PowerTransformer(copy=True, method='yeo-johnson', standardize=True)
     |}];
-  print_ndarray @@ get @@ PowerTransformer.lambdas_ pt;
+  print_ndarray @@ PowerTransformer.lambdas_ pt;
   [%expect {|
             [ 1.38668178 -3.10053309]
     |}];
@@ -947,7 +947,7 @@ let%expect_test "StandardScaler" =
   [%expect {|
             StandardScaler(copy=True, with_mean=True, with_std=True)
     |}];
-  print_ndarray @@ get @@ StandardScaler.mean_ scaler;
+  print_ndarray @@ StandardScaler.mean_ scaler;
   [%expect {|
             [0.5 0.5]
     |}];

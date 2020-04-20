@@ -109,6 +109,10 @@ bigarray and the `Arr.t`.
 To get data out of an `Arr.t`, get the underlying `Ndarray` or
 `Csr_matrix` using `Arr.get`.
 
+Attributes are exposed read-only, each with two getters: one that
+raises Not_found if the attribute is None, and the other that returns
+an option.
+
 Bunches (as returned from the sklearn.datasets APIs) are exposed as
 objects.
 
