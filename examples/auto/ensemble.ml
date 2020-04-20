@@ -1,11 +1,11 @@
 let print f x = Format.printf "%a" f x
 let print_py x = Format.printf "%s" (Py.Object.to_string x)
-let print_ndarray = print Sklearn.Ndarray.pp
+let print_ndarray = print Sklearn.Arr.pp
 
-let matrix = Sklearn.Ndarray.Float.matrix
-let vector = Sklearn.Ndarray.Float.vector
-let matrixi = Sklearn.Ndarray.Int.matrix
-let vectori = Sklearn.Ndarray.Int.vector
+let matrix = Sklearn.Arr.Float.matrix
+let vector = Sklearn.Arr.Float.vector
+let matrixi = Sklearn.Arr.Int.matrix
+let vectori = Sklearn.Arr.Int.vector
 
 let get x = match x with
   | None -> failwith "Option.get"
@@ -35,7 +35,7 @@ let%expect_test "AdaBoostClassifier" =
       ~n_redundant:0 ~random_state:(`Int 0) ~shuffle:false ()
   in
   let clf = AdaBoostClassifier.create ~n_estimators:100 ~random_state:(`Int 0) () in
-  print AdaBoostClassifier.pp @@ AdaBoostClassifier.fit ~x: (`Ndarray x) ~y clf;
+  print AdaBoostClassifier.pp @@ AdaBoostClassifier.fit ~x ~y clf;
   [%expect {|
       AdaBoostClassifier(algorithm='SAMME.R', base_estimator=None, learning_rate=1.0,
                          n_estimators=100, random_state=0)
@@ -44,7 +44,7 @@ let%expect_test "AdaBoostClassifier" =
   [%expect {|
       [0.28 0.42 0.14 0.16]
   |}];
-  print_ndarray @@ AdaBoostClassifier.predict ~x:(`Ndarray (matrixi [|[|0; 0; 0; 0|]|])) clf;
+  print_ndarray @@ AdaBoostClassifier.predict ~x:(matrixi [|[|0; 0; 0; 0|]|]) clf;
   [%expect {|
       [1]
   |}];
@@ -76,7 +76,7 @@ let%expect_test "AdaBoostRegressor" =
       ~random_state:(`Int 0) ~shuffle:false ()
   in
   let regr = AdaBoostRegressor.create ~random_state:(`Int 0) ~n_estimators:100 () in
-  print AdaBoostRegressor.pp @@ AdaBoostRegressor.fit ~x:(`Ndarray x) ~y regr;
+  print AdaBoostRegressor.pp @@ AdaBoostRegressor.fit ~x ~y regr;
   [%expect {|
         AdaBoostRegressor(base_estimator=None, learning_rate=1.0, loss='linear',
                           n_estimators=100, random_state=0)
@@ -85,7 +85,7 @@ let%expect_test "AdaBoostRegressor" =
   [%expect {|
         [0.27885832 0.71092234 0.00654703 0.00367231]
      |}];
-  print_ndarray @@ AdaBoostRegressor.predict ~x:(`Ndarray (matrixi [|[|0; 0; 0; 0|]|])) regr;
+  print_ndarray @@ AdaBoostRegressor.predict ~x:(matrixi [|[|0; 0; 0; 0|]|]) regr;
   [%expect {|
         [4.79722349]
      |}];
@@ -123,9 +123,9 @@ let%expect_test "BaggingClassifier" =
      2020-04-19 *)
   let clf = BaggingClassifier.(create ~base_estimator:(`PyObject (Sklearn.Svm.SVC.(create () |> to_pyobject)))
                                  ~n_estimators:10 ~random_state:(`Int 0) ()
-                               |> fit ~x:(`Ndarray x) ~y)
+                               |> fit ~x ~y)
   in
-  print_ndarray @@ BaggingClassifier.predict ~x:(`Ndarray (matrixi [|[|0; 0; 0; 0|]|])) clf;
+  print_ndarray @@ BaggingClassifier.predict ~x:(matrixi [|[|0; 0; 0; 0|]|]) clf;
   [%expect {|
       [1]
    |}]
@@ -152,9 +152,9 @@ let%expect_test "BaggingRegressor" =
   in
   let regr = BaggingRegressor.(create ~base_estimator:(`PyObject (Sklearn.Svm.SVR.(create () |> to_pyobject)))
                                  ~n_estimators:10 ~random_state:(`Int 0) ()
-                               |> fit ~x:(`Ndarray x) ~y)
+                               |> fit ~x ~y)
   in
-  print_ndarray @@ BaggingRegressor.predict ~x:(`Ndarray (matrixi [|[|0; 0; 0; 0|]|])) regr;
+  print_ndarray @@ BaggingRegressor.predict ~x:(matrixi [|[|0; 0; 0; 0|]|]) regr;
   [%expect {|
       [-2.87202411]
    |}]
@@ -177,13 +177,20 @@ let%expect_test "ExtraTreesClassifier" =
   let open Sklearn.Ensemble in
   let x, y = Sklearn.Datasets.make_classification ~n_features:4 ~random_state:(`Int 0) () in
   let clf = ExtraTreesClassifier.create ~n_estimators:100 ~random_state:(`Int 0) () in
-  print ExtraTreesClassifier.pp @@ ExtraTreesClassifier.fit ~x:(`Ndarray x) ~y clf;
+  print ExtraTreesClassifier.pp @@ ExtraTreesClassifier.fit ~x ~y clf;
   [%expect {|
-      ExtraTreesClassifier(random_state=0)
+      ExtraTreesClassifier(bootstrap=False, ccp_alpha=0.0, class_weight=None,
+                           criterion='gini', max_depth=None, max_features='auto',
+                           max_leaf_nodes=None, max_samples=None,
+                           min_impurity_decrease=0.0, min_impurity_split=None,
+                           min_samples_leaf=1, min_samples_split=2,
+                           min_weight_fraction_leaf=0.0, n_estimators=100,
+                           n_jobs=None, oob_score=False, random_state=0, verbose=0,
+                           warm_start=False)
    |}];
-  print_ndarray @@ ExtraTreesClassifier.predict ~x:(`Ndarray (matrixi [|[|0; 0; 0; 0|]|])) clf;
+  print_ndarray @@ ExtraTreesClassifier.predict ~x:(matrixi [|[|0; 0; 0; 0|]|]) clf;
   [%expect {|
-      array([1])
+      [1]
    |}]
 
 
@@ -200,10 +207,9 @@ let%expect_test "ExtraTreesClassifier" =
 let%expect_test "IsolationForest" =
   let open Sklearn.Ensemble in
   let x = matrix [|[|-1.1|]; [|0.3|]; [|0.5|]; [|100.|]|] in
-  let clf = IsolationForest.(create ~random_state:(`Int 0) () |> fit ~x:(`Ndarray x)) in
-  print_ndarray @@ IsolationForest.predict ~x:(`Ndarray (matrix [|[|0.1|]; [|0.|]; [|90.|]|])) clf;
-  [%expect {|
-   |}]
+  let clf = IsolationForest.(create ~random_state:(`Int 0) () |> fit ~x) in
+  print_ndarray @@ IsolationForest.predict ~x:(matrix [|[|0.1|]; [|0.|]; [|90.|]|]) clf;
+  [%expect {| [ 1  1 -1] |}]
 
 
 (* RandomForestClassifier *)
@@ -227,15 +233,22 @@ let%expect_test "RandomForestClassifier" =
       ~n_redundant:0 ~random_state:(`Int 0) ~shuffle:false ()
   in
   let clf = RandomForestClassifier.create ~max_depth:(`Int 2) ~random_state:(`Int 0) () in
-  print RandomForestClassifier.pp @@ RandomForestClassifier.fit ~x:(`Ndarray x) ~y clf;
+  print RandomForestClassifier.pp @@ RandomForestClassifier.fit ~x ~y clf;
   [%expect {|
-      RandomForestClassifier(max_depth=2, random_state=0)
+      RandomForestClassifier(bootstrap=True, ccp_alpha=0.0, class_weight=None,
+                             criterion='gini', max_depth=2, max_features='auto',
+                             max_leaf_nodes=None, max_samples=None,
+                             min_impurity_decrease=0.0, min_impurity_split=None,
+                             min_samples_leaf=1, min_samples_split=2,
+                             min_weight_fraction_leaf=0.0, n_estimators=100,
+                             n_jobs=None, oob_score=False, random_state=0, verbose=0,
+                             warm_start=False)
    |}];
   print_ndarray @@ get @@ RandomForestClassifier.feature_importances_ clf;
   [%expect {|
       [0.14205973 0.76664038 0.0282433  0.06305659]
    |}];
-  print_ndarray @@ RandomForestClassifier.predict ~x:(`Ndarray (matrixi [|[|0; 0; 0; 0|]|])) clf;
+  print_ndarray @@ RandomForestClassifier.predict ~x:(matrixi [|[|0; 0; 0; 0|]|]) clf;
   [%expect {|
       [1]
    |}]

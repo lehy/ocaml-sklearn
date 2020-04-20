@@ -1,5 +1,6 @@
 (library
  (public_name sklearn)
+ (private_modules ndarray_private)
  (libraries bigarray pyml))
 
 ;; 58 is due to pyml, not sure what to do about it

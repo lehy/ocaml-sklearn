@@ -1,11 +1,11 @@
 let print f x = Format.printf "%a" f x
 let print_py x = Format.printf "%s" (Py.Object.to_string x)
-let print_ndarray = print Sklearn.Ndarray.pp
+let print_ndarray = print Sklearn.Arr.pp
 
-let matrix = Sklearn.Ndarray.Float.matrix
-let vector = Sklearn.Ndarray.Float.vector
-let matrixi = Sklearn.Ndarray.Int.matrix
-let vectori = Sklearn.Ndarray.Int.vector
+let matrix = Sklearn.Arr.Float.matrix
+let vector = Sklearn.Arr.Float.vector
+let matrixi = Sklearn.Arr.Int.matrix
+let vectori = Sklearn.Arr.Int.vector
 
 let get x = match x with
   | None -> failwith "Option.get"
@@ -229,7 +229,7 @@ let%expect_test "FeatureUnion" =
                          "svd", Sklearn.Decomposition.TruncatedSVD.(create ~n_components:2 () |> to_pyobject)] ()
   in
   let x = matrix [|[|0.; 1.; 3.|]; [|2.; 2.; 5.|]|] in
-  print_ndarray @@ FeatureUnion.fit_transform union ~x:(`Ndarray x);
+  print_ndarray @@ FeatureUnion.fit_transform union ~x;
   [%expect {|
     [[ 1.5         3.03954967  0.87243213]
      [-1.5         5.72586357 -0.46312679]] |}]
@@ -285,9 +285,10 @@ let%expect_test "complex_pipeline" =
   let sub_pipeline = Pipeline.get_item anova_svm ~ind:(`Slice(`None, `Int 1, `None)) |> Pipeline.of_pyobject in
   let svc = Pipeline.get_item anova_svm ~ind:(`Int (-1)) |> Svm.SVC.of_pyobject in
   let coef = get @@ Svm.SVC.coef_ svc in
-  Ndarray.shape coef |> Ndarray.Int.vector |> print_ndarray;
+  Arr.get_ndarray coef |> Ndarray.shape |> Ndarray.Int.vector |> print Sklearn.Ndarray.pp;
   [%expect {| [ 1 10] |}];
-  Pipeline.inverse_transform sub_pipeline ~x:coef |> Ndarray.shape |> Ndarray.Int.vector |> print_ndarray;
+  Pipeline.inverse_transform sub_pipeline ~x:coef
+  |> Arr.get_ndarray |> Ndarray.shape |> Ndarray.Int.vector |> print Sklearn.Ndarray.pp;
   [%expect {| [ 1 20] |}]
   
 (* >>> from sklearn import svm

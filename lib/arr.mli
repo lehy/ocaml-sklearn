@@ -232,6 +232,40 @@ module String : sig
   val vectors : string array list -> List.t
 end
 
+(** ## module Arr.Object
+
+    Build an Arr containing mixed ints, floats or strings. *)
+module Object : sig
+  (**
+     The type of an element: int (`I), float (`F) or string (`S).
+  *)
+  type elt = [`I of int | `F of float | `S of string]
+
+  (** ### vector
+
+      Build a vector from an OCaml array.
+
+      Example :
+
+      ~~~ocaml
+      let x = Arr.Object.vector [| `I 42; `S "answer"; `F 12.3 |]
+      ~~~
+  *)
+  val vector : elt array -> t
+
+  (** ### matrix
+
+      Build a matrix from an OCaml array of arrays.
+
+      Example :
+
+      ~~~ocaml
+      let x = Arr.Object.matrix [| [|`I 42; `S "answer"|]; [|`I 43; `S "lala"|] |]
+      ~~~
+  *)
+  val matrix : elt array array -> t
+end
+
 (** ### to_pyobject
 
     Convert the Array to a Py.Object.t. *)

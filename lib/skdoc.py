@@ -183,15 +183,30 @@ class Bool(Type):
 
 
 class Ndarray(Type):
+    names = []
+    ml_type = 'Sklearn.Ndarray.t'
+    wrap = 'Sklearn.Ndarray.to_pyobject'
+    ml_type_ret = 'Sklearn.Ndarray.t'
+    unwrap = 'Sklearn.Ndarray.of_pyobject'
+
+
+class Arr(Type):
+    """Handles dense or sparse arrays (ie, union of Ndarray and
+    Csr_matrix/SparseMatrix).
+
+    We wrap all arrays using Arr, except in Csr_matrix (which would
+    cause a dependency cycle).
+
+    """
     names = [
-        'ndarray', 'numpy array', 'array of floats', 'nd-array', 'array-like',
-        'array', 'array_like', 'indexable', 'float ndarray', 'iterable',
-        'an iterable', 'numeric array-like', 'array of float'
+        'ndarray', 'numpy array', 'array of floats', 'nd-array', 'array',
+        'float ndarray', 'iterable', 'indexable', 'an iterable',
+        'numeric array-like', 'array of float', 'array-like', 'array_like'
     ]
-    ml_type = 'Ndarray.t'
-    wrap = 'Ndarray.to_pyobject'
-    ml_type_ret = 'Ndarray.t'
-    unwrap = 'Ndarray.of_pyobject'
+    ml_type = 'Sklearn.Arr.t'
+    wrap = 'Sklearn.Arr.to_pyobject'
+    ml_type_ret = 'Sklearn.Arr.t'
+    unwrap = 'Sklearn.Arr.of_pyobject'
 
 
 class Array(Type):
@@ -514,10 +529,20 @@ def parse_enum(t):
 transformer_list = List(Tuple([String(), PyObject()]))
 transformer_list.names = ['list of (string, transformer) tuples']
 
+
+def init_builtins(builtin, builtin_types):
+    builtin.clear()
+    for t in builtin_types:
+        for name in t.names:
+            assert name not in builtin
+            builtin[name] = t
+
+
 builtin_types = [
     Int(),
     Float(),
     Bool(),
+    Arr(),
     Ndarray(),
     FloatList(),
     StringList(),
@@ -546,10 +571,7 @@ builtin_types = [
     transformer_list
 ]
 builtin = {}
-for t in builtin_types:
-    for name in t.names:
-        assert name not in builtin
-        builtin[name] = t
+init_builtins(builtin, builtin_types)
 
 
 def partition(l, pred):
@@ -575,6 +597,14 @@ def remove_duplicates(elts):
             got.add(elt)
     return ret
 
+
+def simplify_arr(enum):
+    arr, not_arr = partition(enum.elements, lambda x: isinstance(x, (Arr, Ndarray)))
+    sparse, not_arr_not_sparse = partition(not_arr, lambda x: isinstance(x, SparseMatrix))
+    if arr and sparse:
+        return type(enum)([Arr()] + not_arr_not_sparse)
+    else:
+        return enum
 
 def simplify_enum(enum):
     # flatten (once should be enough?)
@@ -612,13 +642,16 @@ def simplify_enum(enum):
 
     enum = type(enum)(remove_duplicates(enum.elements))
 
+    # Arr | SparseMatrix == Arr
+    enum = simplify_arr(enum)
+
     # There is no point having more than one Py.Object tag in an enum.
     is_obj, is_not_obj = partition(
         enum.elements, lambda x: isinstance(x, (PyObject, UnknownType)))
-    if len(is_obj) >= 1:
-        enum = type(enum)(is_not_obj + [builtin['object']])
+    if len(is_obj) > 1:
+        enum = type(enum)(is_not_obj + [PyObject()])
 
-    # this is probably the result of a parsing bug
+    # A one-element enum is just the element itself.
     if len(enum.elements) == 1:
         return enum.elements[0]
 
@@ -1558,8 +1591,8 @@ class Parameter:
 
         pos_arg = None
         if self.is_star():
-            # pos_arg = f"(match {self.ml_name} with None -> [||] | Some x -> x)"
-            pos_arg = f"(Wrap_utils.pos_arg {self.ty.t.wrap} {self.ml_name})"
+            ty_t_wrap = _localize(self.ty.t.wrap, module_path)
+            pos_arg = f"(Wrap_utils.pos_arg {ty_t_wrap} {self.ml_name})"
             kv = None
 
         kw_arg = None
@@ -1786,7 +1819,7 @@ def parse_type_simple(t, param_name):
         if isinstance(ret, ArrayLike):
             if param_name in ['filenames']:
                 ret = builtin['list of string']
-        if isinstance(ret, (Ndarray, ArrayLike)):
+        if isinstance(ret, (Arr, ArrayLike)):
             if param_name in ['feature_names', 'target_names']:
                 ret = builtin['list of string']
             if param_name in ['neigh_ind', 'is_inlier']:
@@ -2176,10 +2209,10 @@ overrides = {
     dict(signature=sig_inverse_transform,
          param_types={
              'self': Self(),
-             'X': Ndarray(),
-             'y': Ndarray()
+             'X': Arr(),
+             'y': Arr()
          },
-         ret_type=Ndarray()),
+         ret_type=Arr()),
     r'__getitem__$':
     dict(ml_name='get_item'),
     r'Pipeline.__getitem__$':
@@ -2190,27 +2223,31 @@ overrides = {
     r'set_params$':
     dict(ret_type=Self()),
     r'train_test_split$':
-    dict(signature=train_test_split_signature,
-         param_types={
-             'arrays': List(Ndarray()),
-             'test_size': Enum([Float(), Int(), NoneValue()]),
-             'train_size': Enum([Float(), Int(), NoneValue()]),
-             'random_state': Enum([Int(), RandomState(),
-                                   NoneValue()]),
-             'shuffle': Bool(),
-             'stratify': Enum([Ndarray(), NoneValue()])
-         },
-         ret_type=List(Ndarray())),
+    dict(
+        signature=train_test_split_signature,
+        param_types={
+            'arrays': List(Arr()),
+            'test_size': Enum([Float(), Int(), NoneValue()]),
+            'train_size': Enum([Float(), Int(), NoneValue()]),
+            'random_state': Enum([Int(), RandomState(),
+                                  NoneValue()]),
+            'shuffle': Bool(),
+            'stratify': Arr()  # was Arr | None
+        },
+        ret_type=List(Arr())),
     r'make_regression$':
     dict(fixed_values=dict(coef=('true', False))),
     r'\.radius_neighbors$':
-    dict(ret_type=Tuple([List(Ndarray()), List(Ndarray())])),
+    dict(ret_type=Tuple([List(Arr()), List(Arr())])),
     r'^NearestCentroid\.fit$':
-    dict(param_types=dict(X=Enum([Ndarray(), SparseMatrix()]), y=Ndarray())),
+    dict(param_types=dict(X=Arr(), y=Arr())),
     r'MultiLabelBinarizer\.(fit_transform|fit)':
     dict(types={'^y$': ArrayList()}),
     r'\.(decision_function|predict|predict_proba|fit_predict|transform|fit_transform)$':
-    dict(ret_type=Ndarray()),
+    dict(ret_type=Arr(),
+         types={
+             r'^X$': Arr()
+         }),
     r'\.fit$':
     dict(ret_type=Self()),
     r'Pipeline$':
@@ -2220,21 +2257,17 @@ overrides = {
                           verbose=Bool())),
     r'load_iris$':
     dict(ret_type=Bunch({
-        'data': Ndarray(),
-        'target': Ndarray(),
+        'data': Arr(),
+        'target': Arr(),
         'target_names': List(String()),
         'feature_names': List(String()),
         'DESCR': String(),
         'filename': String()
     })),
     r'(fetch_.*|load_(?!iris)(?!svmlight_files).*)$':
-    dict(
-        ret_bunch=True,
-        types={
-            'r^(data|target|pairs|images)$': Ndarray(),
-            # XXX pairs|images is an approximation, the original code has
-            # "and t.startswith('numpy array|ndarray')"
-        }),
+    dict(ret_bunch=True, types={
+        'r^(data|target|pairs|images)$': Arr(),
+    }),
     r'':
     dict(fixed_values=dict(return_X_y=('false', True),
                            return_distance=('true', False)),
@@ -2242,13 +2275,8 @@ overrides = {
              '^shape$': List(Int()),
              '^DESCR$': String(),
              '^target_names$': List(String()),
-             '^(intercept_|coef_|classes_)$': Ndarray()
+             '^(intercept_|coef_|classes_)$': Arr()
          }),
-    r'label_binarize$':
-    dict(
-        fixed_values=dict(sparse_output=('false',
-                                         False)),  # XXX disable sparse return
-        ret_type=Ndarray()),
     r'power_transform$':
     dict(types={
         r'^method$':
@@ -2256,15 +2284,14 @@ overrides = {
               StringValue("box-cox")])
     }),
     r'quantile_transform$':
-    dict(
-        types={
-            r'^X$':
-            Ndarray(),  # XXX disable space return/input
-            r'^output_distribution$':
-            Enum([StringValue("uniform"),
-                  StringValue("normal")])
-        },
-        ret_type=Ndarray())
+    dict(types={
+        r'^X$':
+        Arr(),
+        r'^output_distribution$':
+        Enum([StringValue("uniform"),
+              StringValue("normal")])
+    },
+         ret_type=Arr())
 }
 
 
@@ -2305,6 +2332,13 @@ def main():
         # Write this one separately, no sense having it in metrics and
         # it causes cross dep problems.
         # This is scipy.sparse.csr.csr_matrix.
+        # The next lines are a horrible hack to have Csr_matrix use Ndarray
+        # instead of Arr, therefore avoiding a dependency cycle.
+        global Arr
+        for name in Arr.names:
+            builtin[name] = Ndarray()
+        Arr = Ndarray
+
         Class(sklearn.metrics.pairwise.csr_matrix, "Sklearn",
               over).write(build_dir, "Sklearn", ns="sklearn.metrics.pairwise")
         write_version(build_dir)
