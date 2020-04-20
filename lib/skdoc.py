@@ -599,12 +599,15 @@ def remove_duplicates(elts):
 
 
 def simplify_arr(enum):
-    arr, not_arr = partition(enum.elements, lambda x: isinstance(x, (Arr, Ndarray)))
-    sparse, not_arr_not_sparse = partition(not_arr, lambda x: isinstance(x, SparseMatrix))
+    arr, not_arr = partition(enum.elements,
+                             lambda x: isinstance(x, (Arr, Ndarray)))
+    sparse, not_arr_not_sparse = partition(
+        not_arr, lambda x: isinstance(x, SparseMatrix))
     if arr and sparse:
         return type(enum)([Arr()] + not_arr_not_sparse)
     else:
         return enum
+
 
 def simplify_enum(enum):
     # flatten (once should be enough?)
@@ -1170,7 +1173,7 @@ class Attribute:
             self.ml_name_opt = self.ml_name + 'opt'
         else:
             self.ml_name_opt = self.ml_name + '_opt'
-            
+
     def write_to_ml(self, f, module_path):
         unwrap = _localize(self.typ.unwrap, module_path)
         # Not sure whether we should raise or return None if the attribute is not found.
@@ -1197,16 +1200,14 @@ let {self.ml_name} self = match {self.ml_name_opt} self with
     def write_to_mli(self, f, module_path):
         #  XXX TODO extract doc and put it here
         ml_type_ret = _localize(self.typ.ml_type_ret, module_path)
-        f.write(
-            f"""
+        f.write(f"""
 (** Attribute {self.name}: get value or raise Not_found if None.*)
 val {self.ml_name} : t -> {ml_type_ret}
 
 (** Attribute {self.name}: get value as an option. *)
 val {self.ml_name_opt} : t -> ({ml_type_ret}) option
 
-"""
-        )
+""")
 
     def write_to_md(self, f, module_path):
         ml_type_ret = _localize(self.typ.ml_type_ret, module_path)
@@ -1522,7 +1523,10 @@ class Parameter:
         self.ty = ty
         self.parameter = parameter
         self.fixed_value = None
-
+        # If the default value is None, no need to have it as an option in the type.
+        if self.parameter.default is None:
+            self.ty = remove_none_from_enum(self.ty)
+        
     def __str__(self):
         return repr(self)
 
@@ -1748,19 +1752,6 @@ class Wrapper:
 
 {doc}
 """
-
-
-#         return f"""
-# ### {self.ml_name}
-
-# ```ocaml
-# val {self.ml_name} :
-# {sig}
-# ```
-
-# {doc}
-
-# """
 
     def _pos_args(self, module_path):
         pos_args = None
@@ -2262,10 +2253,7 @@ overrides = {
     r'MultiLabelBinarizer\.(fit_transform|fit)':
     dict(types={'^y$': ArrayList()}),
     r'\.(decision_function|predict|predict_proba|fit_predict|transform|fit_transform)$':
-    dict(ret_type=Arr(),
-         types={
-             r'^X$': Arr()
-         }),
+    dict(ret_type=Arr(), types={r'^X$': Arr()}),
     r'\.fit$':
     dict(ret_type=Self()),
     r'Pipeline$':

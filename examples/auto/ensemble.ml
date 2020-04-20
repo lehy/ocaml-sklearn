@@ -121,7 +121,7 @@ let%expect_test "BaggingClassifier" =
      classes... would be a lot of work, probably harder to use, for a
      benefit that is relatively mild. Suggestions welcome.  -- Ronan,
      2020-04-19 *)
-  let clf = BaggingClassifier.(create ~base_estimator:(`PyObject (Sklearn.Svm.SVC.(create () |> to_pyobject)))
+  let clf = BaggingClassifier.(create ~base_estimator:Sklearn.Svm.SVC.(create () |> to_pyobject)
                                  ~n_estimators:10 ~random_state:(`Int 0) ()
                                |> fit ~x ~y)
   in
@@ -150,7 +150,7 @@ let%expect_test "BaggingRegressor" =
   let x, y, _coefs = Sklearn.Datasets.make_regression ~n_samples:100 ~n_features:4
       ~n_informative:2 ~n_targets:1 ~random_state:(`Int 0) ~shuffle:false ()
   in
-  let regr = BaggingRegressor.(create ~base_estimator:(`PyObject (Sklearn.Svm.SVR.(create () |> to_pyobject)))
+  let regr = BaggingRegressor.(create ~base_estimator:Sklearn.Svm.SVR.(create () |> to_pyobject)
                                  ~n_estimators:10 ~random_state:(`Int 0) ()
                                |> fit ~x ~y)
   in
@@ -232,7 +232,7 @@ let%expect_test "RandomForestClassifier" =
   let x, y = Sklearn.Datasets.make_classification ~n_samples:1000 ~n_features:4 ~n_informative:2
       ~n_redundant:0 ~random_state:(`Int 0) ~shuffle:false ()
   in
-  let clf = RandomForestClassifier.create ~max_depth:(`Int 2) ~random_state:(`Int 0) () in
+  let clf = RandomForestClassifier.create ~max_depth:2 ~random_state:(`Int 0) () in
   print RandomForestClassifier.pp @@ RandomForestClassifier.fit ~x ~y clf;
   [%expect {|
       RandomForestClassifier(bootstrap=True, ccp_alpha=0.0, class_weight=None,
@@ -273,7 +273,7 @@ let%expect_test "RandomForestRegressor" =
   let x, y, _coefs =
     Sklearn.Datasets.make_regression ~n_features:4 ~n_informative:2 ~random_state:(`Int 0) ~shuffle:false ()
   in
-  let regr = RandomForestRegressor.create ~max_depth:(`Int 2) ~random_state:(`Int 0) () in
+  let regr = RandomForestRegressor.create ~max_depth:2 ~random_state:(`Int 0) () in
   print RandomForestRegressor.pp @@ RandomForestRegressor.fit ~x ~y regr;
   [%expect {|
       RandomForestRegressor(bootstrap=True, ccp_alpha=0.0, criterion='mse',
