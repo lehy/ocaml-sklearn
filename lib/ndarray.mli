@@ -43,16 +43,6 @@ val show : t -> string
     Pretty-print the Ndarray.  *)
 val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
-(** ### to_pyobject
-
-    Convert the Ndarray to a Py.Object.t. *)
-val to_pyobject : t -> Py.Object.t
-
-(** ### of_pyobject
-
-    Build an Ndarray from a Py.Object.t.  *)
-val of_pyobject : Py.Object.t -> t
-
 (** ### of_bigarray
 
     Build an Ndarray from a bigarray. *)
@@ -467,3 +457,13 @@ module Object : sig
  *)
   val matrix : elt array array -> t
 end
+
+(** ### to_pyobject
+
+    Convert the Ndarray to a Py.Object.t. *)
+val to_pyobject : t -> Py.Object.t
+
+(** ### of_pyobject
+
+    Build an Ndarray from a Py.Object.t.  *)
+val of_pyobject : Py.Object.t -> t
