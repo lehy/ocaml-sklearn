@@ -24,8 +24,8 @@ let y = Sklearn.Ndarray.of_bigarray @@ Owl.Arr.uniform [|n_samples|] in
 let x = Sklearn.Ndarray.of_bigarray @@ Owl.Dense.Matrix.D.uniform n_samples n_features in
 let open Sklearn.Svm in
 let clf = SVR.create ~c:1.0 ~epsilon:0.2 () in
-Format.printf "%a\n" SVR.pp @@ SVR.fit clf ~x:(`Ndarray x) ~y;
-Format.printf "%a\n" Sklearn.Ndarray.pp @@ SVR.support_vectors_ clf;;
+Format.printf "%a\n" SVR.pp @@ SVR.fit clf ~x ~y;
+Format.printf "%a\n" Sklearn.Arr.pp @@ SVR.support_vectors_ clf;;
 ```
 
 This outputs:
@@ -93,22 +93,21 @@ Python class `sklearn.svm.SVC` can be found in OCaml module
 `SVC` and functions corresponding to the Python methods and
 attributes.
 
-Most data is passed in and out of sklearn through a binding to Numpy's
-`Ndarray`. This is a tensor type that can contain integers, floats, or
-strings (as exposed in the current OCaml API). The way to get data
-into or out of an `Ndarray.t` is to go through OCaml arrays or
-bigarrays. A way to create bigarrays is to use `Owl`'s facilities. At
-the moment, the `Ndarray` functions exposed here are extremely minimal
-(no `np.zeros` or `np.ones`).
+Most data is passed in and out of sklearn through module `Arr`. An
+`Arr.t` is either a dense `Ndarray.t` or a sparse `Csr_matrix.t`.
 
-Many functions accept either dense Ndarrays or sparse matrices. A
-sparse matrix can be constructed and accessed using module
-Sklearn.Csr_matrix. A parameter that can be dense or sparse will be
-typed like `x : [`Ndarray of Ndarray.t | `SparseMatrixx of
-Csr_matrix.t]`. At the moment, returning either a dense or sparse
-matrix is not supported; in these cases sparse return is disabled
-(either by forcing a boolean parameter like `sparse_return` to be
-`false`, or by forcing a parameter to be dense).
+You should generally build a dense array using the constructors in `Arr`:
+
+~~~ocaml
+let x = Arr.Float.matrix [|[| 1; 2 |]; [| 3; 4 |]|]
+~~~
+
+One way to build an `Arr.t` is to use `Owl`'s function to construct a
+bigarray and then use `Arr.of_bigarray`. Data is shared between the
+bigarray and the `Arr.t`.
+
+To get data out of an `Arr.t`, get the underlying `Ndarray` or
+`Csr_matrix` using `Arr.get`.
 
 Bunches (as returned from the sklearn.datasets APIs) are exposed as
 objects.

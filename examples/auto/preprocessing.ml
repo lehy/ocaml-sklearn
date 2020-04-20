@@ -1,12 +1,12 @@
 let print f x = Format.printf "%a" f x
 let print_py x = Format.printf "%s" (Py.Object.to_string x)
-let print_ndarray = print Sklearn.Ndarray.pp
+let print_ndarray = print Sklearn.Arr.pp
 
-let matrix = Sklearn.Ndarray.Float.matrix
-let vector = Sklearn.Ndarray.Float.vector
-let matrixi = Sklearn.Ndarray.Int.matrix
-let vectori = Sklearn.Ndarray.Int.vector
-let vectors = Sklearn.Ndarray.String.vector
+let matrix = Sklearn.Arr.Float.matrix
+let vector = Sklearn.Arr.Float.vector
+let matrixi = Sklearn.Arr.Int.matrix
+let vectori = Sklearn.Arr.Int.vector
+let vectors = Sklearn.Arr.String.vector
 
 let get x = match x with
   | None -> failwith "Option.get"
@@ -37,7 +37,7 @@ let%expect_test "Binarizer" =
   [%expect {|
             Binarizer(copy=True, threshold=0.0)
     |}];
-  print_ndarray @@ Binarizer.transform transformer ~x:(`Ndarray x);
+  print_ndarray @@ Binarizer.transform transformer ~x;
   [%expect {|
             [[1. 0. 1.]
              [1. 0. 0.]
@@ -243,7 +243,7 @@ let%expect_test "LabelBinarizer" =
   [%expect {|
             [1 2 4 6]
     |}];
-  print_ndarray @@ LabelBinarizer.transform lb ~y:(`Ndarray (vectori [|1; 6|]));
+  print_ndarray @@ LabelBinarizer.transform lb ~y:(vectori [|1; 6|]);
   [%expect {|
             [[1 0 0 0]
              [0 0 0 1]]
@@ -266,7 +266,7 @@ array([[1],
 let%expect_test "LabelBinarizer" =
   let open Sklearn.Preprocessing in
   let lb = LabelBinarizer.create () in
-  print_ndarray @@ LabelBinarizer.fit_transform lb ~y:(`Ndarray (vectors [|"yes"; "no"; "no"; "yes"|]));
+  print_ndarray @@ LabelBinarizer.fit_transform lb ~y:(vectors [|"yes"; "no"; "no"; "yes"|]);
   [%expect {|
             [[1]
              [0]
@@ -301,7 +301,7 @@ let%expect_test "LabelBinarizer" =
   [%expect {|
             [0 1 2]
     |}];
-  print_ndarray @@ LabelBinarizer.transform lb ~y:(`Ndarray (vectori [|0; 1; 2; 1|]));
+  print_ndarray @@ LabelBinarizer.transform lb ~y:(vectori [|0; 1; 2; 1|]);
   [%expect {|
             [[1 0 0]
              [0 1 0]
@@ -404,12 +404,12 @@ array([[ 0.5, -1. ,  1. ],
 let%expect_test "MaxAbsScaler" =
   let open Sklearn.Preprocessing in
   let x = matrix [|[| 1.; -1.;  2.|];[| 2.;  0.;  0.|];[| 0.;  1.; -1.|]|] in
-  let transformer = MaxAbsScaler.(create () |> fit ~x:(`Ndarray x)) in
+  let transformer = MaxAbsScaler.(create () |> fit ~x) in
   print MaxAbsScaler.pp transformer;
   [%expect {|
             MaxAbsScaler(copy=True)
     |}];
-  print_ndarray @@ MaxAbsScaler.transform transformer ~x:(`Ndarray x);
+  print_ndarray @@ MaxAbsScaler.transform transformer ~x;
   [%expect {|
             [[ 0.5 -1.   1. ]
              [ 1.   0.   0. ]
@@ -606,7 +606,7 @@ let%expect_test "Normalizer" =
   [%expect {|
             Normalizer(copy=True, norm='l2')
     |}];
-  print_ndarray @@ Normalizer.transform transformer ~x:(`Ndarray x);
+  print_ndarray @@ Normalizer.transform transformer ~x;
   [%expect {|
             [[0.8 0.2 0.4 0.4]
              [0.1 0.3 0.9 0.3]
@@ -701,9 +701,9 @@ array([[0., 2.],
 let%expect_test "OrdinalEncoder" =
   let open Sklearn.Preprocessing in
   let enc = OrdinalEncoder.create () in
-  let x = Sklearn.Ndarray.Object.matrix [|[|`S "Male";   `I 1|];
-                                          [|`S "Female"; `I 3|];
-                                          [|`S "Female"; `I 2|]|] in
+  let x = Sklearn.Arr.Object.matrix [|[|`S "Male";   `I 1|];
+                                      [|`S "Female"; `I 3|];
+                                      [|`S "Female"; `I 2|]|] in
   print_ndarray x;
   [%expect {|
     [['Male' 1]
@@ -718,8 +718,8 @@ let%expect_test "OrdinalEncoder" =
             [array(['Female', 'Male'], dtype=object), array([1, 2, 3], dtype=object)]
     |}];
   print_ndarray @@ OrdinalEncoder.transform enc
-    ~x:(Sklearn.Ndarray.Object.matrix [|[|`S "Female"; `I 3|];
-                                        [|`S "Male"; `I 1|]|]);
+    ~x:(Sklearn.Arr.Object.matrix [|[|`S "Female"; `I 3|];
+                                    [|`S "Male"; `I 1|]|]);
   [%expect {|
             [[0. 2.]
              [1. 0.]]
@@ -773,7 +773,7 @@ array([[ 1.,  0.,  1.,  0.],
 
 let%expect_test "PolynomialFeatures" =
   let open Sklearn.Preprocessing in
-  let x =  Sklearn.Ndarray.(arange 6 |> reshape ~shape:[|3; 2|]) in
+  let x =  Sklearn.Ndarray.(arange 6 |> reshape ~shape:[|3; 2|]) |> Sklearn.Arr.of_ndarray in
   print_ndarray x;
   [%expect {|
             [[0 1]
@@ -850,7 +850,7 @@ let%expect_test "QuantileTransformer" =
   let open Sklearn.Preprocessing in
   let module Matrix = Owl.Dense.Matrix.D in
   Owl_stats_prng.init 0;
-  let x = Matrix.(gaussian ~mu:0.5 ~sigma:0.25 25 1 |> sort) |> Sklearn.Ndarray.of_bigarray in
+  let x = Matrix.(gaussian ~mu:0.5 ~sigma:0.25 25 1 |> sort) |> Sklearn.Arr.of_bigarray in
   let qt = QuantileTransformer.create ~n_quantiles:10 ~random_state:(`Int 0) () in
   print_ndarray @@ QuantileTransformer.fit_transform qt ~x;
   [%expect {|
@@ -911,7 +911,7 @@ let%expect_test "RobustScaler" =
             RobustScaler(copy=True, quantile_range=(25.0, 75.0), with_centering=True,
                          with_scaling=True)
     |}];
-  print_ndarray @@ RobustScaler.transform transformer ~x:(`Ndarray x);
+  print_ndarray @@ RobustScaler.transform transformer ~x;
   [%expect {|
             [[ 0.  -2.   0. ]
              [-1.   0.   0.4]
@@ -943,7 +943,7 @@ let%expect_test "StandardScaler" =
   let open Sklearn.Preprocessing in
   let data = matrixi [|[|0; 0|]; [|0; 0|]; [|1; 1|]; [|1; 1|]|] in
   let scaler = StandardScaler.create () in
-  print StandardScaler.pp @@ StandardScaler.fit scaler ~x:(`Ndarray data);
+  print StandardScaler.pp @@ StandardScaler.fit scaler ~x:data;
   [%expect {|
             StandardScaler(copy=True, with_mean=True, with_std=True)
     |}];
@@ -1080,7 +1080,7 @@ let%expect_test "quantile_transform" =
   let open Sklearn.Preprocessing in
   let module Matrix = Owl.Dense.Matrix.D in
   Owl_stats_prng.init 0;
-  let x = Matrix.(gaussian ~mu:0.5 ~sigma:0.25 25 1 |> sort) |> Sklearn.Ndarray.of_bigarray in
+  let x = Matrix.(gaussian ~mu:0.5 ~sigma:0.25 25 1 |> sort) |> Sklearn.Arr.of_bigarray in
   print_ndarray @@ quantile_transform ~x ~n_quantiles:10 ~random_state:(`Int 0) ~copy:true ();
   [%expect {|
             [[0.        ]
