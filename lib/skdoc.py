@@ -50,11 +50,20 @@ class Type:
     ml_type_ret = 'Py.Object.t'
     unwrap = 'Wrap_utils.id'
 
+    is_type = None
+    
+    def tag_name(self):
+        return tag(self.__class__.__name__)
+    
     def tag(self):
-        ta = tag(self.__class__.__name__)
+        ta = self.tag_name()
         t = f"`{ta} of {self.ml_type}"
         destruct = f"`{ta} x -> {self.wrap} x"
-        return t, destruct
+        if self.is_type is None:
+            construct = None
+        else:
+            construct = f"if {self.is_type} x then `{ta} ({self.unwrap} x)"
+        return t, destruct, construct
 
 
 class Bunch(Type):
@@ -83,12 +92,9 @@ class UnknownType(Type):
     def __init__(self, text):
         self.text = text
 
-    def tag(self):
-        ta = tag(self.text)
-        t = f"`{ta} of {self.ml_type}"
-        destruct = f"`{ta} x -> {self.wrap} x"
-        return t, destruct
-
+    def tag_name(self):
+        return tag(self.text)
+        
 
 class StringValue(Type):
     def __init__(self, text):
@@ -104,10 +110,18 @@ class StringValue(Type):
         ta = tag(self.text)
         t = f"`{ta}"
         destruct = f'`{ta} -> {self.wrap} "{self.text}"'
-        return t, destruct
+        construct = None
+        return t, destruct, construct
 
 
 class Enum(Type):
+    def can_be_returned(self):
+        for elt in self.elements:
+            if elt.tag()[2] is None:
+                # print(f"WW enum {self} cannot be returned because element {elt} cannot be discriminated")
+                return False
+        return True
+    
     def __init__(self, elements):
         self.elements = elements
         self.ml_type = "[" + ' | '.join([elt.tag()[0]
@@ -115,6 +129,10 @@ class Enum(Type):
         wrap_cases = [f"| {elt.tag()[1]}\n" for elt in elements]
         self.wrap = f"(function\n{''.join(wrap_cases)})"
 
+        if self.can_be_returned():
+            self.ml_type_ret = self.ml_type
+            unwrap_cases = [f"{elt.tag()[2]}" for elt in elements]
+            self.unwrap = 'fun x -> ' + ' else '.join(unwrap_cases) + ' else failwith "could not identify type from Python value"'
 
 class Tuple(Type):
     def __init__(self, elements):
@@ -139,7 +157,8 @@ class Int(Type):
     wrap = 'Py.Int.of_int'
     ml_type_ret = 'int'
     unwrap = 'Py.Int.to_int'
-
+    def tag_name(self):
+        return tag("I")
 
 class Pipeline(Type):
     names = ['Pipeline', 'pipeline']
@@ -168,7 +187,8 @@ class Float(Type):
     wrap = 'Py.Float.of_float'
     ml_type_ret = 'float'
     unwrap = 'Py.Float.to_float'
-
+    def tag_name(self):
+        return tag("F")
 
 class Bool(Type):
     names = ['bool', 'boolean', 'Boolean', 'Bool']
@@ -197,14 +217,31 @@ class Arr(Type):
     names = [
         'ndarray', 'numpy array', 'array of floats', 'nd-array', 'array',
         'float ndarray', 'iterable', 'indexable', 'an iterable',
-        'numeric array-like', 'array of float', 'array-like', 'array_like'
+        'numeric array-like', 'array of float', 'array-like', 'array_like', 'array like',
+        'np.matrix', 'numpy.matrix', 'float array with', 'matrix', '1d array-like',
+        'int array', 'int array-like'
     ]
     ml_type = 'Sklearn.Arr.t'
     wrap = 'Sklearn.Arr.to_pyobject'
     ml_type_ret = 'Sklearn.Arr.t'
     unwrap = 'Sklearn.Arr.of_pyobject'
 
-
+class ClassificationReport(Type):
+    # XXX ml_type is needed even for retuning, since we use it atm to
+    # build the return type inside enums (see Type.tag()).
+    ml_type = '(string * <precision:float; recall:float; f1_score:float; support:float>) list'
+    ml_type_ret = '(string * <precision:float; recall:float; f1_score:float; support:float>) list'
+    unwrap = '''(fun py -> Py.Dict.fold (fun kpy vpy acc -> ((Py.String.to_string kpy), object
+      method precision = Py.Dict.get_item_string vpy "precision" |> Wrap_utils.Option.get |> Py.Float.to_float
+      method recall = Py.Dict.get_item_string vpy "recall" |> Wrap_utils.Option.get |> Py.Float.to_float
+      method f1_score = Py.Dict.get_item_string vpy "f1-score" |> Wrap_utils.Option.get |> Py.Float.to_float
+      method support = Py.Dict.get_item_string vpy "support" |> Wrap_utils.Option.get |> Py.Float.to_float
+    end)::acc) py [])
+    '''
+    is_type = 'Wrap_utils.isinstance Wrap_utils.dict'
+    def tag_name(self):
+        return 'Dict'
+    
 class Array(Type):
     def __init__(self, t):
         self.t = t
@@ -282,7 +319,9 @@ class String(Type):
     wrap = 'Py.String.of_string'
     ml_type_ret = 'string'
     unwrap = 'Py.String.to_string'
-
+    is_type = 'Wrap_utils.isinstance Wrap_utils.string'
+    def tag_name(self):
+        return tag("S")
 
 class ArrayLike(Type):
     names = ['list-like', 'list']
@@ -292,21 +331,21 @@ class NoneValue(Type):
     names = ['None', 'none']
 
     def tag(self):
-        return '`None', '`None -> Py.none'
+        return '`None', '`None -> Py.none', None
 
 
 class TrueValue(Type):
     names = ['True', 'true']
 
     def tag(self):
-        return '`True', '`True -> Py.Bool.t'
+        return '`True', '`True -> Py.Bool.t', None
 
 
 class FalseValue(Type):
     names = ['False', 'false']
 
     def tag(self):
-        return '`False', '`False -> Py.Bool.f'
+        return '`False', '`False -> Py.Bool.f', None
 
 
 class RandomState(Type):
@@ -336,7 +375,8 @@ class JoblibMemory(Type):
 class SparseMatrix(Type):
     names = [
         'sparse matrix', 'sparse-matrix', 'CSR matrix',
-        'sparse graph in CSR format'
+        'sparse graph in CSR format', 'scipy.sparse.csr_matrix', 'CSR',
+        'label indicator array / sparse matrix'
     ]
     ml_type = 'Sklearn.Csr_matrix.t'
     wrap = 'Sklearn.Csr_matrix.to_pyobject'
@@ -355,7 +395,7 @@ class Self(Type):
 
 
 class Dtype(Type):
-    names = ['type', 'dtype']
+    names = ['type', 'dtype', 'numpy dtype']
 
 
 class TypeList(Type):
@@ -364,14 +404,18 @@ class TypeList(Type):
 
 class Dict(Type):
     names = ['dict', 'Dict', 'dictionary']
-
+    ml_type = 'Sklearn.Dict.t'
+    ml_type_ret = 'Sklearn.Dict.t'
+    wrap = 'Sklearn.Dict.to_pyobject'
+    unwrap = 'Sklearn.Dict.of_pyobject'
+    is_type = 'Wrap_utils.isinstance Wrap_utils.dict'
 
 # emitted as a postprocessing of Dict() based on param name/callable
 class DictIntToFloat(Type):
     names = ['dict int to float']
     ml_type = '(int * float) list'
     wrap = '(Py.Dict.of_bindings_map Py.Int.of_int Py.Float.of_float)'
-
+    is_type = 'Wrap_utils.isinstance Wrap_utils.dict'
 
 class Callable(Type):
     names = ['callable', 'function']
@@ -383,7 +427,8 @@ def Slice():
     destruct = "(`Slice _) as s -> Wrap_utils.Slice.of_variant s"
     ret.tag = lambda: (
         f"`Slice of ({int_or_none.ml_type}) * ({int_or_none.ml_type}) * ({int_or_none.ml_type})",
-        destruct)
+        destruct,
+        None)
     return ret
 
 
@@ -518,7 +563,10 @@ def parse_enum(t):
 
 
 transformer_list = List(Tuple([String(), PyObject()]))
-transformer_list.names = ['list of (string, transformer) tuples', 'list of (str, estimator)']
+transformer_list.names = [
+    'list of (string, transformer) tuples', 'list of (str, estimator)',
+    'list of (str, estimator) tuples'
+]
 
 
 def init_builtins(builtin, builtin_types):
@@ -1514,7 +1562,7 @@ class Parameter:
         # If the default value is None, no need to have it as an option in the type.
         if self.parameter.default is None:
             self.ty = remove_none_from_enum(self.ty)
-        
+
     def __str__(self):
         return repr(self)
 
@@ -1835,6 +1883,7 @@ def parse_type_simple(t, param_name):
     elif is_string(t):
         return StringValue(t.strip("'\""))
     else:
+        print(f"WW failed to parse type: {t}")
         return UnknownType(t)
 
 
@@ -1853,7 +1902,7 @@ def parse_types_simple(doc, section='Parameters'):
             if m is None:
                 mm = re.match(r'^(\w+)\s*\n', text)
                 if mm is not None:
-                    ret[mm.group(1)] = UnknownType('')
+                    ret[mm.group(1)] = UnknownType(text)
                     continue
                 continue
             param_name = m.group(1)
@@ -1875,8 +1924,7 @@ def parse_types_simple(doc, section='Parameters'):
     return ret
 
 
-def parse_bunch_simple(doc, section='Returns'):
-    elements = parse_params(doc, section)
+def parse_bunch_fetch(elements):
     ret = {}
     for element in elements:
         for line in element.text.split("\n"):
@@ -1893,6 +1941,33 @@ def parse_bunch_simple(doc, section='Returns'):
                 ret[name] = parse_type_simple(value, name)
     ret = Bunch(ret)
     return ret
+
+
+def parse_bunch_load(elements):
+    text = ' '.join(e.text for e in elements)
+    attributes = re.findall(r"'([^']+)'", text)
+    print(attributes)
+    types = dict(data=Arr(),
+                 target=Arr(),
+                 data_filename=String(),
+                 target_filename=String(),
+                 DESCR=String(),
+                 filename=String(),
+                 target_names=Arr(),
+                 feature_names=Arr(),
+                 images=Arr(),
+                 filenames=Arr())
+    return Bunch({k: types[k] for k in attributes})
+
+
+def parse_bunch_simple(doc, section='Returns'):
+    elements = parse_params(doc, section)
+
+    if 'attributes are' in elements[0].text or (
+            len(elements) > 1 and 'attributes are' in elements[1].text):
+        return parse_bunch_load(elements)
+    else:
+        return parse_bunch_fetch(elements)
 
 
 class Function:
@@ -1941,7 +2016,7 @@ class Function:
             # found parsing the doc).
             for k in signature.parameters.keys():
                 if k not in param_types:
-                    param_types[k] = UnknownType(k)
+                    param_types[k] = UnknownType(f"{k} not found in parsed types {param_types}")
             param_types = self.overrides.types(self.qualname, param_types)
 
         parameters = []
@@ -2196,7 +2271,6 @@ def dummy_inverse_transform(self, X=None, y=None):
 
 sig_inverse_transform = inspect.signature(dummy_inverse_transform)
 
-
 overrides = {
     r'Pipeline\.inverse_transform$':
     dict(signature=sig_inverse_transform,
@@ -2259,17 +2333,21 @@ overrides = {
         'r^(data|target|pairs|images)$': Arr(),
     }),
     r'':
-    dict(fixed_values=dict(return_X_y=('false', True),
-                           return_distance=('true', False)),
-         types={
-             '^shape$': Array(Int()),
-             '^DESCR$': String(),
-             '^target_names$': Arr(),
-             '^(intercept_|coef_|classes_)$': Arr(),
-               # using (`Int 42) instead of 42 is getting tiring, and
-               # RandomState does not seem necessary
-             '^random_state$': Int(),
-         }),
+    dict(
+        fixed_values=dict(return_X_y=('false', True),
+                          return_distance=('true', False)),
+        types={
+            '^shape$': Array(Int()),
+            '^DESCR$': String(),
+            '^target_names$': Arr(),
+            '^(intercept_|coef_|classes_)$': Arr(),
+            # using (`Int 42) instead of 42 is getting tiring, and
+            # RandomState does not seem necessary
+            '^random_state$': Int(),
+            "^verbose$": Int(),
+            '^named_(estimators|steps|transformers)_?$': Dict(),
+            # '^y_(true|pred)$': Arr(),
+        }),
     r'power_transform$':
     dict(types={
         r'^method$':
@@ -2284,7 +2362,19 @@ overrides = {
         Enum([StringValue("uniform"),
               StringValue("normal")])
     },
-         ret_type=Arr())
+         ret_type=Arr()),
+    r'mquantiles$':
+    dict(param_types=dict(a=Arr(),
+                          prob=Arr(),
+                          alphap=Float(),
+                          betap=Float(),
+                          axis=Int(),
+                          limit=Tuple([Float(), Float()])),
+         ret_type=Arr()),
+    '\.auc$':
+    dict(param_types=dict(x=Arr(), y=Arr()), ret_type=Float()),
+    r'\.classification_report$':
+    dict(ret_type=Enum([String(), ClassificationReport()]))
 }
 
 
@@ -2316,7 +2406,7 @@ def main():
 
     import sys
     if len(sys.argv) <= 1:
-        print("skdoc.py: not argument passed, not doing anything")
+        print("skdoc.py: no argument passed, not doing anything")
         return
 
     mode = sys.argv[1]
