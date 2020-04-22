@@ -53,6 +53,11 @@ val of_bigarray : ('a, 'b, 'c) Bigarray.Genarray.t -> t
     Shape (dimensions) of an Ndarray. *)
 val shape : t -> int array
 
+module Dtype : sig
+  type t = [`Object | `S of string]
+  val to_pyobject : t -> Py.Object.t
+end
+
 (** ### arange
 
     ~~~python
@@ -122,6 +127,27 @@ val shape : t -> int array
     ~~~
 *)
 val arange : ?start : int -> ?step : int -> int -> t
+
+val ones : ?dtype : Dtype.t -> int list -> t
+val zeros : ?dtype : Dtype.t -> int list -> t
+
+module Ops : sig
+  val int : int -> t
+  val float : float -> t
+  val bool : bool -> t
+  val string : string -> t
+  
+  val ( - ) : t -> t -> t
+  val ( + ) : t -> t -> t
+  val ( * ) : t -> t -> t
+  val ( / ) : t -> t -> t
+  val ( > ) : t -> t -> t
+  val ( >= ) : t -> t -> t
+  val ( < ) : t -> t -> t
+  val ( <= ) : t -> t -> t
+  val ( = ) : t -> t -> t
+  val ( != ) : t -> t -> t
+end
 
 (** ### reshape
 
@@ -290,6 +316,15 @@ val arange : ?start : int -> ?step : int -> int -> t
     ~~~
 *)
 val reshape : shape : int array -> t -> t
+
+val set : [`Colon | `I of int] array -> [`I of int | `F of float | `S of string] -> t -> unit
+val get_int : int list -> t -> int
+val get_float : int list -> t -> float
+
+val to_int_array : t -> int array
+val to_float_array : t -> float array
+
+val ravel : t -> t
 
 (** ## module Ndarray.List
 
@@ -467,3 +502,4 @@ val to_pyobject : t -> Py.Object.t
 
     Build an Ndarray from a Py.Object.t.  *)
 val of_pyobject : Py.Object.t -> t
+

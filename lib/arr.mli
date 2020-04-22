@@ -48,6 +48,11 @@ val of_bigarray : ('a, 'b, 'c) Bigarray.Genarray.t -> t
     This is a Python list of Arrays. This is `Sklearn.PyList.Make(Sklearn.Array)`. *)
 module List : PyList.S with type elt := t
 
+module Dtype : sig
+  type t = [`Object | `S of string]
+  val to_pyobject : t -> Py.Object.t
+end
+
 (** ### arange
 
     ~~~python
@@ -117,6 +122,27 @@ module List : PyList.S with type elt := t
     ~~~
 *)
 val arange : ?start : int -> ?step : int -> int -> t
+
+val ones : ?dtype : Dtype.t -> int list -> t
+val zeros : ?dtype : Dtype.t -> int list -> t
+
+module Ops : sig
+  val int : int -> t
+  val float : float -> t
+  val bool : bool -> t
+  val string : string -> t
+  
+  val ( - ) : t -> t -> t
+  val ( + ) : t -> t -> t
+  val ( * ) : t -> t -> t
+  val ( / ) : t -> t -> t
+  val ( > ) : t -> t -> t
+  val ( >= ) : t -> t -> t
+  val ( < ) : t -> t -> t
+  val ( <= ) : t -> t -> t
+  val ( = ) : t -> t -> t
+  val ( != ) : t -> t -> t
+end
 
 (** ## module Array.Float
 

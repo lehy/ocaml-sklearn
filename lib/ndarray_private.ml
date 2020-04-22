@@ -29,8 +29,8 @@ let arange ?start ?step stop =
   |> of_pyobject
 
 let reshape ~shape x =
-  Py.Object.call_method x "reshape" [| Py.List.of_array_map Py.Int.of_int shape |] |> of_pyobject
-  
+  Py.Object.call_method x "reshape" [| Py.List.of_array_map Py.Int.of_int shape |] |> of_pyobject  
+
 module List = PyList.Make(M)
 
 module Float = struct
@@ -68,9 +68,10 @@ module Int = struct
 end
 
 module Dtype = struct
+  type t = [`Object | `S of string]
   let rec to_pyobject = function
-    | `String s -> Py.Module.get_function numpy "dtype" [|Py.String.of_string s|]
-    | `Object -> to_pyobject (`String "object")
+    | `S s -> Py.Module.get_function numpy "dtype" [|Py.String.of_string s|]
+    | `Object -> to_pyobject (`S "object")
 end
 
 let numpy_array ?dtype a =
@@ -105,3 +106,74 @@ module Object = struct
   let matrix aa =
     numpy_array ~dtype:`Object @@ Py.List.of_array_map py_of_array aa
 end
+
+(* [`Colon | `I of int] -> [`I of int | `F of float | `S of string] -> t -> unit *)
+let set idx value self =
+  let py_of_idx = function
+    | `Colon -> Wrap_utils.Slice.create ()
+    | (`I _) as i -> Wrap_utils.Slice.create ~i ()
+  in
+  let _ = Py.Object.call_method self "__setitem__" [| Py.Tuple.of_array (Array.map py_of_idx idx) ; Object.py_of_elt value|]
+  in ()
+
+let get_int idx self =
+  match Py.Object.get_item self (Py.Tuple.of_list_map Py.Int.of_int idx) with
+  | None -> raise (invalid_arg "Sklearn.Ndarray.get_int")
+  | Some x -> Py.Int.to_int x
+
+let get_float idx self =
+  match Py.Object.get_item self (Py.Tuple.of_list_map Py.Int.of_int idx) with
+  | None -> raise (invalid_arg "Sklearn.Ndarray.get_float")
+  | Some x -> Py.Float.to_float x
+
+let ones ?dtype shape =
+  match dtype with
+  | None -> Py.Module.get_function numpy "ones" [|Py.Tuple.of_list_map Py.Int.of_int shape|]
+  | Some dtype ->
+    Py.Module.get_function numpy "ones"
+      [|Py.Tuple.of_list_map Py.Int.of_int shape; Dtype.to_pyobject dtype|]
+
+let zeros ?dtype shape =
+  match dtype with
+  | None -> Py.Module.get_function numpy "ones" [|Py.Tuple.of_list_map Py.Int.of_int shape|]
+  | Some dtype ->
+    Py.Module.get_function numpy "zeros"
+      [|Py.Tuple.of_list_map Py.Int.of_int shape; Dtype.to_pyobject dtype|]
+
+module Ops = struct
+  let operator = Py.import "operator"
+
+  let int x = numpy_array (Py.Int.of_int x)
+  let float x = numpy_array (Py.Float.of_float x)
+  let bool x = numpy_array (Py.Bool.of_bool x)
+  let string x = numpy_array (Py.String.of_string x)
+
+  let binop name a b =
+    of_pyobject @@ Py.Module.get_function operator name [|to_pyobject a; to_pyobject b|]
+  
+  let ( - ) = binop "sub"
+  let ( + ) = binop "add"
+  let ( * ) = binop "mul"
+  let ( / ) = binop "truediv"
+      
+  let ( < ) = binop "lt"
+  let ( <= ) = binop "le"
+  let ( > ) = binop "gt"
+  let ( >= ) = binop "get"
+
+  let ( = ) = binop "eq"
+  let ( != ) = binop "ne"
+end
+
+let ravel x =
+  Py.Module.get_function numpy "ravel" [|x|]
+
+let to_int_array x =
+  let x = ravel x in
+  let len = (shape x).(0) in
+  Array.init len (fun i -> get_int [i] x)
+
+let to_float_array x =
+  let x = ravel x in
+  let len = (shape x).(0) in
+  Array.init len (fun i -> get_float [i] x)
