@@ -160,7 +160,7 @@ The following examples have been ported completely:
 - [pipeline](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/pipeline.ml)
 - [preprocessing](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/preprocessing.ml)
 - [svm](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/svm.ml)
-
+- [ensemble](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/ensemble.ml)
 
 The following examples still need to be ported:
 - [calibration](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/calibration.ml)
@@ -171,7 +171,6 @@ The following examples still need to be ported:
 - [datasets](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/datasets.ml)
 - [decomposition](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/decomposition.ml)
 - [discriminant_analysis](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/discriminant_analysis.ml)
-- [ensemble](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/ensemble.ml)
 - [feature_extraction](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/feature_extraction.ml)
 - [feature_selection](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/feature_selection.ml)
 - [gaussian_process](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/gaussian_process.ml)
