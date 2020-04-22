@@ -1,4 +1,4 @@
-# scikit-learn for OCaml, version %%OCAML_SKLEARN_FULL_VERSION%%
+# scikit-learn for OCaml
 
 ocaml-sklearn allows using Python's
 [scikit-learn](https://scikit-learn.org/) machine learning library
@@ -11,7 +11,7 @@ If you are not familiar with scikit-learn, consult its Python [getting
 started documentation](https://scikit-learn.org/stable/getting_started.html)
 and [user guide](https://scikit-learn.org/stable/user_guide.html).
 
-**The current OCaml API is not complete. Some functions may be hard or
+**This is a preview. The current OCaml API is not complete. Some functions may be hard or
 impossible to use. Also, the existing API is not stable, it may change
 to accomodate more functionality or make things easier to use.**
 
