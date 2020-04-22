@@ -2,18 +2,18 @@ Wrap_utils.init ()
 
 include Ndarray_private
 
-let isinstance =
-  let builtins = Py.Module.builtins() in
-  fun x klass ->
-    Py.Bool.to_bool @@ Py.Module.get_function builtins "isinstance" [|x; klass|]
+let csr_matrix = Py.Module.get (Py.import "sklearn.metrics.pairwise") "csr_matrix"
+let ndarray = Py.Module.get (Py.import "numpy") "ndarray"
+
+let of_pyobject x =
+  assert (Wrap_utils.isinstance csr_matrix x || Wrap_utils.isinstance ndarray x);
+  x
 
 let get =
-  let csr_matrix = Py.Module.get (Py.import "sklearn.metrics.pairwise") "csr_matrix" in
-  let ndarray = Py.Module.get (Py.import "numpy") "ndarray" in
   fun x ->
-    if isinstance x ndarray then `Ndarray (Ndarray.of_pyobject x)
-    else if isinstance x csr_matrix then `Csr_matrix (Csr_matrix.of_pyobject x)
-    else failwith (Printf.sprintf "Arr.get: unexpected type: %s" (Py.Object.to_string x))
+  if Wrap_utils.isinstance ndarray x then `Ndarray (Ndarray.of_pyobject x)
+  else if Wrap_utils.isinstance csr_matrix x then `Csr_matrix (Csr_matrix.of_pyobject x)
+  else failwith (Printf.sprintf "Arr.get: unexpected type: %s" (Py.Object.to_string x))
 
 let get_ndarray x = match get x with
   | `Ndarray x -> x

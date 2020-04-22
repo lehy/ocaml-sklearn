@@ -60,13 +60,17 @@ module Slice = struct
   let create_py i j step =
     Py.Module.get_function (Py.Module.builtins ()) "slice" [|i; j; step|]
 
+  let py_of_tag = function
+    | `None -> Py.none
+    | `I i -> Py.Int.of_int i
+  
   let of_variant s =
-    let of_tag = function
-      | `None -> Py.none
-      | `Int i -> Py.Int.of_int i
-    in match s with
-    | `Slice(i, j, step) -> create_py (of_tag i) (of_tag j) (of_tag step)
-end 
+    match s with
+    | `Slice(i, j, step) -> create_py (py_of_tag i) (py_of_tag j) (py_of_tag step)
+
+  let create ?(i=`None) ?(j=`None) ?(step=`None) () =
+    create_py (py_of_tag i) (py_of_tag j) (py_of_tag step)
+end
 
 (* XXX at some point it would be nice to create a PyObject tuple
    directly instead of going through an array (but we would need to
@@ -76,3 +80,22 @@ let pos_arg f arg_list =
   let arr = Array.make (List.length arg_list) Py.none in
   let _ = List.fold_left (fun i e -> arr.(i) <- f e; succ i) 0 arg_list in
   arr
+
+(*  call this to print the Python part of a traceback when Py.E is caught  *)
+let print_python_traceback =
+  init();
+  let _ = Py.Run.eval ~start: Py.File "import traceback" in fun () ->
+    match Py.Err.fetched () with
+    | None -> ()
+    | Some (exc, exc_val, tb) ->
+      let exc_string_list = Py.Module.get_function (Py.import "traceback") "format_exception" [|exc; exc_val; tb|] in
+      let exc_string_list = Py.List.to_list_map Py.String.to_string exc_string_list in
+      List.iter (Format.printf "%s") exc_string_list
+
+let isinstance =
+  let builtins = Py.Module.builtins() in
+  fun klass x ->
+    Py.Bool.to_bool @@ Py.Module.get_function builtins "isinstance" [|x; klass|]
+
+let string = Py.Module.get (Py.Module.builtins ()) "str"
+let dict = Py.Module.get (Py.Module.builtins ()) "dict"
