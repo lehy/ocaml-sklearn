@@ -7,10 +7,6 @@ let vector = Sklearn.Arr.Float.vector
 let matrixi = Sklearn.Arr.Int.matrix
 let vectori = Sklearn.Arr.Int.vector
 
-let get x = match x with
-  | None -> failwith "Option.get"
-  | Some x -> x
-
 (* AdaBoostClassifier *)
 (*
 >>> from sklearn.ensemble import AdaBoostClassifier
@@ -336,8 +332,7 @@ let%expect_test "StackingClassifier" =
     Sklearn.Model_selection.train_test_split [iris#data; iris#target] ~stratify:iris#target ~random_state:42
   in
   Format.printf "%g" @@ StackingClassifier.(fit ~x:x_train ~y:y_train clf |> score ~x:x_test ~y:y_test);
-  [%expect {|
-   |}]
+  [%expect {| 0.947368 |}]
 
 (* StackingRegressor *)
 (*
@@ -364,16 +359,19 @@ let%expect_test "StackingClassifier" =
 
 *)
 
-(* let%expect_test "StackingRegressor" =
- *   let open Sklearn.Ensemble in
- *   let x, y = load_diabetes ~return_X_y:true () in
- *   let estimators = [('lr', RidgeCV()),('svr', LinearSVR(random_state=42))] in
- *   let reg = StackingRegressor(estimators=estimators,final_estimator=RandomForestRegressor(n_estimators=10,random_state=42)) in
- *   let X_train, X_test, y_train, y_test = train_test_split ~x y ~random_state:42 () in
- *   print StackingRegressor.pp @@ StackingRegressor.fit ~X_train y_train.score X_test ~y_test reg;
- *   [%expect {|
- *    |}] *)
-
+let%expect_test "StackingRegressor" =
+  let open Sklearn.Ensemble in
+  let diabetes = Sklearn.Datasets.load_diabetes () in
+  let estimators = ["lr", Sklearn.Linear_model.RidgeCV.(create () |> to_pyobject);
+                    "svr", Sklearn.Svm.LinearSVR.(create ~random_state:42 () |> to_pyobject)] in
+  let reg = StackingRegressor.create ~estimators
+      ~final_estimator:RandomForestRegressor.(create ~n_estimators:10 ~random_state:42 () |> to_pyobject) ()
+  in
+  let [@ocaml.warning "-8"] [x_train; x_test; y_train; y_test] =
+    Sklearn.Model_selection.train_test_split [diabetes#data; diabetes#target] ~random_state:42
+  in
+  Format.printf "%g" @@ StackingRegressor.(fit ~x:x_train ~y:y_train reg |> score ~x:x_test ~y:y_test);
+  [%expect {| 0.369668 |}]
 
 (* VotingClassifier *)
 (*
@@ -410,39 +408,50 @@ True
 >>> print(eclf3.transform(X).shape)
 
 *)
+module type OF_PYOBJECT = sig type t val of_pyobject : Py.Object.t -> t end
 
-(* let%expect_test "VotingClassifier" =
- *   let open Sklearn.Ensemble in
- *   let clf1 = LogisticRegression.create ~multi_class:'multinomial' ~random_state:1 () in
- *   let clf2 = RandomForestClassifier.create ~n_estimators:50 ~random_state:1 () in
- *   let clf3 = GaussianNB.create () in
- *   let x = .array (matrixi [|[|-1; -1|]; [|-2; -1|]; [|-3; -2|]; [|1; 1|]; [|2; 1|]; [|3; 2|]|]) np in
- *   let y = .array (vectori [|1; 1; 1; 2; 2; 2|]) np in
- *   let eclf1 = VotingClassifier(estimators=[('lr', clf1), ('rf', clf2), ('gnb', clf3)], voting='hard') in
- *   let eclf1 = eclf1.fit ~x y () in
- *   print_ndarray @@ print(eclf1.predict ~x ());
- *   [%expect {|
- *       [1 1 1 2 2 2]
- *    |}];
- *   print_ndarray @@ .array_equal eclf1.named_estimators_.lr.predict ~x () eclf1.named_estimators_['lr'].predict ~x () np;
- *   [%expect {|
- *       True
- *    |}];
- *   let eclf2 = VotingClassifier(estimators=[('lr', clf1), ('rf', clf2), ('gnb', clf3)],voting='soft') in
- *   let eclf2 = eclf2.fit ~x y () in
- *   print_ndarray @@ print(eclf2.predict ~x ());
- *   [%expect {|
- *       [1 1 1 2 2 2]
- *    |}];
- *   let eclf3 = VotingClassifier(estimators=[('lr', clf1), ('rf', clf2), ('gnb', clf3)],voting='soft', weights=(vectori [|2;1;1|]),flatten_transform=true) in
- *   let eclf3 = eclf3.fit ~x y () in
- *   print_ndarray @@ print(eclf3.predict ~x ());
- *   [%expect {|
- *       [1 1 1 2 2 2]
- *    |}];
- *   print_ndarray @@ print(eclf3.transform ~x ().shape);
- *   [%expect {|
- *    |}] *)
+(* let get_estimator (type a) (module Output : OF_PYOBJECT with type t = a) ~name voting_classifier =
+ *   let open Sklearn.Ensemble.VotingClassifier in
+ *   match Py.Dict.get_item_string (named_estimators_ voting_classifier) name with
+ *   | None -> raise Not_found
+ *   | Some x -> Output.of_pyobject x *)
+
+let%expect_test "VotingClassifier" =
+  let open Sklearn.Ensemble in
+  let open Sklearn.Linear_model in
+  let open Sklearn.Naive_bayes in
+  let clf1 = LogisticRegression.(create ~multi_class:`Multinomial ~random_state:1 () |> to_pyobject) in
+  let clf2 = RandomForestClassifier.(create ~n_estimators:50 ~random_state:1 () |> to_pyobject) in
+  let clf3 = GaussianNB.(create () |> to_pyobject) in
+  let x = matrixi [|[|-1; -1|]; [|-2; -1|]; [|-3; -2|]; [|1; 1|]; [|2; 1|]; [|3; 2|]|] in
+  let y = vectori [|1; 1; 1; 2; 2; 2|] in
+  let eclf1 = VotingClassifier.create ~estimators:["lr", clf1; "rf", clf2; "gnb", clf3] ~voting:`Hard () in
+  let eclf1 = VotingClassifier.fit eclf1 ~x ~y in
+  print_ndarray @@ VotingClassifier.predict ~x eclf1;
+  [%expect {|
+      [1 1 1 2 2 2]
+   |}];
+  print_ndarray @@ (Sklearn.Dict.get (module LogisticRegression) ~name:"lr" (VotingClassifier.named_estimators_ eclf1)
+                    |> LogisticRegression.predict ~x);
+  [%expect {|
+      [0 0 0 1 1 1]
+   |}];
+  let eclf2 = VotingClassifier.create ~estimators:["lr", clf1; "rf", clf2; "gnb", clf3] ~voting:`Soft () in
+  let eclf2 = VotingClassifier.fit ~x ~y eclf2 in
+  print_ndarray @@ VotingClassifier.predict eclf2 ~x;
+  [%expect {|
+      [1 1 1 2 2 2]
+   |}];
+  let eclf3 = VotingClassifier.create ~estimators:["lr", clf1; "rf", clf2; "gnb", clf3]
+      ~voting:`Soft ~weights:(vectori [|2;1;1|]) ~flatten_transform:true ()
+  in
+  let eclf3 = VotingClassifier.fit eclf3 ~x ~y in
+  print_ndarray @@ VotingClassifier.predict eclf3 ~x;
+  [%expect {|
+      [1 1 1 2 2 2]
+   |}];
+  print_ndarray @@ vectori @@ Sklearn.Ndarray.shape @@ Sklearn.Arr.get_ndarray @@ VotingClassifier.transform eclf3 ~x;
+  [%expect {| [6 6] |}]
 
 
 (* VotingRegressor *)
@@ -460,16 +469,17 @@ True
 
 *)
 
-(* let%expect_test "VotingRegressor" =
- *   let open Sklearn.Ensemble in
- *   let r1 = LinearRegression.create () in
- *   let r2 = RandomForestRegressor.create ~n_estimators:10 ~random_state:1 () in
- *   let x = .array (matrixi [|[|1; 1|]; [|2; 4|]; [|3; 9|]; [|4; 16|]; [|5; 25|]; [|6; 36|]|]) np in
- *   let y = .array [2 ~6 12 ~20 30 42] np in
- *   let er = VotingRegressor([('lr', r1), ('rf', r2)]) in
- *   print_ndarray @@ print VotingRegressor.fit ~x y ().predict ~x () er;
- *   [%expect {|
- *    |}] *)
+let%expect_test "VotingRegressor" =
+  let open Sklearn.Ensemble in
+  let open Sklearn.Linear_model in
+  let r1 = LinearRegression.(create () |> to_pyobject) in
+  let r2 = RandomForestRegressor.(create ~n_estimators:10 ~random_state:1 () |> to_pyobject) in
+  let x = matrixi [|[|1; 1|]; [|2; 4|]; [|3; 9|]; [|4; 16|]; [|5; 25|]; [|6; 36|]|] in
+  let y = vectori [|2; 6; 12; 20; 30; 42|] in
+  let er = VotingRegressor.create ~estimators:["lr", r1;
+                                               "rf", r2] () in
+  print_ndarray @@ VotingRegressor.(fit ~x ~y er |> predict ~x);
+  [%expect {| [ 3.3  5.7 11.8 19.7 28.  40.3] |}]
 
 
 (*--------- Examples for module Sklearn.Ensemble.Partial_dependence ----------*)
@@ -482,7 +492,7 @@ True
 
 *)
 
-(* TEST TODO
+(* 
    let%expect_test "Parallel" =
    let open Sklearn.Ensemble in
    print_ndarray @@ Parallel(n_jobs=1)(delayed ~sqrt ()(i**2) for i in range ~10 ());
@@ -507,7 +517,7 @@ True
 
 *)
 
-(* TEST TODO
+(* 
    let%expect_test "Parallel" =
    let open Sklearn.Ensemble in
    let r = Parallel(n_jobs=1)(delayed ~modf ()(i/2.) for i in range ~10 ()) in
@@ -536,7 +546,7 @@ True
 
 *)
 
-(* TEST TODO
+(* 
    let%expect_test "Parallel" =
    let open Sklearn.Ensemble in
    let r = Parallel(n_jobs=2, verbose=10)(delayed ~sleep ()(.2) for _ in range ~10 ()) #doctest: +SKIP in
@@ -578,7 +588,7 @@ ___________________________________________________________________________
 
 *)
 
-(* TEST TODO
+(* 
    let%expect_test "Parallel" =
    let open Sklearn.Ensemble in
    print_ndarray @@ Parallel(n_jobs=2)(delayed ~nlargest ()(2, n) for n in (range ~4 (), 'abcde', 3)) #doctest: +SKIP;
@@ -633,7 +643,7 @@ Produced 5
 
 *)
 
-(* TEST TODO
+(* 
    let%expect_test "Parallel" =
    let open Sklearn.Ensemble in
    print_ndarray @@ def producer ():for i in range ~6 ():print 'Produced %s' % i ()yield i;
@@ -673,7 +683,7 @@ array([[1, 4, 6],
 
 *)
 
-(* TEST TODO
+(* 
    let%expect_test "cartesian" =
    let open Sklearn.Ensemble in
    print_ndarray @@ cartesian(((vectori [|1; 2; 3|]), (vectori [|4; 5|]), (vectori [|6; 7|])));
@@ -703,7 +713,7 @@ array([[1, 4, 6],
 
 *)
 
-(* TEST TODO
+(* 
    let%expect_test "deprecated" =
    let open Sklearn.Ensemble in
    print_ndarray @@ deprecated ();
@@ -722,7 +732,7 @@ array([[1, 4, 6],
 
 *)
 
-(* TEST TODO
+(* 
    let%expect_test "deprecated" =
    let open Sklearn.Ensemble in
    print_ndarray @@ @deprecated ()def some_function (): pass;
@@ -742,20 +752,15 @@ array([ 19.2,  40. ,  42.8])
 
 *)
 
-(* TEST TODO
-   let%expect_test "mquantiles" =
-   let open Sklearn.Ensemble in
-   let a = .array [6. 47. 49. 15. 42. 41. 7. 39. 43. 40. 36.] np in
-   print_ndarray @@ mquantiles ~a ();
-   [%expect {|
-      array([ 19.2,  40. ,  42.8])
-   |}];
+let%expect_test "mquantiles" =
+  let open Sklearn.Ensemble in
+  let a = vectori [|6; 47; 49; 15; 42; 41; 7; 39; 43; 40; 36;|] in
+  print_ndarray @@ Partial_dependence.mquantiles ~a ();
+  [%expect {|
+      [19.2 40.  42.8]
+   |}]
 
-*)
-
-
-
-(* mquantiles *)
+  (* mquantiles *)
 (*
 >>> data = np.array([[   6.,    7.,    1.],
 ...                  [  47.,   15.,    2.],
@@ -775,18 +780,18 @@ array([ 19.2,  40. ,  42.8])
 
 *)
 
-(* TEST TODO
-   let%expect_test "mquantiles" =
+let%expect_test "mquantiles" =
    let open Sklearn.Ensemble in
-   let data = .array [[ 6. 7. 1.] [ 47. 15. 2.] [ 49. 36. 3.] [ 15. 39. 4.] [ 42. 40. -999.] [ 41. 41. -999.] [ 7. -999. -999.] [ 39. -999. -999.] [ 43. -999. -999.] [ 40. -999. -999.] [ 36. -999. -999.]] np in
-   print_ndarray @@ print(mquantiles(data, axis=0, limit=(0, 50)));
+   let data = matrixi [|[| 6; 7; 1|]; [| 47; 15; 2|]; [| 49; 36; 3|]; [| 15; 39; 4|];
+                        [| 42; 40; -999|]; [| 41; 41; -999|]; [| 7; -999; -999|]; [| 39; -999; -999|];
+                        [| 43; -999; -999|]; [| 40; -999; -999|]; [| 36; -999; -999|]|]
+   in
+   print_ndarray @@ Partial_dependence.mquantiles ~a:data ~axis:0 ~limit:(0., 50.) ();
    [%expect {|
       [[19.2  14.6   1.45]
        [40.   37.5   2.5 ]
        [42.8  40.05  3.55]]
-   |}];
-
-*)
+   |}]
 
 
 
@@ -796,17 +801,47 @@ array([ 19.2,  40. ,  42.8])
 >>> print(mquantiles(data, axis=0, limit=(0, 50)))
 [[19.200000000000003 14.6 --]
  [40.0 37.5 --]
-
+ [42.800000000000004 40.05 --]]
 *)
 
-(* TEST TODO
-   let%expect_test "mquantiles" =
-   let open Sklearn.Ensemble in
-   print_ndarray @@ data vectori [|:; 2|] () = -999.;
-   print_ndarray @@ print(mquantiles(data, axis=0, limit=(0, 50)));
-   [%expect {|
+let%expect_test "mquantiles" =
+  let open Sklearn.Ensemble in
+  let data = matrixi [|[| 6; 7; 1|]; [| 47; 15; 2|]; [| 49; 36; 3|]; [| 15; 39; 4|];
+                       [| 42; 40; -999|]; [| 41; 41; -999|]; [| 7; -999; -999|]; [| 39; -999; -999|];
+                       [| 43; -999; -999|]; [| 40; -999; -999|]; [| 36; -999; -999|]|]
+  in
+  print_ndarray data;
+  [%expect {|
+    [[   6    7    1]
+     [  47   15    2]
+     [  49   36    3]
+     [  15   39    4]
+     [  42   40 -999]
+     [  41   41 -999]
+     [   7 -999 -999]
+     [  39 -999 -999]
+     [  43 -999 -999]
+     [  40 -999 -999]
+     [  36 -999 -999]]
+   |}];
+  Sklearn.Arr.get_ndarray data |> Sklearn.Ndarray.set [|`Colon; `I 2|] (`I ~-999);
+  print_ndarray data;
+  [%expect {|
+    [[   6    7 -999]
+     [  47   15 -999]
+     [  49   36 -999]
+     [  15   39 -999]
+     [  42   40 -999]
+     [  41   41 -999]
+     [   7 -999 -999]
+     [  39 -999 -999]
+     [  43 -999 -999]
+     [  40 -999 -999]
+     [  36 -999 -999]]
+   |}];
+  print_ndarray @@ Partial_dependence.mquantiles ~a:data ~axis:0 ~limit:(0., 50.) ();
+  [%expect {|
       [[19.200000000000003 14.6 --]
        [40.0 37.5 --]
-   |}];
-
-*)
+       [42.800000000000004 40.05 --]]
+   |}]
