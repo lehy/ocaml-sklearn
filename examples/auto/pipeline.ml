@@ -225,7 +225,7 @@ let%expect_test "FeatureUnion" =
   let open Sklearn in
   let open Pipeline in
   let union = FeatureUnion.create
-      ~transformer_list:["pca", Sklearn.Decomposition.PCA.(create ~n_components:(`Int 1) () |> to_pyobject);
+      ~transformer_list:["pca", Sklearn.Decomposition.PCA.(create ~n_components:(`I 1) () |> to_pyobject);
                          "svd", Sklearn.Decomposition.TruncatedSVD.(create ~n_components:2 () |> to_pyobject)] ()
   in
   let x = matrix [|[|0.; 1.; 3.|]; [|2.; 2.; 5.|]|] in
@@ -244,7 +244,7 @@ let%expect_test "complex_pipeline" =
     let _ = Py.Run.eval ~start:Py.File "import sklearn.feature_selection" in
     Py.Run.eval "sklearn.feature_selection.f_regression"
   in
-  let anova_filter = Feature_selection.SelectKBest.create ~score_func:f_regression ~k:(`Int 5) () in
+  let anova_filter = Feature_selection.SelectKBest.create ~score_func:f_regression ~k:(`I 5) () in
   let clf = Svm.SVC.create ~kernel:"linear" () in
   let anova_svm = Pipeline.create ~steps:["anova", Feature_selection.SelectKBest.to_pyobject anova_filter;
                                           "svc", Svm.SVC.to_pyobject clf] ()
@@ -276,14 +276,19 @@ let%expect_test "complex_pipeline" =
   Format.printf "%g" @@ Pipeline.score anova_svm ~x ~y;
   [%expect {| 0.83 |}];
   (*  ouch, this is very ugly compared to anova_svm['anova']  *)
-  let anova = Pipeline.get_item anova_svm ~ind:(`String "anova") |> Feature_selection.SelectKBest.of_pyobject in
+  let anova = Pipeline.get_item anova_svm ~ind:(`S "anova") |> Feature_selection.SelectKBest.of_pyobject in
+  print_ndarray @@ Feature_selection.SelectKBest.get_support anova;
+  [%expect {|
+    [False False  True  True False False  True  True False  True False  True
+      True False  True False  True  True False False] |}];
+  let anova = Pipeline.named_steps anova_svm |> Sklearn.Dict.get (module Feature_selection.SelectKBest) ~name:"anova" in
   print_ndarray @@ Feature_selection.SelectKBest.get_support anova;
   [%expect {|
     [False False  True  True False False  True  True False  True False  True
       True False  True False  True  True False False] |}];
   (*  anova_svm.names_steps.anova: not wrapping that, won't be easier than the above  *)
-  let sub_pipeline = Pipeline.get_item anova_svm ~ind:(`Slice(`None, `Int 1, `None)) |> Pipeline.of_pyobject in
-  let svc = Pipeline.get_item anova_svm ~ind:(`Int (-1)) |> Svm.SVC.of_pyobject in
+  let sub_pipeline = Pipeline.get_item anova_svm ~ind:(`Slice(`None, `I 1, `None)) |> Pipeline.of_pyobject in
+  let svc = Pipeline.get_item anova_svm ~ind:(`I (-1)) |> Svm.SVC.of_pyobject in
   let coef = Svm.SVC.coef_ svc in
   Arr.get_ndarray coef |> Ndarray.shape |> Ndarray.Int.vector |> print Sklearn.Ndarray.pp;
   [%expect {| [ 1 10] |}];

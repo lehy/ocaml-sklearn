@@ -202,7 +202,7 @@ array([[ 0., 0., 0., 0.],
 let%expect_test "KBinsDiscretizer" =
   let open Sklearn.Preprocessing in
   let x = matrix [|[|-2.; 1.; -4.; -1.|]; [|-1.; 2.; -3.; -0.5|]; [| 0.; 3.; -2.;  0.5|]; [| 1.; 4.; -1.; 2.|]|] in
-  let est = KBinsDiscretizer.create ~n_bins:(`Int 3) ~encode:`Ordinal ~strategy:`Uniform () in
+  let est = KBinsDiscretizer.create ~n_bins:(`I 3) ~encode:`Ordinal ~strategy:`Uniform () in
   print KBinsDiscretizer.pp @@ KBinsDiscretizer.fit est ~x;
   [%expect {|
             KBinsDiscretizer(encode='ordinal', n_bins=3, strategy='uniform')

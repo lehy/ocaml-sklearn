@@ -316,7 +316,7 @@ let%expect_test "NeighborhoodComponentsAnalysis" =
   let iris = load_iris () in
   let x, y = iris#data, iris#target in
   let [@ocaml.warning "-8"] [x_train; x_test; y_train; y_test] =
-    train_test_split [x; y] ~stratify:y ~test_size:(`Float 0.7) ~random_state:42
+    train_test_split [x; y] ~stratify:y ~test_size:(`F 0.7) ~random_state:42
   in
   let nca = NeighborhoodComponentsAnalysis.create ~random_state:42 () in
   print NeighborhoodComponentsAnalysis.pp @@ NeighborhoodComponentsAnalysis.fit nca ~x:x_train ~y:y_train;
