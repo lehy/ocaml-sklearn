@@ -97,5 +97,9 @@ let isinstance =
   fun klass x ->
     Py.Bool.to_bool @@ Py.Module.get_function builtins "isinstance" [|x; klass|]
 
+let numpy = Py.import "numpy"
 let string = Py.Module.get (Py.Module.builtins ()) "str"
 let dict = Py.Module.get (Py.Module.builtins ()) "dict"
+let ndarray = Py.Module.get numpy "ndarray"
+let csr_matrix = Py.Module.get (Py.import "sklearn.metrics.pairwise") "csr_matrix"
+

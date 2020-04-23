@@ -377,39 +377,34 @@ let%expect_test "confusion_matrix" =
 
 *)
 
-(* TEST TODO
 let%expect_test "dcg_score" =
   let open Sklearn.Metrics in
-  print_ndarray @@ # we have groud-truth relevance of some answers to a query:;
-  let true_relevance = .asarray (matrixi [|[|10; 0; 0; 1; 5|]|]) np in
-  print_ndarray @@ # we predict scores for the answers;
-  let scores = .asarray (matrix [|[|.1; .2; .3; 4; 70|]|]) np in
-  print_ndarray @@ dcg_score ~true_relevance scores () # doctest: +ELLIPSIS;
+  (* we have groud-truth relevance of some answers to a query *)
+  let true_relevance = matrixi [|[|10; 0; 0; 1; 5|]|] in
+  (* we predict scores for the answers *)
+  let scores = matrix [|[|0.1; 0.2; 0.3; 4.; 70.|]|] in
+  print_float @@ dcg_score ~y_true:true_relevance ~y_score:scores ();
   [%expect {|
-      9.49...
-  |}]
-  print_ndarray @@ # we can set k to truncate the sum; only top k answers contribute;
-  print_ndarray @@ dcg_score ~true_relevance scores ~k:2 () # doctest: +ELLIPSIS;
+      9.49946
+  |}];
+  (* we can set k to truncate the sum; only top k answers contribute *)
+  print_float @@ dcg_score ~y_true:true_relevance ~y_score:scores ~k:2 ();
   [%expect {|
-      5.63...
-  |}]
-  print_ndarray @@ # now we have some ties in our prediction;
-  let scores = .asarray (matrixi [|[|1; 0; 0; 0; 1|]|]) np in
-  print_ndarray @@ # by default ties are averaged, so here we get the average true;
-  print_ndarray @@ # relevance of our top predictions: (10 + 5) / 2 = 7.5;
-  print_ndarray @@ dcg_score ~true_relevance scores ~k:1 () # doctest: +ELLIPSIS;
+      5.63093
+  |}];
+  (* now we have some ties in our prediction *)
+  let scores = matrixi [|[|1; 0; 0; 0; 1|]|] in
+  (* by default ties are averaged, so here we get the average true *)
+  (* relevance of our top predictions: (10 + 5) / 2 = 7.5 *)
+  print_float @@ dcg_score ~y_true:true_relevance ~y_score:scores ~k:1 ();
   [%expect {|
       7.5
-  |}]
-  print_ndarray @@ # we can choose to ignore ties for faster results, but only;
-  print_ndarray @@ # if we know there aren't ties in our scores, otherwise we get;
-  print_ndarray @@ # wrong results:;
-  print_ndarray @@ dcg_score ~true_relevance scores ~k:1 ~ignore_ties:true () # doctest: +ELLIPSIS;
-  [%expect {|
-  |}]
-
-*)
-
+  |}];
+  (* we can choose to ignore ties for faster results, but only *)
+  (* if we know there aren't ties in our scores, otherwise we get *)
+  (* wrong results: *)
+  print_float @@ dcg_score ~y_true:true_relevance ~y_score:scores ~k:1 ~ignore_ties:true ();
+  [%expect {| 5 |}]
 
 
 (* euclidean_distances *)
@@ -427,25 +422,21 @@ array([[1.        ],
 
 *)
 
-(* TEST TODO
 let%expect_test "euclidean_distances" =
   let open Sklearn.Metrics in
-  let x = (matrixi [|[|0; 1|]; [|1; 1|]|]) in
-  print_ndarray @@ # distance between rows of x;
-  print_ndarray @@ euclidean_distances ~x x ();
+  let x = matrixi [|[|0; 1|]; [|1; 1|]|] in
+  (* distance between rows of x *)
+  print_ndarray @@ euclidean_distances ~x ~y:x ();
   [%expect {|
-      array([[0., 1.],
-             [1., 0.]])
-  |}]
-  # get distance to origin
-  print_ndarray @@ euclidean_distances(x, (matrixi [|[|0; 0|]|]));
+      [[0. 1.]
+       [1. 0.]]
+  |}];
+  (* get distance to origin *)
+  print_ndarray @@ euclidean_distances ~x ~y:(matrixi [|[|0; 0|]|]) ();
   [%expect {|
-      array([[1.        ],
-             [1.41421356]])
+      [[1.        ]
+       [1.41421356]]
   |}]
-
-*)
-
 
 
 (* explained_variance_score *)
@@ -461,24 +452,24 @@ let%expect_test "euclidean_distances" =
 
 *)
 
-(* TEST TODO
 let%expect_test "explained_variance_score" =
   let open Sklearn.Metrics in
-  let y_true = [3, -0.5, 2, 7] in
-  let y_pred = [2.5, 0.0, 2, 8] in
-  print_ndarray @@ explained_variance_score ~y_true y_pred ();
+  let y_true = vector [|3.; -0.5; 2.; 7.|] in
+  let y_pred = vector [|2.5; 0.0; 2.; 8.|] in
+  begin match explained_variance_score ~y_true ~y_pred () with
+  | `Arr _ -> assert false
+  | `F f -> print_float f
+  end;
   [%expect {|
-      0.957...
-  |}]
-  let y_true = (matrix [|[|0.5; 1|]; [|-1; 1|]; [|7; -6|]|]) in
-  let y_pred = (matrixi [|[|0; 2|]; [|-1; 2|]; [|8; -5|]|]) in
-  print_ndarray @@ explained_variance_score ~y_true y_pred ~multioutput:'uniform_average' ();
-  [%expect {|
-  |}]
-
-*)
-
-
+      0.957173
+  |}];
+  let y_true = matrix [|[|0.5; 1.|]; [|-1.; 1.|]; [|7.; -6.|]|] in
+  let y_pred = matrixi [|[|0; 2|]; [|-1; 2|]; [|8; -5|]|] in
+  begin match explained_variance_score ~y_true ~y_pred ~multioutput:`Uniform_average () with
+  | `Arr _ -> assert false
+  | `F f -> print_float f
+  end;
+  [%expect {| 0.983871 |}]
 
 (* f1_score *)
 (*
@@ -500,36 +491,40 @@ array([0.8, 0. , 0. ])
 
 *)
 
-(* TEST TODO
+let print_f = function
+  | `F x -> print_float x
+  | `Arr _ -> assert false
+
+let print_arr = function
+  | `F _ -> assert false
+  | `Arr x -> print_ndarray x
+
 let%expect_test "f1_score" =
   let open Sklearn.Metrics in
-  let y_true = (vectori [|0; 1; 2; 0; 1; 2|]) in
-  let y_pred = (vectori [|0; 2; 1; 0; 0; 1|]) in
-  print_ndarray @@ f1_score(y_true, y_pred, average='macro');
+  let y_true = vectori [|0; 1; 2; 0; 1; 2|] in
+  let y_pred = vectori [|0; 2; 1; 0; 0; 1|] in
+  print_f @@ f1_score ~y_true ~y_pred ~average:`Macro ();
   [%expect {|
-      0.26...
-  |}]
-  print_ndarray @@ f1_score(y_true, y_pred, average='micro');
+      0.266667
+  |}];
+  print_f @@ f1_score ~y_true ~y_pred ~average:`Micro ();
   [%expect {|
-      0.33...
-  |}]
-  print_ndarray @@ f1_score(y_true, y_pred, average='weighted');
+      0.333333
+  |}];
+  print_f @@ f1_score ~y_true ~y_pred ~average:`Weighted ();
   [%expect {|
-      0.26...
-  |}]
-  print_ndarray @@ f1_score(y_true, y_pred, average=None);
+      0.266667
+  |}];
+  print_arr @@ f1_score ~y_true ~y_pred ~average:`None ();
   [%expect {|
-      array([0.8, 0. , 0. ])
-  |}]
-  let y_true = (vectori [|0; 0; 0; 0; 0; 0|]) in
-  let y_pred = (vectori [|0; 0; 0; 0; 0; 0|]) in
-  print_ndarray @@ f1_score(y_true, y_pred, zero_division=1);
+      [0.8 0.  0. ]
+  |}];
+  let y_true = vectori [|0; 0; 0; 0; 0; 0|] in
+  let y_pred = vectori [|0; 0; 0; 0; 0; 0|] in
+  print_f @@ f1_score ~y_true ~y_pred ~zero_division:`One ();
   [%expect {|
-      1.0...
+      1
   |}]
-
-*)
-
 
 
 (* fbeta_score *)

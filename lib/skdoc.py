@@ -51,10 +51,10 @@ class Type:
     unwrap = 'Wrap_utils.id'
 
     is_type = None
-    
+
     def tag_name(self):
         return tag(self.__class__.__name__)
-    
+
     def tag(self):
         ta = self.tag_name()
         t = f"`{ta} of {self.ml_type}"
@@ -94,10 +94,11 @@ class UnknownType(Type):
 
     def tag_name(self):
         return tag(self.text)
-        
+
 
 class StringValue(Type):
     def __init__(self, text):
+        assert text != 'None'
         self.text = text.strip("\"'")
 
     ml_type = 'string'
@@ -114,6 +115,27 @@ class StringValue(Type):
         return t, destruct, construct
 
 
+class IntValue(Type):
+    def __init__(self, value):
+        self.value = int(value)
+
+    ml_type = 'int'
+    wrap = 'Py.Int.of_int'
+
+    ml_type_ret = 'int'
+    unwrap = 'Py.Int.to_int'
+
+    def tag(self):
+        ta = ['Zero', 'One', 'Two'][self.value]
+        t = f"`{ta}"
+        destruct = f'`{ta} -> {self.wrap} {self.value}'
+        construct = None
+        return t, destruct, construct
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.value})"
+
+
 class Enum(Type):
     def can_be_returned(self):
         for elt in self.elements:
@@ -121,8 +143,9 @@ class Enum(Type):
                 # print(f"WW enum {self} cannot be returned because element {elt} cannot be discriminated")
                 return False
         return True
-    
+
     def __init__(self, elements):
+        assert elements, elements
         self.elements = elements
         self.ml_type = "[" + ' | '.join([elt.tag()[0]
                                          for elt in elements]) + "]"
@@ -132,7 +155,10 @@ class Enum(Type):
         if self.can_be_returned():
             self.ml_type_ret = self.ml_type
             unwrap_cases = [f"{elt.tag()[2]}" for elt in elements]
-            self.unwrap = 'fun x -> ' + ' else '.join(unwrap_cases) + ' else failwith "could not identify type from Python value"'
+            self.unwrap = '(fun x -> ' + ' else '.join(
+                unwrap_cases
+            ) + ' else failwith "could not identify type from Python value")'
+
 
 class Tuple(Type):
     def __init__(self, elements):
@@ -152,13 +178,15 @@ class Tuple(Type):
 
 
 class Int(Type):
-    names = ['int', 'integer', 'integer > 0']
+    names = ['int', 'integer', 'integer > 0', 'int with']
     ml_type = 'int'
     wrap = 'Py.Int.of_int'
     ml_type_ret = 'int'
     unwrap = 'Py.Int.to_int'
+
     def tag_name(self):
         return tag("I")
+
 
 class Pipeline(Type):
     names = ['Pipeline', 'pipeline']
@@ -181,14 +209,18 @@ class FeatureUnion(Type):
 class Float(Type):
     names = [
         'float', 'floating', 'double', 'positive float',
-        'strictly positive float', 'non-negative float'
+        'strictly positive float', 'non-negative float', 'numeric',
+        'float (upperlimited by 1.0)', 'float in range'
     ]
     ml_type = 'float'
     wrap = 'Py.Float.of_float'
     ml_type_ret = 'float'
     unwrap = 'Py.Float.to_float'
+    is_type = 'Py.Float.check'
+
     def tag_name(self):
         return tag("F")
+
 
 class Bool(Type):
     names = ['bool', 'boolean', 'Boolean', 'Bool']
@@ -204,6 +236,22 @@ class Ndarray(Type):
     wrap = 'Sklearn.Ndarray.to_pyobject'
     ml_type_ret = 'Sklearn.Ndarray.t'
     unwrap = 'Sklearn.Ndarray.of_pyobject'
+    is_type = 'Wrap_utils.isinstance Wrap_utils.ndarray'
+
+
+class SparseMatrix(Type):
+    names = [
+        'sparse matrix', 'sparse-matrix', 'CSR matrix', 'CSR matrix with',
+        'CSR sparse matrix', 'sparse graph in CSR format',
+        'scipy.sparse.csr_matrix', 'CSR',
+        'label indicator array / sparse matrix', 'scipy.sparse',
+        'sparse matrix with'
+    ]
+    ml_type = 'Sklearn.Csr_matrix.t'
+    wrap = 'Sklearn.Csr_matrix.to_pyobject'
+    ml_type_ret = 'Sklearn.Csr_matrix.t'
+    unwrap = 'Sklearn.Csr_matrix.of_pyobject'
+    is_type = 'Wrap_utils.isinstance Wrap_utils.csr_matrix'
 
 
 class Arr(Type):
@@ -217,14 +265,19 @@ class Arr(Type):
     names = [
         'ndarray', 'numpy array', 'array of floats', 'nd-array', 'array',
         'float ndarray', 'iterable', 'indexable', 'an iterable',
-        'numeric array-like', 'array of float', 'array-like', 'array_like', 'array like',
-        'np.matrix', 'numpy.matrix', 'float array with', 'matrix', '1d array-like',
-        'int array', 'int array-like'
+        'numeric array-like', 'array of float', 'array-like', 'array_like',
+        'array like', 'np.matrix', 'numpy.matrix', 'float array with',
+        'matrix', '1d array-like', 'int array', 'int array-like',
+        'ndarray of floats', 'numpy array of int', 'numpy array of float',
+        '(sparse) array-like', 'array of int', 'numpy.ndarray',
+        'array-like of float', 'bool array', 'list-like', 'list'
     ]
     ml_type = 'Sklearn.Arr.t'
     wrap = 'Sklearn.Arr.to_pyobject'
     ml_type_ret = 'Sklearn.Arr.t'
     unwrap = 'Sklearn.Arr.of_pyobject'
+    is_type = f'(fun x -> ({Ndarray.is_type} x) || ({SparseMatrix.is_type} x))'
+
 
 class ClassificationReport(Type):
     # XXX ml_type is needed even for retuning, since we use it atm to
@@ -239,9 +292,11 @@ class ClassificationReport(Type):
     end)::acc) py [])
     '''
     is_type = 'Wrap_utils.isinstance Wrap_utils.dict'
+
     def tag_name(self):
         return 'Dict'
-    
+
+
 class Array(Type):
     def __init__(self, t):
         self.t = t
@@ -259,7 +314,7 @@ class Array(Type):
 
 
 class ArrayList(Type):
-    names = ['iterable of iterables', 'list of arrays']
+    names = ['iterable of iterables', 'list of arrays', 'list of ndarray']
     ml_type = 'Sklearn.Arr.List.t'
     ml_type_ret = 'Sklearn.Arr.List.t'
     wrap = 'Sklearn.Arr.List.to_pyobject'
@@ -320,11 +375,13 @@ class String(Type):
     ml_type_ret = 'string'
     unwrap = 'Py.String.to_string'
     is_type = 'Wrap_utils.isinstance Wrap_utils.string'
+
     def tag_name(self):
         return tag("S")
 
-class ArrayLike(Type):
-    names = ['list-like', 'list']
+
+# class ArrayLike(Type):
+#     names = ['list-like', 'list']
 
 
 class NoneValue(Type):
@@ -372,18 +429,6 @@ class JoblibMemory(Type):
     names = ['object with the joblib.Memory interface']
 
 
-class SparseMatrix(Type):
-    names = [
-        'sparse matrix', 'sparse-matrix', 'CSR matrix',
-        'sparse graph in CSR format', 'scipy.sparse.csr_matrix', 'CSR',
-        'label indicator array / sparse matrix'
-    ]
-    ml_type = 'Sklearn.Csr_matrix.t'
-    wrap = 'Sklearn.Csr_matrix.to_pyobject'
-    ml_type_ret = 'Sklearn.Csr_matrix.t'
-    unwrap = 'Sklearn.Csr_matrix.of_pyobject'
-
-
 class PyObject(Type):
     names = ['object']
 
@@ -403,12 +448,13 @@ class TypeList(Type):
 
 
 class Dict(Type):
-    names = ['dict', 'Dict', 'dictionary']
+    names = ['dict', 'Dict', 'dictionary', 'mapping of string to any']
     ml_type = 'Sklearn.Dict.t'
     ml_type_ret = 'Sklearn.Dict.t'
     wrap = 'Sklearn.Dict.to_pyobject'
     unwrap = 'Sklearn.Dict.of_pyobject'
     is_type = 'Wrap_utils.isinstance Wrap_utils.dict'
+
 
 # emitted as a postprocessing of Dict() based on param name/callable
 class DictIntToFloat(Type):
@@ -416,6 +462,7 @@ class DictIntToFloat(Type):
     ml_type = '(int * float) list'
     wrap = '(Py.Dict.of_bindings_map Py.Int.of_int Py.Float.of_float)'
     is_type = 'Wrap_utils.isinstance Wrap_utils.dict'
+
 
 class Callable(Type):
     names = ['callable', 'function']
@@ -427,8 +474,7 @@ def Slice():
     destruct = "(`Slice _) as s -> Wrap_utils.Slice.of_variant s"
     ret.tag = lambda: (
         f"`Slice of ({int_or_none.ml_type}) * ({int_or_none.ml_type}) * ({int_or_none.ml_type})",
-        destruct,
-        None)
+        destruct, None)
     return ret
 
 
@@ -494,23 +540,26 @@ def parse_params(doc, section='Parameters'):
 
 
 def remove_default(text):
+    text = re.sub(r'\s*\(default\)', '', text)
     text = re.sub(r'[Dd]efaults\s+to\s+\S+\.?', '', text)
     text = re.sub(r'[Dd]efault\s+is\s+\S+\.?', '', text)
     text = re.sub(r'\(?\s*[Dd]efault\s*[:=]?\s*.+\)?$', '', text)
     text = re.sub(r'\s*optional', '', text)
-    text = re.sub(r'\S+\s+by\s+default', '', text)
+    text = re.sub(r'(,\s*)?\S+\s+by\s+default', '', text)
     return text
 
 
 def remove_shape(text):
+    # print(f"remove_shape 0: {text}")
     text = re.sub(
         r'(of\s+)?shape\s*[:=]?\s*[([](\S+,\s*)*\S+?\s*[\])](\s*,?\s*or\s*[([](\S+,\s*)*\S+?\s*[\])])*',
         '', text)
+    # print(f"remove_shape 1: {text}")
     # two levels of parentheses should be enough for anyone
     text = re.sub(r'(of\s+)?shape\s*[:=]?\s*\([^()]*(\([^()]*\)[^()]*)?\)', '',
                   text)
     text = re.sub(r'(,\s*)?(of\s+)?length \S+', '', text)
-    text = re.sub(r'(,\s*)?\[[^[\]()]+,[^[\]()]+\]', '', text)
+    text = re.sub(r"""(,\s*)?\[[^'"[\]()]+,[^'"[\]()]+\]""", '', text)
     text = re.sub(r'if\s+\S+\s*=+\s*\S+\s*', '', text)
     text = re.sub(r'(,\s*)?\s*\d-dimensional\s*', '', text)
     return text
@@ -524,21 +573,25 @@ def is_string(x):
     ]  # hack for doc bug of RidgeCV
 
 
+def is_int(x):
+    return re.match(r'^\d+$', x)
+
+
 def parse_enum(t):
     """Love.
     """
     if not t:
         return None
-    # print(t)
+
     elts = None
     m = re.match(r'^str(?:ing)?\s*(?:,|in|)\s*(\{.*\}|\[.*\]|\(.*\))$', t)
     if m is not None:
         return parse_enum(m.group(1))
-    t = re.sub(r'(?:str\s*in\s*)?(\{[^}]+\})',
+    t = re.sub(r'(?:str(?:ing)?\s*in\s*)?(\{[^}]+\})',
                lambda m: re.sub(r'[,|]|\s+or\s+', ' __OR__ ', m.group(1)), t)
-    t = re.sub(r'(?:str\s*in\s*)?(\[[^}]+\])',
+    t = re.sub(r'(?:str(?:ing)?\s*in\s*)?(\[[^}]+\])',
                lambda m: re.sub(r'[,|]|\s+or\s+', ' __OR__ ', m.group(1)), t)
-    t = re.sub(r'(?:str\s*in\s*)?(\([^}]+\))',
+    t = re.sub(r'(?:str(?:ing)?\s*in\s*)?(\([^}]+\))',
                lambda m: re.sub(r'[,|]|\s+or\s+', ' __OR__ ', m.group(1)), t)
     # if '__OR__' in t:
     #     print(f"replaced , with __OR__: {t}")
@@ -594,7 +647,7 @@ builtin_types = [
     # Iterable(),
     Dtype(),
     TypeList(),
-    ArrayLike(),
+    # ArrayLike(),
     NoneValue(),
     TrueValue(),
     FalseValue(),
@@ -671,15 +724,15 @@ def simplify_enum(enum):
     assert len(none) <= 1, enum
     if none:
         # enum = EnumOption(not_none)
-        enum = type(enum)(not_none + [StringValue('None')])
+        enum = type(enum)(not_none + [NoneValue()])
 
     # Enum(String, StringValue, StringValue) should just be
     # Enum(StringValue, StringValue) since that is (probably) a
     # misparsing of "str, 'l1' or 'l2'"
     is_string_value, is_not_string_value = partition(
         enum.elements, lambda x: isinstance(x, StringValue))
-    if len(is_not_string_value) == 1 and isinstance(is_not_string_value[0],
-                                                    String):
+    if is_string_value and len(is_not_string_value) == 1 and isinstance(is_not_string_value[0],
+                                                                        String):
         enum = type(enum)(is_string_value)
 
     enum = type(enum)(remove_duplicates(enum.elements))
@@ -701,6 +754,7 @@ def simplify_enum(enum):
 
 
 def remove_ranges(t):
+    # print(f"remove_ranges: {t}")
     t = re.sub(r'(float|int)\s*(in\s*(range\s*)?)\s*[()[\]][^\]]+[()[\]]',
                r'\1', t)
     t = re.sub(r'(float|int)\s*,?\s*(greater|smaller)\s+than\s+\d+(\.\d+)?',
@@ -1851,6 +1905,7 @@ class Wrapper:
 def parse_type_simple(t, param_name):
     t = remove_ranges(t)
     t = re.sub(r'\s*\(\)\s*', '', t)
+
     ret = None
     try:
         ret = builtin[t]
@@ -1861,10 +1916,10 @@ def parse_type_simple(t, param_name):
         if isinstance(ret, Dict):
             if param_name in ['class_weight']:
                 ret = builtin['dict int to float']
-        if isinstance(ret, ArrayLike):
+        if isinstance(ret, Arr):
             if param_name in ['filenames']:
                 ret = builtin['list of string']
-        if isinstance(ret, (Arr, ArrayLike)):
+        if isinstance(ret, (Arr)):
             if param_name in ['feature_names', 'target_names']:
                 ret = builtin['list of string']
             if param_name in ['neigh_ind', 'is_inlier']:
@@ -1882,6 +1937,8 @@ def parse_type_simple(t, param_name):
         return ret
     elif is_string(t):
         return StringValue(t.strip("'\""))
+    elif is_int(t):
+        return IntValue(t)
     else:
         print(f"WW failed to parse type: {t}")
         return UnknownType(t)
@@ -1906,11 +1963,12 @@ def parse_types_simple(doc, section='Parameters'):
                     continue
                 continue
             param_name = m.group(1)
+
             value = m.group(2)
             value = remove_default(value)
-
             value = remove_shape(value)
             value = value.strip(" \n\t,.;")
+
             if value.startswith('ref:'):
                 continue
 
@@ -2016,7 +2074,8 @@ class Function:
             # found parsing the doc).
             for k in signature.parameters.keys():
                 if k not in param_types:
-                    param_types[k] = UnknownType(f"{k} not found in parsed types {param_types}")
+                    param_types[k] = UnknownType(
+                        f"{k} not found in parsed types {param_types}")
             param_types = self.overrides.types(self.qualname, param_types)
 
         parameters = []
@@ -2398,7 +2457,6 @@ def main():
     warnings.simplefilter('error', FutureWarning)
 
     over = Overrides(overrides)
-    pkg = Package(sklearn, over)
 
     import pathlib
     build_dir = pathlib.Path('.')
@@ -2411,6 +2469,7 @@ def main():
 
     mode = sys.argv[1]
     if mode == "build":
+        pkg = Package(sklearn, over)
         pkg.write(build_dir)
         # Write this one separately, no sense having it in metrics and
         # it causes cross dep problems.
@@ -2426,8 +2485,10 @@ def main():
               over).write(build_dir, "Sklearn", ns="sklearn.metrics.pairwise")
         write_version(build_dir)
     elif mode == "doc":
+        pkg = Package(sklearn, over)
         pkg.write_doc(pathlib.Path('./doc'))
     elif mode == "examples":
+        pkg = Package(sklearn, over)
         path = pathlib.Path('./_build/examples/auto/')
         print(f"extracting examples to {path}")
         pkg.write_examples(path)
