@@ -543,30 +543,26 @@ array([0.71..., 0.        , 0.        ])
 
 *)
 
-(* TEST TODO
 let%expect_test "fbeta_score" =
   let open Sklearn.Metrics in
-  let y_true = (vectori [|0; 1; 2; 0; 1; 2|]) in
-  let y_pred = (vectori [|0; 2; 1; 0; 0; 1|]) in
-  print_ndarray @@ fbeta_score ~y_true y_pred ~average:'macro' ~beta:0.5 ();
+  let y_true = vectori [|0; 1; 2; 0; 1; 2|] in
+  let y_pred = vectori [|0; 2; 1; 0; 0; 1|] in
+  print_f @@ fbeta_score ~y_true ~y_pred ~average:`Macro ~beta:0.5 ();
   [%expect {|
-      0.23...
-  |}]
-  print_ndarray @@ fbeta_score ~y_true y_pred ~average:'micro' ~beta:0.5 ();
+      0.238095
+  |}];
+  print_f @@ fbeta_score ~y_true ~y_pred ~average:`Micro ~beta:0.5 ();
   [%expect {|
-      0.33...
-  |}]
-  print_ndarray @@ fbeta_score ~y_true y_pred ~average:'weighted' ~beta:0.5 ();
+      0.333333
+  |}];
+  print_f @@ fbeta_score ~y_true ~y_pred ~average:`Weighted ~beta:0.5 ();
   [%expect {|
-      0.23...
-  |}]
-  print_ndarray @@ fbeta_score ~y_true y_pred ~average:None ~beta:0.5 ();
+      0.238095
+  |}];
+  print_arr @@ fbeta_score ~y_true ~y_pred ~average:`None ~beta:0.5 ();
   [%expect {|
-      array([0.71..., 0.        , 0.        ])
+      [0.71428571 0.         0.        ]
   |}]
-
-*)
-
 
 
 (* hamming_loss *)
@@ -579,18 +575,14 @@ let%expect_test "fbeta_score" =
 
 *)
 
-(* TEST TODO
 let%expect_test "hamming_loss" =
   let open Sklearn.Metrics in
-  let y_pred = (vectori [|1; 2; 3; 4|]) in
-  let y_true = (vectori [|2; 2; 3; 4|]) in
-  print_ndarray @@ hamming_loss ~y_true y_pred ();
+  let y_pred = vectori [|1; 2; 3; 4|] in
+  let y_true = vectori [|2; 2; 3; 4|] in
+  print_float @@ hamming_loss ~y_true ~y_pred ();
   [%expect {|
       0.25
   |}]
-
-*)
-
 
 
 (* hamming_loss *)
@@ -600,15 +592,10 @@ let%expect_test "hamming_loss" =
 
 *)
 
-(* TEST TODO
 let%expect_test "hamming_loss" =
   let open Sklearn.Metrics in
-  print_ndarray @@ hamming_loss(.array (matrixi [|[|0; 1|]; [|1; 1|]|])) np.zeros((2 2)) np;
-  [%expect {|
-  |}]
-
-*)
-
+  print_float @@ hamming_loss ~y_true:(matrixi [|[|0; 1|]; [|1; 1|]|]) ~y_pred:(Sklearn.Arr.zeros [2; 2]) ();
+  [%expect {| 0.25 |}]
 
 
 (* hinge_loss *)
@@ -628,28 +615,28 @@ array([-2.18...,  2.36...,  0.09...])
 
 *)
 
-(* TEST TODO
 let%expect_test "hinge_loss" =
   let open Sklearn.Metrics in
-  let x = (matrixi [|[|0|]; [|1|]|]) in
-  let y = [-1, 1] in
-  let est = .linearSVC ~random_state:0 svm in
-  print_ndarray @@ .fit ~x y est;
+  let open Sklearn.Svm in
+  let x = matrixi [|[|0|]; [|1|]|] in
+  let y = vectori [|-1; 1|] in
+  let est = LinearSVC.create ~random_state:0 () in
+  print LinearSVC.pp @@ LinearSVC.fit ~x ~y est;
   [%expect {|
-      LinearSVC(random_state=0)
-  |}]
-  let pred_decision = .decision_function (matrix [|[|-2|]; [|3|]; [|0.5|]|]) est in
+      LinearSVC(C=1.0, class_weight=None, dual=True, fit_intercept=True,
+                intercept_scaling=1, loss='squared_hinge', max_iter=1000,
+                multi_class='ovr', penalty='l2', random_state=0, tol=0.0001,
+                verbose=0)
+  |}];
+  let pred_decision = LinearSVC.decision_function ~x:(matrix [|[|-2.|]; [|3.|]; [|0.5|]|]) est in
   print_ndarray @@ pred_decision;
   [%expect {|
-      array([-2.18...,  2.36...,  0.09...])
-  |}]
-  print_ndarray @@ hinge_loss [-1 ~1 1] ~pred_decision ();
+      [-2.18177944  2.36355888  0.09088972]
+  |}];
+  print_float @@ hinge_loss ~y_true:(vectori [|-1; 1; 1|]) ~pred_decision ();
   [%expect {|
-      0.30...
+      0.303037
   |}]
-
-*)
-
 
 
 (* hinge_loss *)
@@ -667,25 +654,24 @@ LinearSVC()
 
 *)
 
-(* TEST TODO
 let%expect_test "hinge_loss" =
   let open Sklearn.Metrics in
-  let x = .array (matrixi [|[|0|]; [|1|]; [|2|]; [|3|]|]) np in
-  let Y = .array (vectori [|0; 1; 2; 3|]) np in
-  let labels = .array (vectori [|0; 1; 2; 3|]) np in
-  let est = .linearSVC svm in
-  print_ndarray @@ .fit ~x Y est;
+  let open Sklearn.Svm in
+  let x = matrixi [|[|0|]; [|1|]; [|2|]; [|3|]|] in
+  let y = vectori [|0; 1; 2; 3|] in
+  let labels = vectori [|0; 1; 2; 3|] in
+  let est = LinearSVC.create () in
+  print LinearSVC.pp @@ LinearSVC.fit ~x ~y est;
   [%expect {|
-      LinearSVC()
-  |}]
-  let pred_decision = .decision_function (matrixi [|[|-1|]; [|2|]; [|3|]|]) est in
-  let y_true = (vectori [|0; 2; 3|]) in
-  print_ndarray @@ hinge_loss ~y_true pred_decision ~labels ();
-  [%expect {|
-  |}]
-
-*)
-
+      LinearSVC(C=1.0, class_weight=None, dual=True, fit_intercept=True,
+                intercept_scaling=1, loss='squared_hinge', max_iter=1000,
+                multi_class='ovr', penalty='l2', random_state=None, tol=0.0001,
+                verbose=0)
+  |}];
+  let pred_decision = LinearSVC.decision_function ~x:(matrixi [|[|-1|]; [|2|]; [|3|]|]) est in
+  let y_true = vectori [|0; 2; 3|] in
+  print_float @@ hinge_loss ~y_true ~pred_decision ~labels ();
+  [%expect {| 0.564113 |}]
 
 
 (* jaccard_score *)

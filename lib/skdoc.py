@@ -183,7 +183,8 @@ class Int(Type):
     wrap = 'Py.Int.of_int'
     ml_type_ret = 'int'
     unwrap = 'Py.Int.to_int'
-
+    is_type = 'Py.Int.check'
+    
     def tag_name(self):
         return tag("I")
 
@@ -541,6 +542,7 @@ def parse_params(doc, section='Parameters'):
 
 def remove_default(text):
     text = re.sub(r'\s*\(default\)', '', text)
+    text = re.sub(r'\s*\(if [^()]+\)', '', text)
     text = re.sub(r'[Dd]efaults\s+to\s+\S+\.?', '', text)
     text = re.sub(r'[Dd]efault\s+is\s+\S+\.?', '', text)
     text = re.sub(r'\(?\s*[Dd]efault\s*[:=]?\s*.+\)?$', '', text)
@@ -582,7 +584,7 @@ def parse_enum(t):
     """
     if not t:
         return None
-
+    # print(f"parse_enum: {t}")
     elts = None
     m = re.match(r'^str(?:ing)?\s*(?:,|in|)\s*(\{.*\}|\[.*\]|\(.*\))$', t)
     if m is not None:
@@ -611,7 +613,7 @@ def parse_enum(t):
         return None
     elts = [x.strip() for x in elts]
     elts = [x for x in elts if x]
-    # print(elts)
+    # print("parse_enum returns:", elts)
     return elts
 
 
@@ -2433,7 +2435,10 @@ overrides = {
     '\.auc$':
     dict(param_types=dict(x=Arr(), y=Arr()), ret_type=Float()),
     r'\.classification_report$':
-    dict(ret_type=Enum([String(), ClassificationReport()]))
+    dict(ret_type=Enum([String(), ClassificationReport()])),
+    # hamming_loss() is documented as returning int or float, but I
+    # don't see how it can ever return an int.
+    r'\.hamming_loss$': dict(ret_type=Float())
 }
 
 
