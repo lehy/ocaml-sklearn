@@ -57,12 +57,20 @@ let init () =
 
 module Slice = struct
   type t = Py.Object.t
+
+  let to_pyobject x = x
+  let of_pyobject x = x
+  
   let create_py i j step =
     Py.Module.get_function (Py.Module.builtins ()) "slice" [|i; j; step|]
 
   let py_of_tag = function
     | `None -> Py.none
     | `I i -> Py.Int.of_int i
+
+  let py_of_option = function
+    | None -> Py.none
+    | Some i -> Py.Int.of_int i
   
   let of_variant s =
     match s with
@@ -70,6 +78,9 @@ module Slice = struct
 
   let create ?(i=`None) ?(j=`None) ?(step=`None) () =
     create_py (py_of_tag i) (py_of_tag j) (py_of_tag step)
+
+  let create_options ?i ?j ?step () =
+    create_py (py_of_option i) (py_of_option j) (py_of_option step)
 end
 
 (* XXX at some point it would be nice to create a PyObject tuple

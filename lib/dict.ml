@@ -5,6 +5,14 @@ module type BUILD = sig
   val of_pyobject : Py.Object.t -> t
 end
 
+let of_param = function
+  | `Ints x -> Py.List.of_list_map Py.Int.of_int x
+  | `Floats x -> Py.List.of_list_map Py.Float.of_float x
+  | `Strings x -> Py.List.of_list_map Py.String.of_string x
+
+let of_param_grid_alist param_grid =
+  Py.Dict.of_bindings_map Py.String.of_string of_param param_grid
+
 let fold_py ~f ~init self =
   Py.Dict.fold (fun k v acc -> f acc (Py.String.to_string k) v) self init
 

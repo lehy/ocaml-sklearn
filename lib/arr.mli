@@ -126,6 +126,17 @@ val arange : ?start : int -> ?step : int -> int -> t
 val ones : ?dtype : Dtype.t -> int list -> t
 val zeros : ?dtype : Dtype.t -> int list -> t
 
+val set : [`Colon | `I of int] array -> [`I of int | `F of float | `S of string] -> t -> unit
+val get_int : int list -> t -> int
+val get_float : int list -> t -> float
+
+(* XXX should we expose this? not sure it's reasonable, because
+   get_sub on a Csr_matrix can return something that is not a
+   Csr_matrix I think; also should it return `Float of f | `Arr of t ?
+   *)
+val slice : ?i : int -> ?j : int -> ?step : int -> unit -> [`Slice of Wrap_utils.Slice.t]
+val get_sub : [`I of int | `Slice of Wrap_utils.Slice.t] list -> t -> t
+
 module Ops : sig
   val int : int -> t
   val float : float -> t

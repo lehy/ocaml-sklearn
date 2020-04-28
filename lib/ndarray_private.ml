@@ -177,3 +177,15 @@ let to_float_array x =
   let x = ravel x in
   let len = (shape x).(0) in
   Array.init len (fun i -> get_float [i] x)
+
+let slice ?i ?j ?step () =
+  `Slice (Wrap_utils.Slice.create_options ?i ?j ?step ())
+
+let get_sub indices self =
+  let index_of_tag = function
+    | `I i -> Py.Int.of_int i
+    | `Slice s -> Wrap_utils.Slice.to_pyobject s
+  in
+  match Py.Object.get_item self (Py.Tuple.of_list_map index_of_tag indices) with
+  | None -> raise (invalid_arg "Sklearn.Ndarray.get_sub")
+  | Some x -> of_pyobject x

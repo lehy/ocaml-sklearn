@@ -321,6 +321,9 @@ val set : [`Colon | `I of int] array -> [`I of int | `F of float | `S of string]
 val get_int : int list -> t -> int
 val get_float : int list -> t -> float
 
+val slice : ?i : int -> ?j : int -> ?step : int -> unit -> [`Slice of Wrap_utils.Slice.t]
+val get_sub : [`I of int | `Slice of Wrap_utils.Slice.t] list -> t -> t
+
 val to_int_array : t -> int array
 val to_float_array : t -> float array
 

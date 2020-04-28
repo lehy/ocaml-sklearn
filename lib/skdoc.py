@@ -184,7 +184,7 @@ class Int(Type):
     ml_type_ret = 'int'
     unwrap = 'Py.Int.to_int'
     is_type = 'Py.Int.check'
-    
+
     def tag_name(self):
         return tag("I")
 
@@ -224,7 +224,7 @@ class Float(Type):
 
 
 class Bool(Type):
-    names = ['bool', 'boolean', 'Boolean', 'Bool']
+    names = ['bool', 'boolean', 'Boolean', 'Bool', 'boolean value']
     ml_type = 'bool'
     wrap = 'Py.Bool.of_bool'
     ml_type_ret = 'bool'
@@ -244,9 +244,7 @@ class SparseMatrix(Type):
     names = [
         'sparse matrix', 'sparse-matrix', 'CSR matrix', 'CSR matrix with',
         'CSR sparse matrix', 'sparse graph in CSR format',
-        'scipy.sparse.csr_matrix', 'CSR',
-        'label indicator array / sparse matrix', 'scipy.sparse',
-        'sparse matrix with'
+        'scipy.sparse.csr_matrix', 'CSR', 'scipy.sparse', 'sparse matrix with'
     ]
     ml_type = 'Sklearn.Csr_matrix.t'
     wrap = 'Sklearn.Csr_matrix.to_pyobject'
@@ -271,7 +269,8 @@ class Arr(Type):
         'matrix', '1d array-like', 'int array', 'int array-like',
         'ndarray of floats', 'numpy array of int', 'numpy array of float',
         '(sparse) array-like', 'array of int', 'numpy.ndarray',
-        'array-like of float', 'bool array', 'list-like', 'list'
+        'array-like of float', 'bool array', 'list-like', 'list',
+        'label indicator array / sparse matrix', 'label indicator matrix'
     ]
     ml_type = 'Sklearn.Arr.t'
     wrap = 'Sklearn.Arr.to_pyobject'
@@ -449,12 +448,27 @@ class TypeList(Type):
 
 
 class Dict(Type):
-    names = ['dict', 'Dict', 'dictionary', 'mapping of string to any']
+    # XXX dict of numpy (masked) ndarrays is the format of a
+    # DataFrame, we could have a more appropriate OCaml type for it
+    # maybe?
+    names = [
+        'dict', 'Dict', 'dictionary', 'mapping of string to any',
+        'dict of numpy (masked) ndarrays'
+    ]
     ml_type = 'Sklearn.Dict.t'
     ml_type_ret = 'Sklearn.Dict.t'
     wrap = 'Sklearn.Dict.to_pyobject'
     unwrap = 'Sklearn.Dict.of_pyobject'
     is_type = 'Wrap_utils.isinstance Wrap_utils.dict'
+
+
+class ParamGridDict(Type):
+    names = []
+    ml_type = '(string * [`Ints of int list | `Floats of float list | `Strings of string list]) list'
+    wrap = '(fun x -> Sklearn.Dict.(of_param_grid_alist x |> to_pyobject))'
+
+    def tag_name(self):
+        return 'Grid'
 
 
 # emitted as a postprocessing of Dict() based on param name/callable
@@ -733,8 +747,8 @@ def simplify_enum(enum):
     # misparsing of "str, 'l1' or 'l2'"
     is_string_value, is_not_string_value = partition(
         enum.elements, lambda x: isinstance(x, StringValue))
-    if is_string_value and len(is_not_string_value) == 1 and isinstance(is_not_string_value[0],
-                                                                        String):
+    if is_string_value and len(is_not_string_value) == 1 and isinstance(
+            is_not_string_value[0], String):
         enum = type(enum)(is_string_value)
 
     enum = type(enum)(remove_duplicates(enum.elements))
@@ -961,24 +975,35 @@ class Module:
         return False
 
     def write_header(self, f):
-        if self.has_callables():
-            f.write("let () = Wrap_utils.init ();;\n")
-            f.write(f'let ns = Py.import "{self.module.__name__}"\n\n')
-        else:
-            f.write(
-                "(* this module has no callables, skipping init and ns *)\n")
+        # if self.has_callables():
+        f.write("let () = Wrap_utils.init ();;\n")
+        f.write(f'let ns = Py.import "{self.module.__name__}"\n\n')
+        # else:
+        #     f.write(
+        #         "(* this module has no callables, skipping init and ns *)\n")
 
     def write(self, path, module_path):
         module_path = f"{module_path}.{self.ml_name}"
         ml = f"{path / self.python_name}.ml"
         with open(ml, 'w') as f:
-            self.write_header(f)
-            for element in self.elements:
-                element.write_to_ml(f, module_path)
+            self.write_ml_inside(f, module_path)
         mli = f"{path / self.python_name}.mli"
         with open(mli, 'w') as f:
-            for element in self.elements:
-                element.write_to_mli(f, module_path)
+            self.write_mli_inside(f, module_path)
+
+    def write_ml_inside(self, f, module_path):
+        self.write_header(f)
+        f.write("let get_py name = Py.Module.get ns name\n")
+        for element in self.elements:
+            element.write_to_ml(f, module_path)
+
+    def write_mli_inside(self, f, module_path):
+        f.write(
+            "(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)\n"
+        )
+        f.write("val get_py : string -> Py.Object.t\n\n")
+        for element in self.elements:
+            element.write_to_mli(f, module_path)
 
     def write_doc(self, path, module_path):
         if module_path:
@@ -999,16 +1024,13 @@ class Module:
     def write_to_ml(self, f, module_path):
         module_path = f"{module_path}.{self.ml_name}"
         f.write(f"module {self.ml_name} = struct\n")
-        self.write_header(f)
-        for element in self.elements:
-            element.write_to_ml(f, module_path)
+        self.write_ml_inside(f, module_path)
         f.write("\nend\n")
 
     def write_to_mli(self, f, module_path):
         module_path = f"{module_path}.{self.ml_name}"
         f.write(f"module {self.ml_name} : sig\n")
-        for element in self.elements:
-            element.write_to_mli(f, module_path)
+        self.write_mli_inside(f, module_path)
         f.write("\nend\n\n")
 
     def write_to_md(self, f, module_path):
@@ -2438,7 +2460,23 @@ overrides = {
     dict(ret_type=Enum([String(), ClassificationReport()])),
     # hamming_loss() is documented as returning int or float, but I
     # don't see how it can ever return an int.
-    r'\.hamming_loss$': dict(ret_type=Float())
+    r'\.hamming_loss$':
+    dict(ret_type=Float()),
+    r'CV$':
+    dict(types={
+        r'^param_grid$': Enum([ParamGridDict(),
+                               List(ParamGridDict())])
+    }),
+    r'\.mean_(\w+)_error$':
+    dict(
+        types={
+            r'^multioutput$':
+            Enum([
+                StringValue("raw_values"),
+                StringValue("uniform_average"),
+                Arr()
+            ])
+        })
 }
 
 
