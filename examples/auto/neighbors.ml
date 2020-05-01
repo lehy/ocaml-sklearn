@@ -104,7 +104,7 @@ let%expect_test "KNeighborsMixin.kneighbors_graph" =
                              radius=1.0)
     |}];
   let a = NearestNeighbors.kneighbors_graph neigh ~x in
-  Sklearn.Csr_matrix.pp Format.std_formatter @@ a;
+  Sklearn.Arr.pp Format.std_formatter @@ a;
   [%expect {|
             (0, 0)	1.0
             (0, 2)	1.0
@@ -113,7 +113,7 @@ let%expect_test "KNeighborsMixin.kneighbors_graph" =
             (2, 2)	1.0
             (2, 0)	1.0
     |}];
-  print Sklearn.Ndarray.pp @@ Sklearn.Csr_matrix.toarray a;
+  print Sklearn.Arr.pp @@ Sklearn.Arr.todense a;
   [%expect {|
             [[1. 0. 1.]
              [0. 1. 1.]
@@ -277,7 +277,7 @@ let%expect_test "RadiusNeighborsMixin.radius_neighbors_graph" =
                              radius=1.5)
     |}];
   let a = NearestNeighbors.radius_neighbors_graph neigh ~x in
-  Sklearn.Ndarray.pp Format.std_formatter @@ Sklearn.Csr_matrix.toarray a;
+  Sklearn.Arr.pp Format.std_formatter @@ Sklearn.Arr.todense a;
   [%expect {|
             [[1. 0. 1.]
              [0. 1. 0.]
@@ -436,7 +436,7 @@ let%expect_test "kneighbors_graph" =
     Sklearn.Neighbors.kneighbors_graph ~x:(`Arr x) ~n_neighbors:2
       ~mode:`Connectivity ~include_self:(`Bool true) ()
   in
-  Sklearn.Ndarray.pp Format.std_formatter @@ Sklearn.Csr_matrix.toarray @@ a;
+  Sklearn.Arr.pp Format.std_formatter @@ Sklearn.Arr.todense a;
   [%expect {|
             [[1. 0. 1.]
              [0. 1. 1.]
@@ -463,7 +463,7 @@ let%expect_test "radius_neighbors_graph" =
   let a = Sklearn.Neighbors.radius_neighbors_graph ~x:(`Arr x) ~radius:1.5
       ~mode:`Connectivity ~include_self:(`Bool true) ()
   in
-  Sklearn.Ndarray.pp Format.std_formatter @@ Sklearn.Csr_matrix.toarray a;
+  Sklearn.Arr.pp Format.std_formatter @@ Sklearn.Arr.todense a;
   [%expect {|
             [[1. 0. 1.]
              [0. 1. 0.]

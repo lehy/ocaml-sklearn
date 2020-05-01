@@ -241,11 +241,7 @@ class Ndarray(Type):
 
 
 class SparseMatrix(Type):
-    names = [
-        'sparse matrix', 'sparse-matrix', 'CSR matrix', 'CSR matrix with',
-        'CSR sparse matrix', 'sparse graph in CSR format',
-        'scipy.sparse.csr_matrix', 'CSR', 'scipy.sparse', 'sparse matrix with'
-    ]
+    names = []
     ml_type = 'Sklearn.Csr_matrix.t'
     wrap = 'Sklearn.Csr_matrix.to_pyobject'
     ml_type_ret = 'Sklearn.Csr_matrix.t'
@@ -270,7 +266,13 @@ class Arr(Type):
         'ndarray of floats', 'numpy array of int', 'numpy array of float',
         '(sparse) array-like', 'array of int', 'numpy.ndarray',
         'array-like of float', 'bool array', 'list-like', 'list',
-        'label indicator array / sparse matrix', 'label indicator matrix'
+        'label indicator array / sparse matrix', 'label indicator matrix',
+        # the sparse matrices
+        'sparse matrix', 'sparse-matrix', 'CSR matrix', 'CSR matrix with',
+        'CSR sparse matrix', 'sparse graph in CSR format',
+        'scipy.sparse.csr_matrix', 'CSR', 'scipy.sparse', 'sparse matrix with',
+        "CSC", "CSC sparse matrix"
+
     ]
     ml_type = 'Sklearn.Arr.t'
     wrap = 'Sklearn.Arr.to_pyobject'
@@ -1072,6 +1074,9 @@ class Class:
         self.elements = self._list_elements(overrides)
         self.ml_name = ucfirst(self.klass.__name__)
 
+    def remove_element(self, elt):
+        self.elements = [x for x in self.elements if x is not elt]
+
     def _list_elements(self, overrides):
         elts = []
 
@@ -1290,6 +1295,9 @@ class Attribute:
             self.ml_name_opt = self.ml_name + 'opt'
         else:
             self.ml_name_opt = self.ml_name + '_opt'
+
+    def iter_types(self):
+        yield self.typ
 
     def write_to_ml(self, f, module_path):
         unwrap = _localize(self.typ.unwrap, module_path)
@@ -2071,6 +2079,11 @@ class Function:
         self.wrapper = Wrapper(python_name, self._ml_name(python_name), doc,
                                parameters, ret, "function", namespace)
 
+    def iter_types(self):
+        for param in self.wrapper.parameters:
+            yield param.ty
+        yield self.wrapper.ret.ty
+            
     def _ml_name(self, python_name):
         # warning: all overrides are resolved based on the function
         # qualname, not python_name (which may in some rare cases be
@@ -2536,16 +2549,21 @@ def main():
         pkg.write(build_dir)
         # Write this one separately, no sense having it in metrics and
         # it causes cross dep problems.
-        # This is scipy.sparse.csr.csr_matrix.
-        # The next lines are a horrible hack to have Csr_matrix use Ndarray
-        # instead of Arr, therefore avoiding a dependency cycle.
-        global Arr
-        for name in Arr.names:
-            builtin[name] = Ndarray()
-        Arr = Ndarray
-
-        Class(sklearn.metrics.pairwise.csr_matrix, "Sklearn",
-              over).write(build_dir, "Sklearn", ns="sklearn.metrics.pairwise")
+        csr_matrix = Class(sklearn.metrics.pairwise.csr_matrix, "Sklearn",
+                           over)
+        remove_me = set()
+        for elt in csr_matrix.elements:
+            for ty in elt.iter_types():
+                if isinstance(ty, Arr):
+                    remove_me.add(elt)
+                elif isinstance(ty, Enum):
+                    for t in ty.elements:
+                        if isinstance(t, Arr):
+                            remove_me.add(elt)
+        for elt in remove_me:
+            # print(f"Csr_matrix: removing {elt}")
+            csr_matrix.remove_element(elt)
+        csr_matrix.write(build_dir, "Sklearn", ns="sklearn.metrics.pairwise")
         write_version(build_dir)
     elif mode == "doc":
         pkg = Package(sklearn, over)

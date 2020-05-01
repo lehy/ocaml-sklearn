@@ -450,7 +450,7 @@ let%expect_test "VotingClassifier" =
   [%expect {|
       [1 1 1 2 2 2]
    |}];
-  print_ndarray @@ vectori @@ Sklearn.Ndarray.shape @@ Sklearn.Arr.get_ndarray @@ VotingClassifier.transform eclf3 ~x;
+  Sklearn.Arr.(VotingClassifier.transform eclf3 ~x |> shape |> Int.vector |> print pp);
   [%expect {| [6 6] |}]
 
 
@@ -824,7 +824,7 @@ let%expect_test "mquantiles" =
      [  40 -999 -999]
      [  36 -999 -999]]
    |}];
-  Sklearn.Arr.get_ndarray data |> Sklearn.Ndarray.set [|`Colon; `I 2|] (`I ~-999);
+  Sklearn.Arr.(set ~i:[slice (); `I 2] ~v:(int ~-999) data);
   print_ndarray data;
   [%expect {|
     [[   6    7 -999]
