@@ -1092,26 +1092,21 @@ array([[[1, 0],
 
 *)
 
-(* TEST TODO
-   let%expect_test "multilabel_confusion_matrix" =
+let%expect_test "multilabel_confusion_matrix" =
    let open Sklearn.Metrics in
-   let y_true = .array [(vectori [|1; 0; 1|]) (vectori [|0; 1; 0|])] np in
-   let y_pred = .array [(vectori [|1; 0; 0|]) (vectori [|0; 1; 1|])] np in
-   print_ndarray @@ multilabel_confusion_matrix ~y_true y_pred ();
+   let y_true = matrixi [|[|1; 0; 1|]; [|0; 1; 0|]|] in
+   let y_pred = matrixi [|[|1; 0; 0|]; [|0; 1; 1|]|] in
+   print_ndarray @@ multilabel_confusion_matrix ~y_true ~y_pred ();
    [%expect {|
-      array([[[1, 0],
-              [0, 1]],
-      <BLANKLINE>
-             [[1, 0],
-              [0, 1]],
-      <BLANKLINE>
-             [[0, 1],
-              [1, 0]]])
+      [[[1 0]
+        [0 1]]
+
+       [[1 0]
+        [0 1]]
+
+       [[0 1]
+        [1 0]]]
    |}]
-
-*)
-
-
 
 (* multilabel_confusion_matrix *)
 (*
