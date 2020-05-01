@@ -291,3 +291,21 @@ let todense self =
   match Py.Module.get_function_opt self "todense" with
   | None -> self
   | Some f -> f [||] |> of_pyobject
+
+module Generator = struct
+  type arr = t
+  type t = Py.Object.t
+  
+  let to_pyobject x = x
+  let of_pyobject x = x
+
+  let fold ~f ~init self =
+    Py.Iter.fold_left f init self
+
+  let next self =
+    Py.Iter.next self
+
+  let to_seq self = Py.Iter.to_seq self
+
+  let of_seq seq = Py.Iter.of_seq seq
+end

@@ -258,27 +258,70 @@ class Arr(Type):
 
     """
     names = [
-        'ndarray', 'numpy array', 'array of floats', 'nd-array', 'array',
-        'float ndarray', 'iterable', 'indexable', 'an iterable',
-        'numeric array-like', 'array of float', 'array-like', 'array_like',
-        'array like', 'np.matrix', 'numpy.matrix', 'float array with',
-        'matrix', '1d array-like', 'int array', 'int array-like',
-        'ndarray of floats', 'numpy array of int', 'numpy array of float',
-        '(sparse) array-like', 'array of int', 'numpy.ndarray',
-        'array-like of float', 'bool array', 'list-like', 'list',
-        'label indicator array / sparse matrix', 'label indicator matrix',
+        'ndarray',
+        'numpy array',
+        'array of floats',
+        'nd-array',
+        'array',
+        'float ndarray',
+        'iterable',
+        'indexable',
+        'an iterable',
+        'numeric array-like',
+        'array of float',
+        'array-like',
+        'array_like',
+        'array like',
+        'np.matrix',
+        'numpy.matrix',
+        'float array with',
+        'matrix',
+        '1d array-like',
+        'int array',
+        'int array-like',
+        'ndarray of floats',
+        'numpy array of int',
+        'numpy array of float',
+        '(sparse) array-like',
+        'array of int',
+        'numpy.ndarray',
+        'array-like of float',
+        'bool array',
+        'list-like',
+        'list',
+        'label indicator array / sparse matrix',
+        'label indicator matrix',
         # the sparse matrices
-        'sparse matrix', 'sparse-matrix', 'CSR matrix', 'CSR matrix with',
-        'CSR sparse matrix', 'sparse graph in CSR format',
-        'scipy.sparse.csr_matrix', 'CSR', 'scipy.sparse', 'sparse matrix with',
-        "CSC", "CSC sparse matrix"
-
+        'sparse matrix',
+        'sparse-matrix',
+        'CSR matrix',
+        'CSR matrix with',
+        'CSR sparse matrix',
+        'sparse graph in CSR format',
+        'scipy.sparse.csr_matrix',
+        'CSR',
+        'scipy.sparse',
+        'sparse matrix with',
+        "CSC",
+        "CSC sparse matrix"
     ]
     ml_type = 'Sklearn.Arr.t'
     wrap = 'Sklearn.Arr.to_pyobject'
     ml_type_ret = 'Sklearn.Arr.t'
     unwrap = 'Sklearn.Arr.of_pyobject'
     is_type = f'(fun x -> ({Ndarray.is_type} x) || ({SparseMatrix.is_type} x))'
+
+
+class ArrGenerator(Type):
+    names = ["generator of array"]
+    ml_type = 'Sklearn.Arr.Generator.t'
+    wrap = 'Sklearn.Arr.Generator.to_pyobject'
+    ml_type_ret = 'Sklearn.Arr.Generator.t'
+    unwrap = 'Sklearn.Arr.Generator.of_pyobject'
+    is_type = 'Py.Iter.check'
+
+    def tag_name(self):
+        return 'Gen'
 
 
 class ClassificationReport(Type):
@@ -553,6 +596,8 @@ def parse_params(doc, section='Parameters'):
             params.append(elt)
             # if section == 'Returns':
             #     print(f"params for section {section}: {params}")
+    if not params and section == 'Returns':
+        return parse_params(doc, section='Yields')
     return params
 
 
@@ -653,6 +698,7 @@ builtin_types = [
     Float(),
     Bool(),
     Arr(),
+    ArrGenerator(),
     Ndarray(),
     FloatList(),
     StringList(),
@@ -2083,7 +2129,7 @@ class Function:
         for param in self.wrapper.parameters:
             yield param.ty
         yield self.wrapper.ret.ty
-            
+
     def _ml_name(self, python_name):
         # warning: all overrides are resolved based on the function
         # qualname, not python_name (which may in some rare cases be
@@ -2360,14 +2406,17 @@ def dummy_train_test_split(*arrays,
 
 train_test_split_signature = inspect.signature(dummy_train_test_split)
 
+
 def dummy_inverse_transform(self, X=None, y=None):
     pass
 
 
 sig_inverse_transform = inspect.signature(dummy_inverse_transform)
 
+
 def dummy_shuffle(*arrays, random_state=None, n_samples=None):
     pass
+
 
 sig_shuffle = inspect.signature(dummy_shuffle)
 

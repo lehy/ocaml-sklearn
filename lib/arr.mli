@@ -447,3 +447,15 @@ val asarray_chkfinite : ?dtype:Dtype.t -> t -> t
 
 val toarray : t -> t
 val todense : t -> t
+
+module Generator : sig
+  type arr = t
+  type t
+  val to_pyobject : t -> Py.Object.t
+  val of_pyobject : Py.Object.t -> t
+  val of_seq : arr Seq.t -> t
+    
+  val fold : f:('acc -> arr -> 'acc) -> init:'acc -> t -> 'acc
+  val to_seq : t -> arr Seq.t
+  val next : t -> arr option
+end
