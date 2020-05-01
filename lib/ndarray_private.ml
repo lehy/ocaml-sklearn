@@ -95,11 +95,12 @@ module String = struct
 end
 
 module Object = struct
-  type elt = [`I of int | `F of float | `S of string]
+  type elt = [`I of int | `F of float | `S of string | `Arr of t]
   let py_of_elt x = match x with
     | `I x -> Py.Int.of_int x
     | `F x -> Py.Float.of_float x
     | `S x -> Py.String.of_string x
+    | `Arr x -> of_pyobject x
   let py_of_array a = Py.List.of_array_map py_of_elt a
   let vector a =
     numpy_array ~dtype:`Object @@ py_of_array a
@@ -185,7 +186,17 @@ let get_sub indices self =
   let index_of_tag = function
     | `I i -> Py.Int.of_int i
     | `Slice s -> Wrap_utils.Slice.to_pyobject s
+    | `Arr x -> to_pyobject x
   in
   match Py.Object.get_item self (Py.Tuple.of_list_map index_of_tag indices) with
   | None -> raise (invalid_arg "Sklearn.Ndarray.get_sub")
   | Some x -> of_pyobject x
+
+let min x =
+  Py.Module.get_function numpy "min" [|x|] |> Py.Float.to_float
+
+let max x =
+  Py.Module.get_function numpy "max" [|x|] |> Py.Float.to_float
+
+let argsort x =
+  Py.Module.get_function numpy "argsort" [|x|] |> of_pyobject

@@ -2347,12 +2347,16 @@ def dummy_train_test_split(*arrays,
 
 train_test_split_signature = inspect.signature(dummy_train_test_split)
 
-
 def dummy_inverse_transform(self, X=None, y=None):
     pass
 
 
 sig_inverse_transform = inspect.signature(dummy_inverse_transform)
+
+def dummy_shuffle(*arrays, random_state=None, n_samples=None):
+    pass
+
+sig_shuffle = inspect.signature(dummy_shuffle)
 
 overrides = {
     r'Pipeline\.inverse_transform$':
@@ -2384,6 +2388,14 @@ overrides = {
             'stratify': Arr()  # was Arr | None
         },
         ret_type=List(Arr())),
+    r'\.shuffle$':
+    dict(signature=sig_shuffle,
+         param_types=dict(
+             arrays=List(Arr()),
+             random_state=Int(),
+             n_samples=Int()
+         ),
+         ret_type=List(Arr())),
     r'make_regression$':
     dict(fixed_values=dict(coef=('true', False))),
     r'\.radius_neighbors$':
@@ -2411,6 +2423,14 @@ overrides = {
         'DESCR': String(),
         'filename': String()
     })),
+    r'load_boston$':  # feature_names is missing from docs
+    dict(ret_type=Bunch({
+        'data': Arr(),
+        'target': Arr(),
+        'feature_names': Arr(),
+        'DESCR': String(),
+        'filename': String()
+    })),
     r'(fetch_.*|load_(?!iris)(?!svmlight_files).*)$':
     dict(ret_bunch=True, types={
         'r^(data|target|pairs|images)$': Arr(),
@@ -2420,7 +2440,7 @@ overrides = {
         fixed_values=dict(return_X_y=('false', True),
                           return_distance=('true', False)),
         types={
-            '^shape$': Array(Int()),
+            '^shape$': List(Int()),
             '^DESCR$': String(),
             '^target_names$': Arr(),
             '^(intercept_|coef_|classes_)$': Arr(),

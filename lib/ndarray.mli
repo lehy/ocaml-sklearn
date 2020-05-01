@@ -317,17 +317,23 @@ end
 *)
 val reshape : shape : int array -> t -> t
 
-val set : [`Colon | `I of int] array -> [`I of int | `F of float | `S of string] -> t -> unit
+val set : [`Colon | `I of int] array -> [`I of int | `F of float | `S of string | `Arr of t] -> t -> unit
 val get_int : int list -> t -> int
 val get_float : int list -> t -> float
 
-val slice : ?i : int -> ?j : int -> ?step : int -> unit -> [`Slice of Wrap_utils.Slice.t]
-val get_sub : [`I of int | `Slice of Wrap_utils.Slice.t] list -> t -> t
+val slice : ?i : int -> ?j : int -> ?step : int -> unit -> [> `Slice of Wrap_utils.Slice.t]
+val get_sub : [`I of int | `Slice of Wrap_utils.Slice.t | `Arr of t] list -> t -> t
 
 val to_int_array : t -> int array
 val to_float_array : t -> float array
 
 val ravel : t -> t
+
+(* TODO provide axis arg on these  *)
+val min : t -> float
+val max : t -> float
+
+val argsort : t -> t
 
 (** ## module Ndarray.List
 
@@ -469,7 +475,7 @@ module Object : sig
   (**
      The type of an element: int (`I), float (`F) or string (`S).
   *)
-  type elt = [`I of int | `F of float | `S of string]
+  type elt = [`I of int | `F of float | `S of string | `Arr of t]
 
   (** ### vector
 

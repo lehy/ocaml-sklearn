@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+set -x
+
+ROOT=$(realpath $(dirname "$0"))/..
+
+cd "$ROOT"
+source "$ROOT/.venv/bin/activate"
+for i in "$ROOT/examples/notebooks/"*.ipynb; do
+    jupyter nbconvert --inplace --execute "$i"
+done

@@ -43,6 +43,9 @@ val of_csr_matrix : Csr_matrix.t -> t
     Build an Array from a bigarray. *)
 val of_bigarray : ('a, 'b, 'c) Bigarray.Genarray.t -> t
 
+val to_int_array : t -> int array
+val to_float_array : t -> float array
+
 (** ## module Array.List
 
     This is a Python list of Arrays. This is `Sklearn.PyList.Make(Sklearn.Array)`. *)
@@ -52,6 +55,11 @@ module Dtype : sig
   type t = [`Object | `S of string]
   val to_pyobject : t -> Py.Object.t
 end
+
+(** ### shape
+
+    Shape (dimensions) of an Arr. *)
+val shape : t -> int array
 
 (** ### arange
 
@@ -123,6 +131,11 @@ end
 *)
 val arange : ?start : int -> ?step : int -> int -> t
 
+val min : t -> float
+val max : t -> float
+
+val argsort : t -> t
+
 val ones : ?dtype : Dtype.t -> int list -> t
 val zeros : ?dtype : Dtype.t -> int list -> t
 
@@ -134,8 +147,8 @@ val get_float : int list -> t -> float
    get_sub on a Csr_matrix can return something that is not a
    Csr_matrix I think; also should it return `Float of f | `Arr of t ?
    *)
-val slice : ?i : int -> ?j : int -> ?step : int -> unit -> [`Slice of Wrap_utils.Slice.t]
-val get_sub : [`I of int | `Slice of Wrap_utils.Slice.t] list -> t -> t
+val slice : ?i : int -> ?j : int -> ?step : int -> unit -> [> `Slice of Wrap_utils.Slice.t]
+val get_sub : [`I of int | `Slice of Wrap_utils.Slice.t | `Arr of t] list -> t -> t
 
 module Ops : sig
   val int : int -> t
@@ -276,7 +289,7 @@ module Object : sig
   (**
      The type of an element: int (`I), float (`F) or string (`S).
   *)
-  type elt = [`I of int | `F of float | `S of string]
+  type elt = [`I of int | `F of float | `S of string | `Arr of t]
 
   (** ### vector
 
