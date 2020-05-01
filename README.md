@@ -1,4 +1,4 @@
-# scikit-learn for OCaml, version %%OCAML_SKLEARN_FULL_VERSION%%
+# scikit-learn for OCaml
 
 ocaml-sklearn allows using Python's
 [scikit-learn](https://scikit-learn.org/) machine learning library
@@ -11,11 +11,11 @@ If you are not familiar with scikit-learn, consult its Python [getting
 started documentation](https://scikit-learn.org/stable/getting_started.html)
 and [user guide](https://scikit-learn.org/stable/user_guide.html).
 
-**The current OCaml API is not complete. Some functions may be hard or
+**This is a preview. The current OCaml API is not complete. Some functions may be hard or
 impossible to use. Also, the existing API is not stable, it may change
 to accomodate more functionality or make things easier to use.**
 
-## Example : support vector regresion with RBF kernel
+## Example : support vector regression with RBF kernel
 
 ```ocaml
 let n_samples, n_features = 10, 5 in
@@ -24,8 +24,8 @@ let y = Sklearn.Ndarray.of_bigarray @@ Owl.Arr.uniform [|n_samples|] in
 let x = Sklearn.Ndarray.of_bigarray @@ Owl.Dense.Matrix.D.uniform n_samples n_features in
 let open Sklearn.Svm in
 let clf = SVR.create ~c:1.0 ~epsilon:0.2 () in
-Format.printf "%a\n" SVR.pp @@ SVR.fit clf ~x:(`Ndarray x) ~y;
-Format.printf "%a\n" Sklearn.Ndarray.pp @@ SVR.support_vectors_ clf;;
+Format.printf "%a\n" SVR.pp @@ SVR.fit clf ~x ~y;
+Format.printf "%a\n" Sklearn.Arr.pp @@ SVR.support_vectors_ clf;;
 ```
 
 This outputs:
@@ -48,7 +48,9 @@ for instance
 
 ## Installation
 
-(TODO, need to publish on opam)
+~~~sh
+opam install sklearn
+~~~
 
 ## Finding Python's scikit-learn at runtime
 
@@ -91,13 +93,25 @@ Python class `sklearn.svm.SVC` can be found in OCaml module
 `SVC` and functions corresponding to the Python methods and
 attributes.
 
-Most data is passed in and out of sklearn through a binding to Numpy's
-`Ndarray`. This is a tensor type that can contain integers, floats, or
-strings (as exposed in the current OCaml API). The way to get data
-into or out of an `Ndarray.t` is to go through OCaml arrays or
-bigarrays. A way to create bigarrays is to use `Owl`'s facilities. At
-the moment, the `Ndarray` functions exposed here are extremely minimal
-(no `np.zeros` or `np.ones`).
+Most data is passed in and out of sklearn through module `Arr`. An
+`Arr.t` is either a dense `Ndarray.t` or a sparse `Csr_matrix.t`.
+
+You should generally build a dense array using the constructors in `Arr`:
+
+~~~ocaml
+let x = Arr.Float.matrix [|[| 1; 2 |]; [| 3; 4 |]|]
+~~~
+
+One way to build an `Arr.t` is to use `Owl`'s function to construct a
+bigarray and then use `Arr.of_bigarray`. Data is shared between the
+bigarray and the `Arr.t`.
+
+To get data out of an `Arr.t`, get the underlying `Ndarray` or
+`Csr_matrix` using `Arr.get`.
+
+Attributes are exposed read-only, each with two getters: one that
+raises Not_found if the attribute is None, and the other that returns
+an option.
 
 Bunches (as returned from the sklearn.datasets APIs) are exposed as
 objects.
@@ -108,6 +122,8 @@ polymorphic variants.
 Each module has a conversion function to `Py.Object.t`, so that you
 can always escape and use `pyml` directly if the API provided here is
 incomplete.
+
+No attempt is made to expose features marked as deprecated.
 
 ## Development notes
 
@@ -138,6 +154,42 @@ from the Python documentation. A good way to develop is to pick one of
 the files and start porting examples. One can refer to
 `examples/auto/svm.ml` or `examples/auto/pipeline.ml`, whose examples
 have already been ported (almost) completely.
+
+The following examples have been ported completely:
+- [neighbors](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/neighbors.ml)
+- [pipeline](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/pipeline.ml)
+- [preprocessing](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/preprocessing.ml)
+- [svm](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/svm.ml)
+- [ensemble](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/ensemble.ml)
+
+The following examples still need to be ported:
+- [calibration](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/calibration.ml)
+- [cluster](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/cluster.ml)
+- [compose](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/compose.ml)
+- [covariance](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/covariance.ml)
+- [cross_decomposition](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/cross_decomposition.ml)
+- [datasets](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/datasets.ml)
+- [decomposition](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/decomposition.ml)
+- [discriminant_analysis](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/discriminant_analysis.ml)
+- [feature_extraction](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/feature_extraction.ml)
+- [feature_selection](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/feature_selection.ml)
+- [gaussian_process](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/gaussian_process.ml)
+- [impute](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/impute.ml)
+- [inspection](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/inspection.ml)
+- [isotonic](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/isotonic.ml)
+- [kernel_approximation](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/kernel_approximation.ml)
+- [linear_model](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/linear_model.ml)
+- [manifold](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/manifold.ml)
+- [metrics](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/metrics.ml)
+- [model_selection](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/model_selection.ml)
+- [multiclass](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/multiclass.ml)
+- [multioutput](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/multioutput.ml)
+- [naive_bayes](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/naive_bayes.ml)
+- [neural_network](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/neural_network.ml)
+- [random_projection](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/random_projection.ml)
+- [semi_supervised](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/semi_supervised.ml)
+- [tree](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/tree.ml)
+- [utils](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/utils.ml)
 
 ### Generating documentation
 

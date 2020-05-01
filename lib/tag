@@ -54,13 +54,14 @@ git checkout master
 # files.
 dune build @install @runtest
 "$ROOT/lib/build-doc"
+"$ROOT/lib/build-notebooks"
 
 git checkout "$BRANCH"
 
 git merge master -m 'merge from master'
 
 cp "$ROOT/_build/default/lib/"*.{ml,mli} "$ROOT/lib/"
-git add "$ROOT"/lib/*.{ml,mli} "$ROOT/sklearn.opam"
+git add "$ROOT"/lib/*.{ml,mli} "$ROOT/sklearn.opam" "$ROOT/examples/notebooks/rendered/"*.ipynb
 git diff-index --quiet HEAD || git commit -m 'add generated files to release branch'
 
 git tag -a "$TAG" -m "Tag release $TAG."

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+set -x
+
+ROOT=$(realpath $(dirname "$0"))/..
+
+cd "$ROOT"
+source "$ROOT/.venv/bin/activate"
+mkdir -p "$ROOT/examples/notebooks/rendered"
+jupyter nbconvert --execute --to notebook --output-dir "$ROOT/examples/notebooks/rendered" "$ROOT/examples/notebooks/"*.ipynb
+

@@ -7,21 +7,20 @@ ARDRegression()
 >>> clf.predict([[1, 1]])
 array([1.])
 
-
 *)
 
 (* TEST TODO
-let%expect_text "ARDRegression" =
-    let linear_model = Sklearn.linear_model in
-    clf = linear_model.ARDRegression()    
-    print @@ fit clf [[0 0] [1 1] [2 2]] [0 1 2]
-    [%expect {|
-            ARDRegression()            
-    |}]
-    print @@ predict clf [[1 1]]
-    [%expect {|
-            array([1.])            
-    |}]
+let%expect_test "ARDRegression" =
+  let open Sklearn.Linear_model in
+  let clf = .aRDRegression linear_model in  
+  print_ndarray @@ .fit (matrixi [|[|0;0|]; [|1; 1|]; [|2; 2|]|]) (vectori [|0; 1; 2|]) clf;  
+  [%expect {|
+      ARDRegression()      
+  |}]
+  print_ndarray @@ .predict (matrixi [|[|1; 1|]|]) clf;  
+  [%expect {|
+      array([1.])      
+  |}]
 
 *)
 
@@ -36,21 +35,20 @@ BayesianRidge()
 >>> clf.predict([[1, 1]])
 array([1.])
 
-
 *)
 
 (* TEST TODO
-let%expect_text "BayesianRidge" =
-    let linear_model = Sklearn.linear_model in
-    clf = linear_model.BayesianRidge()    
-    print @@ fit clf [[0 0] [1 1] [2 2]] [0 1 2]
-    [%expect {|
-            BayesianRidge()            
-    |}]
-    print @@ predict clf [[1 1]]
-    [%expect {|
-            array([1.])            
-    |}]
+let%expect_test "BayesianRidge" =
+  let open Sklearn.Linear_model in
+  let clf = .bayesianRidge linear_model in  
+  print_ndarray @@ .fit (matrixi [|[|0;0|]; [|1; 1|]; [|2; 2|]|]) (vectori [|0; 1; 2|]) clf;  
+  [%expect {|
+      BayesianRidge()      
+  |}]
+  print_ndarray @@ .predict (matrixi [|[|1; 1|]|]) clf;  
+  [%expect {|
+      array([1.])      
+  |}]
 
 *)
 
@@ -61,15 +59,13 @@ let%expect_text "BayesianRidge" =
 >>> from sklearn.linear_model import ElasticNet
 >>> from sklearn.datasets import make_regression
 
-
 *)
 
 (* TEST TODO
-let%expect_text "ElasticNet" =
-    let elasticNet = Sklearn.Linear_model.elasticNet in
-    let make_regression = Sklearn.Datasets.make_regression in
-    [%expect {|
-    |}]
+let%expect_test "ElasticNet" =
+  let open Sklearn.Linear_model in
+  [%expect {|
+  |}]
 
 *)
 
@@ -88,29 +84,29 @@ ElasticNet(random_state=0)
 >>> print(regr.predict([[0, 0]]))
 [1.451...]
 
-
 *)
 
 (* TEST TODO
-let%expect_text "ElasticNet" =
-    let x, y = make_regression n_features=2 random_state=0 in
-    regr = ElasticNet(random_state=0)    
-    print @@ fit regr x y
-    [%expect {|
-            ElasticNet(random_state=0)            
-    |}]
-    print(regr.coef_)    
-    [%expect {|
-            [18.83816048 64.55968825]            
-    |}]
-    print(regr.intercept_)    
-    [%expect {|
-            1.451...            
-    |}]
-    print(regr.predict([[0, 0]]))    
-    [%expect {|
-            [1.451...]            
-    |}]
+let%expect_test "ElasticNet" =
+  let open Sklearn.Linear_model in
+  let x, y = make_regression ~n_features:2 ~random_state:0 () in  
+  let regr = ElasticNet.create ~random_state:0 () in  
+  print ElasticNet.pp @@ ElasticNet.fit ~x y regr;  
+  [%expect {|
+      ElasticNet(random_state=0)      
+  |}]
+  print_ndarray @@ print regr.coef_ ();  
+  [%expect {|
+      [18.83816048 64.55968825]      
+  |}]
+  print_ndarray @@ print regr.intercept_ ();  
+  [%expect {|
+      1.451...      
+  |}]
+  print_ndarray @@ print(ElasticNet.predict (matrixi [|[|0; 0|]|])) regr;  
+  [%expect {|
+      [1.451...]      
+  |}]
 
 *)
 
@@ -121,15 +117,13 @@ let%expect_text "ElasticNet" =
 >>> from sklearn.linear_model import ElasticNetCV
 >>> from sklearn.datasets import make_regression
 
-
 *)
 
 (* TEST TODO
-let%expect_text "ElasticNetCV" =
-    let elasticNetCV = Sklearn.Linear_model.elasticNetCV in
-    let make_regression = Sklearn.Datasets.make_regression in
-    [%expect {|
-    |}]
+let%expect_test "ElasticNetCV" =
+  let open Sklearn.Linear_model in
+  [%expect {|
+  |}]
 
 *)
 
@@ -148,29 +142,29 @@ ElasticNetCV(cv=5, random_state=0)
 >>> print(regr.predict([[0, 0]]))
 [0.398...]
 
-
 *)
 
 (* TEST TODO
-let%expect_text "ElasticNetCV" =
-    let x, y = make_regression n_features=2 random_state=0 in
-    regr = ElasticNetCV(cv=5, random_state=0)    
-    print @@ fit regr x y
-    [%expect {|
-            ElasticNetCV(cv=5, random_state=0)            
-    |}]
-    print(regr.alpha_)    
-    [%expect {|
-            0.199...            
-    |}]
-    print(regr.intercept_)    
-    [%expect {|
-            0.398...            
-    |}]
-    print(regr.predict([[0, 0]]))    
-    [%expect {|
-            [0.398...]            
-    |}]
+let%expect_test "ElasticNetCV" =
+  let open Sklearn.Linear_model in
+  let x, y = make_regression ~n_features:2 ~random_state:0 () in  
+  let regr = ElasticNetCV.create ~cv:5 ~random_state:0 () in  
+  print ElasticNetCV.pp @@ ElasticNetCV.fit ~x y regr;  
+  [%expect {|
+      ElasticNetCV(cv=5, random_state=0)      
+  |}]
+  print_ndarray @@ print regr.alpha_ ();  
+  [%expect {|
+      0.199...      
+  |}]
+  print_ndarray @@ print regr.intercept_ ();  
+  [%expect {|
+      0.398...      
+  |}]
+  print_ndarray @@ print(ElasticNetCV.predict (matrixi [|[|0; 0|]|])) regr;  
+  [%expect {|
+      [0.398...]      
+  |}]
 
 *)
 
@@ -199,40 +193,37 @@ Huber coefficients: [17.7906... 31.0106...]
 >>> print("Linear Regression coefficients:", linear.coef_)
 Linear Regression coefficients: [-1.9221...  7.0226...]
 
-
 *)
 
 (* TEST TODO
-let%expect_text "HuberRegressor" =
-    import numpy as np    
-    from sklearn.linear_model import HuberRegressor, LinearRegression    
-    let make_regression = Sklearn.Datasets.make_regression in
-    rng = np.random.RandomState(0)    
-    X, y, coef = make_regression(n_samples=200, n_features=2, noise=4.0, coef=True, random_state=0)    
-    X[:4] = rng.uniform(10, 20, (4, 2))    
-    y[:4] = rng.uniform(10, 20, 4)    
-    huber = HuberRegressor().fit(X, y)    
-    print @@ score huber x y
-    [%expect {|
-            -7.284608623514573            
-    |}]
-    print @@ predict huber x[:1 ]
-    [%expect {|
-            array([806.7200...])            
-    |}]
-    linear = LinearRegression().fit(X, y)    
-    print("True coefficients:", coef)    
-    [%expect {|
-            True coefficients: [20.4923...  34.1698...]            
-    |}]
-    print("Huber coefficients:", huber.coef_)    
-    [%expect {|
-            Huber coefficients: [17.7906... 31.0106...]            
-    |}]
-    print("Linear Regression coefficients:", linear.coef_)    
-    [%expect {|
-            Linear Regression coefficients: [-1.9221...  7.0226...]            
-    |}]
+let%expect_test "HuberRegressor" =
+  let open Sklearn.Linear_model in
+  let rng = np..randomState ~0 random in  
+  let x, y, coef = make_regression ~n_samples:200 ~n_features:2 ~noise:4.0 ~coef:true ~random_state:0 () in  
+  print_ndarray @@ x[:4] = .uniform ~10 20 (4 2) rng;  
+  print_ndarray @@ y[:4] = .uniform ~10 20 ~4 rng;  
+  let huber = HuberRegressor().fit ~x y () in  
+  print_ndarray @@ HuberRegressor.score ~x y huber;  
+  [%expect {|
+      -7.284608623514573      
+  |}]
+  print_ndarray @@ HuberRegressor.predict x[:1 ] huber;  
+  [%expect {|
+      array([806.7200...])      
+  |}]
+  let linear = LinearRegression().fit ~x y () in  
+  print_ndarray @@ print "true coefficients:" ~coef ();  
+  [%expect {|
+      True coefficients: [20.4923...  34.1698...]      
+  |}]
+  print_ndarray @@ print "Huber coefficients:" huber.coef_ ();  
+  [%expect {|
+      Huber coefficients: [17.7906... 31.0106...]      
+  |}]
+  print_ndarray @@ print "Linear Regression coefficients:" linear.coef_ ();  
+  [%expect {|
+      Linear Regression coefficients: [-1.9221...  7.0226...]      
+  |}]
 
 *)
 
@@ -247,21 +238,20 @@ Lars(n_nonzero_coefs=1)
 >>> print(reg.coef_)
 [ 0. -1.11...]
 
-
 *)
 
 (* TEST TODO
-let%expect_text "Lars" =
-    let linear_model = Sklearn.linear_model in
-    reg = linear_model.Lars(n_nonzero_coefs=1)    
-    print @@ fit reg [[-1 1] [0 0] [1 1]] [-1.1111 0 -1.1111]
-    [%expect {|
-            Lars(n_nonzero_coefs=1)            
-    |}]
-    print(reg.coef_)    
-    [%expect {|
-            [ 0. -1.11...]            
-    |}]
+let%expect_test "Lars" =
+  let open Sklearn.Linear_model in
+  let reg = .lars ~n_nonzero_coefs:1 linear_model in  
+  print_ndarray @@ .fit (matrixi [|[|-1; 1|]; [|0; 0|]; [|1; 1|]|]) [-1.1111 ~0 -1.1111] reg;  
+  [%expect {|
+      Lars(n_nonzero_coefs=1)      
+  |}]
+  print_ndarray @@ print reg.coef_ ();  
+  [%expect {|
+      [ 0. -1.11...]      
+  |}]
 
 *)
 
@@ -280,27 +270,25 @@ let%expect_text "Lars" =
 >>> reg.predict(X[:1,])
 array([154.0842...])
 
-
 *)
 
 (* TEST TODO
-let%expect_text "LarsCV" =
-    let larsCV = Sklearn.Linear_model.larsCV in
-    let make_regression = Sklearn.Datasets.make_regression in
-    let x, y = make_regression n_samples=200 noise=4.0 random_state=0 in
-    reg = LarsCV(cv=5).fit(X, y)    
-    print @@ score reg x y
-    [%expect {|
-            0.9996...            
-    |}]
-    reg.alpha_    
-    [%expect {|
-            0.0254...            
-    |}]
-    print @@ predict reg x[:1 ]
-    [%expect {|
-            array([154.0842...])            
-    |}]
+let%expect_test "LarsCV" =
+  let open Sklearn.Linear_model in
+  let x, y = make_regression ~n_samples:200 ~noise:4.0 ~random_state:0 () in  
+  let reg = LarsCV(cv=5).fit ~x y () in  
+  print_ndarray @@ LarsCV.score ~x y reg;  
+  [%expect {|
+      0.9996...      
+  |}]
+  print_ndarray @@ LarsCV.alpha_ reg;  
+  [%expect {|
+      0.0254...      
+  |}]
+  print_ndarray @@ LarsCV.predict x[:1 ] reg;  
+  [%expect {|
+      array([154.0842...])      
+  |}]
 
 *)
 
@@ -317,25 +305,24 @@ Lasso(alpha=0.1)
 >>> print(clf.intercept_)
 0.15...
 
-
 *)
 
 (* TEST TODO
-let%expect_text "Lasso" =
-    let linear_model = Sklearn.linear_model in
-    clf = linear_model.Lasso(alpha=0.1)    
-    print @@ fit clf [[0 0] [1 1] [2 2]] [0 1 2]
-    [%expect {|
-            Lasso(alpha=0.1)            
-    |}]
-    print(clf.coef_)    
-    [%expect {|
-            [0.85 0.  ]            
-    |}]
-    print(clf.intercept_)    
-    [%expect {|
-            0.15...            
-    |}]
+let%expect_test "Lasso" =
+  let open Sklearn.Linear_model in
+  let clf = .lasso ~alpha:0.1 linear_model in  
+  print_ndarray @@ .fit (matrixi [|[|0;0|]; [|1; 1|]; [|2; 2|]|]) (vectori [|0; 1; 2|]) clf;  
+  [%expect {|
+      Lasso(alpha=0.1)      
+  |}]
+  print_ndarray @@ print clf.coef_ ();  
+  [%expect {|
+      [0.85 0.  ]      
+  |}]
+  print_ndarray @@ print clf.intercept_ ();  
+  [%expect {|
+      0.15...      
+  |}]
 
 *)
 
@@ -352,23 +339,21 @@ let%expect_text "Lasso" =
 >>> reg.predict(X[:1,])
 array([-78.4951...])
 
-
 *)
 
 (* TEST TODO
-let%expect_text "LassoCV" =
-    let lassoCV = Sklearn.Linear_model.lassoCV in
-    let make_regression = Sklearn.Datasets.make_regression in
-    let x, y = make_regression noise=4 random_state=0 in
-    reg = LassoCV(cv=5, random_state=0).fit(X, y)    
-    print @@ score reg x y
-    [%expect {|
-            0.9993...            
-    |}]
-    print @@ predict reg x[:1 ]
-    [%expect {|
-            array([-78.4951...])            
-    |}]
+let%expect_test "LassoCV" =
+  let open Sklearn.Linear_model in
+  let x, y = make_regression ~noise:4 ~random_state:0 () in  
+  let reg = LassoCV(cv=5, random_state=0).fit ~x y () in  
+  print_ndarray @@ LassoCV.score ~x y reg;  
+  [%expect {|
+      0.9993...      
+  |}]
+  print_ndarray @@ LassoCV.predict x[:1 ] reg;  
+  [%expect {|
+      array([-78.4951...])      
+  |}]
 
 *)
 
@@ -383,21 +368,20 @@ LassoLars(alpha=0.01)
 >>> print(reg.coef_)
 [ 0.         -0.963257...]
 
-
 *)
 
 (* TEST TODO
-let%expect_text "LassoLars" =
-    let linear_model = Sklearn.linear_model in
-    reg = linear_model.LassoLars(alpha=0.01)    
-    print @@ fit reg [[-1 1] [0 0] [1 1]] [-1 0 -1]
-    [%expect {|
-            LassoLars(alpha=0.01)            
-    |}]
-    print(reg.coef_)    
-    [%expect {|
-            [ 0.         -0.963257...]            
-    |}]
+let%expect_test "LassoLars" =
+  let open Sklearn.Linear_model in
+  let reg = .lassoLars ~alpha:0.01 linear_model in  
+  print_ndarray @@ .fit (matrixi [|[|-1; 1|]; [|0; 0|]; [|1; 1|]|]) [-1 ~0 -1] reg;  
+  [%expect {|
+      LassoLars(alpha=0.01)      
+  |}]
+  print_ndarray @@ print reg.coef_ ();  
+  [%expect {|
+      [ 0.         -0.963257...]      
+  |}]
 
 *)
 
@@ -416,27 +400,25 @@ let%expect_text "LassoLars" =
 >>> reg.predict(X[:1,])
 array([-77.8723...])
 
-
 *)
 
 (* TEST TODO
-let%expect_text "LassoLarsCV" =
-    let lassoLarsCV = Sklearn.Linear_model.lassoLarsCV in
-    let make_regression = Sklearn.Datasets.make_regression in
-    let x, y = make_regression noise=4.0 random_state=0 in
-    reg = LassoLarsCV(cv=5).fit(X, y)    
-    print @@ score reg x y
-    [%expect {|
-            0.9992...            
-    |}]
-    reg.alpha_    
-    [%expect {|
-            0.0484...            
-    |}]
-    print @@ predict reg x[:1 ]
-    [%expect {|
-            array([-77.8723...])            
-    |}]
+let%expect_test "LassoLarsCV" =
+  let open Sklearn.Linear_model in
+  let x, y = make_regression ~noise:4.0 ~random_state:0 () in  
+  let reg = LassoLarsCV(cv=5).fit ~x y () in  
+  print_ndarray @@ LassoLarsCV.score ~x y reg;  
+  [%expect {|
+      0.9992...      
+  |}]
+  print_ndarray @@ LassoLarsCV.alpha_ reg;  
+  [%expect {|
+      0.0484...      
+  |}]
+  print_ndarray @@ LassoLarsCV.predict x[:1 ] reg;  
+  [%expect {|
+      array([-77.8723...])      
+  |}]
 
 *)
 
@@ -451,21 +433,102 @@ LassoLarsIC(criterion='bic')
 >>> print(reg.coef_)
 [ 0.  -1.11...]
 
+*)
+
+(* TEST TODO
+let%expect_test "LassoLarsIC" =
+  let open Sklearn.Linear_model in
+  let reg = .lassoLarsIC ~criterion:'bic' linear_model in  
+  print_ndarray @@ .fit (matrixi [|[|-1; 1|]; [|0; 0|]; [|1; 1|]|]) [-1.1111 ~0 -1.1111] reg;  
+  [%expect {|
+      LassoLarsIC(criterion='bic')      
+  |}]
+  print_ndarray @@ print reg.coef_ ();  
+  [%expect {|
+      [ 0.  -1.11...]      
+  |}]
+
+*)
+
+
+
+(* LinearRegression *)
+(*
+>>> import numpy as np
+>>> from sklearn.linear_model import LinearRegression
+>>> X = np.array([[1, 1], [1, 2], [2, 2], [2, 3]])
+>>> # y = 1 * x_0 + 2 * x_1 + 3
+>>> y = np.dot(X, np.array([1, 2])) + 3
+>>> reg = LinearRegression().fit(X, y)
+>>> reg.score(X, y)
+1.0
+>>> reg.coef_
+array([1., 2.])
+>>> reg.intercept_
+3.0000...
+>>> reg.predict(np.array([[3, 5]]))
 
 *)
 
 (* TEST TODO
-let%expect_text "LassoLarsIC" =
-    let linear_model = Sklearn.linear_model in
-    reg = linear_model.LassoLarsIC(criterion='bic')    
-    print @@ fit reg [[-1 1] [0 0] [1 1]] [-1.1111 0 -1.1111]
-    [%expect {|
-            LassoLarsIC(criterion='bic')            
-    |}]
-    print(reg.coef_)    
-    [%expect {|
-            [ 0.  -1.11...]            
-    |}]
+let%expect_test "LinearRegression" =
+  let open Sklearn.Linear_model in
+  let x = .array (matrixi [|[|1; 1|]; [|1; 2|]; [|2; 2|]; [|2; 3|]|]) np in  
+  print_ndarray @@ # y = 1 * x_0 + 2 * x_1 + 3;  
+  let y = .dot ~x np.array((vectori [|1; 2|])) np + 3 in  
+  let reg = LinearRegression().fit ~x y () in  
+  print_ndarray @@ LinearRegression.score ~x y reg;  
+  [%expect {|
+      1.0      
+  |}]
+  print_ndarray @@ LinearRegression.coef_ reg;  
+  [%expect {|
+      array([1., 2.])      
+  |}]
+  print_ndarray @@ LinearRegression.intercept_ reg;  
+  [%expect {|
+      3.0000...      
+  |}]
+  print_ndarray @@ LinearRegression.predict np.array((matrixi [|[|3; 5|]|])) reg;  
+  [%expect {|
+  |}]
+
+*)
+
+
+
+(* LogisticRegression *)
+(*
+>>> from sklearn.datasets import load_iris
+>>> from sklearn.linear_model import LogisticRegression
+>>> X, y = load_iris(return_X_y=True)
+>>> clf = LogisticRegression(random_state=0).fit(X, y)
+>>> clf.predict(X[:2, :])
+array([0, 0])
+>>> clf.predict_proba(X[:2, :])
+array([[9.8...e-01, 1.8...e-02, 1.4...e-08],
+       [9.7...e-01, 2.8...e-02, ...e-08]])
+>>> clf.score(X, y)
+
+*)
+
+(* TEST TODO
+let%expect_test "LogisticRegression" =
+  let open Sklearn.Linear_model in
+  let x, y = load_iris ~return_X_y:true () in  
+  let clf = LogisticRegression(random_state=0).fit ~x y () in  
+  print_ndarray @@ LogisticRegression.predict x[:2 :] clf;  
+  [%expect {|
+      array([0, 0])      
+  |}]
+  print_ndarray @@ LogisticRegression.predict_proba x[:2 :] clf;  
+  [%expect {|
+      array([[9.8...e-01, 1.8...e-02, 1.4...e-08],      
+             [9.7...e-01, 2.8...e-02, ...e-08]])      
+  |}]
+  print_ndarray @@ LogisticRegression.score ~x y clf;  
+  [%expect {|
+  |}]
 
 *)
 
@@ -484,27 +547,25 @@ array([0, 0])
 >>> clf.score(X, y)
 0.98...
 
-
 *)
 
 (* TEST TODO
-let%expect_text "LogisticRegressionCV" =
-    let load_iris = Sklearn.Datasets.load_iris in
-    let logisticRegressionCV = Sklearn.Linear_model.logisticRegressionCV in
-    let x, y = load_iris return_X_y=True in
-    clf = LogisticRegressionCV(cv=5, random_state=0).fit(X, y)    
-    print @@ predict clf x[:2 :]
-    [%expect {|
-            array([0, 0])            
-    |}]
-    clf.predict_proba(X[:2, :]).shape    
-    [%expect {|
-            (2, 3)            
-    |}]
-    print @@ score clf x y
-    [%expect {|
-            0.98...            
-    |}]
+let%expect_test "LogisticRegressionCV" =
+  let open Sklearn.Linear_model in
+  let x, y = load_iris ~return_X_y:true () in  
+  let clf = LogisticRegressionCV(cv=5, random_state=0).fit ~x y () in  
+  print_ndarray @@ LogisticRegressionCV.predict x[:2 :] clf;  
+  [%expect {|
+      array([0, 0])      
+  |}]
+  print_ndarray @@ LogisticRegressionCV.predict_proba x[:2 :] LogisticRegressionCV.shape clf;  
+  [%expect {|
+      (2, 3)      
+  |}]
+  print_ndarray @@ LogisticRegressionCV.score ~x y clf;  
+  [%expect {|
+      0.98...      
+  |}]
 
 *)
 
@@ -522,26 +583,25 @@ MultiTaskElasticNet(alpha=0.1)
 >>> print(clf.intercept_)
 [0.0872422 0.0872422]
 
-
 *)
 
 (* TEST TODO
-let%expect_text "MultiTaskElasticNet" =
-    let linear_model = Sklearn.linear_model in
-    clf = linear_model.MultiTaskElasticNet(alpha=0.1)    
-    print @@ fit clf [[0 0] [1 1] [2 2]] [[0 0] [1 1] [2 2]]
-    [%expect {|
-            MultiTaskElasticNet(alpha=0.1)            
-    |}]
-    print(clf.coef_)    
-    [%expect {|
-            [[0.45663524 0.45612256]            
-             [0.45663524 0.45612256]]            
-    |}]
-    print(clf.intercept_)    
-    [%expect {|
-            [0.0872422 0.0872422]            
-    |}]
+let%expect_test "MultiTaskElasticNet" =
+  let open Sklearn.Linear_model in
+  let clf = .multiTaskElasticNet ~alpha:0.1 linear_model in  
+  print_ndarray @@ .fit (matrixi [|[|0;0|]; [|1; 1|]; [|2; 2|]|]) (matrixi [|[|0; 0|]; [|1; 1|]; [|2; 2|]|]) clf;  
+  [%expect {|
+      MultiTaskElasticNet(alpha=0.1)      
+  |}]
+  print_ndarray @@ print clf.coef_ ();  
+  [%expect {|
+      [[0.45663524 0.45612256]      
+       [0.45663524 0.45612256]]      
+  |}]
+  print_ndarray @@ print clf.intercept_ ();  
+  [%expect {|
+      [0.0872422 0.0872422]      
+  |}]
 
 *)
 
@@ -560,26 +620,25 @@ MultiTaskElasticNetCV(cv=3)
 >>> print(clf.intercept_)
 [0.00166409 0.00166409]
 
-
 *)
 
 (* TEST TODO
-let%expect_text "MultiTaskElasticNetCV" =
-    let linear_model = Sklearn.linear_model in
-    clf = linear_model.MultiTaskElasticNetCV(cv=3)    
-    print @@ fit clf [[0 0] [1 1] [2 2]] [[0 0] [1 1] [2 2]]
-    [%expect {|
-            MultiTaskElasticNetCV(cv=3)            
-    |}]
-    print(clf.coef_)    
-    [%expect {|
-            [[0.52875032 0.46958558]            
-             [0.52875032 0.46958558]]            
-    |}]
-    print(clf.intercept_)    
-    [%expect {|
-            [0.00166409 0.00166409]            
-    |}]
+let%expect_test "MultiTaskElasticNetCV" =
+  let open Sklearn.Linear_model in
+  let clf = .multiTaskElasticNetCV ~cv:3 linear_model in  
+  print_ndarray @@ .fit (matrixi [|[|0;0|]; [|1; 1|]; [|2; 2|]|]) (matrixi [|[|0; 0|]; [|1; 1|]; [|2; 2|]|]) clf;  
+  [%expect {|
+      MultiTaskElasticNetCV(cv=3)      
+  |}]
+  print_ndarray @@ print clf.coef_ ();  
+  [%expect {|
+      [[0.52875032 0.46958558]      
+       [0.52875032 0.46958558]]      
+  |}]
+  print_ndarray @@ print clf.intercept_ ();  
+  [%expect {|
+      [0.00166409 0.00166409]      
+  |}]
 
 *)
 
@@ -597,26 +656,25 @@ MultiTaskLasso(alpha=0.1)
 >>> print(clf.intercept_)
 [0.10606602 0.10606602]
 
-
 *)
 
 (* TEST TODO
-let%expect_text "MultiTaskLasso" =
-    let linear_model = Sklearn.linear_model in
-    clf = linear_model.MultiTaskLasso(alpha=0.1)    
-    print @@ fit clf [[0 0] [1 1] [2 2]] [[0 0] [1 1] [2 2]]
-    [%expect {|
-            MultiTaskLasso(alpha=0.1)            
-    |}]
-    print(clf.coef_)    
-    [%expect {|
-            [[0.89393398 0.        ]            
-             [0.89393398 0.        ]]            
-    |}]
-    print(clf.intercept_)    
-    [%expect {|
-            [0.10606602 0.10606602]            
-    |}]
+let%expect_test "MultiTaskLasso" =
+  let open Sklearn.Linear_model in
+  let clf = .multiTaskLasso ~alpha:0.1 linear_model in  
+  print_ndarray @@ .fit (matrixi [|[|0;0|]; [|1; 1|]; [|2; 2|]|]) (matrixi [|[|0; 0|]; [|1; 1|]; [|2; 2|]|]) clf;  
+  [%expect {|
+      MultiTaskLasso(alpha=0.1)      
+  |}]
+  print_ndarray @@ print clf.coef_ ();  
+  [%expect {|
+      [[0.89393398 0.        ]      
+       [0.89393398 0.        ]]      
+  |}]
+  print_ndarray @@ print clf.intercept_ ();  
+  [%expect {|
+      [0.10606602 0.10606602]      
+  |}]
 
 *)
 
@@ -636,28 +694,25 @@ let%expect_text "MultiTaskLasso" =
 >>> reg.predict(X[:1,])
 array([[153.7971...,  94.9015...]])
 
-
 *)
 
 (* TEST TODO
-let%expect_text "MultiTaskLassoCV" =
-    let multiTaskLassoCV = Sklearn.Linear_model.multiTaskLassoCV in
-    let make_regression = Sklearn.Datasets.make_regression in
-    let r2_score = Sklearn.Metrics.r2_score in
-    let x, y = make_regression n_targets=2 noise=4 random_state=0 in
-    reg = MultiTaskLassoCV(cv=5, random_state=0).fit(X, y)    
-    r2_score(y, reg.predict(X))    
-    [%expect {|
-            0.9994...            
-    |}]
-    reg.alpha_    
-    [%expect {|
-            0.5713...            
-    |}]
-    print @@ predict reg x[:1 ]
-    [%expect {|
-            array([[153.7971...,  94.9015...]])            
-    |}]
+let%expect_test "MultiTaskLassoCV" =
+  let open Sklearn.Linear_model in
+  let x, y = make_regression ~n_targets:2 ~noise:4 ~random_state:0 () in  
+  let reg = MultiTaskLassoCV(cv=5, random_state=0).fit ~x y () in  
+  print_ndarray @@ r2_score(y, MultiTaskLassoCV.predict x) reg;  
+  [%expect {|
+      0.9994...      
+  |}]
+  print_ndarray @@ MultiTaskLassoCV.alpha_ reg;  
+  [%expect {|
+      0.5713...      
+  |}]
+  print_ndarray @@ MultiTaskLassoCV.predict x[:1 ] reg;  
+  [%expect {|
+      array([[153.7971...,  94.9015...]])      
+  |}]
 
 *)
 
@@ -674,23 +729,21 @@ let%expect_text "MultiTaskLassoCV" =
 >>> reg.predict(X[:1,])
 array([-78.3854...])
 
-
 *)
 
 (* TEST TODO
-let%expect_text "OrthogonalMatchingPursuit" =
-    let orthogonalMatchingPursuit = Sklearn.Linear_model.orthogonalMatchingPursuit in
-    let make_regression = Sklearn.Datasets.make_regression in
-    let x, y = make_regression noise=4 random_state=0 in
-    reg = OrthogonalMatchingPursuit().fit(X, y)    
-    print @@ score reg x y
-    [%expect {|
-            0.9991...            
-    |}]
-    print @@ predict reg x[:1 ]
-    [%expect {|
-            array([-78.3854...])            
-    |}]
+let%expect_test "OrthogonalMatchingPursuit" =
+  let open Sklearn.Linear_model in
+  let x, y = make_regression ~noise:4 ~random_state:0 () in  
+  let reg = OrthogonalMatchingPursuit().fit ~x y () in  
+  print_ndarray @@ OrthogonalMatchingPursuit.score ~x y reg;  
+  [%expect {|
+      0.9991...      
+  |}]
+  print_ndarray @@ OrthogonalMatchingPursuit.predict x[:1 ] reg;  
+  [%expect {|
+      array([-78.3854...])      
+  |}]
 
 *)
 
@@ -710,27 +763,25 @@ let%expect_text "OrthogonalMatchingPursuit" =
 >>> reg.predict(X[:1,])
 array([-78.3854...])
 
-
 *)
 
 (* TEST TODO
-let%expect_text "OrthogonalMatchingPursuitCV" =
-    let orthogonalMatchingPursuitCV = Sklearn.Linear_model.orthogonalMatchingPursuitCV in
-    let make_regression = Sklearn.Datasets.make_regression in
-    let x, y = make_regression n_features=100 n_informative=10 noise=4 random_state=0 in
-    reg = OrthogonalMatchingPursuitCV(cv=5).fit(X, y)    
-    print @@ score reg x y
-    [%expect {|
-            0.9991...            
-    |}]
-    reg.n_nonzero_coefs_    
-    [%expect {|
-            10            
-    |}]
-    print @@ predict reg x[:1 ]
-    [%expect {|
-            array([-78.3854...])            
-    |}]
+let%expect_test "OrthogonalMatchingPursuitCV" =
+  let open Sklearn.Linear_model in
+  let x, y = make_regression ~n_features:100 ~n_informative:10 ~noise:4 ~random_state:0 () in  
+  let reg = OrthogonalMatchingPursuitCV(cv=5).fit ~x y () in  
+  print_ndarray @@ OrthogonalMatchingPursuitCV.score ~x y reg;  
+  [%expect {|
+      0.9991...      
+  |}]
+  print_ndarray @@ OrthogonalMatchingPursuitCV.n_nonzero_coefs_ reg;  
+  [%expect {|
+      10      
+  |}]
+  print_ndarray @@ OrthogonalMatchingPursuitCV.predict x[:1 ] reg;  
+  [%expect {|
+      array([-78.3854...])      
+  |}]
 
 *)
 
@@ -741,15 +792,13 @@ let%expect_text "OrthogonalMatchingPursuitCV" =
 >>> from sklearn.linear_model import PassiveAggressiveClassifier
 >>> from sklearn.datasets import make_classification
 
-
 *)
 
 (* TEST TODO
-let%expect_text "PassiveAggressiveClassifier" =
-    let passiveAggressiveClassifier = Sklearn.Linear_model.passiveAggressiveClassifier in
-    let make_classification = Sklearn.Datasets.make_classification in
-    [%expect {|
-    |}]
+let%expect_test "PassiveAggressiveClassifier" =
+  let open Sklearn.Linear_model in
+  [%expect {|
+  |}]
 
 *)
 
@@ -769,29 +818,29 @@ PassiveAggressiveClassifier(random_state=0)
 >>> print(clf.predict([[0, 0, 0, 0]]))
 [1]
 
-
 *)
 
 (* TEST TODO
-let%expect_text "PassiveAggressiveClassifier" =
-    let x, y = make_classification n_features=4 random_state=0 in
-    clf = PassiveAggressiveClassifier(max_iter=1000, random_state=0,tol=1e-3)    
-    print @@ fit clf x y
-    [%expect {|
-            PassiveAggressiveClassifier(random_state=0)            
-    |}]
-    print(clf.coef_)    
-    [%expect {|
-            [[0.26642044 0.45070924 0.67251877 0.64185414]]            
-    |}]
-    print(clf.intercept_)    
-    [%expect {|
-            [1.84127814]            
-    |}]
-    print(clf.predict([[0, 0, 0, 0]]))    
-    [%expect {|
-            [1]            
-    |}]
+let%expect_test "PassiveAggressiveClassifier" =
+  let open Sklearn.Linear_model in
+  let x, y = make_classification ~n_features:4 ~random_state:0 () in  
+  let clf = PassiveAggressiveClassifier.create ~max_iter:1000 ~random_state:0 ~tol:1e-3 () in  
+  print PassiveAggressiveClassifier.pp @@ PassiveAggressiveClassifier.fit ~x y clf;  
+  [%expect {|
+      PassiveAggressiveClassifier(random_state=0)      
+  |}]
+  print_ndarray @@ print clf.coef_ ();  
+  [%expect {|
+      [[0.26642044 0.45070924 0.67251877 0.64185414]]      
+  |}]
+  print_ndarray @@ print clf.intercept_ ();  
+  [%expect {|
+      [1.84127814]      
+  |}]
+  print_ndarray @@ print(PassiveAggressiveClassifier.predict (matrixi [|[|0; 0; 0; 0|]|])) clf;  
+  [%expect {|
+      [1]      
+  |}]
 
 *)
 
@@ -802,15 +851,13 @@ let%expect_text "PassiveAggressiveClassifier" =
 >>> from sklearn.linear_model import PassiveAggressiveRegressor
 >>> from sklearn.datasets import make_regression
 
-
 *)
 
 (* TEST TODO
-let%expect_text "PassiveAggressiveRegressor" =
-    let passiveAggressiveRegressor = Sklearn.Linear_model.passiveAggressiveRegressor in
-    let make_regression = Sklearn.Datasets.make_regression in
-    [%expect {|
-    |}]
+let%expect_test "PassiveAggressiveRegressor" =
+  let open Sklearn.Linear_model in
+  [%expect {|
+  |}]
 
 *)
 
@@ -830,29 +877,29 @@ PassiveAggressiveRegressor(max_iter=100, random_state=0)
 >>> print(regr.predict([[0, 0, 0, 0]]))
 [-0.02306214]
 
-
 *)
 
 (* TEST TODO
-let%expect_text "PassiveAggressiveRegressor" =
-    let x, y = make_regression n_features=4 random_state=0 in
-    regr = PassiveAggressiveRegressor(max_iter=100, random_state=0,tol=1e-3)    
-    print @@ fit regr x y
-    [%expect {|
-            PassiveAggressiveRegressor(max_iter=100, random_state=0)            
-    |}]
-    print(regr.coef_)    
-    [%expect {|
-            [20.48736655 34.18818427 67.59122734 87.94731329]            
-    |}]
-    print(regr.intercept_)    
-    [%expect {|
-            [-0.02306214]            
-    |}]
-    print(regr.predict([[0, 0, 0, 0]]))    
-    [%expect {|
-            [-0.02306214]            
-    |}]
+let%expect_test "PassiveAggressiveRegressor" =
+  let open Sklearn.Linear_model in
+  let x, y = make_regression ~n_features:4 ~random_state:0 () in  
+  let regr = PassiveAggressiveRegressor.create ~max_iter:100 ~random_state:0 ~tol:1e-3 () in  
+  print PassiveAggressiveRegressor.pp @@ PassiveAggressiveRegressor.fit ~x y regr;  
+  [%expect {|
+      PassiveAggressiveRegressor(max_iter=100, random_state=0)      
+  |}]
+  print_ndarray @@ print regr.coef_ ();  
+  [%expect {|
+      [20.48736655 34.18818427 67.59122734 87.94731329]      
+  |}]
+  print_ndarray @@ print regr.intercept_ ();  
+  [%expect {|
+      [-0.02306214]      
+  |}]
+  print_ndarray @@ print(PassiveAggressiveRegressor.predict (matrixi [|[|0; 0; 0; 0|]|])) regr;  
+  [%expect {|
+      [-0.02306214]      
+  |}]
 
 *)
 
@@ -869,23 +916,21 @@ Perceptron()
 >>> clf.score(X, y)
 0.939...
 
-
 *)
 
 (* TEST TODO
-let%expect_text "Perceptron" =
-    let load_digits = Sklearn.Datasets.load_digits in
-    let perceptron = Sklearn.Linear_model.perceptron in
-    let x, y = load_digits return_X_y=True in
-    clf = Perceptron(tol=1e-3, random_state=0)    
-    print @@ fit clf x y
-    [%expect {|
-            Perceptron()            
-    |}]
-    print @@ score clf x y
-    [%expect {|
-            0.939...            
-    |}]
+let%expect_test "Perceptron" =
+  let open Sklearn.Linear_model in
+  let x, y = load_digits ~return_X_y:true () in  
+  let clf = Perceptron.create ~tol:1e-3 ~random_state:0 () in  
+  print Perceptron.pp @@ Perceptron.fit ~x y clf;  
+  [%expect {|
+      Perceptron()      
+  |}]
+  print_ndarray @@ Perceptron.score ~x y clf;  
+  [%expect {|
+      0.939...      
+  |}]
 
 *)
 
@@ -903,23 +948,50 @@ let%expect_text "Perceptron" =
 >>> reg.predict(X[:1,])
 array([-31.9417...])
 
+*)
+
+(* TEST TODO
+let%expect_test "RANSACRegressor" =
+  let open Sklearn.Linear_model in
+  let x, y = make_regression ~n_samples:200 ~n_features:2 ~noise:4.0 ~random_state:0 () in  
+  let reg = RANSACRegressor(random_state=0).fit ~x y () in  
+  print_ndarray @@ RANSACRegressor.score ~x y reg;  
+  [%expect {|
+      0.9885...      
+  |}]
+  print_ndarray @@ RANSACRegressor.predict x[:1 ] reg;  
+  [%expect {|
+      array([-31.9417...])      
+  |}]
+
+*)
+
+
+
+(* Ridge *)
+(*
+>>> from sklearn.linear_model import Ridge
+>>> import numpy as np
+>>> n_samples, n_features = 10, 5
+>>> rng = np.random.RandomState(0)
+>>> y = rng.randn(n_samples)
+>>> X = rng.randn(n_samples, n_features)
+>>> clf = Ridge(alpha=1.0)
+>>> clf.fit(X, y)
 
 *)
 
 (* TEST TODO
-let%expect_text "RANSACRegressor" =
-    let rANSACRegressor = Sklearn.Linear_model.rANSACRegressor in
-    let make_regression = Sklearn.Datasets.make_regression in
-    let x, y = make_regression n_samples=200 n_features=2 noise=4.0 random_state=0 in
-    reg = RANSACRegressor(random_state=0).fit(X, y)    
-    print @@ score reg x y
-    [%expect {|
-            0.9885...            
-    |}]
-    print @@ predict reg x[:1 ]
-    [%expect {|
-            array([-31.9417...])            
-    |}]
+let%expect_test "Ridge" =
+  let open Sklearn.Linear_model in
+  let n_samples, n_features = 10, 5 in  
+  let rng = np..randomState ~0 random in  
+  let y = .randn ~n_samples rng in  
+  let x = .randn ~n_samples n_features rng in  
+  let clf = Ridge.create ~alpha:1.0 () in  
+  print Ridge.pp @@ Ridge.fit ~x y clf;  
+  [%expect {|
+  |}]
 
 *)
 
@@ -934,19 +1006,40 @@ let%expect_text "RANSACRegressor" =
 >>> clf.score(X, y)
 0.5166...
 
+*)
+
+(* TEST TODO
+let%expect_test "RidgeCV" =
+  let open Sklearn.Linear_model in
+  let x, y = load_diabetes ~return_X_y:true () in  
+  let clf = RidgeCV(alphas=[1e-3, 1e-2, 1e-1, 1]).fit ~x y () in  
+  print_ndarray @@ RidgeCV.score ~x y clf;  
+  [%expect {|
+      0.5166...      
+  |}]
+
+*)
+
+
+
+(* RidgeClassifier *)
+(*
+>>> from sklearn.datasets import load_breast_cancer
+>>> from sklearn.linear_model import RidgeClassifier
+>>> X, y = load_breast_cancer(return_X_y=True)
+>>> clf = RidgeClassifier().fit(X, y)
+>>> clf.score(X, y)
 
 *)
 
 (* TEST TODO
-let%expect_text "RidgeCV" =
-    let load_diabetes = Sklearn.Datasets.load_diabetes in
-    let ridgeCV = Sklearn.Linear_model.ridgeCV in
-    let x, y = load_diabetes return_X_y=True in
-    clf = RidgeCV(alphas=[1e-3, 1e-2, 1e-1, 1]).fit(X, y)    
-    print @@ score clf x y
-    [%expect {|
-            0.5166...            
-    |}]
+let%expect_test "RidgeClassifier" =
+  let open Sklearn.Linear_model in
+  let x, y = load_breast_cancer ~return_X_y:true () in  
+  let clf = RidgeClassifier().fit ~x y () in  
+  print_ndarray @@ RidgeClassifier.score ~x y clf;  
+  [%expect {|
+  |}]
 
 *)
 
@@ -961,19 +1054,17 @@ let%expect_text "RidgeCV" =
 >>> clf.score(X, y)
 0.9630...
 
-
 *)
 
 (* TEST TODO
-let%expect_text "RidgeClassifierCV" =
-    let load_breast_cancer = Sklearn.Datasets.load_breast_cancer in
-    let ridgeClassifierCV = Sklearn.Linear_model.ridgeClassifierCV in
-    let x, y = load_breast_cancer return_X_y=True in
-    clf = RidgeClassifierCV(alphas=[1e-3, 1e-2, 1e-1, 1]).fit(X, y)    
-    print @@ score clf x y
-    [%expect {|
-            0.9630...            
-    |}]
+let%expect_test "RidgeClassifierCV" =
+  let open Sklearn.Linear_model in
+  let x, y = load_breast_cancer ~return_X_y:true () in  
+  let clf = RidgeClassifierCV(alphas=[1e-3, 1e-2, 1e-1, 1]).fit ~x y () in  
+  print_ndarray @@ RidgeClassifierCV.score ~x y clf;  
+  [%expect {|
+      0.9630...      
+  |}]
 
 *)
 
@@ -989,20 +1080,35 @@ let%expect_text "RidgeClassifierCV" =
 >>> clf.fit(X, Y)
 SGDClassifier()
 
+*)
+
+(* TEST TODO
+let%expect_test "SGDClassifier" =
+  let open Sklearn.Linear_model in
+  let x = .array (matrixi [|[|-1; -1|]; [|-2; -1|]; [|1; 1|]; [|2; 1|]|]) np in  
+  let Y = .array (vectori [|1; 1; 2; 2|]) np in  
+  let clf = .sGDClassifier ~max_iter:1000 ~tol:1e-3 linear_model in  
+  print_ndarray @@ .fit ~x Y clf;  
+  [%expect {|
+      SGDClassifier()      
+  |}]
+
+*)
+
+
+
+(* SGDClassifier *)
+(*
+>>> print(clf.predict([[-0.8, -1]]))
 
 *)
 
 (* TEST TODO
-let%expect_text "SGDClassifier" =
-    import numpy as np    
-    let linear_model = Sklearn.linear_model in
-    X = np.array([[-1, -1], [-2, -1], [1, 1], [2, 1]])    
-    Y = np.array([1, 1, 2, 2])    
-    clf = linear_model.SGDClassifier(max_iter=1000, tol=1e-3)    
-    print @@ fit clf x y
-    [%expect {|
-            SGDClassifier()            
-    |}]
+let%expect_test "SGDClassifier" =
+  let open Sklearn.Linear_model in
+  print_ndarray @@ print(.predict (matrix [|[|-0.8; -1|]|])) clf;  
+  [%expect {|
+  |}]
 
 *)
 
@@ -1020,22 +1126,20 @@ let%expect_text "SGDClassifier" =
 >>> clf.fit(X, y)
 SGDRegressor()
 
-
 *)
 
 (* TEST TODO
-let%expect_text "SGDRegressor" =
-    import numpy as np    
-    let linear_model = Sklearn.linear_model in
-    n_samples, n_features = 10, 5    
-    rng = np.random.RandomState(0)    
-    y = rng.randn(n_samples)    
-    X = rng.randn(n_samples, n_features)    
-    clf = linear_model.SGDRegressor(max_iter=1000, tol=1e-3)    
-    print @@ fit clf x y
-    [%expect {|
-            SGDRegressor()            
-    |}]
+let%expect_test "SGDRegressor" =
+  let open Sklearn.Linear_model in
+  let n_samples, n_features = 10, 5 in  
+  let rng = np..randomState ~0 random in  
+  let y = .randn ~n_samples rng in  
+  let x = .randn ~n_samples n_features rng in  
+  let clf = .sGDRegressor ~max_iter:1000 ~tol:1e-3 linear_model in  
+  print_ndarray @@ .fit ~x y clf;  
+  [%expect {|
+      SGDRegressor()      
+  |}]
 
 *)
 
@@ -1053,23 +1157,21 @@ let%expect_text "SGDRegressor" =
 >>> reg.predict(X[:1,])
 array([-31.5871...])
 
-
 *)
 
 (* TEST TODO
-let%expect_text "TheilSenRegressor" =
-    let theilSenRegressor = Sklearn.Linear_model.theilSenRegressor in
-    let make_regression = Sklearn.Datasets.make_regression in
-    let x, y = make_regression n_samples=200 n_features=2 noise=4.0 random_state=0 in
-    reg = TheilSenRegressor(random_state=0).fit(X, y)    
-    print @@ score reg x y
-    [%expect {|
-            0.9884...            
-    |}]
-    print @@ predict reg x[:1 ]
-    [%expect {|
-            array([-31.5871...])            
-    |}]
+let%expect_test "TheilSenRegressor" =
+  let open Sklearn.Linear_model in
+  let x, y = make_regression ~n_samples:200 ~n_features:2 ~noise:4.0 ~random_state:0 () in  
+  let reg = TheilSenRegressor(random_state=0).fit ~x y () in  
+  print_ndarray @@ TheilSenRegressor.score ~x y reg;  
+  [%expect {|
+      0.9884...      
+  |}]
+  print_ndarray @@ TheilSenRegressor.predict x[:1 ] reg;  
+  [%expect {|
+      array([-31.5871...])      
+  |}]
 
 *)
 
@@ -1085,20 +1187,20 @@ let%expect_text "TheilSenRegressor" =
 [[0.         0.         0.46874778]
  [0.2159048  0.4425765  0.23689075]]
 
-
 *)
 
 (* TEST TODO
-let%expect_text "lasso_path" =
-    X = np.array([[1, 2, 3.1], [2.3, 5.4, 4.3]]).T    
-    y = np.array([1, 2, 3.1])    
-    # Use lasso_path to compute a coefficient path    
-    let h, _ = lasso_path x y alphas=[5. 1. .5] in
-    print(coef_path)    
-    [%expect {|
-            [[0.         0.         0.46874778]            
-             [0.2159048  0.4425765  0.23689075]]            
-    |}]
+let%expect_test "lasso_path" =
+  let open Sklearn.Linear_model in
+  let x = .array (matrix [|[|1; 2; 3.1|]; [|2.3; 5.4; 4.3|]|]) .t np in  
+  let y = .array [1 ~2 3.1] np in  
+  print_ndarray @@ # Use lasso_path to compute a coefficient path;  
+  let _, coef_path, _ = lasso_path ~x y ~alphas:[5. 1. .5] () in  
+  print_ndarray @@ print ~coef_path ();  
+  [%expect {|
+      [[0.         0.         0.46874778]      
+       [0.2159048  0.4425765  0.23689075]]      
+  |}]
 
 *)
 
@@ -1117,22 +1219,20 @@ let%expect_text "lasso_path" =
 [[0.         0.         0.46915237]
  [0.2159048  0.4425765  0.23668876]]
 
-
 *)
 
 (* TEST TODO
-let%expect_text "lasso_path" =
-    # Now use lars_path and 1D linear interpolation to compute the    
-    # same path    
-    let lars_path = Sklearn.Linear_model.lars_path in
-    let e, coef_path_lars = lars_path x y method='lasso' in
-    let interpolate = Scipy.interpolate in
-    coef_path_continuous = interpolate.interp1d(alphas[::-1],coef_path_lars[:, ::-1])    
-    print(coef_path_continuous([5., 1., .5]))    
-    [%expect {|
-            [[0.         0.         0.46915237]            
-             [0.2159048  0.4425765  0.23668876]]            
-    |}]
+let%expect_test "lasso_path" =
+  let open Sklearn.Linear_model in
+  print_ndarray @@ # Now use lars_path and 1D linear interpolation to compute the;  
+  print_ndarray @@ # same path;  
+  let alphas, active, coef_path_lars = lars_path ~x y ~method:'lasso' () in  
+  let coef_path_continuous = .interp1d alphas[::-1] coef_path_lars[: ::-1] interpolate in  
+  print_ndarray @@ print(coef_path_continuous [5. 1. .5] ());  
+  [%expect {|
+      [[0.         0.         0.46915237]      
+       [0.2159048  0.4425765  0.23668876]]      
+  |}]
 
 *)
 

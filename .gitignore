@@ -1,6 +1,7 @@
 *~
 .merlin
 _build/
+.ipynb_checkpoints/
 .venv/
 .mypy_cache
 _disabled
