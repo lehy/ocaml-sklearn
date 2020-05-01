@@ -904,11 +904,11 @@ let%expect_test "mean_absolute_error" =
 *)
 
 let%expect_test "mean_gamma_deviance" =
-   let open Sklearn.Metrics in
-   let y_true = vector [|2.; 0.5; 1.; 4.|] in
-   let y_pred = vector [|0.5; 0.5; 2.; 2.|] in
-   print_float @@ mean_gamma_deviance ~y_true ~y_pred ();
-   [%expect {| 1.05685 |}]
+  let open Sklearn.Metrics in
+  let y_true = vector [|2.; 0.5; 1.; 4.|] in
+  let y_pred = vector [|0.5; 0.5; 2.; 2.|] in
+  print_float @@ mean_gamma_deviance ~y_true ~y_pred ();
+  [%expect {| 1.05685 |}]
 
 
 (* mean_poisson_deviance *)
@@ -921,11 +921,11 @@ let%expect_test "mean_gamma_deviance" =
 *)
 
 let%expect_test "mean_poisson_deviance" =
-   let open Sklearn.Metrics in
-   let y_true = vectori [|2; 0; 1; 4|] in
-   let y_pred = vector [|0.5; 0.5; 2.; 2.|] in
-   print_float @@ mean_poisson_deviance ~y_true ~y_pred ();
-   [%expect {| 1.42602 |}]
+  let open Sklearn.Metrics in
+  let y_true = vectori [|2; 0; 1; 4|] in
+  let y_pred = vector [|0.5; 0.5; 2.; 2.|] in
+  print_float @@ mean_poisson_deviance ~y_true ~y_pred ();
+  [%expect {| 1.42602 |}]
 
 
 (* mean_squared_error *)
@@ -950,31 +950,31 @@ array([0.41666667, 1.        ])
 *)
 
 let%expect_test "mean_squared_error" =
-   let open Sklearn.Metrics in
-   let y_true = vector [|3.; -0.5; 2.; 7.|] in
-   let y_pred = vector [|2.5; 0.0; 2.; 8.|] in
-   print_ndarray @@ mean_squared_error ~y_true ~y_pred ();
-   [%expect {|
+  let open Sklearn.Metrics in
+  let y_true = vector [|3.; -0.5; 2.; 7.|] in
+  let y_pred = vector [|2.5; 0.0; 2.; 8.|] in
+  print_ndarray @@ mean_squared_error ~y_true ~y_pred ();
+  [%expect {|
       0.375
    |}];
-   let y_true = vector [|3.; -0.5; 2.; 7.|] in
-   let y_pred = vector [|2.5; 0.0; 2.; 8.|] in
-   print_ndarray @@ mean_squared_error ~y_true ~y_pred ~squared:false ();
-   [%expect {|
+  let y_true = vector [|3.; -0.5; 2.; 7.|] in
+  let y_pred = vector [|2.5; 0.0; 2.; 8.|] in
+  print_ndarray @@ mean_squared_error ~y_true ~y_pred ~squared:false ();
+  [%expect {|
       0.6123724356957945
    |}];
-   let y_true = matrix  [|[|0.5; 1.|]; [|-1.; 1.|]; [|7.;  -6.|]|] in
-   let y_pred = matrixi [|[|0;   2 |]; [|-1;  2 |]; [|8;   -5 |]|] in
-   print_ndarray @@ mean_squared_error ~y_true ~y_pred ();
-   [%expect {|
+  let y_true = matrix  [|[|0.5; 1.|]; [|-1.; 1.|]; [|7.;  -6.|]|] in
+  let y_pred = matrixi [|[|0;   2 |]; [|-1;  2 |]; [|8;   -5 |]|] in
+  print_ndarray @@ mean_squared_error ~y_true ~y_pred ();
+  [%expect {|
       0.7083333333333334
    |}];
-   print_ndarray @@ mean_squared_error ~y_true ~y_pred ~multioutput:`Raw_values ();
-   [%expect {|
+  print_ndarray @@ mean_squared_error ~y_true ~y_pred ~multioutput:`Raw_values ();
+  [%expect {|
       [0.41666667 1.        ]
    |}];
-   print_ndarray @@ mean_squared_error ~y_true ~y_pred ~multioutput:(`Arr (vector [|0.3; 0.7|])) ();
-   [%expect {| 0.825 |}]
+  print_ndarray @@ mean_squared_error ~y_true ~y_pred ~multioutput:(`Arr (vector [|0.3; 0.7|])) ();
+  [%expect {| 0.825 |}]
 
 
 (* mean_squared_log_error *)
@@ -995,25 +995,25 @@ array([0.00462428, 0.08377444])
 *)
 
 let%expect_test "mean_squared_log_error" =
-   let open Sklearn.Metrics in
-   let y_true = vector [|3.; 5.; 2.5; 7.|] in
-   let y_pred = vector [|2.5; 5.; 4.; 8.|] in
-   print_ndarray @@ mean_squared_log_error ~y_true ~y_pred ();
-   [%expect {|
+  let open Sklearn.Metrics in
+  let y_true = vector [|3.; 5.; 2.5; 7.|] in
+  let y_pred = vector [|2.5; 5.; 4.; 8.|] in
+  print_ndarray @@ mean_squared_log_error ~y_true ~y_pred ();
+  [%expect {|
       0.03973012298459379
    |}];
-   let y_true = matrix [|[|0.5; 1.|]; [|1.; 2.|]; [|7.; 6.|]|] in
-   let y_pred = matrix [|[|0.5; 2.|]; [|1.; 2.5|]; [|8.; 8.|]|] in
-   print_ndarray @@ mean_squared_log_error ~y_true ~y_pred ();
-   [%expect {|
+  let y_true = matrix [|[|0.5; 1.|]; [|1.; 2.|]; [|7.; 6.|]|] in
+  let y_pred = matrix [|[|0.5; 2.|]; [|1.; 2.5|]; [|8.; 8.|]|] in
+  print_ndarray @@ mean_squared_log_error ~y_true ~y_pred ();
+  [%expect {|
       0.044199361889160516
    |}];
-   print_ndarray @@ mean_squared_log_error ~y_true ~y_pred ~multioutput:`Raw_values ();
-   [%expect {|
+  print_ndarray @@ mean_squared_log_error ~y_true ~y_pred ~multioutput:`Raw_values ();
+  [%expect {|
       [0.00462428 0.08377444]
    |}];
-   print_ndarray @@ mean_squared_log_error ~y_true ~y_pred ~multioutput:(`Arr (vector [|0.3; 0.7|])) ();
-   [%expect {| 0.06002939417970032 |}]
+  print_ndarray @@ mean_squared_log_error ~y_true ~y_pred ~multioutput:(`Arr (vector [|0.3; 0.7|])) ();
+  [%expect {| 0.06002939417970032 |}]
 
 
 (* mean_tweedie_deviance *)
@@ -1026,11 +1026,11 @@ let%expect_test "mean_squared_log_error" =
 *)
 
 let%expect_test "mean_tweedie_deviance" =
-   let open Sklearn.Metrics in
-   let y_true = vectori [|2; 0; 1; 4|] in
-   let y_pred = vector [|0.5; 0.5; 2.; 2.|] in
-   print_float @@ mean_tweedie_deviance ~y_true ~y_pred ~power:1. ();
-   [%expect {| 1.42602 |}]
+  let open Sklearn.Metrics in
+  let y_true = vectori [|2; 0; 1; 4|] in
+  let y_pred = vector [|0.5; 0.5; 2.; 2.|] in
+  print_float @@ mean_tweedie_deviance ~y_true ~y_pred ~power:1. ();
+  [%expect {| 1.42602 |}]
 
 
 (* median_absolute_error *)
@@ -1051,25 +1051,25 @@ array([0.5, 1. ])
 *)
 
 let%expect_test "median_absolute_error" =
-   let open Sklearn.Metrics in
-   let y_true = vector [|3.; -0.5; 2.; 7.|] in
-   let y_pred = vector [|2.5; 0.0; 2.; 8.|] in
-   print_ndarray @@ median_absolute_error ~y_true ~y_pred ();
-   [%expect {|
+  let open Sklearn.Metrics in
+  let y_true = vector [|3.; -0.5; 2.; 7.|] in
+  let y_pred = vector [|2.5; 0.0; 2.; 8.|] in
+  print_ndarray @@ median_absolute_error ~y_true ~y_pred ();
+  [%expect {|
       0.5
    |}];
-   let y_true = matrix [|[|0.5; 1.|]; [|-1.; 1.|]; [|7.; -6.|]|] in
-   let y_pred = matrixi [|[|0; 2|]; [|-1; 2|]; [|8; -5|]|] in
-   print_ndarray @@ median_absolute_error ~y_true ~y_pred ();
-   [%expect {|
+  let y_true = matrix [|[|0.5; 1.|]; [|-1.; 1.|]; [|7.; -6.|]|] in
+  let y_pred = matrixi [|[|0; 2|]; [|-1; 2|]; [|8; -5|]|] in
+  print_ndarray @@ median_absolute_error ~y_true ~y_pred ();
+  [%expect {|
       0.75
    |}];
-   print_ndarray @@ median_absolute_error ~y_true ~y_pred ~multioutput:`Raw_values ();
-   [%expect {|
+  print_ndarray @@ median_absolute_error ~y_true ~y_pred ~multioutput:`Raw_values ();
+  [%expect {|
       [0.5 1. ]
    |}];
-   print_ndarray @@ median_absolute_error ~y_true ~y_pred ~multioutput:(`Arr (vector [|0.3; 0.7|])) ();
-   [%expect {| 0.85 |}]
+  print_ndarray @@ median_absolute_error ~y_true ~y_pred ~multioutput:(`Arr (vector [|0.3; 0.7|])) ();
+  [%expect {| 0.85 |}]
 
 
 (* multilabel_confusion_matrix *)
@@ -1093,11 +1093,11 @@ array([[[1, 0],
 *)
 
 let%expect_test "multilabel_confusion_matrix" =
-   let open Sklearn.Metrics in
-   let y_true = matrixi [|[|1; 0; 1|]; [|0; 1; 0|]|] in
-   let y_pred = matrixi [|[|1; 0; 0|]; [|0; 1; 1|]|] in
-   print_ndarray @@ multilabel_confusion_matrix ~y_true ~y_pred ();
-   [%expect {|
+  let open Sklearn.Metrics in
+  let y_true = matrixi [|[|1; 0; 1|]; [|0; 1; 0|]|] in
+  let y_pred = matrixi [|[|1; 0; 0|]; [|0; 1; 1|]|] in
+  print_ndarray @@ multilabel_confusion_matrix ~y_true ~y_pred ();
+  [%expect {|
       [[[1 0]
         [0 1]]
 
@@ -1125,11 +1125,11 @@ array([[[3, 1],
 *)
 
 let%expect_test "multilabel_confusion_matrix" =
-   let open Sklearn.Metrics in
-   let y_true = vectors [|"cat"; "ant"; "cat"; "cat"; "ant"; "bird"|] in
-   let y_pred = vectors [|"ant"; "ant"; "cat"; "cat"; "ant"; "cat"|] in
-   print_ndarray @@ multilabel_confusion_matrix ~y_true ~y_pred ~labels:(vectors [|"ant"; "bird"; "cat"|]) ();
-   [%expect {|
+  let open Sklearn.Metrics in
+  let y_true = vectors [|"cat"; "ant"; "cat"; "cat"; "ant"; "bird"|] in
+  let y_pred = vectors [|"ant"; "ant"; "cat"; "cat"; "ant"; "cat"|] in
+  print_ndarray @@ multilabel_confusion_matrix ~y_true ~y_pred ~labels:(vectors [|"ant"; "bird"; "cat"|]) ();
+  [%expect {|
       [[[3 1]
         [0 2]]
 
@@ -1152,19 +1152,14 @@ array([[0.        , 1.41421356],
 
 *)
 
-(* TEST TODO
-   let%expect_test "nan_euclidean_distances" =
-   let open Sklearn.Metrics in
-   let nan = float "NaN" () in
-   let x = (matrixi [|[|0; 1|]; [|1; nan|]|]) in
-   print_ndarray @@ nan_euclidean_distances ~x x () # distance between rows of x;
-   [%expect {|
-      array([[0.        , 1.41421356],
-             [1.41421356, 0.        ]])
+let%expect_test "nan_euclidean_distances" =
+  let open Sklearn.Metrics in
+  let x = matrix [|[|0.; 1.|]; [|1.; nan|]|] in
+  print_ndarray @@ nan_euclidean_distances ~x ~y:x () (* distance between rows of x *);
+  [%expect {|
+      [[0.         1.41421356]
+       [1.41421356 0.        ]]
    |}]
-
-*)
-
 
 
 (* nan_euclidean_distances *)
@@ -1176,18 +1171,15 @@ array([[1.        ],
 
 *)
 
-(* TEST TODO
-   let%expect_test "nan_euclidean_distances" =
-   let open Sklearn.Metrics in
-   # get distance to origin
-   print_ndarray @@ nan_euclidean_distances(x, (matrixi [|[|0; 0|]|]));
-   [%expect {|
-      array([[1.        ],
-             [1.41421356]])
+let%expect_test "nan_euclidean_distances" =
+  let open Sklearn.Metrics in
+  let x = matrix [|[|0.; 1.|]; [|1.; nan|]|] in
+  (* get distance to origin *)
+  print_ndarray @@ nan_euclidean_distances ~x ~y:(matrixi [|[|0; 0|]|]) ();
+  [%expect {|
+      [[1.        ]
+       [1.41421356]]
    |}]
-
-*)
-
 
 
 (* ndcg_score *)
