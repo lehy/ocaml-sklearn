@@ -777,6 +777,18 @@ def simplify_arr(enum):
         return enum
 
 
+def simplify_arr_or_float(enum):
+    if len(enum.elements) != 2:
+        return enum
+
+    e0, e1 = enum.elements
+    if ((isinstance(e0, Float) and isinstance(e1, Arr))
+            or (isinstance(e1, Float) and isinstance(e0, Arr))):
+        return type(enum)([Arr()])
+
+    return enum
+
+
 def simplify_enum(enum):
     # flatten (once should be enough?)
     elts = []
@@ -815,6 +827,9 @@ def simplify_enum(enum):
 
     # Arr | SparseMatrix == Arr
     enum = simplify_arr(enum)
+
+    # An Arr.t is able to represent a single Numpy scalar also.
+    enum = simplify_arr_or_float(enum)
 
     # There is no point having more than one Py.Object tag in an enum.
     is_obj, is_not_obj = partition(
