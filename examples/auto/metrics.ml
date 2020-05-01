@@ -1025,17 +1025,12 @@ let%expect_test "mean_squared_log_error" =
 
 *)
 
-(* TEST TODO
-   let%expect_test "mean_tweedie_deviance" =
+let%expect_test "mean_tweedie_deviance" =
    let open Sklearn.Metrics in
-   let y_true = (vectori [|2; 0; 1; 4|]) in
-   let y_pred = [0.5, 0.5, 2., 2.] in
-   print_ndarray @@ mean_tweedie_deviance ~y_true y_pred ~power:1 ();
-   [%expect {|
-   |}]
-
-*)
-
+   let y_true = vectori [|2; 0; 1; 4|] in
+   let y_pred = vector [|0.5; 0.5; 2.; 2.|] in
+   print_float @@ mean_tweedie_deviance ~y_true ~y_pred ~power:1. ();
+   [%expect {| 1.42602 |}]
 
 
 (* median_absolute_error *)
