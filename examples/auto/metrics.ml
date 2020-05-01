@@ -1124,24 +1124,21 @@ array([[[3, 1],
 
 *)
 
-(* TEST TODO
-   let%expect_test "multilabel_confusion_matrix" =
+let%expect_test "multilabel_confusion_matrix" =
    let open Sklearn.Metrics in
-   let y_true = ["cat", "ant", "cat", "cat", "ant", "bird"] in
-   let y_pred = ["ant", "ant", "cat", "cat", "ant", "cat"] in
-   print_ndarray @@ multilabel_confusion_matrix ~y_true y_pred ~labels:["ant" "bird" "cat"] ();
+   let y_true = vectors [|"cat"; "ant"; "cat"; "cat"; "ant"; "bird"|] in
+   let y_pred = vectors [|"ant"; "ant"; "cat"; "cat"; "ant"; "cat"|] in
+   print_ndarray @@ multilabel_confusion_matrix ~y_true ~y_pred ~labels:(vectors [|"ant"; "bird"; "cat"|]) ();
    [%expect {|
-      array([[[3, 1],
-              [0, 2]],
-      <BLANKLINE>
-             [[5, 0],
-              [1, 0]],
-      <BLANKLINE>
-             [[2, 1],
+      [[[3 1]
+        [0 2]]
+
+       [[5 0]
+        [1 0]]
+
+       [[2 1]
+        [1 2]]]
    |}]
-
-*)
-
 
 
 (* nan_euclidean_distances *)
