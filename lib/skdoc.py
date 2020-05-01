@@ -324,6 +324,13 @@ class ArrGenerator(Type):
         return 'Gen'
 
 
+class LossFunction(Type):
+    names = ['LossFunction', 'concrete ``LossFunction``']
+    # ml_type = 'Sklearn.Arr.t -> Sklearn.Arr.t -> float'
+    ml_type_ret = 'Sklearn.Arr.t -> Sklearn.Arr.t -> float'
+    unwrap = '(fun py -> fun x y -> Py.Callable.to_function py [|Sklearn.Arr.to_pyobject x; Sklearn.Arr.to_pyobject y|] |> Py.Float.to_float)'
+
+
 class ClassificationReport(Type):
     # XXX ml_type is needed even for retuning, since we use it atm to
     # build the return type inside enums (see Type.tag()).
@@ -486,6 +493,10 @@ class Self(Type):
 
 class Dtype(Type):
     names = ['type', 'dtype', 'numpy dtype']
+    ml_type = 'Sklearn.Arr.Dtype.t'
+    wrap = 'Sklearn.Arr.Dtype.to_pyobject'
+    ml_type_ret = 'Sklearn.Arr.Dtype.t'
+    unwrap = 'Sklearn.Arr.Dtype.of_pyobject'
 
 
 class TypeList(Type):
@@ -699,6 +710,7 @@ builtin_types = [
     Bool(),
     Arr(),
     ArrGenerator(),
+    LossFunction(),
     Ndarray(),
     FloatList(),
     StringList(),
@@ -2600,14 +2612,16 @@ def main():
         # it causes cross dep problems.
         csr_matrix = Class(sklearn.metrics.pairwise.csr_matrix, "Sklearn",
                            over)
+        # Remove all Csr_matrix methods that cause a dependence on Sklearn.Arr, since
+        # they cause a dependency cycle.
         remove_me = set()
         for elt in csr_matrix.elements:
             for ty in elt.iter_types():
-                if isinstance(ty, Arr):
+                if isinstance(ty, (Arr, Dtype)):
                     remove_me.add(elt)
                 elif isinstance(ty, Enum):
                     for t in ty.elements:
-                        if isinstance(t, Arr):
+                        if isinstance(t, (Arr, Dtype)):
                             remove_me.add(elt)
         for elt in remove_me:
             # print(f"Csr_matrix: removing {elt}")

@@ -36,6 +36,7 @@ module List : PyList.S with type elt := t
 module Dtype : sig
   type t = [`Object | `S of string]
   val to_pyobject : t -> Py.Object.t
+  val of_pyobject : Py.Object.t -> t
 end
 
 (** ### shape
