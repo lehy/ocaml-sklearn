@@ -211,7 +211,8 @@ class Float(Type):
     names = [
         'float', 'floating', 'double', 'positive float',
         'strictly positive float', 'non-negative float', 'numeric',
-        'float (upperlimited by 1.0)', 'float in range'
+        'float (upperlimited by 1.0)', 'float in range', 'number',
+        'numerical value', 'scalar'
     ]
     ml_type = 'float'
     wrap = 'Py.Float.of_float'
@@ -272,6 +273,10 @@ class Arr(Type):
         'array-like',
         'array_like',
         'array like',
+        'array-like of shape',
+        'array-like of shape at least 2D',
+        'array of shape of (n_targets',
+        'array of shape `shape`'
         'np.matrix',
         'numpy.matrix',
         'float array with',
@@ -301,6 +306,7 @@ class Arr(Type):
         'scipy.sparse.csr_matrix',
         'CSR',
         'scipy.sparse',
+        'scipy.sparse matrix',
         'sparse matrix with',
         "CSC",
         "CSC sparse matrix"

@@ -1050,31 +1050,26 @@ array([0.5, 1. ])
 
 *)
 
-(* TEST TODO
-   let%expect_test "median_absolute_error" =
+let%expect_test "median_absolute_error" =
    let open Sklearn.Metrics in
-   let y_true = [3, -0.5, 2, 7] in
-   let y_pred = [2.5, 0.0, 2, 8] in
-   print_ndarray @@ median_absolute_error ~y_true y_pred ();
+   let y_true = vector [|3.; -0.5; 2.; 7.|] in
+   let y_pred = vector [|2.5; 0.0; 2.; 8.|] in
+   print_ndarray @@ median_absolute_error ~y_true ~y_pred ();
    [%expect {|
       0.5
-   |}]
-   let y_true = (matrix [|[|0.5; 1|]; [|-1; 1|]; [|7; -6|]|]) in
-   let y_pred = (matrixi [|[|0; 2|]; [|-1; 2|]; [|8; -5|]|]) in
-   print_ndarray @@ median_absolute_error ~y_true y_pred ();
+   |}];
+   let y_true = matrix [|[|0.5; 1.|]; [|-1.; 1.|]; [|7.; -6.|]|] in
+   let y_pred = matrixi [|[|0; 2|]; [|-1; 2|]; [|8; -5|]|] in
+   print_ndarray @@ median_absolute_error ~y_true ~y_pred ();
    [%expect {|
       0.75
-   |}]
-   print_ndarray @@ median_absolute_error ~y_true y_pred ~multioutput:'raw_values' ();
+   |}];
+   print_ndarray @@ median_absolute_error ~y_true ~y_pred ~multioutput:`Raw_values ();
    [%expect {|
-      array([0.5, 1. ])
-   |}]
-   print_ndarray @@ median_absolute_error ~y_true y_pred ~multioutput:[0.3 0.7] ();
-   [%expect {|
-   |}]
-
-*)
-
+      [0.5 1. ]
+   |}];
+   print_ndarray @@ median_absolute_error ~y_true ~y_pred ~multioutput:(`Arr (vector [|0.3; 0.7|])) ();
+   [%expect {| 0.85 |}]
 
 
 (* multilabel_confusion_matrix *)
