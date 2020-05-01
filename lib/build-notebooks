@@ -7,6 +7,6 @@ ROOT=$(realpath $(dirname "$0"))/..
 
 cd "$ROOT"
 source "$ROOT/.venv/bin/activate"
-for i in "$ROOT/examples/notebooks/"*.ipynb; do
-    jupyter nbconvert --inplace --execute "$i"
-done
+mkdir -p "$ROOT/examples/notebooks/rendered"
+jupyter nbconvert --execute --to notebook --output-dir "$ROOT/examples/notebooks/rendered" "$ROOT/examples/notebooks/"*.ipynb
+
