@@ -13,4 +13,5 @@ if [[ $(git status -s) ]]; then
 fi
 
 "$ROOT/lib/build-doc"
+"$ROOT/lib/build-notebooks"
 ghp-import -np "$ROOT/html_doc/"
