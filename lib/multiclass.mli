@@ -1,3 +1,6 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module BaseEstimator : sig
 type t
 val of_pyobject : Py.Object.t -> t
@@ -14,7 +17,7 @@ at the class level in their ``__init__`` as explicit keyword
 arguments (no ``*args`` or ``**kwargs``).
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -74,7 +77,7 @@ val create : unit -> t
 Mixin class for all classifiers in scikit-learn.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -210,7 +213,7 @@ sklearn.preprocessing.OneHotEncoder : encode categorical features
     using a one-hot aka one-of-K scheme.
 *)
 
-val fit : y:Ndarray.t -> t -> t
+val fit : y:Arr.t -> t -> t
 (**
 Fit label binarizer
 
@@ -225,7 +228,7 @@ Returns
 self : returns an instance of self.
 *)
 
-val fit_transform : y:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val fit_transform : y:Arr.t -> t -> Arr.t
 (**
 Fit label binarizer and transform multi-class labels to binary
 labels.
@@ -246,7 +249,7 @@ Y : array or CSR matrix of shape [n_samples, n_classes]
     Shape will be [n_samples, 1] for binary problems.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -262,7 +265,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : ?threshold:[`Float of float | `None] -> y:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> Py.Object.t
+val inverse_transform : ?threshold:float -> y:Arr.t -> t -> Py.Object.t
 (**
 Transform binary labels back to multi-class labels
 
@@ -315,7 +318,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : y:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val transform : y:Arr.t -> t -> Arr.t
 (**
 Transform multi-class labels to binary labels
 
@@ -336,14 +339,26 @@ Y : numpy array or CSR matrix of shape [n_samples, n_classes]
 *)
 
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
 
-(** Attribute y_type_: see constructor for documentation *)
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute y_type_: get value or raise Not_found if None.*)
 val y_type_ : t -> string
 
-(** Attribute sparse_input_: see constructor for documentation *)
+(** Attribute y_type_: get value as an option. *)
+val y_type_opt : t -> (string) option
+
+
+(** Attribute sparse_input_: get value or raise Not_found if None.*)
 val sparse_input_ : t -> bool
+
+(** Attribute sparse_input_: get value as an option. *)
+val sparse_input_opt : t -> (bool) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -411,7 +426,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_jobs:[`Int of int | `None] -> estimator:Py.Object.t -> unit -> t
+val create : ?n_jobs:int -> estimator:Py.Object.t -> unit -> t
 (**
 One-vs-one multiclass strategy
 
@@ -455,7 +470,7 @@ pairwise_indices_ : list, length = ``len(estimators_)``, or ``None``
     ``None`` when ``estimator`` does not have ``_pairwise`` attribute.
 *)
 
-val decision_function : x:Ndarray.t -> t -> Ndarray.t
+val decision_function : x:Arr.t -> t -> Arr.t
 (**
 Decision function for the OneVsOneClassifier.
 
@@ -473,7 +488,7 @@ Returns
 Y : array-like of shape (n_samples, n_classes)
 *)
 
-val fit : x:Py.Object.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit underlying estimators.
 
@@ -490,7 +505,7 @@ Returns
 self
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -506,7 +521,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val partial_fit : ?classes:Ndarray.t -> x:Py.Object.t -> y:Ndarray.t -> t -> Py.Object.t
+val partial_fit : ?classes:Arr.t -> x:Arr.t -> y:Arr.t -> t -> Py.Object.t
 (**
 Partially fit underlying estimators
 
@@ -535,7 +550,7 @@ Returns
 self
 *)
 
-val predict : x:Py.Object.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Estimate the best class label for each sample in X.
 
@@ -554,7 +569,7 @@ y : numpy array of shape [n_samples]
     Predicted multi-class targets.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -600,17 +615,33 @@ self : object
 *)
 
 
-(** Attribute estimators_: see constructor for documentation *)
+(** Attribute estimators_: get value or raise Not_found if None.*)
 val estimators_ : t -> Py.Object.t
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute estimators_: get value as an option. *)
+val estimators_opt : t -> (Py.Object.t) option
 
-(** Attribute n_classes_: see constructor for documentation *)
+
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
+
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute n_classes_: get value or raise Not_found if None.*)
 val n_classes_ : t -> int
 
-(** Attribute pairwise_indices_: see constructor for documentation *)
+(** Attribute n_classes_: get value as an option. *)
+val n_classes_opt : t -> (int) option
+
+
+(** Attribute pairwise_indices_: get value or raise Not_found if None.*)
 val pairwise_indices_ : t -> Py.Object.t
+
+(** Attribute pairwise_indices_: get value as an option. *)
+val pairwise_indices_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -630,7 +661,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_jobs:[`Int of int | `None] -> estimator:Py.Object.t -> unit -> t
+val create : ?n_jobs:int -> estimator:Py.Object.t -> unit -> t
 (**
 One-vs-the-rest (OvR) multiclass/multilabel strategy
 
@@ -701,7 +732,7 @@ Examples
 array([2, 0, 1])
 *)
 
-val decision_function : x:Ndarray.t -> t -> Ndarray.t
+val decision_function : x:Arr.t -> t -> Arr.t
 (**
 Returns the distance of each sample from the decision boundary for
 each class. This can only be used with estimators which implement the
@@ -716,7 +747,7 @@ Returns
 T : array-like of shape (n_samples, n_classes)
 *)
 
-val fit : x:Py.Object.t -> y:Py.Object.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit underlying estimators.
 
@@ -734,7 +765,7 @@ Returns
 self
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -750,7 +781,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val partial_fit : ?classes:Ndarray.t -> x:Py.Object.t -> y:Py.Object.t -> t -> Py.Object.t
+val partial_fit : ?classes:Arr.t -> x:Arr.t -> y:Arr.t -> t -> Py.Object.t
 (**
 Partially fit underlying estimators
 
@@ -778,7 +809,7 @@ Returns
 self
 *)
 
-val predict : x:Py.Object.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict multi-class targets using underlying estimators.
 
@@ -793,7 +824,7 @@ y : (sparse) array-like of shape (n_samples,) or (n_samples, n_classes)
     Predicted multi-class targets.
 *)
 
-val predict_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Probability estimates.
 
@@ -818,7 +849,7 @@ T : (sparse) array-like of shape (n_samples, n_classes)
     where classes are ordered as they are in `self.classes_`.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -864,20 +895,40 @@ self : object
 *)
 
 
-(** Attribute estimators_: see constructor for documentation *)
+(** Attribute estimators_: get value or raise Not_found if None.*)
 val estimators_ : t -> Py.Object.t
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute estimators_: get value as an option. *)
+val estimators_opt : t -> (Py.Object.t) option
 
-(** Attribute n_classes_: see constructor for documentation *)
+
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
+
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute n_classes_: get value or raise Not_found if None.*)
 val n_classes_ : t -> int
 
-(** Attribute label_binarizer_: see constructor for documentation *)
+(** Attribute n_classes_: get value as an option. *)
+val n_classes_opt : t -> (int) option
+
+
+(** Attribute label_binarizer_: get value or raise Not_found if None.*)
 val label_binarizer_ : t -> Py.Object.t
 
-(** Attribute multilabel_: see constructor for documentation *)
+(** Attribute label_binarizer_: get value as an option. *)
+val label_binarizer_opt : t -> (Py.Object.t) option
+
+
+(** Attribute multilabel_: get value or raise Not_found if None.*)
 val multilabel_ : t -> bool
+
+(** Attribute multilabel_: get value as an option. *)
+val multilabel_opt : t -> (bool) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -897,7 +948,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?code_size:float -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?n_jobs:[`Int of int | `None] -> estimator:Py.Object.t -> unit -> t
+val create : ?code_size:float -> ?random_state:int -> ?n_jobs:int -> estimator:Py.Object.t -> unit -> t
 (**
 (Error-Correcting) Output-Code multiclass strategy
 
@@ -980,7 +1031,7 @@ References
    2008.
 *)
 
-val fit : x:Py.Object.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit underlying estimators.
 
@@ -997,7 +1048,7 @@ Returns
 self
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1013,7 +1064,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:Py.Object.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict multi-class targets using underlying estimators.
 
@@ -1028,7 +1079,7 @@ y : numpy array of shape [n_samples]
     Predicted multi-class targets.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -1074,14 +1125,26 @@ self : object
 *)
 
 
-(** Attribute estimators_: see constructor for documentation *)
+(** Attribute estimators_: get value or raise Not_found if None.*)
 val estimators_ : t -> Py.Object.t
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute estimators_: get value as an option. *)
+val estimators_opt : t -> (Py.Object.t) option
 
-(** Attribute code_book_: see constructor for documentation *)
-val code_book_ : t -> Ndarray.t
+
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
+
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute code_book_: get value or raise Not_found if None.*)
+val code_book_ : t -> Arr.t
+
+(** Attribute code_book_: get value as an option. *)
+val code_book_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1101,7 +1164,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_jobs:int -> ?backend:Py.Object.t -> ?verbose:int -> ?timeout:float -> ?pre_dispatch:[`All | `Int of int | `PyObject of Py.Object.t] -> ?batch_size:[`Int of int | `Auto] -> ?temp_folder:string -> ?max_nbytes:Py.Object.t -> ?mmap_mode:[`R_ | `R | `W_ | `C | `None] -> ?prefer:[`Processes | `Threads | `None] -> ?require:[`Sharedmem | `None] -> unit -> t
+val create : ?n_jobs:int -> ?backend:Py.Object.t -> ?verbose:int -> ?timeout:float -> ?pre_dispatch:[`All | `I of int | `PyObject of Py.Object.t] -> ?batch_size:[`I of int | `Auto] -> ?temp_folder:string -> ?max_nbytes:Py.Object.t -> ?mmap_mode:[`R_ | `R | `W_ | `C | `None] -> ?prefer:[`Processes | `Threads] -> ?require:string -> unit -> t
 (**
 Helper class for readable parallel mapping.
 
@@ -1385,7 +1448,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val check_X_y : ?accept_sparse:[`String of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`String of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C | `None] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?multi_output:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?y_numeric:bool -> ?warn_on_dtype:[`Bool of bool | `None] -> ?estimator:[`String of string | `Estimator of Py.Object.t] -> x:[`Ndarray of Ndarray.t | `ArrayLike of Py.Object.t | `SparseMatrix of Csr_matrix.t] -> y:[`Ndarray of Ndarray.t | `ArrayLike of Py.Object.t | `SparseMatrix of Csr_matrix.t] -> unit -> (Py.Object.t * Py.Object.t)
+val check_X_y : ?accept_sparse:[`S of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`S of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?multi_output:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?y_numeric:bool -> ?warn_on_dtype:bool -> ?estimator:[`S of string | `Estimator of Py.Object.t] -> x:Arr.t -> y:Arr.t -> unit -> (Py.Object.t * Py.Object.t)
 (**
 Input validation for standard estimators.
 
@@ -1491,7 +1554,7 @@ y_converted : object
     The converted and validated y.
 *)
 
-val check_array : ?accept_sparse:[`String of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`String of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C | `None] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:[`Bool of bool | `None] -> ?estimator:[`String of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
+val check_array : ?accept_sparse:[`S of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`S of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:bool -> ?estimator:[`S of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
 (**
 Input validation on an array, list, sparse matrix or similar.
 
@@ -1583,7 +1646,7 @@ array_converted : object
     The converted and validated array.
 *)
 
-val check_classification_targets : y:Ndarray.t -> unit -> Py.Object.t
+val check_classification_targets : y:Arr.t -> unit -> Py.Object.t
 (**
 Ensure that target y is of a non-regression type.
 
@@ -1596,7 +1659,7 @@ Parameters
 y : array-like
 *)
 
-val check_is_fitted : ?attributes:[`String of string | `ArrayLike of Py.Object.t | `StringList of string list] -> ?msg:string -> ?all_or_any:[`Callable of Py.Object.t | `PyObject of Py.Object.t] -> estimator:Py.Object.t -> unit -> Py.Object.t
+val check_is_fitted : ?attributes:[`S of string | `Arr of Arr.t | `StringList of string list] -> ?msg:string -> ?all_or_any:[`Callable of Py.Object.t | `PyObject of Py.Object.t] -> estimator:Py.Object.t -> unit -> Py.Object.t
 (**
 Perform is_fitted validation for estimator.
 
@@ -1643,7 +1706,7 @@ NotFittedError
     If the attributes are not found.
 *)
 
-val check_random_state : seed:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> Py.Object.t
+val check_random_state : seed:[`I of int | `RandomState of Py.Object.t | `None] -> unit -> Py.Object.t
 (**
 Turn seed into a np.random.RandomState instance
 
@@ -1656,7 +1719,7 @@ seed : None | int | instance of RandomState
     Otherwise raise ValueError.
 *)
 
-val clone : ?safe:bool -> estimator:[`Estimator of Py.Object.t | `ArrayLike of Py.Object.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val clone : ?safe:bool -> estimator:[`Estimator of Py.Object.t | `Arr of Arr.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
 (**
 Constructs a new estimator with the same parameters.
 
@@ -1679,7 +1742,7 @@ val delayed : ?check_pickle:Py.Object.t -> function_:Py.Object.t -> unit -> Py.O
 Decorator used to capture the arguments of a function.
 *)
 
-val euclidean_distances : ?y:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> ?y_norm_squared:Ndarray.t -> ?squared:bool -> ?x_norm_squared:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> Ndarray.t
+val euclidean_distances : ?y:Arr.t -> ?y_norm_squared:Arr.t -> ?squared:bool -> ?x_norm_squared:Arr.t -> x:Arr.t -> unit -> Arr.t
 (**
 Considering the rows of X (and Y=X) as vectors, compute the
 distance matrix between each pair of vectors.
@@ -1746,7 +1809,7 @@ See also
 paired_distances : distances betweens pairs of elements of X and Y.
 *)
 
-val if_delegate_has_method : delegate:[`String of string | `StringList of string list | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val if_delegate_has_method : delegate:[`S of string | `StringList of string list | `Tuple_of_strings of Py.Object.t] -> unit -> Py.Object.t
 (**
 Create a decorator for methods that are delegated to a sub-estimator
 

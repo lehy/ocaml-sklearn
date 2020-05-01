@@ -1,9 +1,12 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module AffinityPropagation : sig
 type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?damping:float -> ?max_iter:int -> ?convergence_iter:int -> ?copy:bool -> ?preference:[`Ndarray of Ndarray.t | `Float of float] -> ?affinity:[`Euclidean | `Precomputed] -> ?verbose:bool -> unit -> t
+val create : ?damping:float -> ?max_iter:int -> ?convergence_iter:int -> ?copy:bool -> ?preference:[`Arr of Arr.t | `F of float] -> ?affinity:[`Euclidean | `Precomputed] -> ?verbose:int -> unit -> t
 (**
 Perform Affinity Propagation Clustering of data.
 
@@ -104,7 +107,7 @@ Brendan J. Frey and Delbert Dueck, "Clustering by Passing Messages
 Between Data Points", Science Feb. 2007
 *)
 
-val fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fit the clustering from features, or affinity matrix.
 
@@ -123,7 +126,7 @@ Returns
 self
 *)
 
-val fit_predict : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val fit_predict : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Fit the clustering from features or affinity matrix, and return
 cluster labels.
@@ -144,7 +147,7 @@ labels : ndarray, shape (n_samples,)
     Cluster labels.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -160,7 +163,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict the closest cluster each sample in X belongs to.
 
@@ -197,20 +200,40 @@ self : object
 *)
 
 
-(** Attribute cluster_centers_indices_: see constructor for documentation *)
-val cluster_centers_indices_ : t -> Ndarray.t
+(** Attribute cluster_centers_indices_: get value or raise Not_found if None.*)
+val cluster_centers_indices_ : t -> Arr.t
 
-(** Attribute cluster_centers_: see constructor for documentation *)
-val cluster_centers_ : t -> Ndarray.t
+(** Attribute cluster_centers_indices_: get value as an option. *)
+val cluster_centers_indices_opt : t -> (Arr.t) option
 
-(** Attribute labels_: see constructor for documentation *)
-val labels_ : t -> Ndarray.t
 
-(** Attribute affinity_matrix_: see constructor for documentation *)
-val affinity_matrix_ : t -> Ndarray.t
+(** Attribute cluster_centers_: get value or raise Not_found if None.*)
+val cluster_centers_ : t -> Arr.t
 
-(** Attribute n_iter_: see constructor for documentation *)
+(** Attribute cluster_centers_: get value as an option. *)
+val cluster_centers_opt : t -> (Arr.t) option
+
+
+(** Attribute labels_: get value or raise Not_found if None.*)
+val labels_ : t -> Arr.t
+
+(** Attribute labels_: get value as an option. *)
+val labels_opt : t -> (Arr.t) option
+
+
+(** Attribute affinity_matrix_: get value or raise Not_found if None.*)
+val affinity_matrix_ : t -> Arr.t
+
+(** Attribute affinity_matrix_: get value as an option. *)
+val affinity_matrix_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -230,7 +253,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_clusters:[`Int of int | `None] -> ?affinity:[`String of string | `Callable of Py.Object.t] -> ?memory:[`String of string | `JoblibMemory of Py.Object.t] -> ?connectivity:[`Ndarray of Ndarray.t | `Callable of Py.Object.t] -> ?compute_full_tree:[`Auto | `Bool of bool] -> ?linkage:[`Ward | `Complete | `Average | `Single] -> ?distance_threshold:float -> unit -> t
+val create : ?n_clusters:[`I of int | `None] -> ?affinity:[`S of string | `Callable of Py.Object.t] -> ?memory:[`S of string | `JoblibMemory of Py.Object.t] -> ?connectivity:[`Arr of Arr.t | `Callable of Py.Object.t] -> ?compute_full_tree:[`Auto | `Bool of bool] -> ?linkage:[`Ward | `Complete | `Average | `Single] -> ?distance_threshold:float -> unit -> t
 (**
 Agglomerative Clustering
 
@@ -334,7 +357,7 @@ AgglomerativeClustering()
 array([1, 1, 1, 0, 0, 0])
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fit the hierarchical clustering from features, or distance matrix.
 
@@ -352,7 +375,7 @@ Returns
 self
 *)
 
-val fit_predict : ?y:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_predict : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Fit the hierarchical clustering from features or distance matrix,
 and return cluster labels.
@@ -372,7 +395,7 @@ labels : ndarray, shape (n_samples,)
     Cluster labels.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -409,20 +432,40 @@ self : object
 *)
 
 
-(** Attribute n_clusters_: see constructor for documentation *)
+(** Attribute n_clusters_: get value or raise Not_found if None.*)
 val n_clusters_ : t -> int
 
-(** Attribute labels_: see constructor for documentation *)
-val labels_ : t -> Ndarray.t
+(** Attribute n_clusters_: get value as an option. *)
+val n_clusters_opt : t -> (int) option
 
-(** Attribute n_leaves_: see constructor for documentation *)
+
+(** Attribute labels_: get value or raise Not_found if None.*)
+val labels_ : t -> Arr.t
+
+(** Attribute labels_: get value as an option. *)
+val labels_opt : t -> (Arr.t) option
+
+
+(** Attribute n_leaves_: get value or raise Not_found if None.*)
 val n_leaves_ : t -> int
 
-(** Attribute n_connected_components_: see constructor for documentation *)
+(** Attribute n_leaves_: get value as an option. *)
+val n_leaves_opt : t -> (int) option
+
+
+(** Attribute n_connected_components_: get value or raise Not_found if None.*)
 val n_connected_components_ : t -> int
 
-(** Attribute children_: see constructor for documentation *)
-val children_ : t -> Ndarray.t
+(** Attribute n_connected_components_: get value as an option. *)
+val n_connected_components_opt : t -> (int) option
+
+
+(** Attribute children_: get value or raise Not_found if None.*)
+val children_ : t -> Arr.t
+
+(** Attribute children_: get value as an option. *)
+val children_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -442,7 +485,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?threshold:float -> ?branching_factor:int -> ?n_clusters:[`Int of int | `PyObject of Py.Object.t] -> ?compute_labels:bool -> ?copy:bool -> unit -> t
+val create : ?threshold:float -> ?branching_factor:int -> ?n_clusters:[`I of int | `Instance_of_sklearn_cluster_model of Py.Object.t] -> ?compute_labels:bool -> ?copy:bool -> unit -> t
 (**
 Implements the Birch clustering algorithm.
 
@@ -554,7 +597,7 @@ Birch(n_clusters=None)
 array([0, 0, 0, 1, 1, 1])
 *)
 
-val fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Build a CF Tree for the input data.
 
@@ -572,7 +615,7 @@ self
     Fitted estimator.
 *)
 
-val fit_predict : ?y:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_predict : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Perform clustering on X and returns cluster labels.
 
@@ -590,7 +633,7 @@ labels : ndarray, shape (n_samples,)
     Cluster labels.
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -614,7 +657,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -630,7 +673,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val partial_fit : ?x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t | `None] -> ?y:Py.Object.t -> t -> t
+val partial_fit : ?x:Arr.t -> ?y:Py.Object.t -> t -> t
 (**
 Online learning. Prevents rebuilding of CFTree from scratch.
 
@@ -649,7 +692,7 @@ self
     Fitted estimator.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict data using the ``centroids_`` of subclusters.
 
@@ -686,7 +729,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Transform X into subcluster centroids dimension.
 
@@ -705,20 +748,40 @@ X_trans : {array-like, sparse matrix}, shape (n_samples, n_clusters)
 *)
 
 
-(** Attribute root_: see constructor for documentation *)
+(** Attribute root_: get value or raise Not_found if None.*)
 val root_ : t -> Py.Object.t
 
-(** Attribute dummy_leaf_: see constructor for documentation *)
+(** Attribute root_: get value as an option. *)
+val root_opt : t -> (Py.Object.t) option
+
+
+(** Attribute dummy_leaf_: get value or raise Not_found if None.*)
 val dummy_leaf_ : t -> Py.Object.t
 
-(** Attribute subcluster_centers_: see constructor for documentation *)
-val subcluster_centers_ : t -> Ndarray.t
+(** Attribute dummy_leaf_: get value as an option. *)
+val dummy_leaf_opt : t -> (Py.Object.t) option
 
-(** Attribute subcluster_labels_: see constructor for documentation *)
-val subcluster_labels_ : t -> Ndarray.t
 
-(** Attribute labels_: see constructor for documentation *)
-val labels_ : t -> Ndarray.t
+(** Attribute subcluster_centers_: get value or raise Not_found if None.*)
+val subcluster_centers_ : t -> Arr.t
+
+(** Attribute subcluster_centers_: get value as an option. *)
+val subcluster_centers_opt : t -> (Arr.t) option
+
+
+(** Attribute subcluster_labels_: get value or raise Not_found if None.*)
+val subcluster_labels_ : t -> Arr.t
+
+(** Attribute subcluster_labels_: get value as an option. *)
+val subcluster_labels_opt : t -> (Arr.t) option
+
+
+(** Attribute labels_: get value or raise Not_found if None.*)
+val labels_ : t -> Arr.t
+
+(** Attribute labels_: get value as an option. *)
+val labels_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -738,7 +801,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?eps:float -> ?min_samples:int -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?metric_params:Py.Object.t -> ?algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> ?leaf_size:int -> ?p:float -> ?n_jobs:[`Int of int | `None] -> unit -> t
+val create : ?eps:float -> ?min_samples:int -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?metric_params:Dict.t -> ?algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> ?leaf_size:int -> ?p:float -> ?n_jobs:int -> unit -> t
 (**
 Perform DBSCAN clustering from vector array or distance matrix.
 
@@ -864,7 +927,7 @@ DBSCAN revisited, revisited: why and how you should (still) use DBSCAN.
 ACM Transactions on Database Systems (TODS), 42(3), 19.
 *)
 
-val fit : ?y:Py.Object.t -> ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : ?y:Py.Object.t -> ?sample_weight:Arr.t -> x:Arr.t -> t -> t
 (**
 Perform DBSCAN clustering from features, or distance matrix.
 
@@ -889,7 +952,7 @@ Returns
 self
 *)
 
-val fit_predict : ?y:Py.Object.t -> ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val fit_predict : ?y:Py.Object.t -> ?sample_weight:Arr.t -> x:Arr.t -> t -> Arr.t
 (**
 Perform DBSCAN clustering from features or distance matrix,
 and return cluster labels.
@@ -916,7 +979,7 @@ labels : ndarray, shape (n_samples,)
     Cluster labels. Noisy samples are given the label -1.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -953,14 +1016,26 @@ self : object
 *)
 
 
-(** Attribute core_sample_indices_: see constructor for documentation *)
-val core_sample_indices_ : t -> Ndarray.t
+(** Attribute core_sample_indices_: get value or raise Not_found if None.*)
+val core_sample_indices_ : t -> Arr.t
 
-(** Attribute components_: see constructor for documentation *)
-val components_ : t -> Ndarray.t
+(** Attribute core_sample_indices_: get value as an option. *)
+val core_sample_indices_opt : t -> (Arr.t) option
 
-(** Attribute labels_: see constructor for documentation *)
-val labels_ : t -> Ndarray.t
+
+(** Attribute components_: get value or raise Not_found if None.*)
+val components_ : t -> Arr.t
+
+(** Attribute components_: get value as an option. *)
+val components_opt : t -> (Arr.t) option
+
+
+(** Attribute labels_: get value or raise Not_found if None.*)
+val labels_ : t -> Arr.t
+
+(** Attribute labels_: get value as an option. *)
+val labels_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -980,7 +1055,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_clusters:int -> ?affinity:[`String of string | `Callable of Py.Object.t] -> ?memory:[`String of string | `JoblibMemory of Py.Object.t] -> ?connectivity:[`Ndarray of Ndarray.t | `Callable of Py.Object.t] -> ?compute_full_tree:[`Auto | `Bool of bool] -> ?linkage:[`Ward | `Complete | `Average | `Single] -> ?pooling_func:Py.Object.t -> ?distance_threshold:float -> unit -> t
+val create : ?n_clusters:int -> ?affinity:[`S of string | `Callable of Py.Object.t] -> ?memory:[`S of string | `JoblibMemory of Py.Object.t] -> ?connectivity:[`Arr of Arr.t | `Callable of Py.Object.t] -> ?compute_full_tree:[`Auto | `Bool of bool] -> ?linkage:[`Ward | `Complete | `Average | `Single] -> ?pooling_func:Py.Object.t -> ?distance_threshold:float -> unit -> t
 (**
 Agglomerate features.
 
@@ -1093,7 +1168,7 @@ FeatureAgglomeration(n_clusters=32)
 (1797, 32)
 *)
 
-val fit : ?y:Py.Object.t -> ?params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> ?params:(string * Py.Object.t) list -> x:Arr.t -> t -> t
 (**
 Fit the hierarchical clustering on the data
 
@@ -1109,7 +1184,7 @@ Returns
 self
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -1133,7 +1208,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1149,7 +1224,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : xred:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : xred:Arr.t -> t -> Arr.t
 (**
 Inverse the transformation.
 Return a vector of size nb_features with the values of Xred assigned
@@ -1187,7 +1262,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Transform a new matrix using the built clustering
 
@@ -1204,23 +1279,47 @@ Y : array, shape = [n_samples, n_clusters] or [n_clusters]
 *)
 
 
-(** Attribute n_clusters_: see constructor for documentation *)
+(** Attribute n_clusters_: get value or raise Not_found if None.*)
 val n_clusters_ : t -> int
 
-(** Attribute labels_: see constructor for documentation *)
+(** Attribute n_clusters_: get value as an option. *)
+val n_clusters_opt : t -> (int) option
+
+
+(** Attribute labels_: get value or raise Not_found if None.*)
 val labels_ : t -> Py.Object.t
 
-(** Attribute n_leaves_: see constructor for documentation *)
+(** Attribute labels_: get value as an option. *)
+val labels_opt : t -> (Py.Object.t) option
+
+
+(** Attribute n_leaves_: get value or raise Not_found if None.*)
 val n_leaves_ : t -> int
 
-(** Attribute n_connected_components_: see constructor for documentation *)
+(** Attribute n_leaves_: get value as an option. *)
+val n_leaves_opt : t -> (int) option
+
+
+(** Attribute n_connected_components_: get value or raise Not_found if None.*)
 val n_connected_components_ : t -> int
 
-(** Attribute children_: see constructor for documentation *)
-val children_ : t -> Ndarray.t
+(** Attribute n_connected_components_: get value as an option. *)
+val n_connected_components_opt : t -> (int) option
 
-(** Attribute distances_: see constructor for documentation *)
-val distances_ : t -> Ndarray.t
+
+(** Attribute children_: get value or raise Not_found if None.*)
+val children_ : t -> Arr.t
+
+(** Attribute children_: get value as an option. *)
+val children_opt : t -> (Arr.t) option
+
+
+(** Attribute distances_: get value or raise Not_found if None.*)
+val distances_ : t -> Arr.t
+
+(** Attribute distances_: get value as an option. *)
+val distances_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1240,7 +1339,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_clusters:int -> ?init:[`K_means_ | `Random | `Ndarray of Ndarray.t] -> ?n_init:int -> ?max_iter:int -> ?tol:float -> ?precompute_distances:[`Auto | `Bool of bool] -> ?verbose:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t] -> ?copy_x:bool -> ?n_jobs:int -> ?algorithm:[`Auto | `Full | `Elkan] -> unit -> t
+val create : ?n_clusters:int -> ?init:[`K_means_ | `Random | `Arr of Arr.t] -> ?n_init:int -> ?max_iter:int -> ?tol:float -> ?precompute_distances:[`Auto | `Bool of bool] -> ?verbose:int -> ?random_state:int -> ?copy_x:bool -> ?n_jobs:int -> ?algorithm:[`Auto | `Full | `Elkan] -> unit -> t
 (**
 K-Means clustering.
 
@@ -1384,7 +1483,7 @@ array([[10.,  2.],
        [ 1.,  2.]])
 *)
 
-val fit : ?y:Py.Object.t -> ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : ?y:Py.Object.t -> ?sample_weight:Arr.t -> x:Arr.t -> t -> t
 (**
 Compute k-means clustering.
 
@@ -1408,7 +1507,7 @@ self
     Fitted estimator.
 *)
 
-val fit_predict : ?y:Py.Object.t -> ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val fit_predict : ?y:Py.Object.t -> ?sample_weight:Arr.t -> x:Arr.t -> t -> Arr.t
 (**
 Compute cluster centers and predict cluster index for each sample.
 
@@ -1433,7 +1532,7 @@ labels : array, shape [n_samples,]
     Index of the cluster each sample belongs to.
 *)
 
-val fit_transform : ?y:Py.Object.t -> ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val fit_transform : ?y:Py.Object.t -> ?sample_weight:Arr.t -> x:Arr.t -> t -> Arr.t
 (**
 Compute clustering and transform X to cluster-distance space.
 
@@ -1457,7 +1556,7 @@ X_new : array, shape [n_samples, k]
     X transformed in the new space.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1473,7 +1572,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : ?sample_weight:Arr.t -> x:Arr.t -> t -> Arr.t
 (**
 Predict the closest cluster each sample in X belongs to.
 
@@ -1496,7 +1595,7 @@ labels : array, shape [n_samples,]
     Index of the cluster each sample belongs to.
 *)
 
-val score : ?y:Py.Object.t -> ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> float
+val score : ?y:Py.Object.t -> ?sample_weight:Arr.t -> x:Arr.t -> t -> float
 (**
 Opposite of the value of X on the K-means objective.
 
@@ -1538,7 +1637,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Transform X to a cluster-distance space.
 
@@ -1558,17 +1657,33 @@ X_new : array, shape [n_samples, k]
 *)
 
 
-(** Attribute cluster_centers_: see constructor for documentation *)
-val cluster_centers_ : t -> Ndarray.t
+(** Attribute cluster_centers_: get value or raise Not_found if None.*)
+val cluster_centers_ : t -> Arr.t
 
-(** Attribute labels_: see constructor for documentation *)
-val labels_ : t -> Ndarray.t
+(** Attribute cluster_centers_: get value as an option. *)
+val cluster_centers_opt : t -> (Arr.t) option
 
-(** Attribute inertia_: see constructor for documentation *)
+
+(** Attribute labels_: get value or raise Not_found if None.*)
+val labels_ : t -> Arr.t
+
+(** Attribute labels_: get value as an option. *)
+val labels_opt : t -> (Arr.t) option
+
+
+(** Attribute inertia_: get value or raise Not_found if None.*)
 val inertia_ : t -> float
 
-(** Attribute n_iter_: see constructor for documentation *)
+(** Attribute inertia_: get value as an option. *)
+val inertia_opt : t -> (float) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1588,7 +1703,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?bandwidth:float -> ?seeds:Ndarray.t -> ?bin_seeding:bool -> ?min_bin_freq:int -> ?cluster_all:bool -> ?n_jobs:[`Int of int | `None] -> ?max_iter:int -> unit -> t
+val create : ?bandwidth:float -> ?seeds:Arr.t -> ?bin_seeding:bool -> ?min_bin_freq:int -> ?cluster_all:bool -> ?n_jobs:int -> ?max_iter:int -> unit -> t
 (**
 Mean shift clustering using a flat kernel.
 
@@ -1701,7 +1816,7 @@ feature space analysis". IEEE Transactions on Pattern Analysis and
 Machine Intelligence. 2002. pp. 603-619.
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Perform clustering.
 
@@ -1713,7 +1828,7 @@ X : array-like of shape (n_samples, n_features)
 y : Ignored
 *)
 
-val fit_predict : ?y:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_predict : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Perform clustering on X and returns cluster labels.
 
@@ -1731,7 +1846,7 @@ labels : ndarray, shape (n_samples,)
     Cluster labels.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1747,7 +1862,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict the closest cluster each sample in X belongs to.
 
@@ -1783,14 +1898,26 @@ self : object
 *)
 
 
-(** Attribute cluster_centers_: see constructor for documentation *)
-val cluster_centers_ : t -> Ndarray.t
+(** Attribute cluster_centers_: get value or raise Not_found if None.*)
+val cluster_centers_ : t -> Arr.t
 
-(** Attribute labels_: see constructor for documentation *)
+(** Attribute cluster_centers_: get value as an option. *)
+val cluster_centers_opt : t -> (Arr.t) option
+
+
+(** Attribute labels_: get value or raise Not_found if None.*)
 val labels_ : t -> Py.Object.t
 
-(** Attribute n_iter_: see constructor for documentation *)
+(** Attribute labels_: get value as an option. *)
+val labels_opt : t -> (Py.Object.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1810,7 +1937,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_clusters:int -> ?init:[`K_means_ | `Random | `Ndarray of Ndarray.t] -> ?max_iter:int -> ?batch_size:int -> ?verbose:int -> ?compute_labels:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t] -> ?tol:float -> ?max_no_improvement:int -> ?init_size:int -> ?n_init:int -> ?reassignment_ratio:float -> unit -> t
+val create : ?n_clusters:int -> ?init:[`K_means_ | `Random | `Arr of Arr.t] -> ?max_iter:int -> ?batch_size:int -> ?verbose:int -> ?compute_labels:bool -> ?random_state:int -> ?tol:float -> ?max_no_improvement:int -> ?init_size:int -> ?n_init:int -> ?reassignment_ratio:float -> unit -> t
 (**
 Mini-Batch K-Means clustering.
 
@@ -1950,7 +2077,7 @@ array([[3.95918367, 2.40816327],
 array([1, 0], dtype=int32)
 *)
 
-val fit : ?y:Py.Object.t -> ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : ?y:Py.Object.t -> ?sample_weight:Arr.t -> x:Arr.t -> t -> t
 (**
 Compute the centroids on X by chunking it into mini-batches.
 
@@ -1973,7 +2100,7 @@ Returns
 self
 *)
 
-val fit_predict : ?y:Py.Object.t -> ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val fit_predict : ?y:Py.Object.t -> ?sample_weight:Arr.t -> x:Arr.t -> t -> Arr.t
 (**
 Compute cluster centers and predict cluster index for each sample.
 
@@ -1998,7 +2125,7 @@ labels : array, shape [n_samples,]
     Index of the cluster each sample belongs to.
 *)
 
-val fit_transform : ?y:Py.Object.t -> ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val fit_transform : ?y:Py.Object.t -> ?sample_weight:Arr.t -> x:Arr.t -> t -> Arr.t
 (**
 Compute clustering and transform X to cluster-distance space.
 
@@ -2022,7 +2149,7 @@ X_new : array, shape [n_samples, k]
     X transformed in the new space.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2038,7 +2165,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val partial_fit : ?y:Py.Object.t -> ?sample_weight:Ndarray.t -> x:Ndarray.t -> t -> Py.Object.t
+val partial_fit : ?y:Py.Object.t -> ?sample_weight:Arr.t -> x:Arr.t -> t -> Py.Object.t
 (**
 Update k means estimate on a single mini-batch X.
 
@@ -2060,7 +2187,7 @@ Returns
 self
 *)
 
-val predict : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : ?sample_weight:Arr.t -> x:Arr.t -> t -> Arr.t
 (**
 Predict the closest cluster each sample in X belongs to.
 
@@ -2083,7 +2210,7 @@ labels : array, shape [n_samples,]
     Index of the cluster each sample belongs to.
 *)
 
-val score : ?y:Py.Object.t -> ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> float
+val score : ?y:Py.Object.t -> ?sample_weight:Arr.t -> x:Arr.t -> t -> float
 (**
 Opposite of the value of X on the K-means objective.
 
@@ -2125,7 +2252,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Transform X to a cluster-distance space.
 
@@ -2145,14 +2272,26 @@ X_new : array, shape [n_samples, k]
 *)
 
 
-(** Attribute cluster_centers_: see constructor for documentation *)
-val cluster_centers_ : t -> Ndarray.t
+(** Attribute cluster_centers_: get value or raise Not_found if None.*)
+val cluster_centers_ : t -> Arr.t
 
-(** Attribute labels_: see constructor for documentation *)
+(** Attribute cluster_centers_: get value as an option. *)
+val cluster_centers_opt : t -> (Arr.t) option
+
+
+(** Attribute labels_: get value or raise Not_found if None.*)
 val labels_ : t -> int
 
-(** Attribute inertia_: see constructor for documentation *)
+(** Attribute labels_: get value as an option. *)
+val labels_opt : t -> (int) option
+
+
+(** Attribute inertia_: get value or raise Not_found if None.*)
 val inertia_ : t -> float
+
+(** Attribute inertia_: get value as an option. *)
+val inertia_opt : t -> (float) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2172,7 +2311,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?min_samples:[`Int of int | `PyObject of Py.Object.t] -> ?max_eps:float -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?p:int -> ?metric_params:Py.Object.t -> ?cluster_method:string -> ?eps:float -> ?xi:[`Float of float | `PyObject of Py.Object.t] -> ?predecessor_correction:bool -> ?min_cluster_size:[`Int of int | `PyObject of Py.Object.t] -> ?algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> ?leaf_size:int -> ?n_jobs:[`Int of int | `None] -> unit -> t
+val create : ?min_samples:[`I of int | `Float_between_0_and_1 of Py.Object.t] -> ?max_eps:float -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?p:int -> ?metric_params:Dict.t -> ?cluster_method:string -> ?eps:float -> ?xi:[`F of float | `Between_0_and_1 of Py.Object.t] -> ?predecessor_correction:bool -> ?min_cluster_size:[`I of int | `Float_between_0_and_1 of Py.Object.t] -> ?algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> ?leaf_size:int -> ?n_jobs:int -> unit -> t
 (**
 Estimate clustering structure from vector array.
 
@@ -2356,7 +2495,7 @@ Examples
 array([0, 0, 0, 1, 1, 1])
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Perform OPTICS clustering.
 
@@ -2379,7 +2518,7 @@ self : instance of OPTICS
     The instance.
 *)
 
-val fit_predict : ?y:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_predict : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Perform clustering on X and returns cluster labels.
 
@@ -2397,7 +2536,7 @@ labels : ndarray, shape (n_samples,)
     Cluster labels.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2434,23 +2573,47 @@ self : object
 *)
 
 
-(** Attribute labels_: see constructor for documentation *)
-val labels_ : t -> Ndarray.t
+(** Attribute labels_: get value or raise Not_found if None.*)
+val labels_ : t -> Arr.t
 
-(** Attribute reachability_: see constructor for documentation *)
-val reachability_ : t -> Ndarray.t
+(** Attribute labels_: get value as an option. *)
+val labels_opt : t -> (Arr.t) option
 
-(** Attribute ordering_: see constructor for documentation *)
-val ordering_ : t -> Ndarray.t
 
-(** Attribute core_distances_: see constructor for documentation *)
-val core_distances_ : t -> Ndarray.t
+(** Attribute reachability_: get value or raise Not_found if None.*)
+val reachability_ : t -> Arr.t
 
-(** Attribute predecessor_: see constructor for documentation *)
-val predecessor_ : t -> Ndarray.t
+(** Attribute reachability_: get value as an option. *)
+val reachability_opt : t -> (Arr.t) option
 
-(** Attribute cluster_hierarchy_: see constructor for documentation *)
-val cluster_hierarchy_ : t -> Ndarray.t
+
+(** Attribute ordering_: get value or raise Not_found if None.*)
+val ordering_ : t -> Arr.t
+
+(** Attribute ordering_: get value as an option. *)
+val ordering_opt : t -> (Arr.t) option
+
+
+(** Attribute core_distances_: get value or raise Not_found if None.*)
+val core_distances_ : t -> Arr.t
+
+(** Attribute core_distances_: get value as an option. *)
+val core_distances_opt : t -> (Arr.t) option
+
+
+(** Attribute predecessor_: get value or raise Not_found if None.*)
+val predecessor_ : t -> Arr.t
+
+(** Attribute predecessor_: get value as an option. *)
+val predecessor_opt : t -> (Arr.t) option
+
+
+(** Attribute cluster_hierarchy_: get value or raise Not_found if None.*)
+val cluster_hierarchy_ : t -> Arr.t
+
+(** Attribute cluster_hierarchy_: get value as an option. *)
+val cluster_hierarchy_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2470,7 +2633,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_clusters:[`Int of int | `PyObject of Py.Object.t] -> ?method_:[`Bistochastic | `Scale | `Log] -> ?n_components:int -> ?n_best:int -> ?svd_method:[`Randomized | `Arpack] -> ?n_svd_vecs:int -> ?mini_batch:bool -> ?init:[`K_means_ | `Random | `PyObject of Py.Object.t] -> ?n_init:int -> ?n_jobs:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t] -> unit -> t
+val create : ?n_clusters:[`I of int | `PyObject of Py.Object.t] -> ?method_:[`Bistochastic | `Scale | `Log] -> ?n_components:int -> ?n_best:int -> ?svd_method:[`Randomized | `Arpack] -> ?n_svd_vecs:int -> ?mini_batch:bool -> ?init:[`K_means_ | `Random | `PyObject of Py.Object.t] -> ?n_init:int -> ?n_jobs:int -> ?random_state:int -> unit -> t
 (**
 Spectral biclustering (Kluger, 2003).
 
@@ -2586,7 +2749,7 @@ References
   <http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.135.1608>`__.
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Creates a biclustering for X.
 
@@ -2616,7 +2779,7 @@ col_ind : np.array, dtype=np.intp
     Indices of columns in the dataset that belong to the bicluster.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2647,7 +2810,7 @@ shape : (int, int)
     Number of rows and columns (resp.) in the bicluster.
 *)
 
-val get_submatrix : i:int -> data:Py.Object.t -> t -> Ndarray.t
+val get_submatrix : i:int -> data:Py.Object.t -> t -> Arr.t
 (**
 Return the submatrix corresponding to bicluster `i`.
 
@@ -2690,17 +2853,33 @@ self : object
 *)
 
 
-(** Attribute rows_: see constructor for documentation *)
-val rows_ : t -> Ndarray.t
+(** Attribute rows_: get value or raise Not_found if None.*)
+val rows_ : t -> Arr.t
 
-(** Attribute columns_: see constructor for documentation *)
-val columns_ : t -> Ndarray.t
+(** Attribute rows_: get value as an option. *)
+val rows_opt : t -> (Arr.t) option
 
-(** Attribute row_labels_: see constructor for documentation *)
-val row_labels_ : t -> Ndarray.t
 
-(** Attribute column_labels_: see constructor for documentation *)
-val column_labels_ : t -> Ndarray.t
+(** Attribute columns_: get value or raise Not_found if None.*)
+val columns_ : t -> Arr.t
+
+(** Attribute columns_: get value as an option. *)
+val columns_opt : t -> (Arr.t) option
+
+
+(** Attribute row_labels_: get value or raise Not_found if None.*)
+val row_labels_ : t -> Arr.t
+
+(** Attribute row_labels_: get value as an option. *)
+val row_labels_opt : t -> (Arr.t) option
+
+
+(** Attribute column_labels_: get value or raise Not_found if None.*)
+val column_labels_ : t -> Arr.t
+
+(** Attribute column_labels_: get value as an option. *)
+val column_labels_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2720,7 +2899,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_clusters:int -> ?eigen_solver:[`Arpack | `Lobpcg | `Amg | `None] -> ?n_components:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?n_init:int -> ?gamma:float -> ?affinity:[`String of string | `Callable of Py.Object.t] -> ?n_neighbors:int -> ?eigen_tol:float -> ?assign_labels:[`Kmeans | `Discretize] -> ?degree:float -> ?coef0:float -> ?kernel_params:Py.Object.t -> ?n_jobs:[`Int of int | `None] -> unit -> t
+val create : ?n_clusters:int -> ?eigen_solver:[`Arpack | `Lobpcg | `Amg] -> ?n_components:int -> ?random_state:int -> ?n_init:int -> ?gamma:float -> ?affinity:[`S of string | `Callable of Py.Object.t] -> ?n_neighbors:int -> ?eigen_tol:float -> ?assign_labels:[`Kmeans | `Discretize] -> ?degree:float -> ?coef0:float -> ?kernel_params:Py.Object.t -> ?n_jobs:int -> unit -> t
 (**
 Apply clustering to a projection of the normalized Laplacian.
 
@@ -2883,7 +3062,7 @@ References
   https://www1.icsi.berkeley.edu/~stellayu/publication/doc/2003kwayICCV.pdf
 *)
 
-val fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Perform spectral clustering from features, or affinity matrix.
 
@@ -2904,7 +3083,7 @@ Returns
 self
 *)
 
-val fit_predict : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val fit_predict : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Perform spectral clustering from features, or affinity matrix,
 and return cluster labels.
@@ -2927,7 +3106,7 @@ labels : ndarray, shape (n_samples,)
     Cluster labels.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2964,11 +3143,19 @@ self : object
 *)
 
 
-(** Attribute affinity_matrix_: see constructor for documentation *)
-val affinity_matrix_ : t -> Ndarray.t
+(** Attribute affinity_matrix_: get value or raise Not_found if None.*)
+val affinity_matrix_ : t -> Arr.t
 
-(** Attribute labels_: see constructor for documentation *)
-val labels_ : t -> Ndarray.t
+(** Attribute affinity_matrix_: get value as an option. *)
+val affinity_matrix_opt : t -> (Arr.t) option
+
+
+(** Attribute labels_: get value or raise Not_found if None.*)
+val labels_ : t -> Arr.t
+
+(** Attribute labels_: get value as an option. *)
+val labels_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2988,7 +3175,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_clusters:int -> ?svd_method:[`Randomized | `Arpack] -> ?n_svd_vecs:int -> ?mini_batch:bool -> ?init:[`Random | `Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> ?n_init:int -> ?n_jobs:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t] -> unit -> t
+val create : ?n_clusters:int -> ?svd_method:[`Randomized | `Arpack] -> ?n_svd_vecs:int -> ?mini_batch:bool -> ?init:[`T_k_means_ of Py.Object.t | `Random | `Arr of Arr.t] -> ?n_init:int -> ?n_jobs:int -> ?random_state:int -> unit -> t
 (**
 Spectral Co-Clustering algorithm (Dhillon, 2001).
 
@@ -3089,7 +3276,7 @@ References
   <http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.140.3011>`__.
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Creates a biclustering for X.
 
@@ -3119,7 +3306,7 @@ col_ind : np.array, dtype=np.intp
     Indices of columns in the dataset that belong to the bicluster.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -3150,7 +3337,7 @@ shape : (int, int)
     Number of rows and columns (resp.) in the bicluster.
 *)
 
-val get_submatrix : i:int -> data:Py.Object.t -> t -> Ndarray.t
+val get_submatrix : i:int -> data:Py.Object.t -> t -> Arr.t
 (**
 Return the submatrix corresponding to bicluster `i`.
 
@@ -3193,17 +3380,33 @@ self : object
 *)
 
 
-(** Attribute rows_: see constructor for documentation *)
-val rows_ : t -> Ndarray.t
+(** Attribute rows_: get value or raise Not_found if None.*)
+val rows_ : t -> Arr.t
 
-(** Attribute columns_: see constructor for documentation *)
-val columns_ : t -> Ndarray.t
+(** Attribute rows_: get value as an option. *)
+val rows_opt : t -> (Arr.t) option
 
-(** Attribute row_labels_: see constructor for documentation *)
-val row_labels_ : t -> Ndarray.t
 
-(** Attribute column_labels_: see constructor for documentation *)
-val column_labels_ : t -> Ndarray.t
+(** Attribute columns_: get value or raise Not_found if None.*)
+val columns_ : t -> Arr.t
+
+(** Attribute columns_: get value as an option. *)
+val columns_opt : t -> (Arr.t) option
+
+
+(** Attribute row_labels_: get value or raise Not_found if None.*)
+val row_labels_ : t -> Arr.t
+
+(** Attribute row_labels_: get value as an option. *)
+val row_labels_opt : t -> (Arr.t) option
+
+
+(** Attribute column_labels_: get value or raise Not_found if None.*)
+val column_labels_ : t -> Arr.t
+
+(** Attribute column_labels_: get value as an option. *)
+val column_labels_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -3218,7 +3421,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val affinity_propagation : ?preference:[`Ndarray of Ndarray.t | `Float of float] -> ?convergence_iter:int -> ?max_iter:int -> ?damping:float -> ?copy:bool -> ?verbose:bool -> ?return_n_iter:bool -> s:Ndarray.t -> unit -> (Ndarray.t * Ndarray.t * int)
+val affinity_propagation : ?preference:[`Arr of Arr.t | `F of float] -> ?convergence_iter:int -> ?max_iter:int -> ?damping:float -> ?copy:bool -> ?verbose:int -> ?return_n_iter:bool -> s:Arr.t -> unit -> (Arr.t * Arr.t * int)
 (**
 Perform Affinity Propagation Clustering of data
 
@@ -3293,7 +3496,7 @@ Brendan J. Frey and Delbert Dueck, "Clustering by Passing Messages
 Between Data Points", Science Feb. 2007
 *)
 
-val cluster_optics_dbscan : reachability:Ndarray.t -> core_distances:Ndarray.t -> ordering:Ndarray.t -> eps:float -> unit -> Ndarray.t
+val cluster_optics_dbscan : reachability:Arr.t -> core_distances:Arr.t -> ordering:Arr.t -> eps:float -> unit -> Arr.t
 (**
 Performs DBSCAN extraction for an arbitrary epsilon.
 
@@ -3323,7 +3526,7 @@ labels_ : array, shape (n_samples,)
     The estimated labels.
 *)
 
-val cluster_optics_xi : ?min_cluster_size:[`Int of int | `PyObject of Py.Object.t] -> ?xi:[`Float of float | `PyObject of Py.Object.t] -> ?predecessor_correction:bool -> reachability:Ndarray.t -> predecessor:Ndarray.t -> ordering:Ndarray.t -> min_samples:[`Int of int | `PyObject of Py.Object.t] -> unit -> (Ndarray.t * Ndarray.t)
+val cluster_optics_xi : ?min_cluster_size:[`I of int | `Float_between_0_and_1 of Py.Object.t] -> ?xi:[`F of float | `Between_0_and_1 of Py.Object.t] -> ?predecessor_correction:bool -> reachability:Arr.t -> predecessor:Arr.t -> ordering:Arr.t -> min_samples:[`I of int | `Float_between_0_and_1 of Py.Object.t] -> unit -> (Arr.t * Arr.t)
 (**
 Automatically extract clusters according to the Xi-steep method.
 
@@ -3373,7 +3576,7 @@ clusters : array, shape (n_clusters, 2)
     np.unique(labels)``.
 *)
 
-val compute_optics_graph : x:Ndarray.t -> min_samples:[`Int of int | `PyObject of Py.Object.t] -> max_eps:float -> metric:[`String of string | `Callable of Py.Object.t] -> p:int -> metric_params:Py.Object.t -> algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> leaf_size:int -> n_jobs:[`Int of int | `None] -> unit -> (Ndarray.t * Ndarray.t * Ndarray.t * Ndarray.t)
+val compute_optics_graph : x:Arr.t -> min_samples:[`I of int | `Float_between_0_and_1 of Py.Object.t] -> max_eps:float -> metric:[`S of string | `Callable of Py.Object.t] -> p:int -> metric_params:Dict.t -> algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> leaf_size:int -> n_jobs:[`I of int | `None] -> unit -> (Arr.t * Arr.t * Arr.t * Arr.t)
 (**
 Computes the OPTICS reachability graph.
 
@@ -3479,7 +3682,7 @@ References
    structure." ACM SIGMOD Record 28, no. 2 (1999): 49-60.
 *)
 
-val dbscan : ?eps:float -> ?min_samples:int -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?metric_params:Py.Object.t -> ?algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> ?leaf_size:int -> ?p:float -> ?sample_weight:Ndarray.t -> ?n_jobs:[`Int of int | `None] -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> unit -> (Py.Object.t * Py.Object.t)
+val dbscan : ?eps:float -> ?min_samples:int -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?metric_params:Dict.t -> ?algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> ?leaf_size:int -> ?p:float -> ?sample_weight:Arr.t -> ?n_jobs:int -> x:[`Arr of Arr.t | `Sparse_CSR_matrix of Py.Object.t] -> unit -> (Py.Object.t * Py.Object.t)
 (**
 Perform DBSCAN clustering from vector array or distance matrix.
 
@@ -3594,7 +3797,7 @@ DBSCAN revisited, revisited: why and how you should (still) use DBSCAN.
 ACM Transactions on Database Systems (TODS), 42(3), 19.
 *)
 
-val estimate_bandwidth : ?quantile:float -> ?n_samples:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?n_jobs:[`Int of int | `None] -> x:Ndarray.t -> unit -> float
+val estimate_bandwidth : ?quantile:float -> ?n_samples:int -> ?random_state:int -> ?n_jobs:int -> x:Arr.t -> unit -> float
 (**
 Estimate the bandwidth to use with the mean-shift algorithm.
 
@@ -3631,7 +3834,7 @@ bandwidth : float
     The bandwidth parameter.
 *)
 
-val get_bin_seeds : ?min_bin_freq:int -> x:Ndarray.t -> bin_size:float -> unit -> Ndarray.t
+val get_bin_seeds : ?min_bin_freq:int -> x:Arr.t -> bin_size:float -> unit -> Arr.t
 (**
 Finds seeds for mean_shift.
 
@@ -3662,7 +3865,7 @@ bin_seeds : array-like of shape (n_samples, n_features)
     Points used as initial kernel positions in clustering.mean_shift.
 *)
 
-val k_means : ?sample_weight:Ndarray.t -> ?init:[`K_means_ | `Random | `Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> ?precompute_distances:[`Bool of bool | `Auto] -> ?n_init:int -> ?max_iter:int -> ?verbose:bool -> ?tol:float -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?copy_x:bool -> ?n_jobs:[`Int of int | `None] -> ?algorithm:[`Auto | `Full | `Elkan] -> ?return_n_iter:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> n_clusters:int -> unit -> (Py.Object.t * Py.Object.t * float * int)
+val k_means : ?sample_weight:Arr.t -> ?init:[`K_means_ | `Random | `Arr of Arr.t | `A_callable of Py.Object.t] -> ?precompute_distances:[`Bool of bool | `Auto] -> ?n_init:int -> ?max_iter:int -> ?verbose:int -> ?tol:float -> ?random_state:int -> ?copy_x:bool -> ?n_jobs:int -> ?algorithm:[`Auto | `Full | `Elkan] -> ?return_n_iter:bool -> x:Arr.t -> n_clusters:int -> unit -> (Py.Object.t * Py.Object.t * float * int)
 (**
 K-means clustering algorithm.
 
@@ -3773,7 +3976,7 @@ best_n_iter : int
     Returned only if `return_n_iter` is set to True.
 *)
 
-val linkage_tree : ?connectivity:Csr_matrix.t -> ?n_clusters:int -> ?linkage:[`Average | `Complete | `Single] -> ?affinity:[`String of string | `Callable of Py.Object.t] -> x:Ndarray.t -> unit -> (Py.Object.t * int * int * Py.Object.t * Ndarray.t)
+val linkage_tree : ?connectivity:Csr_matrix.t -> ?n_clusters:int -> ?linkage:[`Average | `Complete | `Single] -> ?affinity:[`S of string | `Callable of Py.Object.t] -> x:Arr.t -> unit -> (Py.Object.t * int * int * Py.Object.t * Arr.t)
 (**
 Linkage agglomerative clustering based on a Feature matrix.
 
@@ -3851,7 +4054,7 @@ See also
 ward_tree : hierarchical clustering with ward linkage
 *)
 
-val mean_shift : ?bandwidth:float -> ?seeds:[`Ndarray of Ndarray.t | `None] -> ?bin_seeding:bool -> ?min_bin_freq:int -> ?cluster_all:bool -> ?max_iter:int -> ?n_jobs:[`Int of int | `None] -> x:Ndarray.t -> unit -> (Ndarray.t * Ndarray.t)
+val mean_shift : ?bandwidth:float -> ?seeds:Arr.t -> ?bin_seeding:bool -> ?min_bin_freq:int -> ?cluster_all:bool -> ?max_iter:int -> ?n_jobs:int -> x:Arr.t -> unit -> (Arr.t * Arr.t)
 (**
 Perform mean shift clustering of data using a flat kernel.
 
@@ -3923,7 +4126,7 @@ For an example, see :ref:`examples/cluster/plot_mean_shift.py
 <sphx_glr_auto_examples_cluster_plot_mean_shift.py>`.
 *)
 
-val spectral_clustering : ?n_clusters:int -> ?n_components:int -> ?eigen_solver:[`Arpack | `Lobpcg | `Amg | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?n_init:int -> ?eigen_tol:float -> ?assign_labels:[`Kmeans | `Discretize] -> affinity:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> Py.Object.t
+val spectral_clustering : ?n_clusters:int -> ?n_components:int -> ?eigen_solver:[`Arpack | `Lobpcg | `Amg] -> ?random_state:int -> ?n_init:int -> ?eigen_tol:float -> ?assign_labels:[`Kmeans | `Discretize] -> affinity:Arr.t -> unit -> Py.Object.t
 (**
 Apply clustering to a projection of the normalized Laplacian.
 
@@ -4014,7 +4217,7 @@ This algorithm solves the normalized cut for k=2: it is a
 normalized spectral clustering.
 *)
 
-val ward_tree : ?connectivity:Csr_matrix.t -> ?n_clusters:int -> x:Ndarray.t -> unit -> (Py.Object.t * int * int * Py.Object.t * Py.Object.t * Py.Object.t)
+val ward_tree : ?connectivity:Csr_matrix.t -> ?n_clusters:int -> x:Arr.t -> unit -> (Py.Object.t * int * int * Py.Object.t * Py.Object.t * Py.Object.t)
 (**
 Ward clustering based on a Feature matrix.
 

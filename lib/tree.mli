@@ -1,9 +1,12 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module DecisionTreeClassifier : sig
 type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?criterion:[`Gini | `Entropy] -> ?splitter:[`Best | `Random] -> ?max_depth:int -> ?min_samples_split:[`Int of int | `Float of float] -> ?min_samples_leaf:[`Int of int | `Float of float] -> ?min_weight_fraction_leaf:float -> ?max_features:[`Int of int | `Float of float | `Auto | `Sqrt | `Log2] -> ?random_state:[`Int of int | `RandomState of Py.Object.t] -> ?max_leaf_nodes:int -> ?min_impurity_decrease:float -> ?min_impurity_split:float -> ?class_weight:[`DictIntToFloat of (int * float) list | `Balanced | `PyObject of Py.Object.t] -> ?presort:Py.Object.t -> ?ccp_alpha:float -> unit -> t
+val create : ?criterion:[`Gini | `Entropy] -> ?splitter:[`Best | `Random] -> ?max_depth:int -> ?min_samples_split:[`I of int | `F of float] -> ?min_samples_leaf:[`I of int | `F of float] -> ?min_weight_fraction_leaf:float -> ?max_features:[`I of int | `F of float | `Auto | `Sqrt | `Log2] -> ?random_state:int -> ?max_leaf_nodes:int -> ?min_impurity_decrease:float -> ?min_impurity_split:float -> ?class_weight:[`DictIntToFloat of (int * float) list | `List_of_dict of Py.Object.t | `Balanced] -> ?presort:Py.Object.t -> ?ccp_alpha:float -> unit -> t
 (**
 A decision tree classifier.
 
@@ -224,7 +227,7 @@ array([ 1.     ,  0.93...,  0.86...,  0.93...,  0.93...,
         0.93...,  0.93...,  1.     ,  0.93...,  1.      ])
 *)
 
-val apply : ?check_input:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val apply : ?check_input:bool -> x:Arr.t -> t -> Arr.t
 (**
 Return the index of the leaf that each sample is predicted as.
 
@@ -250,7 +253,7 @@ X_leaves : array-like of shape (n_samples,)
     numbering.
 *)
 
-val cost_complexity_pruning_path : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> (Py.Object.t * Ndarray.t * Ndarray.t)
+val cost_complexity_pruning_path : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> (Py.Object.t * Arr.t * Arr.t)
 (**
 Compute the pruning path during Minimal Cost-Complexity Pruning.
 
@@ -287,7 +290,7 @@ ccp_path : Bunch
         corresponding alpha value in ``ccp_alphas``.
 *)
 
-val decision_path : ?check_input:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Csr_matrix.t
+val decision_path : ?check_input:bool -> x:Arr.t -> t -> Csr_matrix.t
 (**
 Return the decision path in the tree.
 
@@ -311,7 +314,7 @@ indicator : sparse matrix of shape (n_samples, n_nodes)
     indicates that the samples goes through the nodes.
 *)
 
-val fit : ?sample_weight:Ndarray.t -> ?check_input:bool -> ?x_idx_sorted:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> ?check_input:bool -> ?x_idx_sorted:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Build a decision tree classifier from the training set (X, y).
 
@@ -371,7 +374,7 @@ self.tree_.n_leaves : int
     Number of leaves.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -387,7 +390,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : ?check_input:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : ?check_input:bool -> x:Arr.t -> t -> Arr.t
 (**
 Predict class or regression value for X.
 
@@ -412,7 +415,7 @@ y : array-like of shape (n_samples,) or (n_samples, n_outputs)
     The predicted classes, or the predict values.
 *)
 
-val predict_log_proba : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Py.Object.t
+val predict_log_proba : x:Arr.t -> t -> Py.Object.t
 (**
 Predict class log-probabilities of the input samples X.
 
@@ -430,7 +433,7 @@ proba : ndarray of shape (n_samples, n_classes) or list of n_outputs            
     classes corresponds to that in the attribute :term:`classes_`.
 *)
 
-val predict_proba : ?check_input:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict_proba : ?check_input:bool -> x:Arr.t -> t -> Arr.t
 (**
 Predict class probabilities of the input samples X.
 
@@ -455,7 +458,7 @@ proba : ndarray of shape (n_samples, n_classes) or list of n_outputs            
     classes corresponds to that in the attribute :term:`classes_`.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -501,26 +504,54 @@ self : object
 *)
 
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
 
-(** Attribute feature_importances_: see constructor for documentation *)
-val feature_importances_ : t -> Ndarray.t
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
 
-(** Attribute max_features_: see constructor for documentation *)
+
+(** Attribute feature_importances_: get value or raise Not_found if None.*)
+val feature_importances_ : t -> Arr.t
+
+(** Attribute feature_importances_: get value as an option. *)
+val feature_importances_opt : t -> (Arr.t) option
+
+
+(** Attribute max_features_: get value or raise Not_found if None.*)
 val max_features_ : t -> int
 
-(** Attribute n_classes_: see constructor for documentation *)
+(** Attribute max_features_: get value as an option. *)
+val max_features_opt : t -> (int) option
+
+
+(** Attribute n_classes_: get value or raise Not_found if None.*)
 val n_classes_ : t -> Py.Object.t
 
-(** Attribute n_features_: see constructor for documentation *)
+(** Attribute n_classes_: get value as an option. *)
+val n_classes_opt : t -> (Py.Object.t) option
+
+
+(** Attribute n_features_: get value or raise Not_found if None.*)
 val n_features_ : t -> int
 
-(** Attribute n_outputs_: see constructor for documentation *)
+(** Attribute n_features_: get value as an option. *)
+val n_features_opt : t -> (int) option
+
+
+(** Attribute n_outputs_: get value or raise Not_found if None.*)
 val n_outputs_ : t -> int
 
-(** Attribute tree_: see constructor for documentation *)
+(** Attribute n_outputs_: get value as an option. *)
+val n_outputs_opt : t -> (int) option
+
+
+(** Attribute tree_: get value or raise Not_found if None.*)
 val tree_ : t -> Py.Object.t
+
+(** Attribute tree_: get value as an option. *)
+val tree_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -540,7 +571,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?criterion:[`Mse | `Friedman_mse | `Mae] -> ?splitter:[`Best | `Random] -> ?max_depth:int -> ?min_samples_split:[`Int of int | `Float of float] -> ?min_samples_leaf:[`Int of int | `Float of float] -> ?min_weight_fraction_leaf:float -> ?max_features:[`Int of int | `Float of float | `Auto | `Sqrt | `Log2] -> ?random_state:[`Int of int | `RandomState of Py.Object.t] -> ?max_leaf_nodes:int -> ?min_impurity_decrease:float -> ?min_impurity_split:float -> ?presort:Py.Object.t -> ?ccp_alpha:float -> unit -> t
+val create : ?criterion:[`Mse | `Friedman_mse | `Mae] -> ?splitter:[`Best | `Random] -> ?max_depth:int -> ?min_samples_split:[`I of int | `F of float] -> ?min_samples_leaf:[`I of int | `F of float] -> ?min_weight_fraction_leaf:float -> ?max_features:[`I of int | `F of float | `Auto | `Sqrt | `Log2] -> ?random_state:int -> ?max_leaf_nodes:int -> ?min_impurity_decrease:float -> ?min_impurity_split:float -> ?presort:Py.Object.t -> ?ccp_alpha:float -> unit -> t
 (**
 A decision tree regressor.
 
@@ -740,7 +771,7 @@ array([ 0.61..., 0.57..., -0.34..., 0.41..., 0.75...,
         0.07..., 0.29..., 0.33..., -1.42..., -1.77...])
 *)
 
-val apply : ?check_input:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val apply : ?check_input:bool -> x:Arr.t -> t -> Arr.t
 (**
 Return the index of the leaf that each sample is predicted as.
 
@@ -766,7 +797,7 @@ X_leaves : array-like of shape (n_samples,)
     numbering.
 *)
 
-val cost_complexity_pruning_path : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> (Py.Object.t * Ndarray.t * Ndarray.t)
+val cost_complexity_pruning_path : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> (Py.Object.t * Arr.t * Arr.t)
 (**
 Compute the pruning path during Minimal Cost-Complexity Pruning.
 
@@ -803,7 +834,7 @@ ccp_path : Bunch
         corresponding alpha value in ``ccp_alphas``.
 *)
 
-val decision_path : ?check_input:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Csr_matrix.t
+val decision_path : ?check_input:bool -> x:Arr.t -> t -> Csr_matrix.t
 (**
 Return the decision path in the tree.
 
@@ -827,7 +858,7 @@ indicator : sparse matrix of shape (n_samples, n_nodes)
     indicates that the samples goes through the nodes.
 *)
 
-val fit : ?sample_weight:Ndarray.t -> ?check_input:bool -> ?x_idx_sorted:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> ?check_input:bool -> ?x_idx_sorted:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Build a decision tree regressor from the training set (X, y).
 
@@ -886,7 +917,7 @@ self.tree_.n_leaves : int
     Number of leaves.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -902,7 +933,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : ?check_input:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : ?check_input:bool -> x:Arr.t -> t -> Arr.t
 (**
 Predict class or regression value for X.
 
@@ -927,7 +958,7 @@ y : array-like of shape (n_samples,) or (n_samples, n_outputs)
     The predicted classes, or the predict values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -993,20 +1024,40 @@ self : object
 *)
 
 
-(** Attribute feature_importances_: see constructor for documentation *)
-val feature_importances_ : t -> Ndarray.t
+(** Attribute feature_importances_: get value or raise Not_found if None.*)
+val feature_importances_ : t -> Arr.t
 
-(** Attribute max_features_: see constructor for documentation *)
+(** Attribute feature_importances_: get value as an option. *)
+val feature_importances_opt : t -> (Arr.t) option
+
+
+(** Attribute max_features_: get value or raise Not_found if None.*)
 val max_features_ : t -> int
 
-(** Attribute n_features_: see constructor for documentation *)
+(** Attribute max_features_: get value as an option. *)
+val max_features_opt : t -> (int) option
+
+
+(** Attribute n_features_: get value or raise Not_found if None.*)
 val n_features_ : t -> int
 
-(** Attribute n_outputs_: see constructor for documentation *)
+(** Attribute n_features_: get value as an option. *)
+val n_features_opt : t -> (int) option
+
+
+(** Attribute n_outputs_: get value or raise Not_found if None.*)
 val n_outputs_ : t -> int
 
-(** Attribute tree_: see constructor for documentation *)
+(** Attribute n_outputs_: get value as an option. *)
+val n_outputs_opt : t -> (int) option
+
+
+(** Attribute tree_: get value or raise Not_found if None.*)
 val tree_ : t -> Py.Object.t
+
+(** Attribute tree_: get value as an option. *)
+val tree_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1026,7 +1077,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?criterion:[`Gini | `Entropy] -> ?splitter:[`Random | `Best] -> ?max_depth:int -> ?min_samples_split:[`Int of int | `Float of float] -> ?min_samples_leaf:[`Int of int | `Float of float] -> ?min_weight_fraction_leaf:float -> ?max_features:[`Int of int | `Float of float | `Auto | `Sqrt | `Log2 | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t] -> ?max_leaf_nodes:int -> ?min_impurity_decrease:float -> ?min_impurity_split:float -> ?class_weight:[`DictIntToFloat of (int * float) list | `Balanced | `PyObject of Py.Object.t] -> ?ccp_alpha:float -> unit -> t
+val create : ?criterion:[`Gini | `Entropy] -> ?splitter:[`Random | `Best] -> ?max_depth:int -> ?min_samples_split:[`I of int | `F of float] -> ?min_samples_leaf:[`I of int | `F of float] -> ?min_weight_fraction_leaf:float -> ?max_features:[`I of int | `F of float | `Auto | `Sqrt | `Log2 | `None] -> ?random_state:int -> ?max_leaf_nodes:int -> ?min_impurity_decrease:float -> ?min_impurity_split:float -> ?class_weight:[`DictIntToFloat of (int * float) list | `List_of_dict of Py.Object.t | `Balanced] -> ?ccp_alpha:float -> unit -> t
 (**
 An extremely randomized tree classifier.
 
@@ -1223,7 +1274,7 @@ References
        Machine Learning, 63(1), 3-42, 2006.
 *)
 
-val apply : ?check_input:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val apply : ?check_input:bool -> x:Arr.t -> t -> Arr.t
 (**
 Return the index of the leaf that each sample is predicted as.
 
@@ -1249,7 +1300,7 @@ X_leaves : array-like of shape (n_samples,)
     numbering.
 *)
 
-val cost_complexity_pruning_path : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> (Py.Object.t * Ndarray.t * Ndarray.t)
+val cost_complexity_pruning_path : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> (Py.Object.t * Arr.t * Arr.t)
 (**
 Compute the pruning path during Minimal Cost-Complexity Pruning.
 
@@ -1286,7 +1337,7 @@ ccp_path : Bunch
         corresponding alpha value in ``ccp_alphas``.
 *)
 
-val decision_path : ?check_input:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Csr_matrix.t
+val decision_path : ?check_input:bool -> x:Arr.t -> t -> Csr_matrix.t
 (**
 Return the decision path in the tree.
 
@@ -1310,7 +1361,7 @@ indicator : sparse matrix of shape (n_samples, n_nodes)
     indicates that the samples goes through the nodes.
 *)
 
-val fit : ?sample_weight:Ndarray.t -> ?check_input:bool -> ?x_idx_sorted:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> ?check_input:bool -> ?x_idx_sorted:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Build a decision tree classifier from the training set (X, y).
 
@@ -1370,7 +1421,7 @@ self.tree_.n_leaves : int
     Number of leaves.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1386,7 +1437,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : ?check_input:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : ?check_input:bool -> x:Arr.t -> t -> Arr.t
 (**
 Predict class or regression value for X.
 
@@ -1411,7 +1462,7 @@ y : array-like of shape (n_samples,) or (n_samples, n_outputs)
     The predicted classes, or the predict values.
 *)
 
-val predict_log_proba : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Py.Object.t
+val predict_log_proba : x:Arr.t -> t -> Py.Object.t
 (**
 Predict class log-probabilities of the input samples X.
 
@@ -1429,7 +1480,7 @@ proba : ndarray of shape (n_samples, n_classes) or list of n_outputs            
     classes corresponds to that in the attribute :term:`classes_`.
 *)
 
-val predict_proba : ?check_input:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict_proba : ?check_input:bool -> x:Arr.t -> t -> Arr.t
 (**
 Predict class probabilities of the input samples X.
 
@@ -1454,7 +1505,7 @@ proba : ndarray of shape (n_samples, n_classes) or list of n_outputs            
     classes corresponds to that in the attribute :term:`classes_`.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -1500,26 +1551,54 @@ self : object
 *)
 
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
 
-(** Attribute max_features_: see constructor for documentation *)
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute max_features_: get value or raise Not_found if None.*)
 val max_features_ : t -> int
 
-(** Attribute n_classes_: see constructor for documentation *)
+(** Attribute max_features_: get value as an option. *)
+val max_features_opt : t -> (int) option
+
+
+(** Attribute n_classes_: get value or raise Not_found if None.*)
 val n_classes_ : t -> Py.Object.t
 
-(** Attribute feature_importances_: see constructor for documentation *)
-val feature_importances_ : t -> Ndarray.t
+(** Attribute n_classes_: get value as an option. *)
+val n_classes_opt : t -> (Py.Object.t) option
 
-(** Attribute n_features_: see constructor for documentation *)
+
+(** Attribute feature_importances_: get value or raise Not_found if None.*)
+val feature_importances_ : t -> Arr.t
+
+(** Attribute feature_importances_: get value as an option. *)
+val feature_importances_opt : t -> (Arr.t) option
+
+
+(** Attribute n_features_: get value or raise Not_found if None.*)
 val n_features_ : t -> int
 
-(** Attribute n_outputs_: see constructor for documentation *)
+(** Attribute n_features_: get value as an option. *)
+val n_features_opt : t -> (int) option
+
+
+(** Attribute n_outputs_: get value or raise Not_found if None.*)
 val n_outputs_ : t -> int
 
-(** Attribute tree_: see constructor for documentation *)
+(** Attribute n_outputs_: get value as an option. *)
+val n_outputs_opt : t -> (int) option
+
+
+(** Attribute tree_: get value or raise Not_found if None.*)
 val tree_ : t -> Py.Object.t
+
+(** Attribute tree_: get value as an option. *)
+val tree_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1539,7 +1618,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?criterion:[`Mse | `Friedman_mse | `Mae] -> ?splitter:[`Random | `Best] -> ?max_depth:int -> ?min_samples_split:[`Int of int | `Float of float] -> ?min_samples_leaf:[`Int of int | `Float of float] -> ?min_weight_fraction_leaf:float -> ?max_features:[`Int of int | `Float of float | `Auto | `Sqrt | `Log2 | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t] -> ?min_impurity_decrease:float -> ?min_impurity_split:float -> ?max_leaf_nodes:int -> ?ccp_alpha:float -> unit -> t
+val create : ?criterion:[`Mse | `Friedman_mse | `Mae] -> ?splitter:[`Random | `Best] -> ?max_depth:int -> ?min_samples_split:[`I of int | `F of float] -> ?min_samples_leaf:[`I of int | `F of float] -> ?min_weight_fraction_leaf:float -> ?max_features:[`I of int | `F of float | `Auto | `Sqrt | `Log2 | `None] -> ?random_state:int -> ?min_impurity_decrease:float -> ?min_impurity_split:float -> ?max_leaf_nodes:int -> ?ccp_alpha:float -> unit -> t
 (**
 An extremely randomized tree regressor.
 
@@ -1722,7 +1801,7 @@ Examples
 0.7823...
 *)
 
-val apply : ?check_input:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val apply : ?check_input:bool -> x:Arr.t -> t -> Arr.t
 (**
 Return the index of the leaf that each sample is predicted as.
 
@@ -1748,7 +1827,7 @@ X_leaves : array-like of shape (n_samples,)
     numbering.
 *)
 
-val cost_complexity_pruning_path : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> (Py.Object.t * Ndarray.t * Ndarray.t)
+val cost_complexity_pruning_path : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> (Py.Object.t * Arr.t * Arr.t)
 (**
 Compute the pruning path during Minimal Cost-Complexity Pruning.
 
@@ -1785,7 +1864,7 @@ ccp_path : Bunch
         corresponding alpha value in ``ccp_alphas``.
 *)
 
-val decision_path : ?check_input:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Csr_matrix.t
+val decision_path : ?check_input:bool -> x:Arr.t -> t -> Csr_matrix.t
 (**
 Return the decision path in the tree.
 
@@ -1809,7 +1888,7 @@ indicator : sparse matrix of shape (n_samples, n_nodes)
     indicates that the samples goes through the nodes.
 *)
 
-val fit : ?sample_weight:Ndarray.t -> ?check_input:bool -> ?x_idx_sorted:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> ?check_input:bool -> ?x_idx_sorted:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Build a decision tree regressor from the training set (X, y).
 
@@ -1868,7 +1947,7 @@ self.tree_.n_leaves : int
     Number of leaves.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1884,7 +1963,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : ?check_input:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : ?check_input:bool -> x:Arr.t -> t -> Arr.t
 (**
 Predict class or regression value for X.
 
@@ -1909,7 +1988,7 @@ y : array-like of shape (n_samples,) or (n_samples, n_outputs)
     The predicted classes, or the predict values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -1975,17 +2054,33 @@ self : object
 *)
 
 
-(** Attribute max_features_: see constructor for documentation *)
+(** Attribute max_features_: get value or raise Not_found if None.*)
 val max_features_ : t -> int
 
-(** Attribute n_features_: see constructor for documentation *)
+(** Attribute max_features_: get value as an option. *)
+val max_features_opt : t -> (int) option
+
+
+(** Attribute n_features_: get value or raise Not_found if None.*)
 val n_features_ : t -> int
 
-(** Attribute n_outputs_: see constructor for documentation *)
+(** Attribute n_features_: get value as an option. *)
+val n_features_opt : t -> (int) option
+
+
+(** Attribute n_outputs_: get value or raise Not_found if None.*)
 val n_outputs_ : t -> int
 
-(** Attribute tree_: see constructor for documentation *)
+(** Attribute n_outputs_: get value as an option. *)
+val n_outputs_opt : t -> (int) option
+
+
+(** Attribute tree_: get value or raise Not_found if None.*)
 val tree_ : t -> Py.Object.t
+
+(** Attribute tree_: get value as an option. *)
+val tree_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2000,7 +2095,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val export_graphviz : ?out_file:[`String of string | `PyObject of Py.Object.t] -> ?max_depth:int -> ?feature_names:string list -> ?class_names:[`StringList of string list | `Bool of bool | `None] -> ?label:[`All | `Root | `None] -> ?filled:bool -> ?leaves_parallel:bool -> ?impurity:bool -> ?node_ids:bool -> ?proportion:bool -> ?rotate:bool -> ?rounded:bool -> ?special_characters:bool -> ?precision:int -> decision_tree:Py.Object.t -> unit -> string
+val export_graphviz : ?out_file:[`File_object of Py.Object.t | `S of string] -> ?max_depth:int -> ?feature_names:string list -> ?class_names:[`StringList of string list | `Bool of bool] -> ?label:[`All | `Root | `None] -> ?filled:bool -> ?leaves_parallel:bool -> ?impurity:bool -> ?node_ids:bool -> ?proportion:bool -> ?rotate:bool -> ?rounded:bool -> ?special_characters:bool -> ?precision:int -> decision_tree:Py.Object.t -> unit -> string
 (**
 Export a decision tree in DOT format.
 
@@ -2157,7 +2252,7 @@ Examples
 |   |   |--- class: 2
 *)
 
-val plot_tree : ?max_depth:int -> ?feature_names:string list -> ?class_names:[`StringList of string list | `Bool of bool | `None] -> ?label:[`All | `Root | `None] -> ?filled:bool -> ?impurity:bool -> ?node_ids:bool -> ?proportion:bool -> ?rotate:bool -> ?rounded:bool -> ?precision:int -> ?ax:Py.Object.t -> ?fontsize:int -> decision_tree:Py.Object.t -> unit -> Py.Object.t
+val plot_tree : ?max_depth:int -> ?feature_names:string list -> ?class_names:[`StringList of string list | `Bool of bool] -> ?label:[`All | `Root | `None] -> ?filled:bool -> ?impurity:bool -> ?node_ids:bool -> ?proportion:bool -> ?rotate:bool -> ?rounded:bool -> ?precision:int -> ?ax:Py.Object.t -> ?fontsize:int -> decision_tree:Py.Object.t -> unit -> Py.Object.t
 (**
 Plot a decision tree.
 

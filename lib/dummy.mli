@@ -1,3 +1,6 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module BaseEstimator : sig
 type t
 val of_pyobject : Py.Object.t -> t
@@ -14,7 +17,7 @@ at the class level in their ``__init__`` as explicit keyword
 arguments (no ``*args`` or ``**kwargs``).
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -74,7 +77,7 @@ val create : unit -> t
 Mixin class for all classifiers in scikit-learn.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -118,7 +121,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?strategy:string -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?constant:[`Int of int | `String of string | `Ndarray of Ndarray.t] -> unit -> t
+val create : ?strategy:string -> ?random_state:int -> ?constant:[`I of int | `S of string | `Arr of Arr.t] -> unit -> t
 (**
 DummyClassifier is a classifier that makes predictions using simple rules.
 
@@ -197,7 +200,7 @@ array([1, 1, 1, 1])
 0.75
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:[`Arr of Arr.t | `Object_with_finite_shape of Py.Object.t] -> y:Arr.t -> t -> t
 (**
 Fit the random classifier.
 
@@ -217,7 +220,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -233,7 +236,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Perform classification on test vectors X.
 
@@ -248,7 +251,7 @@ y : array-like of shape (n_samples,) or (n_samples, n_outputs)
     Predicted target values for X.
 *)
 
-val predict_log_proba : x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> Py.Object.t
+val predict_log_proba : x:[`Arr of Arr.t | `Object_with_finite_shape of Py.Object.t] -> t -> Py.Object.t
 (**
 Return log probability estimates for the test vectors X.
 
@@ -265,7 +268,7 @@ P : array-like or list of array-like of shape (n_samples, n_classes)
     output.
 *)
 
-val predict_proba : x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Return probability estimates for the test vectors X.
 
@@ -282,7 +285,7 @@ P : array-like or list of array-lke of shape (n_samples, n_classes)
     output.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `None] -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:[`Arr of Arr.t | `None] -> y:Arr.t -> t -> float
 (**
 Returns the mean accuracy on the given test data and labels.
 
@@ -331,20 +334,40 @@ self : object
 *)
 
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
 
-(** Attribute n_classes_: see constructor for documentation *)
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute n_classes_: get value or raise Not_found if None.*)
 val n_classes_ : t -> Py.Object.t
 
-(** Attribute class_prior_: see constructor for documentation *)
+(** Attribute n_classes_: get value as an option. *)
+val n_classes_opt : t -> (Py.Object.t) option
+
+
+(** Attribute class_prior_: get value or raise Not_found if None.*)
 val class_prior_ : t -> Py.Object.t
 
-(** Attribute n_outputs_: see constructor for documentation *)
+(** Attribute class_prior_: get value as an option. *)
+val class_prior_opt : t -> (Py.Object.t) option
+
+
+(** Attribute n_outputs_: get value or raise Not_found if None.*)
 val n_outputs_ : t -> int
 
-(** Attribute sparse_output_: see constructor for documentation *)
+(** Attribute n_outputs_: get value as an option. *)
+val n_outputs_opt : t -> (int) option
+
+
+(** Attribute sparse_output_: get value or raise Not_found if None.*)
 val sparse_output_ : t -> bool
+
+(** Attribute sparse_output_: get value as an option. *)
+val sparse_output_opt : t -> (bool) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -364,7 +387,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?strategy:string -> ?constant:[`Int of int | `Float of float | `Ndarray of Ndarray.t] -> ?quantile:Py.Object.t -> unit -> t
+val create : ?strategy:string -> ?constant:[`I of int | `F of float | `Arr of Arr.t] -> ?quantile:Py.Object.t -> unit -> t
 (**
 DummyRegressor is a regressor that makes predictions using
 simple rules.
@@ -421,7 +444,7 @@ array([5., 5., 5., 5.])
 0.0
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:[`Arr of Arr.t | `Object_with_finite_shape of Py.Object.t] -> y:Arr.t -> t -> t
 (**
 Fit the random regressor.
 
@@ -441,7 +464,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -457,7 +480,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : ?return_std:bool -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> Ndarray.t
+val predict : ?return_std:bool -> x:Arr.t -> t -> Arr.t
 (**
 Perform classification on test vectors X.
 
@@ -479,7 +502,7 @@ y_std : array-like of shape (n_samples,) or (n_samples, n_outputs)
     Standard deviation of predictive distribution of query points.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `None] -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:[`Arr of Arr.t | `None] -> y:Arr.t -> t -> float
 (**
 Returns the coefficient of determination R^2 of the prediction.
 
@@ -536,11 +559,19 @@ self : object
 *)
 
 
-(** Attribute constant_: see constructor for documentation *)
-val constant_ : t -> Ndarray.t
+(** Attribute constant_: get value or raise Not_found if None.*)
+val constant_ : t -> Arr.t
 
-(** Attribute n_outputs_: see constructor for documentation *)
+(** Attribute constant_: get value as an option. *)
+val constant_opt : t -> (Arr.t) option
+
+
+(** Attribute n_outputs_: get value or raise Not_found if None.*)
 val n_outputs_ : t -> int
+
+(** Attribute n_outputs_: get value as an option. *)
+val n_outputs_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -589,7 +620,7 @@ val create : unit -> t
 Mixin class for all regression estimators in scikit-learn.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -648,7 +679,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val check_array : ?accept_sparse:[`String of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`String of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C | `None] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:[`Bool of bool | `None] -> ?estimator:[`String of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
+val check_array : ?accept_sparse:[`S of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`S of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:bool -> ?estimator:[`S of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
 (**
 Input validation on an array, list, sparse matrix or similar.
 
@@ -752,7 +783,7 @@ Parameters
     Objects that will be checked for consistent length.
 *)
 
-val check_is_fitted : ?attributes:[`String of string | `ArrayLike of Py.Object.t | `StringList of string list] -> ?msg:string -> ?all_or_any:[`Callable of Py.Object.t | `PyObject of Py.Object.t] -> estimator:Py.Object.t -> unit -> Py.Object.t
+val check_is_fitted : ?attributes:[`S of string | `Arr of Arr.t | `StringList of string list] -> ?msg:string -> ?all_or_any:[`Callable of Py.Object.t | `PyObject of Py.Object.t] -> estimator:Py.Object.t -> unit -> Py.Object.t
 (**
 Perform is_fitted validation for estimator.
 
@@ -799,7 +830,7 @@ NotFittedError
     If the attributes are not found.
 *)
 
-val check_random_state : seed:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> Py.Object.t
+val check_random_state : seed:[`I of int | `RandomState of Py.Object.t | `None] -> unit -> Py.Object.t
 (**
 Turn seed into a np.random.RandomState instance
 
@@ -812,7 +843,7 @@ seed : None | int | instance of RandomState
     Otherwise raise ValueError.
 *)
 
-val class_distribution : ?sample_weight:Ndarray.t -> y:Py.Object.t -> unit -> (Py.Object.t * Py.Object.t * Py.Object.t)
+val class_distribution : ?sample_weight:Arr.t -> y:[`Arr of Arr.t | `PyObject of Py.Object.t] -> unit -> (Py.Object.t * Py.Object.t * Py.Object.t)
 (**
 Compute class priors from multioutput-multiclass target data
 

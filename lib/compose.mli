@@ -1,9 +1,12 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module ColumnTransformer : sig
 type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?remainder:[`Drop | `Passthrough | `Estimator of Py.Object.t] -> ?sparse_threshold:float -> ?n_jobs:[`Int of int | `None] -> ?transformer_weights:Py.Object.t -> ?verbose:bool -> transformers:Py.Object.t -> unit -> t
+val create : ?remainder:[`Drop | `Passthrough | `Estimator of Py.Object.t] -> ?sparse_threshold:float -> ?n_jobs:int -> ?transformer_weights:Dict.t -> ?verbose:int -> transformers:Py.Object.t -> unit -> t
 (**
 Applies transformers to columns of an array or pandas DataFrame.
 
@@ -137,7 +140,7 @@ array([[0. , 1. , 0.5, 0.5],
        [0.5, 0.5, 0. , 1. ]])
 *)
 
-val fit : ?y:Ndarray.t -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> t
+val fit : ?y:Arr.t -> x:[`Arr of Arr.t | `DataFrame of Py.Object.t] -> t -> t
 (**
 Fit all transformers using X.
 
@@ -156,7 +159,7 @@ self : ColumnTransformer
     This estimator
 *)
 
-val fit_transform : ?y:Ndarray.t -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> x:Arr.t -> t -> Arr.t
 (**
 Fit all transformers, transform the data and concatenate results.
 
@@ -188,7 +191,7 @@ feature_names : list of strings
     Names of the features produced by transform.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -215,7 +218,7 @@ Returns
 self
 *)
 
-val transform : x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Transform X separately by each transformer, concatenate results.
 
@@ -234,14 +237,26 @@ X_t : array-like or sparse matrix, shape (n_samples, sum_n_components)
 *)
 
 
-(** Attribute transformers_: see constructor for documentation *)
-val transformers_ : t -> Py.Object.t
+(** Attribute transformers_: get value or raise Not_found if None.*)
+val transformers_ : t -> Arr.t
 
-(** Attribute named_transformers_: see constructor for documentation *)
-val named_transformers_ : t -> Py.Object.t
+(** Attribute transformers_: get value as an option. *)
+val transformers_opt : t -> (Arr.t) option
 
-(** Attribute sparse_output_: see constructor for documentation *)
+
+(** Attribute named_transformers_: get value or raise Not_found if None.*)
+val named_transformers_ : t -> Dict.t
+
+(** Attribute named_transformers_: get value as an option. *)
+val named_transformers_opt : t -> (Dict.t) option
+
+
+(** Attribute sparse_output_: get value or raise Not_found if None.*)
 val sparse_output_ : t -> bool
+
+(** Attribute sparse_output_: get value as an option. *)
+val sparse_output_opt : t -> (bool) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -352,7 +367,7 @@ See :ref:`examples/compose/plot_transformed_target.py
 <sphx_glr_auto_examples_compose_plot_transformed_target.py>`.
 *)
 
-val fit : ?fit_params:(string * Py.Object.t) list -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the model according to the given training data.
 
@@ -375,7 +390,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -391,7 +406,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the base regressor, applying inverse.
 
@@ -409,7 +424,7 @@ y_hat : array, shape = (n_samples,)
     Predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -475,11 +490,19 @@ self : object
 *)
 
 
-(** Attribute regressor_: see constructor for documentation *)
+(** Attribute regressor_: get value or raise Not_found if None.*)
 val regressor_ : t -> Py.Object.t
 
-(** Attribute transformer_: see constructor for documentation *)
+(** Attribute regressor_: get value as an option. *)
+val regressor_opt : t -> (Py.Object.t) option
+
+
+(** Attribute transformer_: get value or raise Not_found if None.*)
 val transformer_ : t -> Py.Object.t
+
+(** Attribute transformer_: get value as an option. *)
+val transformer_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string

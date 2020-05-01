@@ -1,9 +1,12 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module Isomap : sig
 type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_neighbors:int -> ?n_components:int -> ?eigen_solver:[`Auto | `Arpack | `Dense] -> ?tol:float -> ?max_iter:int -> ?path_method:[`Auto | `FW | `D] -> ?neighbors_algorithm:[`Auto | `Brute | `Kd_tree | `Ball_tree] -> ?n_jobs:[`Int of int | `None] -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?p:int -> ?metric_params:Py.Object.t -> unit -> t
+val create : ?n_neighbors:int -> ?n_components:int -> ?eigen_solver:[`Auto | `Arpack | `Dense] -> ?tol:float -> ?max_iter:int -> ?path_method:[`Auto | `FW | `D] -> ?neighbors_algorithm:[`Auto | `Brute | `Kd_tree | `Ball_tree] -> ?n_jobs:int -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?p:int -> ?metric_params:Dict.t -> unit -> t
 (**
 Isomap Embedding
 
@@ -114,7 +117,7 @@ References
        framework for nonlinear dimensionality reduction. Science 290 (5500)
 *)
 
-val fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> t
+val fit : ?y:Py.Object.t -> x:[`Arr of Arr.t | `PyObject of Py.Object.t] -> t -> t
 (**
 Compute the embedding vectors for data X
 
@@ -132,7 +135,7 @@ Returns
 self : returns an instance of self.
 *)
 
-val fit_transform : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> Ndarray.t
+val fit_transform : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Fit the model from data in X and transform X.
 
@@ -149,7 +152,7 @@ Returns
 X_new : array-like, shape (n_samples, n_components)
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -206,7 +209,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Transform X.
 
@@ -231,17 +234,33 @@ X_new : array-like, shape (n_queries, n_components)
 *)
 
 
-(** Attribute embedding_: see constructor for documentation *)
-val embedding_ : t -> Ndarray.t
+(** Attribute embedding_: get value or raise Not_found if None.*)
+val embedding_ : t -> Arr.t
 
-(** Attribute kernel_pca_: see constructor for documentation *)
+(** Attribute embedding_: get value as an option. *)
+val embedding_opt : t -> (Arr.t) option
+
+
+(** Attribute kernel_pca_: get value or raise Not_found if None.*)
 val kernel_pca_ : t -> Py.Object.t
 
-(** Attribute nbrs_: see constructor for documentation *)
+(** Attribute kernel_pca_: get value as an option. *)
+val kernel_pca_opt : t -> (Py.Object.t) option
+
+
+(** Attribute nbrs_: get value or raise Not_found if None.*)
 val nbrs_ : t -> Py.Object.t
 
-(** Attribute dist_matrix_: see constructor for documentation *)
-val dist_matrix_ : t -> Ndarray.t
+(** Attribute nbrs_: get value as an option. *)
+val nbrs_opt : t -> (Py.Object.t) option
+
+
+(** Attribute dist_matrix_: get value or raise Not_found if None.*)
+val dist_matrix_ : t -> Arr.t
+
+(** Attribute dist_matrix_: get value as an option. *)
+val dist_matrix_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -261,7 +280,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_neighbors:int -> ?n_components:int -> ?reg:float -> ?eigen_solver:[`Auto | `Arpack | `Dense] -> ?tol:float -> ?max_iter:int -> ?method_:[`Standard | `Hessian | `Modified | `Ltsa] -> ?hessian_tol:float -> ?modified_tol:float -> ?neighbors_algorithm:[`Auto | `Brute | `Kd_tree | `Ball_tree] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?n_jobs:[`Int of int | `None] -> unit -> t
+val create : ?n_neighbors:int -> ?n_components:int -> ?reg:float -> ?eigen_solver:[`Auto | `Arpack | `Dense] -> ?tol:float -> ?max_iter:int -> ?method_:[`Standard | `Hessian | `Modified | `Ltsa] -> ?hessian_tol:float -> ?modified_tol:float -> ?neighbors_algorithm:[`Auto | `Brute | `Kd_tree | `Ball_tree] -> ?random_state:int -> ?n_jobs:int -> unit -> t
 (**
 Locally Linear Embedding
 
@@ -376,7 +395,7 @@ References
     Journal of Shanghai Univ.  8:406 (2004)
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Compute the embedding vectors for data X
 
@@ -392,7 +411,7 @@ Returns
 self : returns an instance of self.
 *)
 
-val fit_transform : ?y:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Compute the embedding vectors for data X and transform X.
 
@@ -408,7 +427,7 @@ Returns
 X_new : array-like, shape (n_samples, n_components)
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -444,7 +463,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Transform new points into embedding space.
 
@@ -463,14 +482,26 @@ it together with methods that are not scale-invariant (like SVMs)
 *)
 
 
-(** Attribute embedding_: see constructor for documentation *)
-val embedding_ : t -> Ndarray.t
+(** Attribute embedding_: get value or raise Not_found if None.*)
+val embedding_ : t -> Arr.t
 
-(** Attribute reconstruction_error_: see constructor for documentation *)
+(** Attribute embedding_: get value as an option. *)
+val embedding_opt : t -> (Arr.t) option
+
+
+(** Attribute reconstruction_error_: get value or raise Not_found if None.*)
 val reconstruction_error_ : t -> float
 
-(** Attribute nbrs_: see constructor for documentation *)
+(** Attribute reconstruction_error_: get value as an option. *)
+val reconstruction_error_opt : t -> (float) option
+
+
+(** Attribute nbrs_: get value or raise Not_found if None.*)
 val nbrs_ : t -> Py.Object.t
+
+(** Attribute nbrs_: get value as an option. *)
+val nbrs_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -490,7 +521,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_components:int -> ?metric:bool -> ?n_init:int -> ?max_iter:int -> ?verbose:int -> ?eps:float -> ?n_jobs:[`Int of int | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?dissimilarity:[`Euclidean | `Precomputed] -> unit -> t
+val create : ?n_components:int -> ?metric:bool -> ?n_init:int -> ?max_iter:int -> ?verbose:int -> ?eps:float -> ?n_jobs:int -> ?random_state:int -> ?dissimilarity:[`Euclidean | `Precomputed] -> unit -> t
 (**
 Multidimensional scaling
 
@@ -577,7 +608,7 @@ Psychometrika, 29 (1964)
 hypothesis" Kruskal, J. Psychometrika, 29, (1964)
 *)
 
-val fit : ?y:Py.Object.t -> ?init:Ndarray.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> ?init:Arr.t -> x:Arr.t -> t -> t
 (**
 Computes the position of the points in the embedding space
 
@@ -595,7 +626,7 @@ init : ndarray, shape (n_samples,), optional, default: None
     chosen array.
 *)
 
-val fit_transform : ?y:Py.Object.t -> ?init:Ndarray.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Py.Object.t -> ?init:Arr.t -> x:Arr.t -> t -> Arr.t
 (**
 Fit the data from X, and returns the embedded coordinates
 
@@ -613,7 +644,7 @@ init : ndarray, shape (n_samples,), optional, default: None
     chosen array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -650,11 +681,19 @@ self : object
 *)
 
 
-(** Attribute embedding_: see constructor for documentation *)
-val embedding_ : t -> Ndarray.t
+(** Attribute embedding_: get value or raise Not_found if None.*)
+val embedding_ : t -> Arr.t
 
-(** Attribute stress_: see constructor for documentation *)
+(** Attribute embedding_: get value as an option. *)
+val embedding_opt : t -> (Arr.t) option
+
+
+(** Attribute stress_: get value or raise Not_found if None.*)
 val stress_ : t -> float
+
+(** Attribute stress_: get value as an option. *)
+val stress_opt : t -> (float) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -674,7 +713,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_components:int -> ?affinity:[`String of string | `Callable of Py.Object.t] -> ?gamma:float -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?eigen_solver:[`Arpack | `Lobpcg | `Amg | `None] -> ?n_neighbors:int -> ?n_jobs:[`Int of int | `None] -> unit -> t
+val create : ?n_components:int -> ?affinity:[`S of string | `Callable of Py.Object.t] -> ?gamma:float -> ?random_state:int -> ?eigen_solver:[`Arpack | `Lobpcg | `Amg] -> ?n_neighbors:int -> ?n_jobs:int -> unit -> t
 (**
 Spectral embedding for non-linear dimensionality reduction.
 
@@ -770,7 +809,7 @@ References
   http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.160.2324
 *)
 
-val fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fit the model from data in X.
 
@@ -791,7 +830,7 @@ self : object
     Returns the instance itself.
 *)
 
-val fit_transform : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val fit_transform : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Fit the model from data in X and transform X.
 
@@ -811,7 +850,7 @@ Returns
 X_new : array-like, shape (n_samples, n_components)
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -848,14 +887,26 @@ self : object
 *)
 
 
-(** Attribute embedding_: see constructor for documentation *)
-val embedding_ : t -> Ndarray.t
+(** Attribute embedding_: get value or raise Not_found if None.*)
+val embedding_ : t -> Arr.t
 
-(** Attribute affinity_matrix_: see constructor for documentation *)
-val affinity_matrix_ : t -> Ndarray.t
+(** Attribute embedding_: get value as an option. *)
+val embedding_opt : t -> (Arr.t) option
 
-(** Attribute n_neighbors_: see constructor for documentation *)
+
+(** Attribute affinity_matrix_: get value or raise Not_found if None.*)
+val affinity_matrix_ : t -> Arr.t
+
+(** Attribute affinity_matrix_: get value as an option. *)
+val affinity_matrix_opt : t -> (Arr.t) option
+
+
+(** Attribute n_neighbors_: get value or raise Not_found if None.*)
 val n_neighbors_ : t -> int
+
+(** Attribute n_neighbors_: get value as an option. *)
+val n_neighbors_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -875,7 +926,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_components:int -> ?perplexity:float -> ?early_exaggeration:float -> ?learning_rate:float -> ?n_iter:int -> ?n_iter_without_progress:int -> ?min_grad_norm:float -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?init:[`String of string | `Ndarray of Ndarray.t] -> ?verbose:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?method_:string -> ?angle:float -> ?n_jobs:[`Int of int | `None] -> unit -> t
+val create : ?n_components:int -> ?perplexity:float -> ?early_exaggeration:float -> ?learning_rate:float -> ?n_iter:int -> ?n_iter_without_progress:int -> ?min_grad_norm:float -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?init:[`S of string | `Arr of Arr.t] -> ?verbose:int -> ?random_state:int -> ?method_:string -> ?angle:float -> ?n_jobs:int -> unit -> t
 (**
 t-distributed Stochastic Neighbor Embedding.
 
@@ -1035,7 +1086,7 @@ References
     https://lvdmaaten.github.io/publications/papers/JMLR_2014.pdf
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fit X into an embedded space.
 
@@ -1051,7 +1102,7 @@ X : array, shape (n_samples, n_features) or (n_samples, n_samples)
 y : Ignored
 *)
 
-val fit_transform : ?y:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Fit X into an embedded space and return that transformed
 output.
@@ -1073,7 +1124,7 @@ X_new : array, shape (n_samples, n_components)
     Embedding of the training data in low-dimensional space.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1110,14 +1161,26 @@ self : object
 *)
 
 
-(** Attribute embedding_: see constructor for documentation *)
-val embedding_ : t -> Ndarray.t
+(** Attribute embedding_: get value or raise Not_found if None.*)
+val embedding_ : t -> Arr.t
 
-(** Attribute kl_divergence_: see constructor for documentation *)
+(** Attribute embedding_: get value as an option. *)
+val embedding_opt : t -> (Arr.t) option
+
+
+(** Attribute kl_divergence_: get value or raise Not_found if None.*)
 val kl_divergence_ : t -> float
 
-(** Attribute n_iter_: see constructor for documentation *)
+(** Attribute kl_divergence_: get value as an option. *)
+val kl_divergence_opt : t -> (float) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1132,7 +1195,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val locally_linear_embedding : ?reg:float -> ?eigen_solver:[`Auto | `Arpack | `Dense] -> ?tol:float -> ?max_iter:int -> ?method_:[`Standard | `Hessian | `Modified | `Ltsa] -> ?hessian_tol:float -> ?modified_tol:float -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?n_jobs:[`Int of int | `None] -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> n_neighbors:int -> n_components:int -> unit -> (Ndarray.t * float)
+val locally_linear_embedding : ?reg:float -> ?eigen_solver:[`Auto | `Arpack | `Dense] -> ?tol:float -> ?max_iter:int -> ?method_:[`Standard | `Hessian | `Modified | `Ltsa] -> ?hessian_tol:float -> ?modified_tol:float -> ?random_state:int -> ?n_jobs:int -> x:[`Arr of Arr.t | `NearestNeighbors of Py.Object.t] -> n_neighbors:int -> n_components:int -> unit -> (Arr.t * float)
 (**
 Perform a Locally Linear Embedding analysis on the data.
 
@@ -1231,7 +1294,7 @@ References
     Journal of Shanghai Univ.  8:406 (2004)
 *)
 
-val smacof : ?metric:bool -> ?n_components:int -> ?init:Ndarray.t -> ?n_init:int -> ?n_jobs:[`Int of int | `None] -> ?max_iter:int -> ?verbose:int -> ?eps:float -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?return_n_iter:bool -> dissimilarities:Ndarray.t -> unit -> (Ndarray.t * float * int)
+val smacof : ?metric:bool -> ?n_components:int -> ?init:Arr.t -> ?n_init:int -> ?n_jobs:int -> ?max_iter:int -> ?verbose:int -> ?eps:float -> ?random_state:int -> ?return_n_iter:bool -> dissimilarities:Arr.t -> unit -> (Arr.t * float * int)
 (**
 Computes multidimensional scaling using the SMACOF algorithm.
 
@@ -1329,7 +1392,7 @@ Psychometrika, 29 (1964)
 hypothesis" Kruskal, J. Psychometrika, 29, (1964)
 *)
 
-val spectral_embedding : ?n_components:int -> ?eigen_solver:[`Arpack | `Lobpcg | `Amg | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?eigen_tol:float -> ?norm_laplacian:bool -> ?drop_first:bool -> adjacency:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> unit -> Ndarray.t
+val spectral_embedding : ?n_components:int -> ?eigen_solver:[`Arpack | `Lobpcg | `Amg] -> ?random_state:int -> ?eigen_tol:float -> ?norm_laplacian:bool -> ?drop_first:bool -> adjacency:[`Arr of Arr.t | `Sparse_graph of Py.Object.t] -> unit -> Arr.t
 (**
 Project the sample on the first eigenvectors of the graph Laplacian.
 
@@ -1406,7 +1469,7 @@ References
   https://doi.org/10.1137%2FS1064827500366124
 *)
 
-val trustworthiness : ?n_neighbors:int -> ?metric:[`String of string | `Callable of Py.Object.t] -> x:Ndarray.t -> x_embedded:Ndarray.t -> unit -> float
+val trustworthiness : ?n_neighbors:int -> ?metric:[`S of string | `Callable of Py.Object.t] -> x:Arr.t -> x_embedded:Arr.t -> unit -> float
 (**
 Expresses to what extent the local structure is retained.
 

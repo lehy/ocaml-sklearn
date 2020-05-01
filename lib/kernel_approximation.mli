@@ -1,3 +1,6 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module AdditiveChi2Sampler : sig
 type t
 val of_pyobject : Py.Object.t -> t
@@ -71,7 +74,7 @@ A. Vedaldi and A. Zisserman, Pattern Analysis and Machine Intelligence,
 2011
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Set the parameters
 
@@ -87,7 +90,7 @@ self : object
     Returns the transformer.
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -111,7 +114,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -147,7 +150,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Apply approximate feature map to X.
 
@@ -163,8 +166,12 @@ X_new : {array, sparse matrix},                shape = (n_samples, n_features * 
 *)
 
 
-(** Attribute sample_interval_: see constructor for documentation *)
+(** Attribute sample_interval_: get value or raise Not_found if None.*)
 val sample_interval_ : t -> float
+
+(** Attribute sample_interval_: get value as an option. *)
+val sample_interval_opt : t -> (float) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -195,7 +202,7 @@ at the class level in their ``__init__`` as explicit keyword
 arguments (no ``*args`` or ``**kwargs``).
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -250,7 +257,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?kernel:[`String of string | `Callable of Py.Object.t] -> ?gamma:float -> ?coef0:float -> ?degree:float -> ?kernel_params:Py.Object.t -> ?n_components:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
+val create : ?kernel:[`S of string | `Callable of Py.Object.t] -> ?gamma:float -> ?coef0:float -> ?degree:float -> ?kernel_params:Dict.t -> ?n_components:int -> ?random_state:int -> unit -> t
 (**
 Approximate a kernel map using a subset of the training data.
 
@@ -343,7 +350,7 @@ RBFSampler : An approximation to the RBF kernel using random Fourier
 sklearn.metrics.pairwise.kernel_metrics : List of built-in kernels.
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fit estimator to data.
 
@@ -356,7 +363,7 @@ X : array-like of shape (n_samples, n_features)
     Training data.
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -380,7 +387,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -416,7 +423,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Apply feature map to X.
 
@@ -435,14 +442,26 @@ X_transformed : array, shape=(n_samples, n_components)
 *)
 
 
-(** Attribute components_: see constructor for documentation *)
-val components_ : t -> Ndarray.t
+(** Attribute components_: get value or raise Not_found if None.*)
+val components_ : t -> Arr.t
 
-(** Attribute component_indices_: see constructor for documentation *)
-val component_indices_ : t -> Ndarray.t
+(** Attribute components_: get value as an option. *)
+val components_opt : t -> (Arr.t) option
 
-(** Attribute normalization_: see constructor for documentation *)
-val normalization_ : t -> Ndarray.t
+
+(** Attribute component_indices_: get value or raise Not_found if None.*)
+val component_indices_ : t -> Arr.t
+
+(** Attribute component_indices_: get value as an option. *)
+val component_indices_opt : t -> (Arr.t) option
+
+
+(** Attribute normalization_: get value or raise Not_found if None.*)
+val normalization_ : t -> Arr.t
+
+(** Attribute normalization_: get value as an option. *)
+val normalization_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -462,7 +481,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?gamma:float -> ?n_components:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
+val create : ?gamma:float -> ?n_components:int -> ?random_state:int -> unit -> t
 (**
 Approximates feature map of an RBF kernel by Monte Carlo approximation
 of its Fourier transform.
@@ -511,7 +530,7 @@ Benjamin Recht.
 (https://people.eecs.berkeley.edu/~brecht/papers/08.rah.rec.nips.pdf)
 *)
 
-val fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fit the model with X.
 
@@ -529,7 +548,7 @@ self : object
     Returns the transformer.
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -553,7 +572,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -589,7 +608,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Apply the approximate feature map to X.
 
@@ -623,7 +642,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?skewedness:float -> ?n_components:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
+val create : ?skewedness:float -> ?n_components:int -> ?random_state:int -> unit -> t
 (**
 Approximates feature map of the "skewed chi-squared" kernel by Monte
 Carlo approximation of its Fourier transform.
@@ -674,7 +693,7 @@ AdditiveChi2Sampler : A different approach for approximating an additive
 sklearn.metrics.pairwise.chi2_kernel : The exact chi squared kernel.
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fit the model with X.
 
@@ -692,7 +711,7 @@ self : object
     Returns the transformer.
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -716,7 +735,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -752,7 +771,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Apply the approximate feature map to X.
 
@@ -792,7 +811,7 @@ val create : unit -> t
 Mixin class for all transformers in scikit-learn.
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -830,7 +849,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val as_float_array : ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> Py.Object.t
+val as_float_array : ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> x:Arr.t -> unit -> Arr.t
 (**
 Converts an array-like to an array of floats.
 
@@ -864,7 +883,7 @@ XT : {array, sparse matrix}
     An array of type np.float
 *)
 
-val check_array : ?accept_sparse:[`String of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`String of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C | `None] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:[`Bool of bool | `None] -> ?estimator:[`String of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
+val check_array : ?accept_sparse:[`S of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`S of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:bool -> ?estimator:[`S of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
 (**
 Input validation on an array, list, sparse matrix or similar.
 
@@ -956,7 +975,7 @@ array_converted : object
     The converted and validated array.
 *)
 
-val check_is_fitted : ?attributes:[`String of string | `ArrayLike of Py.Object.t | `StringList of string list] -> ?msg:string -> ?all_or_any:[`Callable of Py.Object.t | `PyObject of Py.Object.t] -> estimator:Py.Object.t -> unit -> Py.Object.t
+val check_is_fitted : ?attributes:[`S of string | `Arr of Arr.t | `StringList of string list] -> ?msg:string -> ?all_or_any:[`Callable of Py.Object.t | `PyObject of Py.Object.t] -> estimator:Py.Object.t -> unit -> Py.Object.t
 (**
 Perform is_fitted validation for estimator.
 
@@ -1003,7 +1022,7 @@ NotFittedError
     If the attributes are not found.
 *)
 
-val check_random_state : seed:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> Py.Object.t
+val check_random_state : seed:[`I of int | `RandomState of Py.Object.t | `None] -> unit -> Py.Object.t
 (**
 Turn seed into a np.random.RandomState instance
 
@@ -1016,7 +1035,7 @@ seed : None | int | instance of RandomState
     Otherwise raise ValueError.
 *)
 
-val pairwise_kernels : ?y:Ndarray.t -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?filter_params:bool -> ?n_jobs:[`Int of int | `None] -> ?kwds:(string * Py.Object.t) list -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val pairwise_kernels : ?y:Arr.t -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?filter_params:bool -> ?n_jobs:int -> ?kwds:(string * Py.Object.t) list -> x:[`Arr of Arr.t | `Otherwise of Py.Object.t] -> unit -> Py.Object.t
 (**
 Compute the kernel between arrays X and optional array Y.
 
@@ -1086,7 +1105,7 @@ Notes
 If metric is 'precomputed', Y is ignored and X is returned.
 *)
 
-val safe_sparse_dot : ?dense_output:Py.Object.t -> a:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> b:Py.Object.t -> unit -> Py.Object.t
+val safe_sparse_dot : ?dense_output:Py.Object.t -> a:Arr.t -> b:Py.Object.t -> unit -> Arr.t
 (**
 Dot product that handle the sparse matrix case correctly
 
@@ -1104,7 +1123,7 @@ dot_product : array or sparse matrix
     sparse if ``a`` and ``b`` are sparse and ``dense_output=False``.
 *)
 
-val svd : ?full_matrices:Py.Object.t -> ?compute_uv:Py.Object.t -> ?overwrite_a:Py.Object.t -> ?check_finite:Py.Object.t -> ?lapack_driver:Py.Object.t -> a:Py.Object.t -> unit -> Ndarray.t
+val svd : ?full_matrices:Py.Object.t -> ?compute_uv:Py.Object.t -> ?overwrite_a:Py.Object.t -> ?check_finite:Py.Object.t -> ?lapack_driver:Py.Object.t -> a:Py.Object.t -> unit -> Arr.t
 (**
 Singular Value Decomposition.
 

@@ -1,6 +1,7 @@
 let () = Wrap_utils.init ();;
 let ns = Py.import "sklearn.base"
 
+let get_py name = Py.Module.get ns name
 module BaseEstimator = struct
 type t = Py.Object.t
 let of_pyobject x = x
@@ -14,7 +15,7 @@ let get_params ?deep self =
    Py.Module.get_function_with_keywords self "get_params"
      [||]
      (Wrap_utils.keyword_args [("deep", Wrap_utils.Option.map deep Py.Bool.of_bool)])
-
+     |> Dict.of_pyobject
 let set_params ?params self =
    Py.Module.get_function_with_keywords self "set_params"
      [||]
@@ -48,7 +49,7 @@ let get_submatrix ~i ~data self =
    Py.Module.get_function_with_keywords self "get_submatrix"
      [||]
      (Wrap_utils.keyword_args [("i", Some(i |> Py.Int.of_int)); ("data", Some(data ))])
-     |> Ndarray.of_pyobject
+     |> Arr.of_pyobject
 let to_string self = Py.Object.to_string self
 let show self = to_string self
 let pp formatter self = Format.fprintf formatter "%s" (show self)
@@ -66,7 +67,7 @@ let create () =
 let score ?sample_weight ~x ~y self =
    Py.Module.get_function_with_keywords self "score"
      [||]
-     (Wrap_utils.keyword_args [("sample_weight", Wrap_utils.Option.map sample_weight Ndarray.to_pyobject); ("X", Some(x |> Ndarray.to_pyobject)); ("y", Some(y |> Ndarray.to_pyobject))])
+     (Wrap_utils.keyword_args [("sample_weight", Wrap_utils.Option.map sample_weight Arr.to_pyobject); ("X", Some(x |> Arr.to_pyobject)); ("y", Some(y |> Arr.to_pyobject))])
      |> Py.Float.to_float
 let to_string self = Py.Object.to_string self
 let show self = to_string self
@@ -85,8 +86,8 @@ let create () =
 let fit_predict ?y ~x self =
    Py.Module.get_function_with_keywords self "fit_predict"
      [||]
-     (Wrap_utils.keyword_args [("y", y); ("X", Some(x |> Ndarray.to_pyobject))])
-     |> Ndarray.of_pyobject
+     (Wrap_utils.keyword_args [("y", y); ("X", Some(x |> Arr.to_pyobject))])
+     |> Arr.of_pyobject
 let to_string self = Py.Object.to_string self
 let show self = to_string self
 let pp formatter self = Format.fprintf formatter "%s" (show self)
@@ -104,7 +105,7 @@ let create () =
 let score ?y ~x self =
    Py.Module.get_function_with_keywords self "score"
      [||]
-     (Wrap_utils.keyword_args [("y", y); ("X", Some(x |> Ndarray.to_pyobject))])
+     (Wrap_utils.keyword_args [("y", y); ("X", Some(x |> Arr.to_pyobject))])
      |> Py.Float.to_float
 let to_string self = Py.Object.to_string self
 let show self = to_string self
@@ -151,8 +152,8 @@ let create () =
 let fit_predict ?y ~x self =
    Py.Module.get_function_with_keywords self "fit_predict"
      [||]
-     (Wrap_utils.keyword_args [("y", y); ("X", Some(x |> Ndarray.to_pyobject))])
-     |> Ndarray.of_pyobject
+     (Wrap_utils.keyword_args [("y", y); ("X", Some(x |> Arr.to_pyobject))])
+     |> Arr.of_pyobject
 let to_string self = Py.Object.to_string self
 let show self = to_string self
 let pp formatter self = Format.fprintf formatter "%s" (show self)
@@ -170,7 +171,7 @@ let create () =
 let score ?sample_weight ~x ~y self =
    Py.Module.get_function_with_keywords self "score"
      [||]
-     (Wrap_utils.keyword_args [("sample_weight", Wrap_utils.Option.map sample_weight Ndarray.to_pyobject); ("X", Some(x |> Ndarray.to_pyobject)); ("y", Some(y |> Ndarray.to_pyobject))])
+     (Wrap_utils.keyword_args [("sample_weight", Wrap_utils.Option.map sample_weight Arr.to_pyobject); ("X", Some(x |> Arr.to_pyobject)); ("y", Some(y |> Arr.to_pyobject))])
      |> Py.Float.to_float
 let to_string self = Py.Object.to_string self
 let show self = to_string self
@@ -189,8 +190,8 @@ let create () =
 let fit_transform ?y ?fit_params ~x self =
    Py.Module.get_function_with_keywords self "fit_transform"
      [||]
-     (List.rev_append (Wrap_utils.keyword_args [("y", Wrap_utils.Option.map y Ndarray.to_pyobject); ("X", Some(x |> Ndarray.to_pyobject))]) (match fit_params with None -> [] | Some x -> x))
-     |> Ndarray.of_pyobject
+     (List.rev_append (Wrap_utils.keyword_args [("y", Wrap_utils.Option.map y Arr.to_pyobject); ("X", Some(x |> Arr.to_pyobject))]) (match fit_params with None -> [] | Some x -> x))
+     |> Arr.of_pyobject
 let to_string self = Py.Object.to_string self
 let show self = to_string self
 let pp formatter self = Format.fprintf formatter "%s" (show self)
@@ -201,7 +202,7 @@ end
                        [||]
                        (Wrap_utils.keyword_args [("safe", Wrap_utils.Option.map safe Py.Bool.of_bool); ("estimator", Some(estimator |> (function
 | `Estimator x -> Wrap_utils.id x
-| `ArrayLike x -> Wrap_utils.id x
+| `Arr x -> Arr.to_pyobject x
 | `PyObject x -> Wrap_utils.id x
 )))])
 

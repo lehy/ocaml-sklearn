@@ -1,9 +1,12 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module LinearSVC : sig
 type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?penalty:[`L1 | `L2] -> ?loss:[`Hinge | `Squared_hinge] -> ?dual:bool -> ?tol:float -> ?c:float -> ?multi_class:[`Ovr | `Crammer_singer] -> ?fit_intercept:bool -> ?intercept_scaling:float -> ?class_weight:[`DictIntToFloat of (int * float) list | `Balanced] -> ?verbose:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?max_iter:int -> unit -> t
+val create : ?penalty:[`L1 | `L2] -> ?loss:[`Hinge | `Squared_hinge] -> ?dual:bool -> ?tol:float -> ?c:float -> ?multi_class:[`Ovr | `Crammer_singer] -> ?fit_intercept:bool -> ?intercept_scaling:float -> ?class_weight:[`DictIntToFloat of (int * float) list | `Balanced] -> ?verbose:int -> ?random_state:int -> ?max_iter:int -> unit -> t
 (**
 Linear Support Vector Classification.
 
@@ -167,7 +170,7 @@ LinearSVC(random_state=0, tol=1e-05)
 [1]
 *)
 
-val decision_function : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val decision_function : x:Arr.t -> t -> Arr.t
 (**
 Predict confidence scores for samples.
 
@@ -202,7 +205,7 @@ self
     Fitted estimator.
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the model according to the given training data.
 
@@ -226,7 +229,7 @@ self : object
     An instance of the estimator.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -242,7 +245,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict class labels for samples in X.
 
@@ -257,7 +260,7 @@ C : array, shape [n_samples]
     Predicted class label per sample.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -330,17 +333,33 @@ method (if any) will not work until you call densify.
 *)
 
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
 
-(** Attribute n_iter_: see constructor for documentation *)
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
+
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -360,7 +379,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?epsilon:float -> ?tol:float -> ?c:float -> ?loss:string -> ?fit_intercept:bool -> ?intercept_scaling:float -> ?dual:bool -> ?verbose:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?max_iter:int -> unit -> t
+val create : ?epsilon:float -> ?tol:float -> ?c:float -> ?loss:string -> ?fit_intercept:bool -> ?intercept_scaling:float -> ?dual:bool -> ?verbose:int -> ?random_state:int -> ?max_iter:int -> unit -> t
 (**
 Linear Support Vector Regression.
 
@@ -477,7 +496,7 @@ sklearn.linear_model.SGDRegressor
     various loss functions and regularization regimes.
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the model according to the given training data.
 
@@ -500,7 +519,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -516,7 +535,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the linear model.
 
@@ -531,7 +550,7 @@ C : array, shape (n_samples,)
     Returns predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -597,14 +616,26 @@ self : object
 *)
 
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
 
-(** Attribute n_iter_: see constructor for documentation *)
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -624,7 +655,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?nu:float -> ?kernel:string -> ?degree:int -> ?gamma:[`Scale | `Auto | `Float of float] -> ?coef0:float -> ?shrinking:bool -> ?probability:bool -> ?tol:float -> ?cache_size:float -> ?class_weight:[`DictIntToFloat of (int * float) list | `Balanced] -> ?verbose:bool -> ?max_iter:int -> ?decision_function_shape:[`Ovo | `Ovr] -> ?break_ties:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
+val create : ?nu:float -> ?kernel:string -> ?degree:int -> ?gamma:[`Scale | `Auto | `F of float] -> ?coef0:float -> ?shrinking:bool -> ?probability:bool -> ?tol:float -> ?cache_size:float -> ?class_weight:[`DictIntToFloat of (int * float) list | `Balanced] -> ?verbose:int -> ?max_iter:int -> ?decision_function_shape:[`Ovo | `Ovr] -> ?break_ties:bool -> ?random_state:int -> unit -> t
 (**
 Nu-Support Vector Classification.
 
@@ -811,7 +842,7 @@ References
     <http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.41.1639>`_
 *)
 
-val decision_function : x:Ndarray.t -> t -> Ndarray.t
+val decision_function : x:Arr.t -> t -> Arr.t
 (**
 Evaluates the decision function for the samples in X.
 
@@ -839,7 +870,7 @@ If decision_function_shape='ovr', the decision function is a monotonic
 transformation of ovo decision function.
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the SVM model according to the given training data.
 
@@ -872,7 +903,7 @@ If X is a dense array, then the other methods will not support sparse
 matrices as input.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -888,7 +919,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Perform classification on samples in X.
 
@@ -906,7 +937,7 @@ y_pred : array, shape (n_samples,)
     Class labels for samples in X.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -952,38 +983,82 @@ self : object
 *)
 
 
-(** Attribute support_: see constructor for documentation *)
-val support_ : t -> Ndarray.t
+(** Attribute support_: get value or raise Not_found if None.*)
+val support_ : t -> Arr.t
 
-(** Attribute support_vectors_: see constructor for documentation *)
-val support_vectors_ : t -> Ndarray.t
+(** Attribute support_: get value as an option. *)
+val support_opt : t -> (Arr.t) option
 
-(** Attribute n_support_: see constructor for documentation *)
+
+(** Attribute support_vectors_: get value or raise Not_found if None.*)
+val support_vectors_ : t -> Arr.t
+
+(** Attribute support_vectors_: get value as an option. *)
+val support_vectors_opt : t -> (Arr.t) option
+
+
+(** Attribute n_support_: get value or raise Not_found if None.*)
 val n_support_ : t -> Py.Object.t
 
-(** Attribute dual_coef_: see constructor for documentation *)
-val dual_coef_ : t -> Ndarray.t
+(** Attribute n_support_: get value as an option. *)
+val n_support_opt : t -> (Py.Object.t) option
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute dual_coef_: get value or raise Not_found if None.*)
+val dual_coef_ : t -> Arr.t
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute dual_coef_: get value as an option. *)
+val dual_coef_opt : t -> (Arr.t) option
 
-(** Attribute fit_status_: see constructor for documentation *)
+
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
+
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
+
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
+
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute fit_status_: get value or raise Not_found if None.*)
 val fit_status_ : t -> int
 
-(** Attribute probA_: see constructor for documentation *)
+(** Attribute fit_status_: get value as an option. *)
+val fit_status_opt : t -> (int) option
+
+
+(** Attribute probA_: get value or raise Not_found if None.*)
 val probA_ : t -> Py.Object.t
 
-(** Attribute class_weight_: see constructor for documentation *)
-val class_weight_ : t -> Ndarray.t
+(** Attribute probA_: get value as an option. *)
+val probA_opt : t -> (Py.Object.t) option
 
-(** Attribute shape_fit_: see constructor for documentation *)
+
+(** Attribute class_weight_: get value or raise Not_found if None.*)
+val class_weight_ : t -> Arr.t
+
+(** Attribute class_weight_: get value as an option. *)
+val class_weight_opt : t -> (Arr.t) option
+
+
+(** Attribute shape_fit_: get value or raise Not_found if None.*)
 val shape_fit_ : t -> Py.Object.t
+
+(** Attribute shape_fit_: get value as an option. *)
+val shape_fit_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1003,7 +1078,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?nu:float -> ?c:float -> ?kernel:string -> ?degree:int -> ?gamma:[`Scale | `Auto | `Float of float] -> ?coef0:float -> ?shrinking:bool -> ?tol:float -> ?cache_size:float -> ?verbose:bool -> ?max_iter:int -> unit -> t
+val create : ?nu:float -> ?c:float -> ?kernel:string -> ?degree:int -> ?gamma:[`Scale | `Auto | `F of float] -> ?coef0:float -> ?shrinking:bool -> ?tol:float -> ?cache_size:float -> ?verbose:int -> ?max_iter:int -> unit -> t
 (**
 Nu Support Vector Regression.
 
@@ -1116,7 +1191,7 @@ Notes
 <http://www.csie.ntu.edu.tw/~cjlin/papers/libsvm.pdf>`__
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the SVM model according to the given training data.
 
@@ -1149,7 +1224,7 @@ If X is a dense array, then the other methods will not support sparse
 matrices as input.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1165,7 +1240,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Perform regression on samples in X.
 
@@ -1182,7 +1257,7 @@ Returns
 y_pred : array, shape (n_samples,)
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -1248,20 +1323,40 @@ self : object
 *)
 
 
-(** Attribute support_: see constructor for documentation *)
-val support_ : t -> Ndarray.t
+(** Attribute support_: get value or raise Not_found if None.*)
+val support_ : t -> Arr.t
 
-(** Attribute support_vectors_: see constructor for documentation *)
-val support_vectors_ : t -> Ndarray.t
+(** Attribute support_: get value as an option. *)
+val support_opt : t -> (Arr.t) option
 
-(** Attribute dual_coef_: see constructor for documentation *)
-val dual_coef_ : t -> Ndarray.t
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute support_vectors_: get value or raise Not_found if None.*)
+val support_vectors_ : t -> Arr.t
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute support_vectors_: get value as an option. *)
+val support_vectors_opt : t -> (Arr.t) option
+
+
+(** Attribute dual_coef_: get value or raise Not_found if None.*)
+val dual_coef_ : t -> Arr.t
+
+(** Attribute dual_coef_: get value as an option. *)
+val dual_coef_opt : t -> (Arr.t) option
+
+
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
+
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
+
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1281,7 +1376,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?kernel:string -> ?degree:int -> ?gamma:[`Scale | `Auto | `Float of float] -> ?coef0:float -> ?tol:float -> ?nu:float -> ?shrinking:bool -> ?cache_size:float -> ?verbose:bool -> ?max_iter:int -> unit -> t
+val create : ?kernel:string -> ?degree:int -> ?gamma:[`Scale | `Auto | `F of float] -> ?coef0:float -> ?tol:float -> ?nu:float -> ?shrinking:bool -> ?cache_size:float -> ?verbose:int -> ?max_iter:int -> unit -> t
 (**
 Unsupervised Outlier Detection.
 
@@ -1382,7 +1477,7 @@ array([-1,  1,  1,  1, -1])
 array([1.7798..., 2.0547..., 2.0556..., 2.0561..., 1.7332...])
 *)
 
-val decision_function : x:Ndarray.t -> t -> Ndarray.t
+val decision_function : x:Arr.t -> t -> Arr.t
 (**
 Signed distance to the separating hyperplane.
 
@@ -1398,7 +1493,7 @@ dec : array-like, shape (n_samples,)
     Returns the decision function of the samples.
 *)
 
-val fit : ?y:Py.Object.t -> ?sample_weight:Ndarray.t -> ?params:(string * Py.Object.t) list -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : ?y:Py.Object.t -> ?sample_weight:Arr.t -> ?params:(string * Py.Object.t) list -> x:Arr.t -> t -> t
 (**
 Detects the soft boundary of the set of samples X.
 
@@ -1424,7 +1519,7 @@ Notes
 If X is not a C-ordered contiguous array it is copied.
 *)
 
-val fit_predict : ?y:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_predict : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Perform fit on X and returns labels for X.
 
@@ -1444,7 +1539,7 @@ y : ndarray, shape (n_samples,)
     1 for inliers, -1 for outliers.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1460,7 +1555,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Perform classification on samples in X.
 
@@ -1478,7 +1573,7 @@ y_pred : array, shape (n_samples,)
     Class labels for samples in X.
 *)
 
-val score_samples : x:Ndarray.t -> t -> Ndarray.t
+val score_samples : x:Arr.t -> t -> Arr.t
 (**
 Raw scoring function of the samples.
 
@@ -1513,26 +1608,54 @@ self : object
 *)
 
 
-(** Attribute support_: see constructor for documentation *)
-val support_ : t -> Ndarray.t
+(** Attribute support_: get value or raise Not_found if None.*)
+val support_ : t -> Arr.t
 
-(** Attribute support_vectors_: see constructor for documentation *)
-val support_vectors_ : t -> Ndarray.t
+(** Attribute support_: get value as an option. *)
+val support_opt : t -> (Arr.t) option
 
-(** Attribute dual_coef_: see constructor for documentation *)
-val dual_coef_ : t -> Ndarray.t
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute support_vectors_: get value or raise Not_found if None.*)
+val support_vectors_ : t -> Arr.t
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute support_vectors_: get value as an option. *)
+val support_vectors_opt : t -> (Arr.t) option
 
-(** Attribute offset_: see constructor for documentation *)
+
+(** Attribute dual_coef_: get value or raise Not_found if None.*)
+val dual_coef_ : t -> Arr.t
+
+(** Attribute dual_coef_: get value as an option. *)
+val dual_coef_opt : t -> (Arr.t) option
+
+
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
+
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
+
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute offset_: get value or raise Not_found if None.*)
 val offset_ : t -> float
 
-(** Attribute fit_status_: see constructor for documentation *)
+(** Attribute offset_: get value as an option. *)
+val offset_opt : t -> (float) option
+
+
+(** Attribute fit_status_: get value or raise Not_found if None.*)
 val fit_status_ : t -> int
+
+(** Attribute fit_status_: get value as an option. *)
+val fit_status_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1552,7 +1675,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?c:float -> ?kernel:string -> ?degree:int -> ?gamma:[`Scale | `Auto | `Float of float] -> ?coef0:float -> ?shrinking:bool -> ?probability:bool -> ?tol:float -> ?cache_size:float -> ?class_weight:[`DictIntToFloat of (int * float) list | `Balanced] -> ?verbose:bool -> ?max_iter:int -> ?decision_function_shape:[`Ovo | `Ovr] -> ?break_ties:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
+val create : ?c:float -> ?kernel:string -> ?degree:int -> ?gamma:[`Scale | `Auto | `F of float] -> ?coef0:float -> ?shrinking:bool -> ?probability:bool -> ?tol:float -> ?cache_size:float -> ?class_weight:[`DictIntToFloat of (int * float) list | `Balanced] -> ?verbose:int -> ?max_iter:int -> ?decision_function_shape:[`Ovo | `Ovr] -> ?break_ties:bool -> ?random_state:int -> unit -> t
 (**
 C-Support Vector Classification.
 
@@ -1752,7 +1875,7 @@ References
     <http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.41.1639>`_
 *)
 
-val decision_function : x:Ndarray.t -> t -> Ndarray.t
+val decision_function : x:Arr.t -> t -> Arr.t
 (**
 Evaluates the decision function for the samples in X.
 
@@ -1780,7 +1903,7 @@ If decision_function_shape='ovr', the decision function is a monotonic
 transformation of ovo decision function.
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the SVM model according to the given training data.
 
@@ -1813,7 +1936,7 @@ If X is a dense array, then the other methods will not support sparse
 matrices as input.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1829,7 +1952,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Perform classification on samples in X.
 
@@ -1847,7 +1970,7 @@ y_pred : array, shape (n_samples,)
     Class labels for samples in X.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -1893,38 +2016,82 @@ self : object
 *)
 
 
-(** Attribute support_: see constructor for documentation *)
-val support_ : t -> Ndarray.t
+(** Attribute support_: get value or raise Not_found if None.*)
+val support_ : t -> Arr.t
 
-(** Attribute support_vectors_: see constructor for documentation *)
-val support_vectors_ : t -> Ndarray.t
+(** Attribute support_: get value as an option. *)
+val support_opt : t -> (Arr.t) option
 
-(** Attribute n_support_: see constructor for documentation *)
+
+(** Attribute support_vectors_: get value or raise Not_found if None.*)
+val support_vectors_ : t -> Arr.t
+
+(** Attribute support_vectors_: get value as an option. *)
+val support_vectors_opt : t -> (Arr.t) option
+
+
+(** Attribute n_support_: get value or raise Not_found if None.*)
 val n_support_ : t -> Py.Object.t
 
-(** Attribute dual_coef_: see constructor for documentation *)
-val dual_coef_ : t -> Ndarray.t
+(** Attribute n_support_: get value as an option. *)
+val n_support_opt : t -> (Py.Object.t) option
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute dual_coef_: get value or raise Not_found if None.*)
+val dual_coef_ : t -> Arr.t
 
-(** Attribute fit_status_: see constructor for documentation *)
+(** Attribute dual_coef_: get value as an option. *)
+val dual_coef_opt : t -> (Arr.t) option
+
+
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
+
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
+
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute fit_status_: get value or raise Not_found if None.*)
 val fit_status_ : t -> int
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute fit_status_: get value as an option. *)
+val fit_status_opt : t -> (int) option
 
-(** Attribute probA_: see constructor for documentation *)
+
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
+
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute probA_: get value or raise Not_found if None.*)
 val probA_ : t -> Py.Object.t
 
-(** Attribute class_weight_: see constructor for documentation *)
-val class_weight_ : t -> Ndarray.t
+(** Attribute probA_: get value as an option. *)
+val probA_opt : t -> (Py.Object.t) option
 
-(** Attribute shape_fit_: see constructor for documentation *)
+
+(** Attribute class_weight_: get value or raise Not_found if None.*)
+val class_weight_ : t -> Arr.t
+
+(** Attribute class_weight_: get value as an option. *)
+val class_weight_opt : t -> (Arr.t) option
+
+
+(** Attribute shape_fit_: get value or raise Not_found if None.*)
 val shape_fit_ : t -> Py.Object.t
+
+(** Attribute shape_fit_: get value as an option. *)
+val shape_fit_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1944,7 +2111,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?kernel:string -> ?degree:int -> ?gamma:[`Scale | `Auto | `Float of float] -> ?coef0:float -> ?tol:float -> ?c:float -> ?epsilon:float -> ?shrinking:bool -> ?cache_size:float -> ?verbose:bool -> ?max_iter:int -> unit -> t
+val create : ?kernel:string -> ?degree:int -> ?gamma:[`Scale | `Auto | `F of float] -> ?coef0:float -> ?tol:float -> ?c:float -> ?epsilon:float -> ?shrinking:bool -> ?cache_size:float -> ?verbose:int -> ?max_iter:int -> unit -> t
 (**
 Epsilon-Support Vector Regression.
 
@@ -2067,7 +2234,7 @@ Notes
 <http://www.csie.ntu.edu.tw/~cjlin/papers/libsvm.pdf>`__
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the SVM model according to the given training data.
 
@@ -2100,7 +2267,7 @@ If X is a dense array, then the other methods will not support sparse
 matrices as input.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2116,7 +2283,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Perform regression on samples in X.
 
@@ -2133,7 +2300,7 @@ Returns
 y_pred : array, shape (n_samples,)
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -2199,23 +2366,47 @@ self : object
 *)
 
 
-(** Attribute support_: see constructor for documentation *)
-val support_ : t -> Ndarray.t
+(** Attribute support_: get value or raise Not_found if None.*)
+val support_ : t -> Arr.t
 
-(** Attribute support_vectors_: see constructor for documentation *)
-val support_vectors_ : t -> Ndarray.t
+(** Attribute support_: get value as an option. *)
+val support_opt : t -> (Arr.t) option
 
-(** Attribute dual_coef_: see constructor for documentation *)
-val dual_coef_ : t -> Ndarray.t
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute support_vectors_: get value or raise Not_found if None.*)
+val support_vectors_ : t -> Arr.t
 
-(** Attribute fit_status_: see constructor for documentation *)
+(** Attribute support_vectors_: get value as an option. *)
+val support_vectors_opt : t -> (Arr.t) option
+
+
+(** Attribute dual_coef_: get value or raise Not_found if None.*)
+val dual_coef_ : t -> Arr.t
+
+(** Attribute dual_coef_: get value as an option. *)
+val dual_coef_opt : t -> (Arr.t) option
+
+
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
+
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
+
+
+(** Attribute fit_status_: get value or raise Not_found if None.*)
 val fit_status_ : t -> int
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute fit_status_: get value as an option. *)
+val fit_status_opt : t -> (int) option
+
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2230,7 +2421,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val l1_min_c : ?loss:[`Squared_hinge | `Log] -> ?fit_intercept:bool -> ?intercept_scaling:float -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> unit -> float
+val l1_min_c : ?loss:[`Squared_hinge | `Log] -> ?fit_intercept:bool -> ?intercept_scaling:float -> x:Arr.t -> y:Arr.t -> unit -> float
 (**
 Return the lowest bound for C such that for C in (l1_min_C, infinity)
 the model is guaranteed not to be empty. This applies to l1 penalized

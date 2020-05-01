@@ -1,3 +1,6 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module Bunch : sig
 type t
 val of_pyobject : Py.Object.t -> t
@@ -41,7 +44,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_jobs:[`Int of int | `None] -> ?transformer_weights:Py.Object.t -> ?verbose:bool -> transformer_list:(string * Py.Object.t) list -> unit -> t
+val create : ?n_jobs:int -> ?transformer_weights:Dict.t -> ?verbose:int -> transformer_list:(string * Py.Object.t) list -> unit -> t
 (**
 Concatenates results of multiple transformer objects.
 
@@ -98,7 +101,7 @@ array([[ 1.5       ,  3.0...,  0.8...],
        [-1.5       ,  5.7..., -0.4...]])
 *)
 
-val fit : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> t
+val fit : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:[`Arr of Arr.t | `Depending_on_transformers of Py.Object.t] -> t -> t
 (**
 Fit all transformers using X.
 
@@ -116,7 +119,7 @@ self : FeatureUnion
     This estimator
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit all transformers, transform the data and concatenate results.
 
@@ -145,7 +148,7 @@ feature_names : list of strings
     Names of the features produced by transform.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -172,7 +175,7 @@ Returns
 self
 *)
 
-val transform : x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Transform X separately by each transformer, concatenate results.
 
@@ -207,7 +210,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_jobs:int -> ?backend:Py.Object.t -> ?verbose:int -> ?timeout:float -> ?pre_dispatch:[`All | `Int of int | `PyObject of Py.Object.t] -> ?batch_size:[`Int of int | `Auto] -> ?temp_folder:string -> ?max_nbytes:Py.Object.t -> ?mmap_mode:[`R_ | `R | `W_ | `C | `None] -> ?prefer:[`Processes | `Threads | `None] -> ?require:[`Sharedmem | `None] -> unit -> t
+val create : ?n_jobs:int -> ?backend:Py.Object.t -> ?verbose:int -> ?timeout:float -> ?pre_dispatch:[`All | `I of int | `PyObject of Py.Object.t] -> ?batch_size:[`I of int | `Auto] -> ?temp_folder:string -> ?max_nbytes:Py.Object.t -> ?mmap_mode:[`R_ | `R | `W_ | `C | `None] -> ?prefer:[`Processes | `Threads] -> ?require:string -> unit -> t
 (**
 Helper class for readable parallel mapping.
 
@@ -496,7 +499,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?memory:[`None | `String of string | `JoblibMemory of Py.Object.t] -> ?verbose:bool -> steps:(string * Py.Object.t) list -> unit -> t
+val create : ?memory:[`S of string | `JoblibMemory of Py.Object.t] -> ?verbose:bool -> steps:(string * Py.Object.t) list -> unit -> t
 (**
 Pipeline of transforms with a final estimator.
 
@@ -595,7 +598,7 @@ True
 (1, 20)
 *)
 
-val get_item : ind:[`Int of int | `String of string | `Slice of ([`None | `Int of int]) * ([`None | `Int of int]) * ([`None | `Int of int])] -> t -> Py.Object.t
+val get_item : ind:[`I of int | `S of string | `Slice of ([`None | `I of int]) * ([`None | `I of int]) * ([`None | `I of int])] -> t -> Py.Object.t
 (**
 Returns a sub-pipeline or a single esimtator in the pipeline
 
@@ -606,7 +609,7 @@ the sub-pipeline will affect the larger pipeline and vice-versa.
 However, replacing a value in `step` will not affect a copy.
 *)
 
-val decision_function : x:Ndarray.t -> t -> Ndarray.t
+val decision_function : x:Arr.t -> t -> Arr.t
 (**
 Apply transforms, and decision_function of the final estimator
 
@@ -621,7 +624,7 @@ Returns
 y_score : array-like of shape (n_samples, n_classes)
 *)
 
-val fit : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> t
+val fit : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> t
 (**
 Fit the model
 
@@ -649,7 +652,7 @@ self : Pipeline
     This estimator
 *)
 
-val fit_predict : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_predict : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Applies fit_predict of last step in pipeline after transforms.
 
@@ -677,7 +680,7 @@ Returns
 y_pred : array-like
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit the model and transform with the final estimator
 
@@ -706,7 +709,7 @@ Xt : array-like of shape  (n_samples, n_transformed_features)
     Transformed samples
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -722,7 +725,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : ?x:Ndarray.t -> ?y:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : ?x:Arr.t -> ?y:Arr.t -> t -> Arr.t
 (**
 Apply inverse transformations in reverse order
 
@@ -741,7 +744,7 @@ Returns
 Xt : array-like of shape (n_samples, n_features)
 *)
 
-val predict : ?predict_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val predict : ?predict_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Apply transforms to the data, and predict with the final estimator
 
@@ -764,7 +767,7 @@ Returns
 y_pred : array-like
 *)
 
-val predict_log_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_log_proba : x:Arr.t -> t -> Arr.t
 (**
 Apply transforms, and predict_log_proba of the final estimator
 
@@ -779,7 +782,7 @@ Returns
 y_score : array-like of shape (n_samples, n_classes)
 *)
 
-val predict_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Apply transforms, and predict_proba of the final estimator
 
@@ -794,7 +797,7 @@ Returns
 y_proba : array-like of shape (n_samples, n_classes)
 *)
 
-val score : ?y:Ndarray.t -> ?sample_weight:Ndarray.t -> x:Ndarray.t -> t -> float
+val score : ?y:Arr.t -> ?sample_weight:Arr.t -> x:Arr.t -> t -> float
 (**
 Apply transforms, and score with the final estimator
 
@@ -817,7 +820,7 @@ Returns
 score : float
 *)
 
-val score_samples : x:Ndarray.t -> t -> Ndarray.t
+val score_samples : x:Arr.t -> t -> Arr.t
 (**
 Apply transforms, and score_samples of the final estimator.
 
@@ -844,8 +847,12 @@ self
 *)
 
 
-(** Attribute named_steps: see constructor for documentation *)
-val named_steps : t -> Py.Object.t
+(** Attribute named_steps: get value or raise Not_found if None.*)
+val named_steps : t -> Dict.t
+
+(** Attribute named_steps: get value as an option. *)
+val named_steps_opt : t -> (Dict.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -870,7 +877,7 @@ val create : unit -> t
 Mixin class for all transformers in scikit-learn.
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -908,7 +915,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val check_memory : memory:[`String of string | `JoblibMemory of Py.Object.t | `None] -> unit -> Py.Object.t
+val check_memory : memory:[`S of string | `JoblibMemory of Py.Object.t | `None] -> unit -> Py.Object.t
 (**
 Check that ``memory`` is joblib.Memory-like.
 
@@ -930,7 +937,7 @@ ValueError
     If ``memory`` is not joblib.Memory-like.
 *)
 
-val clone : ?safe:bool -> estimator:[`Estimator of Py.Object.t | `ArrayLike of Py.Object.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val clone : ?safe:bool -> estimator:[`Estimator of Py.Object.t | `Arr of Arr.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
 (**
 Constructs a new estimator with the same parameters.
 
@@ -953,7 +960,7 @@ val delayed : ?check_pickle:Py.Object.t -> function_:Py.Object.t -> unit -> Py.O
 Decorator used to capture the arguments of a function.
 *)
 
-val if_delegate_has_method : delegate:[`String of string | `StringList of string list | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val if_delegate_has_method : delegate:[`S of string | `StringList of string list | `Tuple_of_strings of Py.Object.t] -> unit -> Py.Object.t
 (**
 Create a decorator for methods that are delegated to a sub-estimator
 

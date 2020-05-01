@@ -1,3 +1,6 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module CCA : sig
 type t
 val of_pyobject : Py.Object.t -> t
@@ -99,7 +102,7 @@ PLSCanonical
 PLSSVD
 *)
 
-val fit : x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit model to data.
 
@@ -114,7 +117,7 @@ Y : array-like of shape (n_samples, n_targets)
     n_targets is the number of response variables.
 *)
 
-val fit_transform : ?y:Ndarray.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> x:Arr.t -> t -> Arr.t
 (**
 Learn and apply the dimension reduction on the train data.
 
@@ -133,7 +136,7 @@ Returns
 x_scores if Y is not given, (x_scores, y_scores) otherwise.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -149,7 +152,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : x:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : x:Arr.t -> t -> Arr.t
 (**
 Transform data back to its original space.
 
@@ -168,7 +171,7 @@ Notes
 This transformation will only be exact if n_components=n_features
 *)
 
-val predict : ?copy:bool -> x:Ndarray.t -> t -> Ndarray.t
+val predict : ?copy:bool -> x:Arr.t -> t -> Arr.t
 (**
 Apply the dimension reduction learned on the train data.
 
@@ -187,7 +190,7 @@ This call requires the estimation of a p x q matrix, which may
 be an issue in high dimensional space.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -252,7 +255,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : ?y:Ndarray.t -> ?copy:bool -> x:Ndarray.t -> t -> Ndarray.t
+val transform : ?y:Arr.t -> ?copy:bool -> x:Arr.t -> t -> Arr.t
 (**
 Apply the dimension reduction learned on the train data.
 
@@ -275,32 +278,68 @@ x_scores if Y is not given, (x_scores, y_scores) otherwise.
 *)
 
 
-(** Attribute x_weights_: see constructor for documentation *)
-val x_weights_ : t -> Ndarray.t
+(** Attribute x_weights_: get value or raise Not_found if None.*)
+val x_weights_ : t -> Arr.t
 
-(** Attribute y_weights_: see constructor for documentation *)
-val y_weights_ : t -> Ndarray.t
+(** Attribute x_weights_: get value as an option. *)
+val x_weights_opt : t -> (Arr.t) option
 
-(** Attribute x_loadings_: see constructor for documentation *)
-val x_loadings_ : t -> Ndarray.t
 
-(** Attribute y_loadings_: see constructor for documentation *)
-val y_loadings_ : t -> Ndarray.t
+(** Attribute y_weights_: get value or raise Not_found if None.*)
+val y_weights_ : t -> Arr.t
 
-(** Attribute x_scores_: see constructor for documentation *)
-val x_scores_ : t -> Ndarray.t
+(** Attribute y_weights_: get value as an option. *)
+val y_weights_opt : t -> (Arr.t) option
 
-(** Attribute y_scores_: see constructor for documentation *)
-val y_scores_ : t -> Ndarray.t
 
-(** Attribute x_rotations_: see constructor for documentation *)
-val x_rotations_ : t -> Ndarray.t
+(** Attribute x_loadings_: get value or raise Not_found if None.*)
+val x_loadings_ : t -> Arr.t
 
-(** Attribute y_rotations_: see constructor for documentation *)
-val y_rotations_ : t -> Ndarray.t
+(** Attribute x_loadings_: get value as an option. *)
+val x_loadings_opt : t -> (Arr.t) option
 
-(** Attribute n_iter_: see constructor for documentation *)
-val n_iter_ : t -> Ndarray.t
+
+(** Attribute y_loadings_: get value or raise Not_found if None.*)
+val y_loadings_ : t -> Arr.t
+
+(** Attribute y_loadings_: get value as an option. *)
+val y_loadings_opt : t -> (Arr.t) option
+
+
+(** Attribute x_scores_: get value or raise Not_found if None.*)
+val x_scores_ : t -> Arr.t
+
+(** Attribute x_scores_: get value as an option. *)
+val x_scores_opt : t -> (Arr.t) option
+
+
+(** Attribute y_scores_: get value or raise Not_found if None.*)
+val y_scores_ : t -> Arr.t
+
+(** Attribute y_scores_: get value as an option. *)
+val y_scores_opt : t -> (Arr.t) option
+
+
+(** Attribute x_rotations_: get value or raise Not_found if None.*)
+val x_rotations_ : t -> Arr.t
+
+(** Attribute x_rotations_: get value as an option. *)
+val x_rotations_opt : t -> (Arr.t) option
+
+
+(** Attribute y_rotations_: get value or raise Not_found if None.*)
+val y_rotations_ : t -> Arr.t
+
+(** Attribute y_rotations_: get value as an option. *)
+val y_rotations_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
+val n_iter_ : t -> Arr.t
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -458,7 +497,7 @@ CCA
 PLSSVD
 *)
 
-val fit : x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit model to data.
 
@@ -473,7 +512,7 @@ Y : array-like of shape (n_samples, n_targets)
     n_targets is the number of response variables.
 *)
 
-val fit_transform : ?y:Ndarray.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> x:Arr.t -> t -> Arr.t
 (**
 Learn and apply the dimension reduction on the train data.
 
@@ -492,7 +531,7 @@ Returns
 x_scores if Y is not given, (x_scores, y_scores) otherwise.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -508,7 +547,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : x:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : x:Arr.t -> t -> Arr.t
 (**
 Transform data back to its original space.
 
@@ -527,7 +566,7 @@ Notes
 This transformation will only be exact if n_components=n_features
 *)
 
-val predict : ?copy:bool -> x:Ndarray.t -> t -> Ndarray.t
+val predict : ?copy:bool -> x:Arr.t -> t -> Arr.t
 (**
 Apply the dimension reduction learned on the train data.
 
@@ -546,7 +585,7 @@ This call requires the estimation of a p x q matrix, which may
 be an issue in high dimensional space.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -611,7 +650,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : ?y:Ndarray.t -> ?copy:bool -> x:Ndarray.t -> t -> Ndarray.t
+val transform : ?y:Arr.t -> ?copy:bool -> x:Arr.t -> t -> Arr.t
 (**
 Apply the dimension reduction learned on the train data.
 
@@ -634,32 +673,68 @@ x_scores if Y is not given, (x_scores, y_scores) otherwise.
 *)
 
 
-(** Attribute x_weights_: see constructor for documentation *)
-val x_weights_ : t -> Ndarray.t
+(** Attribute x_weights_: get value or raise Not_found if None.*)
+val x_weights_ : t -> Arr.t
 
-(** Attribute y_weights_: see constructor for documentation *)
-val y_weights_ : t -> Ndarray.t
+(** Attribute x_weights_: get value as an option. *)
+val x_weights_opt : t -> (Arr.t) option
 
-(** Attribute x_loadings_: see constructor for documentation *)
-val x_loadings_ : t -> Ndarray.t
 
-(** Attribute y_loadings_: see constructor for documentation *)
-val y_loadings_ : t -> Ndarray.t
+(** Attribute y_weights_: get value or raise Not_found if None.*)
+val y_weights_ : t -> Arr.t
 
-(** Attribute x_scores_: see constructor for documentation *)
-val x_scores_ : t -> Ndarray.t
+(** Attribute y_weights_: get value as an option. *)
+val y_weights_opt : t -> (Arr.t) option
 
-(** Attribute y_scores_: see constructor for documentation *)
-val y_scores_ : t -> Ndarray.t
 
-(** Attribute x_rotations_: see constructor for documentation *)
-val x_rotations_ : t -> Ndarray.t
+(** Attribute x_loadings_: get value or raise Not_found if None.*)
+val x_loadings_ : t -> Arr.t
 
-(** Attribute y_rotations_: see constructor for documentation *)
-val y_rotations_ : t -> Ndarray.t
+(** Attribute x_loadings_: get value as an option. *)
+val x_loadings_opt : t -> (Arr.t) option
 
-(** Attribute n_iter_: see constructor for documentation *)
-val n_iter_ : t -> Ndarray.t
+
+(** Attribute y_loadings_: get value or raise Not_found if None.*)
+val y_loadings_ : t -> Arr.t
+
+(** Attribute y_loadings_: get value as an option. *)
+val y_loadings_opt : t -> (Arr.t) option
+
+
+(** Attribute x_scores_: get value or raise Not_found if None.*)
+val x_scores_ : t -> Arr.t
+
+(** Attribute x_scores_: get value as an option. *)
+val x_scores_opt : t -> (Arr.t) option
+
+
+(** Attribute y_scores_: get value or raise Not_found if None.*)
+val y_scores_ : t -> Arr.t
+
+(** Attribute y_scores_: get value as an option. *)
+val y_scores_opt : t -> (Arr.t) option
+
+
+(** Attribute x_rotations_: get value or raise Not_found if None.*)
+val x_rotations_ : t -> Arr.t
+
+(** Attribute x_rotations_: get value as an option. *)
+val x_rotations_opt : t -> (Arr.t) option
+
+
+(** Attribute y_rotations_: get value or raise Not_found if None.*)
+val y_rotations_ : t -> Arr.t
+
+(** Attribute y_rotations_: get value as an option. *)
+val y_rotations_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
+val n_iter_ : t -> Arr.t
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -811,7 +886,7 @@ Tenenhaus, M. (1998). La regression PLS: theorie et pratique. Paris:
 Editions Technic.
 *)
 
-val fit : x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit model to data.
 
@@ -826,7 +901,7 @@ Y : array-like of shape (n_samples, n_targets)
     n_targets is the number of response variables.
 *)
 
-val fit_transform : ?y:Ndarray.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> x:Arr.t -> t -> Arr.t
 (**
 Learn and apply the dimension reduction on the train data.
 
@@ -845,7 +920,7 @@ Returns
 x_scores if Y is not given, (x_scores, y_scores) otherwise.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -861,7 +936,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : x:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : x:Arr.t -> t -> Arr.t
 (**
 Transform data back to its original space.
 
@@ -880,7 +955,7 @@ Notes
 This transformation will only be exact if n_components=n_features
 *)
 
-val predict : ?copy:bool -> x:Ndarray.t -> t -> Ndarray.t
+val predict : ?copy:bool -> x:Arr.t -> t -> Arr.t
 (**
 Apply the dimension reduction learned on the train data.
 
@@ -899,7 +974,7 @@ This call requires the estimation of a p x q matrix, which may
 be an issue in high dimensional space.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -964,7 +1039,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : ?y:Ndarray.t -> ?copy:bool -> x:Ndarray.t -> t -> Ndarray.t
+val transform : ?y:Arr.t -> ?copy:bool -> x:Arr.t -> t -> Arr.t
 (**
 Apply the dimension reduction learned on the train data.
 
@@ -987,35 +1062,75 @@ x_scores if Y is not given, (x_scores, y_scores) otherwise.
 *)
 
 
-(** Attribute x_weights_: see constructor for documentation *)
-val x_weights_ : t -> Ndarray.t
+(** Attribute x_weights_: get value or raise Not_found if None.*)
+val x_weights_ : t -> Arr.t
 
-(** Attribute y_weights_: see constructor for documentation *)
-val y_weights_ : t -> Ndarray.t
+(** Attribute x_weights_: get value as an option. *)
+val x_weights_opt : t -> (Arr.t) option
 
-(** Attribute x_loadings_: see constructor for documentation *)
-val x_loadings_ : t -> Ndarray.t
 
-(** Attribute y_loadings_: see constructor for documentation *)
-val y_loadings_ : t -> Ndarray.t
+(** Attribute y_weights_: get value or raise Not_found if None.*)
+val y_weights_ : t -> Arr.t
 
-(** Attribute x_scores_: see constructor for documentation *)
-val x_scores_ : t -> Ndarray.t
+(** Attribute y_weights_: get value as an option. *)
+val y_weights_opt : t -> (Arr.t) option
 
-(** Attribute y_scores_: see constructor for documentation *)
-val y_scores_ : t -> Ndarray.t
 
-(** Attribute x_rotations_: see constructor for documentation *)
-val x_rotations_ : t -> Ndarray.t
+(** Attribute x_loadings_: get value or raise Not_found if None.*)
+val x_loadings_ : t -> Arr.t
 
-(** Attribute y_rotations_: see constructor for documentation *)
-val y_rotations_ : t -> Ndarray.t
+(** Attribute x_loadings_: get value as an option. *)
+val x_loadings_opt : t -> (Arr.t) option
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
 
-(** Attribute n_iter_: see constructor for documentation *)
-val n_iter_ : t -> Ndarray.t
+(** Attribute y_loadings_: get value or raise Not_found if None.*)
+val y_loadings_ : t -> Arr.t
+
+(** Attribute y_loadings_: get value as an option. *)
+val y_loadings_opt : t -> (Arr.t) option
+
+
+(** Attribute x_scores_: get value or raise Not_found if None.*)
+val x_scores_ : t -> Arr.t
+
+(** Attribute x_scores_: get value as an option. *)
+val x_scores_opt : t -> (Arr.t) option
+
+
+(** Attribute y_scores_: get value or raise Not_found if None.*)
+val y_scores_ : t -> Arr.t
+
+(** Attribute y_scores_: get value as an option. *)
+val y_scores_opt : t -> (Arr.t) option
+
+
+(** Attribute x_rotations_: get value or raise Not_found if None.*)
+val x_rotations_ : t -> Arr.t
+
+(** Attribute x_rotations_: get value as an option. *)
+val x_rotations_opt : t -> (Arr.t) option
+
+
+(** Attribute y_rotations_: get value or raise Not_found if None.*)
+val y_rotations_ : t -> Arr.t
+
+(** Attribute y_rotations_: get value as an option. *)
+val y_rotations_opt : t -> (Arr.t) option
+
+
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
+
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
+val n_iter_ : t -> Arr.t
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1096,7 +1211,7 @@ PLSCanonical
 CCA
 *)
 
-val fit : x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit model to data.
 
@@ -1111,7 +1226,7 @@ Y : array-like of shape (n_samples, n_targets)
     n_targets is the number of response variables.
 *)
 
-val fit_transform : ?y:Ndarray.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> x:Arr.t -> t -> Arr.t
 (**
 Learn and apply the dimension reduction on the train data.
 
@@ -1130,7 +1245,7 @@ Returns
 x_scores if Y is not given, (x_scores, y_scores) otherwise.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1166,7 +1281,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : ?y:Ndarray.t -> x:Ndarray.t -> t -> Ndarray.t
+val transform : ?y:Arr.t -> x:Arr.t -> t -> Arr.t
 (**
 Apply the dimension reduction learned on the train data.
 
@@ -1182,17 +1297,33 @@ Y : array-like of shape (n_samples, n_targets)
 *)
 
 
-(** Attribute x_weights_: see constructor for documentation *)
-val x_weights_ : t -> Ndarray.t
+(** Attribute x_weights_: get value or raise Not_found if None.*)
+val x_weights_ : t -> Arr.t
 
-(** Attribute y_weights_: see constructor for documentation *)
-val y_weights_ : t -> Ndarray.t
+(** Attribute x_weights_: get value as an option. *)
+val x_weights_opt : t -> (Arr.t) option
 
-(** Attribute x_scores_: see constructor for documentation *)
-val x_scores_ : t -> Ndarray.t
 
-(** Attribute y_scores_: see constructor for documentation *)
-val y_scores_ : t -> Ndarray.t
+(** Attribute y_weights_: get value or raise Not_found if None.*)
+val y_weights_ : t -> Arr.t
+
+(** Attribute y_weights_: get value as an option. *)
+val y_weights_opt : t -> (Arr.t) option
+
+
+(** Attribute x_scores_: get value or raise Not_found if None.*)
+val x_scores_ : t -> Arr.t
+
+(** Attribute x_scores_: get value as an option. *)
+val x_scores_opt : t -> (Arr.t) option
+
+
+(** Attribute y_scores_: get value or raise Not_found if None.*)
+val y_scores_ : t -> Arr.t
+
+(** Attribute y_scores_: get value as an option. *)
+val y_scores_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string

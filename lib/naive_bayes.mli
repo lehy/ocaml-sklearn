@@ -1,3 +1,6 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module ABCMeta : sig
 type t
 val of_pyobject : Py.Object.t -> t
@@ -53,7 +56,7 @@ at the class level in their ``__init__`` as explicit keyword
 arguments (no ``*args`` or ``**kwargs``).
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -108,7 +111,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?alpha:float -> ?binarize:[`Float of float | `None] -> ?fit_prior:bool -> ?class_prior:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> unit -> t
+val create : ?alpha:float -> ?binarize:[`F of float | `None] -> ?fit_prior:bool -> ?class_prior:[`Arr of Arr.t | `PyObject of Py.Object.t] -> unit -> t
 (**
 Naive Bayes classifier for multivariate Bernoulli models.
 
@@ -187,7 +190,7 @@ V. Metsis, I. Androutsopoulos and G. Paliouras (2006). Spam filtering with
 naive Bayes -- Which naive Bayes? 3rd Conf. on Email and Anti-Spam (CEAS).
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit Naive Bayes classifier according to X, y
 
@@ -208,7 +211,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -224,7 +227,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val partial_fit : ?classes:Ndarray.t -> ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val partial_fit : ?classes:Arr.t -> ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Incremental fit on a batch of samples.
 
@@ -262,7 +265,7 @@ Returns
 self : object
 *)
 
-val predict : x:Ndarray.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Perform classification on an array of test vectors X.
 
@@ -276,7 +279,7 @@ C : ndarray of shape (n_samples,)
     Predicted target values for X
 *)
 
-val predict_log_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_log_proba : x:Arr.t -> t -> Arr.t
 (**
 Return log-probability estimates for the test vector X.
 
@@ -292,7 +295,7 @@ C : array-like of shape (n_samples, n_classes)
     order, as they appear in the attribute :term:`classes_`.
 *)
 
-val predict_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Return probability estimates for the test vector X.
 
@@ -308,7 +311,7 @@ C : array-like of shape (n_samples, n_classes)
     order, as they appear in the attribute :term:`classes_`.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -354,23 +357,47 @@ self : object
 *)
 
 
-(** Attribute class_count_: see constructor for documentation *)
-val class_count_ : t -> Ndarray.t
+(** Attribute class_count_: get value or raise Not_found if None.*)
+val class_count_ : t -> Arr.t
 
-(** Attribute class_log_prior_: see constructor for documentation *)
-val class_log_prior_ : t -> Ndarray.t
+(** Attribute class_count_: get value as an option. *)
+val class_count_opt : t -> (Arr.t) option
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
 
-(** Attribute feature_count_: see constructor for documentation *)
-val feature_count_ : t -> Ndarray.t
+(** Attribute class_log_prior_: get value or raise Not_found if None.*)
+val class_log_prior_ : t -> Arr.t
 
-(** Attribute feature_log_prob_: see constructor for documentation *)
-val feature_log_prob_ : t -> Ndarray.t
+(** Attribute class_log_prior_: get value as an option. *)
+val class_log_prior_opt : t -> (Arr.t) option
 
-(** Attribute n_features_: see constructor for documentation *)
+
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
+
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute feature_count_: get value or raise Not_found if None.*)
+val feature_count_ : t -> Arr.t
+
+(** Attribute feature_count_: get value as an option. *)
+val feature_count_opt : t -> (Arr.t) option
+
+
+(** Attribute feature_log_prob_: get value or raise Not_found if None.*)
+val feature_log_prob_ : t -> Arr.t
+
+(** Attribute feature_log_prob_: get value as an option. *)
+val feature_log_prob_opt : t -> (Arr.t) option
+
+
+(** Attribute n_features_: get value or raise Not_found if None.*)
 val n_features_ : t -> int
+
+(** Attribute n_features_: get value as an option. *)
+val n_features_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -390,7 +417,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?alpha:float -> ?fit_prior:bool -> ?class_prior:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> unit -> t
+val create : ?alpha:float -> ?fit_prior:bool -> ?class_prior:[`Arr of Arr.t | `PyObject of Py.Object.t] -> unit -> t
 (**
 Naive Bayes classifier for categorical features
 
@@ -453,7 +480,7 @@ CategoricalNB()
 [3]
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit Naive Bayes classifier according to X, y
 
@@ -479,7 +506,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -495,7 +522,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val partial_fit : ?classes:Ndarray.t -> ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val partial_fit : ?classes:Arr.t -> ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Incremental fit on a batch of samples.
 
@@ -538,7 +565,7 @@ Returns
 self : object
 *)
 
-val predict : x:Ndarray.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Perform classification on an array of test vectors X.
 
@@ -552,7 +579,7 @@ C : ndarray of shape (n_samples,)
     Predicted target values for X
 *)
 
-val predict_log_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_log_proba : x:Arr.t -> t -> Arr.t
 (**
 Return log-probability estimates for the test vector X.
 
@@ -568,7 +595,7 @@ C : array-like of shape (n_samples, n_classes)
     order, as they appear in the attribute :term:`classes_`.
 *)
 
-val predict_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Return probability estimates for the test vector X.
 
@@ -584,7 +611,7 @@ C : array-like of shape (n_samples, n_classes)
     order, as they appear in the attribute :term:`classes_`.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -630,23 +657,47 @@ self : object
 *)
 
 
-(** Attribute category_count_: see constructor for documentation *)
+(** Attribute category_count_: get value or raise Not_found if None.*)
 val category_count_ : t -> Py.Object.t
 
-(** Attribute class_count_: see constructor for documentation *)
-val class_count_ : t -> Ndarray.t
+(** Attribute category_count_: get value as an option. *)
+val category_count_opt : t -> (Py.Object.t) option
 
-(** Attribute class_log_prior_: see constructor for documentation *)
-val class_log_prior_ : t -> Ndarray.t
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute class_count_: get value or raise Not_found if None.*)
+val class_count_ : t -> Arr.t
 
-(** Attribute feature_log_prob_: see constructor for documentation *)
+(** Attribute class_count_: get value as an option. *)
+val class_count_opt : t -> (Arr.t) option
+
+
+(** Attribute class_log_prior_: get value or raise Not_found if None.*)
+val class_log_prior_ : t -> Arr.t
+
+(** Attribute class_log_prior_: get value as an option. *)
+val class_log_prior_opt : t -> (Arr.t) option
+
+
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
+
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute feature_log_prob_: get value or raise Not_found if None.*)
 val feature_log_prob_ : t -> Py.Object.t
 
-(** Attribute n_features_: see constructor for documentation *)
+(** Attribute feature_log_prob_: get value as an option. *)
+val feature_log_prob_opt : t -> (Py.Object.t) option
+
+
+(** Attribute n_features_: get value or raise Not_found if None.*)
 val n_features_ : t -> int
+
+(** Attribute n_features_: get value as an option. *)
+val n_features_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -671,7 +722,7 @@ val create : unit -> t
 Mixin class for all classifiers in scikit-learn.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -715,7 +766,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?alpha:float -> ?fit_prior:bool -> ?class_prior:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> ?norm:bool -> unit -> t
+val create : ?alpha:float -> ?fit_prior:bool -> ?class_prior:[`Arr of Arr.t | `PyObject of Py.Object.t] -> ?norm:bool -> unit -> t
 (**
 The Complement Naive Bayes classifier described in Rennie et al. (2003).
 
@@ -790,7 +841,7 @@ Tackling the poor assumptions of naive bayes text classifiers. In ICML
 https://people.csail.mit.edu/jrennie/papers/icml03-nb.pdf
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit Naive Bayes classifier according to X, y
 
@@ -811,7 +862,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -827,7 +878,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val partial_fit : ?classes:Ndarray.t -> ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val partial_fit : ?classes:Arr.t -> ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Incremental fit on a batch of samples.
 
@@ -865,7 +916,7 @@ Returns
 self : object
 *)
 
-val predict : x:Ndarray.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Perform classification on an array of test vectors X.
 
@@ -879,7 +930,7 @@ C : ndarray of shape (n_samples,)
     Predicted target values for X
 *)
 
-val predict_log_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_log_proba : x:Arr.t -> t -> Arr.t
 (**
 Return log-probability estimates for the test vector X.
 
@@ -895,7 +946,7 @@ C : array-like of shape (n_samples, n_classes)
     order, as they appear in the attribute :term:`classes_`.
 *)
 
-val predict_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Return probability estimates for the test vector X.
 
@@ -911,7 +962,7 @@ C : array-like of shape (n_samples, n_classes)
     order, as they appear in the attribute :term:`classes_`.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -957,26 +1008,54 @@ self : object
 *)
 
 
-(** Attribute class_count_: see constructor for documentation *)
-val class_count_ : t -> Ndarray.t
+(** Attribute class_count_: get value or raise Not_found if None.*)
+val class_count_ : t -> Arr.t
 
-(** Attribute class_log_prior_: see constructor for documentation *)
-val class_log_prior_ : t -> Ndarray.t
+(** Attribute class_count_: get value as an option. *)
+val class_count_opt : t -> (Arr.t) option
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
 
-(** Attribute feature_all_: see constructor for documentation *)
-val feature_all_ : t -> Ndarray.t
+(** Attribute class_log_prior_: get value or raise Not_found if None.*)
+val class_log_prior_ : t -> Arr.t
 
-(** Attribute feature_count_: see constructor for documentation *)
-val feature_count_ : t -> Ndarray.t
+(** Attribute class_log_prior_: get value as an option. *)
+val class_log_prior_opt : t -> (Arr.t) option
 
-(** Attribute feature_log_prob_: see constructor for documentation *)
-val feature_log_prob_ : t -> Ndarray.t
 
-(** Attribute n_features_: see constructor for documentation *)
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
+
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute feature_all_: get value or raise Not_found if None.*)
+val feature_all_ : t -> Arr.t
+
+(** Attribute feature_all_: get value as an option. *)
+val feature_all_opt : t -> (Arr.t) option
+
+
+(** Attribute feature_count_: get value or raise Not_found if None.*)
+val feature_count_ : t -> Arr.t
+
+(** Attribute feature_count_: get value as an option. *)
+val feature_count_opt : t -> (Arr.t) option
+
+
+(** Attribute feature_log_prob_: get value or raise Not_found if None.*)
+val feature_log_prob_ : t -> Arr.t
+
+(** Attribute feature_log_prob_: get value as an option. *)
+val feature_log_prob_opt : t -> (Arr.t) option
+
+
+(** Attribute n_features_: get value or raise Not_found if None.*)
 val n_features_ : t -> int
+
+(** Attribute n_features_: get value as an option. *)
+val n_features_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -996,7 +1075,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?priors:Ndarray.t -> ?var_smoothing:float -> unit -> t
+val create : ?priors:Arr.t -> ?var_smoothing:float -> unit -> t
 (**
 Gaussian Naive Bayes (GaussianNB)
 
@@ -1056,7 +1135,7 @@ GaussianNB()
 [1]
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit Gaussian Naive Bayes according to X, y
 
@@ -1080,7 +1159,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1096,7 +1175,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val partial_fit : ?classes:Ndarray.t -> ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> t
+val partial_fit : ?classes:Arr.t -> ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Incremental fit on a batch of samples.
 
@@ -1137,7 +1216,7 @@ Returns
 self : object
 *)
 
-val predict : x:Ndarray.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Perform classification on an array of test vectors X.
 
@@ -1151,7 +1230,7 @@ C : ndarray of shape (n_samples,)
     Predicted target values for X
 *)
 
-val predict_log_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_log_proba : x:Arr.t -> t -> Arr.t
 (**
 Return log-probability estimates for the test vector X.
 
@@ -1167,7 +1246,7 @@ C : array-like of shape (n_samples, n_classes)
     order, as they appear in the attribute :term:`classes_`.
 *)
 
-val predict_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Return probability estimates for the test vector X.
 
@@ -1183,7 +1262,7 @@ C : array-like of shape (n_samples, n_classes)
     order, as they appear in the attribute :term:`classes_`.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -1229,23 +1308,47 @@ self : object
 *)
 
 
-(** Attribute class_count_: see constructor for documentation *)
-val class_count_ : t -> Ndarray.t
+(** Attribute class_count_: get value or raise Not_found if None.*)
+val class_count_ : t -> Arr.t
 
-(** Attribute class_prior_: see constructor for documentation *)
-val class_prior_ : t -> Ndarray.t
+(** Attribute class_count_: get value as an option. *)
+val class_count_opt : t -> (Arr.t) option
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
 
-(** Attribute epsilon_: see constructor for documentation *)
+(** Attribute class_prior_: get value or raise Not_found if None.*)
+val class_prior_ : t -> Arr.t
+
+(** Attribute class_prior_: get value as an option. *)
+val class_prior_opt : t -> (Arr.t) option
+
+
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
+
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute epsilon_: get value or raise Not_found if None.*)
 val epsilon_ : t -> float
 
-(** Attribute sigma_: see constructor for documentation *)
-val sigma_ : t -> Ndarray.t
+(** Attribute epsilon_: get value as an option. *)
+val epsilon_opt : t -> (float) option
 
-(** Attribute theta_: see constructor for documentation *)
-val theta_ : t -> Ndarray.t
+
+(** Attribute sigma_: get value or raise Not_found if None.*)
+val sigma_ : t -> Arr.t
+
+(** Attribute sigma_: get value as an option. *)
+val sigma_opt : t -> (Arr.t) option
+
+
+(** Attribute theta_: get value or raise Not_found if None.*)
+val theta_ : t -> Arr.t
+
+(** Attribute theta_: get value as an option. *)
+val theta_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1357,7 +1460,7 @@ sklearn.preprocessing.OneHotEncoder : encode categorical features
     using a one-hot aka one-of-K scheme.
 *)
 
-val fit : y:Ndarray.t -> t -> t
+val fit : y:Arr.t -> t -> t
 (**
 Fit label binarizer
 
@@ -1372,7 +1475,7 @@ Returns
 self : returns an instance of self.
 *)
 
-val fit_transform : y:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val fit_transform : y:Arr.t -> t -> Arr.t
 (**
 Fit label binarizer and transform multi-class labels to binary
 labels.
@@ -1393,7 +1496,7 @@ Y : array or CSR matrix of shape [n_samples, n_classes]
     Shape will be [n_samples, 1] for binary problems.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1409,7 +1512,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : ?threshold:[`Float of float | `None] -> y:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> Py.Object.t
+val inverse_transform : ?threshold:float -> y:Arr.t -> t -> Py.Object.t
 (**
 Transform binary labels back to multi-class labels
 
@@ -1462,7 +1565,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : y:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val transform : y:Arr.t -> t -> Arr.t
 (**
 Transform multi-class labels to binary labels
 
@@ -1483,14 +1586,26 @@ Y : numpy array or CSR matrix of shape [n_samples, n_classes]
 *)
 
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
 
-(** Attribute y_type_: see constructor for documentation *)
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute y_type_: get value or raise Not_found if None.*)
 val y_type_ : t -> string
 
-(** Attribute sparse_input_: see constructor for documentation *)
+(** Attribute y_type_: get value as an option. *)
+val y_type_opt : t -> (string) option
+
+
+(** Attribute sparse_input_: get value or raise Not_found if None.*)
 val sparse_input_ : t -> bool
+
+(** Attribute sparse_input_: get value as an option. *)
+val sparse_input_opt : t -> (bool) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1510,7 +1625,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?alpha:float -> ?fit_prior:bool -> ?class_prior:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> unit -> t
+val create : ?alpha:float -> ?fit_prior:bool -> ?class_prior:[`Arr of Arr.t | `PyObject of Py.Object.t] -> unit -> t
 (**
 Naive Bayes classifier for multinomial models
 
@@ -1593,7 +1708,7 @@ Information Retrieval. Cambridge University Press, pp. 234-265.
 https://nlp.stanford.edu/IR-book/html/htmledition/naive-bayes-text-classification-1.html
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit Naive Bayes classifier according to X, y
 
@@ -1614,7 +1729,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1630,7 +1745,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val partial_fit : ?classes:Ndarray.t -> ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val partial_fit : ?classes:Arr.t -> ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Incremental fit on a batch of samples.
 
@@ -1668,7 +1783,7 @@ Returns
 self : object
 *)
 
-val predict : x:Ndarray.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Perform classification on an array of test vectors X.
 
@@ -1682,7 +1797,7 @@ C : ndarray of shape (n_samples,)
     Predicted target values for X
 *)
 
-val predict_log_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_log_proba : x:Arr.t -> t -> Arr.t
 (**
 Return log-probability estimates for the test vector X.
 
@@ -1698,7 +1813,7 @@ C : array-like of shape (n_samples, n_classes)
     order, as they appear in the attribute :term:`classes_`.
 *)
 
-val predict_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Return probability estimates for the test vector X.
 
@@ -1714,7 +1829,7 @@ C : array-like of shape (n_samples, n_classes)
     order, as they appear in the attribute :term:`classes_`.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -1760,29 +1875,61 @@ self : object
 *)
 
 
-(** Attribute class_count_: see constructor for documentation *)
-val class_count_ : t -> Ndarray.t
+(** Attribute class_count_: get value or raise Not_found if None.*)
+val class_count_ : t -> Arr.t
 
-(** Attribute class_log_prior_: see constructor for documentation *)
-val class_log_prior_ : t -> Ndarray.t
+(** Attribute class_count_: get value as an option. *)
+val class_count_opt : t -> (Arr.t) option
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute class_log_prior_: get value or raise Not_found if None.*)
+val class_log_prior_ : t -> Arr.t
 
-(** Attribute feature_count_: see constructor for documentation *)
-val feature_count_ : t -> Ndarray.t
+(** Attribute class_log_prior_: get value as an option. *)
+val class_log_prior_opt : t -> (Arr.t) option
 
-(** Attribute feature_log_prob_: see constructor for documentation *)
-val feature_log_prob_ : t -> Ndarray.t
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
 
-(** Attribute n_features_: see constructor for documentation *)
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
+
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
+
+
+(** Attribute feature_count_: get value or raise Not_found if None.*)
+val feature_count_ : t -> Arr.t
+
+(** Attribute feature_count_: get value as an option. *)
+val feature_count_opt : t -> (Arr.t) option
+
+
+(** Attribute feature_log_prob_: get value or raise Not_found if None.*)
+val feature_log_prob_ : t -> Arr.t
+
+(** Attribute feature_log_prob_: get value as an option. *)
+val feature_log_prob_opt : t -> (Arr.t) option
+
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute n_features_: get value or raise Not_found if None.*)
 val n_features_ : t -> int
+
+(** Attribute n_features_: get value as an option. *)
+val n_features_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1815,7 +1962,7 @@ Usage:
             ...
 *)
 
-val binarize : ?threshold:[`Float of float | `PyObject of Py.Object.t] -> ?copy:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> Py.Object.t
+val binarize : ?threshold:[`F of float | `T_0_0_by of Py.Object.t] -> ?copy:bool -> x:Arr.t -> unit -> Py.Object.t
 (**
 Boolean thresholding of array-like or scipy.sparse matrix
 
@@ -1843,7 +1990,7 @@ Binarizer: Performs binarization using the ``Transformer`` API
     (e.g. as part of a preprocessing :class:`sklearn.pipeline.Pipeline`).
 *)
 
-val check_X_y : ?accept_sparse:[`String of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`String of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C | `None] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?multi_output:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?y_numeric:bool -> ?warn_on_dtype:[`Bool of bool | `None] -> ?estimator:[`String of string | `Estimator of Py.Object.t] -> x:[`Ndarray of Ndarray.t | `ArrayLike of Py.Object.t | `SparseMatrix of Csr_matrix.t] -> y:[`Ndarray of Ndarray.t | `ArrayLike of Py.Object.t | `SparseMatrix of Csr_matrix.t] -> unit -> (Py.Object.t * Py.Object.t)
+val check_X_y : ?accept_sparse:[`S of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`S of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?multi_output:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?y_numeric:bool -> ?warn_on_dtype:bool -> ?estimator:[`S of string | `Estimator of Py.Object.t] -> x:Arr.t -> y:Arr.t -> unit -> (Py.Object.t * Py.Object.t)
 (**
 Input validation for standard estimators.
 
@@ -1949,7 +2096,7 @@ y_converted : object
     The converted and validated y.
 *)
 
-val check_array : ?accept_sparse:[`String of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`String of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C | `None] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:[`Bool of bool | `None] -> ?estimator:[`String of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
+val check_array : ?accept_sparse:[`S of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`S of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:bool -> ?estimator:[`S of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
 (**
 Input validation on an array, list, sparse matrix or similar.
 
@@ -2041,7 +2188,7 @@ array_converted : object
     The converted and validated array.
 *)
 
-val check_is_fitted : ?attributes:[`String of string | `ArrayLike of Py.Object.t | `StringList of string list] -> ?msg:string -> ?all_or_any:[`Callable of Py.Object.t | `PyObject of Py.Object.t] -> estimator:Py.Object.t -> unit -> Py.Object.t
+val check_is_fitted : ?attributes:[`S of string | `Arr of Arr.t | `StringList of string list] -> ?msg:string -> ?all_or_any:[`Callable of Py.Object.t | `PyObject of Py.Object.t] -> estimator:Py.Object.t -> unit -> Py.Object.t
 (**
 Perform is_fitted validation for estimator.
 
@@ -2088,7 +2235,7 @@ NotFittedError
     If the attributes are not found.
 *)
 
-val check_non_negative : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> whom:string -> unit -> Py.Object.t
+val check_non_negative : x:Arr.t -> whom:string -> unit -> Py.Object.t
 (**
 Check if there is any negative value in an array.
 
@@ -2101,7 +2248,7 @@ whom : string
     Who passed X to this function.
 *)
 
-val column_or_1d : ?warn:bool -> y:Ndarray.t -> unit -> Ndarray.t
+val column_or_1d : ?warn:bool -> y:Arr.t -> unit -> Arr.t
 (**
 Ravel column or 1d numpy array, else raises an error
 
@@ -2160,7 +2307,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val label_binarize : ?neg_label:int -> ?pos_label:int -> ?sparse_output:bool -> y:Ndarray.t -> classes:Ndarray.t -> unit -> Py.Object.t
+val label_binarize : ?neg_label:int -> ?pos_label:int -> ?sparse_output:bool -> y:Arr.t -> classes:Arr.t -> unit -> Arr.t
 (**
 Binarize labels in a one-vs-all fashion
 
@@ -2221,7 +2368,7 @@ LabelBinarizer : class used to wrap the functionality of label_binarize and
     allow for fitting to classes independently of the transform operation
 *)
 
-val logsumexp : ?axis:Py.Object.t -> ?b:Ndarray.t -> ?keepdims:bool -> ?return_sign:bool -> a:Ndarray.t -> unit -> Ndarray.t
+val logsumexp : ?axis:Py.Object.t -> ?b:Arr.t -> ?keepdims:bool -> ?return_sign:bool -> a:Arr.t -> unit -> Arr.t
 (**
 Compute the log of the sum of exponentials of input elements.
 
@@ -2307,7 +2454,7 @@ on a masked array, convert the mask into zero weights:
 1.6094379124341005, 1.6094379124341005
 *)
 
-val safe_sparse_dot : ?dense_output:Py.Object.t -> a:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> b:Py.Object.t -> unit -> Py.Object.t
+val safe_sparse_dot : ?dense_output:Py.Object.t -> a:Arr.t -> b:Py.Object.t -> unit -> Arr.t
 (**
 Dot product that handle the sparse matrix case correctly
 

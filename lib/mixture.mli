@@ -1,9 +1,12 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module BayesianGaussianMixture : sig
 type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_components:int -> ?covariance_type:[`Full | `Tied | `Diag | `Spherical] -> ?tol:float -> ?reg_covar:float -> ?max_iter:int -> ?n_init:int -> ?init_params:[`Kmeans | `Random] -> ?weight_concentration_prior_type:string -> ?weight_concentration_prior:[`Float of float | `None] -> ?mean_precision_prior:[`Float of float | `None] -> ?mean_prior:Ndarray.t -> ?degrees_of_freedom_prior:[`Float of float | `None] -> ?covariance_prior:[`Float of float | `Ndarray of Ndarray.t] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?warm_start:bool -> ?verbose:int -> ?verbose_interval:int -> unit -> t
+val create : ?n_components:int -> ?covariance_type:[`Full | `Tied | `Diag | `Spherical] -> ?tol:float -> ?reg_covar:float -> ?max_iter:int -> ?n_init:int -> ?init_params:[`Kmeans | `Random] -> ?weight_concentration_prior_type:string -> ?weight_concentration_prior:float -> ?mean_precision_prior:float -> ?mean_prior:Arr.t -> ?degrees_of_freedom_prior:float -> ?covariance_prior:[`F of float | `Arr of Arr.t] -> ?random_state:int -> ?warm_start:bool -> ?verbose:int -> ?verbose_interval:int -> unit -> t
 (**
 Variational Bayesian estimation of a Gaussian mixture.
 
@@ -249,7 +252,7 @@ References
    <https://www.cs.princeton.edu/courses/archive/fall11/cos597C/reading/BleiJordan2005.pdf>`_
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Estimate model parameters with the EM algorithm.
 
@@ -273,7 +276,7 @@ Returns
 self
 *)
 
-val fit_predict : ?y:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_predict : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Estimate model parameters using X and predict the labels for X.
 
@@ -299,7 +302,7 @@ labels : array, shape (n_samples,)
     Component labels.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -315,7 +318,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:Ndarray.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict the labels for the data samples in X using trained model.
 
@@ -331,7 +334,7 @@ labels : array, shape (n_samples,)
     Component labels.
 *)
 
-val predict_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Predict posterior probability of each component given the data.
 
@@ -348,7 +351,7 @@ resp : array, shape (n_samples, n_components)
     the model given each sample.
 *)
 
-val sample : ?n_samples:int -> t -> (Ndarray.t * Ndarray.t)
+val sample : ?n_samples:int -> t -> (Arr.t * Arr.t)
 (**
 Generate random samples from the fitted Gaussian distribution.
 
@@ -366,7 +369,7 @@ y : array, shape (nsamples,)
     Component labels
 *)
 
-val score : ?y:Py.Object.t -> x:Ndarray.t -> t -> float
+val score : ?y:Py.Object.t -> x:Arr.t -> t -> float
 (**
 Compute the per-sample average log-likelihood of the given data X.
 
@@ -382,7 +385,7 @@ log_likelihood : float
     Log likelihood of the Gaussian mixture given X.
 *)
 
-val score_samples : x:Ndarray.t -> t -> Ndarray.t
+val score_samples : x:Arr.t -> t -> Arr.t
 (**
 Compute the weighted log probabilities for each sample.
 
@@ -419,53 +422,117 @@ self : object
 *)
 
 
-(** Attribute weights_: see constructor for documentation *)
-val weights_ : t -> Ndarray.t
+(** Attribute weights_: get value or raise Not_found if None.*)
+val weights_ : t -> Arr.t
 
-(** Attribute means_: see constructor for documentation *)
-val means_ : t -> Ndarray.t
+(** Attribute weights_: get value as an option. *)
+val weights_opt : t -> (Arr.t) option
 
-(** Attribute covariances_: see constructor for documentation *)
-val covariances_ : t -> Ndarray.t
 
-(** Attribute precisions_: see constructor for documentation *)
-val precisions_ : t -> Ndarray.t
+(** Attribute means_: get value or raise Not_found if None.*)
+val means_ : t -> Arr.t
 
-(** Attribute precisions_cholesky_: see constructor for documentation *)
-val precisions_cholesky_ : t -> Ndarray.t
+(** Attribute means_: get value as an option. *)
+val means_opt : t -> (Arr.t) option
 
-(** Attribute converged_: see constructor for documentation *)
+
+(** Attribute covariances_: get value or raise Not_found if None.*)
+val covariances_ : t -> Arr.t
+
+(** Attribute covariances_: get value as an option. *)
+val covariances_opt : t -> (Arr.t) option
+
+
+(** Attribute precisions_: get value or raise Not_found if None.*)
+val precisions_ : t -> Arr.t
+
+(** Attribute precisions_: get value as an option. *)
+val precisions_opt : t -> (Arr.t) option
+
+
+(** Attribute precisions_cholesky_: get value or raise Not_found if None.*)
+val precisions_cholesky_ : t -> Arr.t
+
+(** Attribute precisions_cholesky_: get value as an option. *)
+val precisions_cholesky_opt : t -> (Arr.t) option
+
+
+(** Attribute converged_: get value or raise Not_found if None.*)
 val converged_ : t -> bool
 
-(** Attribute n_iter_: see constructor for documentation *)
+(** Attribute converged_: get value as an option. *)
+val converged_opt : t -> (bool) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
 
-(** Attribute lower_bound_: see constructor for documentation *)
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
+
+(** Attribute lower_bound_: get value or raise Not_found if None.*)
 val lower_bound_ : t -> float
 
-(** Attribute weight_concentration_prior_: see constructor for documentation *)
+(** Attribute lower_bound_: get value as an option. *)
+val lower_bound_opt : t -> (float) option
+
+
+(** Attribute weight_concentration_prior_: get value or raise Not_found if None.*)
 val weight_concentration_prior_ : t -> Py.Object.t
 
-(** Attribute weight_concentration_: see constructor for documentation *)
-val weight_concentration_ : t -> Ndarray.t
+(** Attribute weight_concentration_prior_: get value as an option. *)
+val weight_concentration_prior_opt : t -> (Py.Object.t) option
 
-(** Attribute mean_precision_prior_: see constructor for documentation *)
+
+(** Attribute weight_concentration_: get value or raise Not_found if None.*)
+val weight_concentration_ : t -> Arr.t
+
+(** Attribute weight_concentration_: get value as an option. *)
+val weight_concentration_opt : t -> (Arr.t) option
+
+
+(** Attribute mean_precision_prior_: get value or raise Not_found if None.*)
 val mean_precision_prior_ : t -> float
 
-(** Attribute mean_precision_: see constructor for documentation *)
-val mean_precision_ : t -> Ndarray.t
+(** Attribute mean_precision_prior_: get value as an option. *)
+val mean_precision_prior_opt : t -> (float) option
 
-(** Attribute mean_prior_: see constructor for documentation *)
-val mean_prior_ : t -> Ndarray.t
 
-(** Attribute degrees_of_freedom_prior_: see constructor for documentation *)
+(** Attribute mean_precision_: get value or raise Not_found if None.*)
+val mean_precision_ : t -> Arr.t
+
+(** Attribute mean_precision_: get value as an option. *)
+val mean_precision_opt : t -> (Arr.t) option
+
+
+(** Attribute mean_prior_: get value or raise Not_found if None.*)
+val mean_prior_ : t -> Arr.t
+
+(** Attribute mean_prior_: get value as an option. *)
+val mean_prior_opt : t -> (Arr.t) option
+
+
+(** Attribute degrees_of_freedom_prior_: get value or raise Not_found if None.*)
 val degrees_of_freedom_prior_ : t -> float
 
-(** Attribute degrees_of_freedom_: see constructor for documentation *)
-val degrees_of_freedom_ : t -> Ndarray.t
+(** Attribute degrees_of_freedom_prior_: get value as an option. *)
+val degrees_of_freedom_prior_opt : t -> (float) option
 
-(** Attribute covariance_prior_: see constructor for documentation *)
-val covariance_prior_ : t -> Py.Object.t
+
+(** Attribute degrees_of_freedom_: get value or raise Not_found if None.*)
+val degrees_of_freedom_ : t -> Arr.t
+
+(** Attribute degrees_of_freedom_: get value as an option. *)
+val degrees_of_freedom_opt : t -> (Arr.t) option
+
+
+(** Attribute covariance_prior_: get value or raise Not_found if None.*)
+val covariance_prior_ : t -> [`F of float | `Arr of Arr.t]
+
+(** Attribute covariance_prior_: get value as an option. *)
+val covariance_prior_opt : t -> ([`F of float | `Arr of Arr.t]) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -485,7 +552,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_components:int -> ?covariance_type:Py.Object.t -> ?tol:float -> ?reg_covar:float -> ?max_iter:int -> ?n_init:int -> ?init_params:[`Kmeans | `Random] -> ?weights_init:Ndarray.t -> ?means_init:Ndarray.t -> ?precisions_init:Ndarray.t -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?warm_start:bool -> ?verbose:int -> ?verbose_interval:int -> unit -> t
+val create : ?n_components:int -> ?covariance_type:[`Full | `Tied | `Diag | `Spherical] -> ?tol:float -> ?reg_covar:float -> ?max_iter:int -> ?n_init:int -> ?init_params:[`Kmeans | `Random] -> ?weights_init:Arr.t -> ?means_init:Arr.t -> ?precisions_init:Arr.t -> ?random_state:int -> ?warm_start:bool -> ?verbose:int -> ?verbose_interval:int -> unit -> t
 (**
 Gaussian Mixture.
 
@@ -640,7 +707,7 @@ BayesianGaussianMixture : Gaussian mixture model fit with a variational
     inference.
 *)
 
-val aic : x:Ndarray.t -> t -> float
+val aic : x:Arr.t -> t -> float
 (**
 Akaike information criterion for the current model on the input X.
 
@@ -654,7 +721,7 @@ aic : float
     The lower the better.
 *)
 
-val bic : x:Ndarray.t -> t -> float
+val bic : x:Arr.t -> t -> float
 (**
 Bayesian information criterion for the current model on the input X.
 
@@ -668,7 +735,7 @@ bic : float
     The lower the better.
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Estimate model parameters with the EM algorithm.
 
@@ -692,7 +759,7 @@ Returns
 self
 *)
 
-val fit_predict : ?y:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_predict : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Estimate model parameters using X and predict the labels for X.
 
@@ -718,7 +785,7 @@ labels : array, shape (n_samples,)
     Component labels.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -734,7 +801,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:Ndarray.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict the labels for the data samples in X using trained model.
 
@@ -750,7 +817,7 @@ labels : array, shape (n_samples,)
     Component labels.
 *)
 
-val predict_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Predict posterior probability of each component given the data.
 
@@ -767,7 +834,7 @@ resp : array, shape (n_samples, n_components)
     the model given each sample.
 *)
 
-val sample : ?n_samples:int -> t -> (Ndarray.t * Ndarray.t)
+val sample : ?n_samples:int -> t -> (Arr.t * Arr.t)
 (**
 Generate random samples from the fitted Gaussian distribution.
 
@@ -785,7 +852,7 @@ y : array, shape (nsamples,)
     Component labels
 *)
 
-val score : ?y:Py.Object.t -> x:Ndarray.t -> t -> float
+val score : ?y:Py.Object.t -> x:Arr.t -> t -> float
 (**
 Compute the per-sample average log-likelihood of the given data X.
 
@@ -801,7 +868,7 @@ log_likelihood : float
     Log likelihood of the Gaussian mixture given X.
 *)
 
-val score_samples : x:Ndarray.t -> t -> Ndarray.t
+val score_samples : x:Arr.t -> t -> Arr.t
 (**
 Compute the weighted log probabilities for each sample.
 
@@ -838,29 +905,61 @@ self : object
 *)
 
 
-(** Attribute weights_: see constructor for documentation *)
-val weights_ : t -> Ndarray.t
+(** Attribute weights_: get value or raise Not_found if None.*)
+val weights_ : t -> Arr.t
 
-(** Attribute means_: see constructor for documentation *)
-val means_ : t -> Ndarray.t
+(** Attribute weights_: get value as an option. *)
+val weights_opt : t -> (Arr.t) option
 
-(** Attribute covariances_: see constructor for documentation *)
-val covariances_ : t -> Ndarray.t
 
-(** Attribute precisions_: see constructor for documentation *)
-val precisions_ : t -> Ndarray.t
+(** Attribute means_: get value or raise Not_found if None.*)
+val means_ : t -> Arr.t
 
-(** Attribute precisions_cholesky_: see constructor for documentation *)
-val precisions_cholesky_ : t -> Ndarray.t
+(** Attribute means_: get value as an option. *)
+val means_opt : t -> (Arr.t) option
 
-(** Attribute converged_: see constructor for documentation *)
+
+(** Attribute covariances_: get value or raise Not_found if None.*)
+val covariances_ : t -> Arr.t
+
+(** Attribute covariances_: get value as an option. *)
+val covariances_opt : t -> (Arr.t) option
+
+
+(** Attribute precisions_: get value or raise Not_found if None.*)
+val precisions_ : t -> Arr.t
+
+(** Attribute precisions_: get value as an option. *)
+val precisions_opt : t -> (Arr.t) option
+
+
+(** Attribute precisions_cholesky_: get value or raise Not_found if None.*)
+val precisions_cholesky_ : t -> Arr.t
+
+(** Attribute precisions_cholesky_: get value as an option. *)
+val precisions_cholesky_opt : t -> (Arr.t) option
+
+
+(** Attribute converged_: get value or raise Not_found if None.*)
 val converged_ : t -> bool
 
-(** Attribute n_iter_: see constructor for documentation *)
+(** Attribute converged_: get value as an option. *)
+val converged_opt : t -> (bool) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
 
-(** Attribute lower_bound_: see constructor for documentation *)
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
+
+(** Attribute lower_bound_: get value or raise Not_found if None.*)
 val lower_bound_ : t -> float
+
+(** Attribute lower_bound_: get value as an option. *)
+val lower_bound_opt : t -> (float) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string

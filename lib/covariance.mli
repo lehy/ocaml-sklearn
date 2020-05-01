@@ -1,9 +1,12 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module EllipticEnvelope : sig
 type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?store_precision:bool -> ?assume_centered:bool -> ?support_fraction:float -> ?contamination:float -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
+val create : ?store_precision:bool -> ?assume_centered:bool -> ?support_fraction:float -> ?contamination:float -> ?random_state:int -> unit -> t
 (**
 An object for detecting outliers in a Gaussian distributed dataset.
 
@@ -99,7 +102,7 @@ References
    (1999)
 *)
 
-val correct_covariance : data:Ndarray.t -> t -> Ndarray.t
+val correct_covariance : data:Arr.t -> t -> Arr.t
 (**
 Apply a correction to raw Minimum Covariance Determinant estimates.
 
@@ -126,7 +129,7 @@ covariance_corrected : array-like, shape (n_features, n_features)
     Corrected robust covariance estimate.
 *)
 
-val decision_function : x:Ndarray.t -> t -> Ndarray.t
+val decision_function : x:Arr.t -> t -> Arr.t
 (**
 Compute the decision function of the given observations.
 
@@ -144,7 +147,7 @@ decision : array-like, shape (n_samples, )
     compatibility with other outlier detection algorithms.
 *)
 
-val error_norm : ?norm:string -> ?scaling:bool -> ?squared:bool -> comp_cov:Ndarray.t -> t -> Py.Object.t
+val error_norm : ?norm:string -> ?scaling:bool -> ?squared:bool -> comp_cov:Arr.t -> t -> Py.Object.t
 (**
 Computes the Mean Squared Error between two covariance estimators.
 (In the sense of the Frobenius norm).
@@ -175,7 +178,7 @@ The Mean Squared Error (in the sense of the Frobenius norm) between
 `self` and `comp_cov` covariance estimators.
 *)
 
-val fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fit the EllipticEnvelope model.
 
@@ -188,7 +191,7 @@ y : Ignored
     not used, present for API consistency by convention.
 *)
 
-val fit_predict : ?y:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_predict : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Perform fit on X and returns labels for X.
 
@@ -208,7 +211,7 @@ y : ndarray, shape (n_samples,)
     1 for inliers, -1 for outliers.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -224,7 +227,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val get_precision : t -> Ndarray.t
+val get_precision : t -> Arr.t
 (**
 Getter for the precision matrix.
 
@@ -234,7 +237,7 @@ precision_ : array-like
     The precision matrix associated to the current covariance object.
 *)
 
-val mahalanobis : x:Ndarray.t -> t -> Ndarray.t
+val mahalanobis : x:Arr.t -> t -> Arr.t
 (**
 Computes the squared Mahalanobis distances of given observations.
 
@@ -251,7 +254,7 @@ dist : array, shape = [n_samples,]
     Squared Mahalanobis distances of the observations.
 *)
 
-val predict : x:Ndarray.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict the labels (1 inlier, -1 outlier) of X according to the
 fitted model.
@@ -266,7 +269,7 @@ is_inlier : array, shape (n_samples,)
     Returns -1 for anomalies/outliers and +1 for inliers.
 *)
 
-val reweight_covariance : data:Ndarray.t -> t -> (Ndarray.t * Ndarray.t * Py.Object.t)
+val reweight_covariance : data:Arr.t -> t -> (Arr.t * Arr.t * Py.Object.t)
 (**
 Re-weight raw Minimum Covariance Determinant estimates.
 
@@ -302,7 +305,7 @@ support_reweighted : array-like, type boolean, shape (n_samples,)
     the re-weighted robust location and covariance estimates.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Returns the mean accuracy on the given test data and labels.
 
@@ -327,7 +330,7 @@ score : float
     Mean accuracy of self.predict(X) wrt. y.
 *)
 
-val score_samples : x:Ndarray.t -> t -> Ndarray.t
+val score_samples : x:Arr.t -> t -> Arr.t
 (**
 Compute the negative Mahalanobis distances.
 
@@ -362,20 +365,40 @@ self : object
 *)
 
 
-(** Attribute location_: see constructor for documentation *)
-val location_ : t -> Ndarray.t
+(** Attribute location_: get value or raise Not_found if None.*)
+val location_ : t -> Arr.t
 
-(** Attribute covariance_: see constructor for documentation *)
-val covariance_ : t -> Ndarray.t
+(** Attribute location_: get value as an option. *)
+val location_opt : t -> (Arr.t) option
 
-(** Attribute precision_: see constructor for documentation *)
-val precision_ : t -> Ndarray.t
 
-(** Attribute support_: see constructor for documentation *)
-val support_ : t -> Ndarray.t
+(** Attribute covariance_: get value or raise Not_found if None.*)
+val covariance_ : t -> Arr.t
 
-(** Attribute offset_: see constructor for documentation *)
+(** Attribute covariance_: get value as an option. *)
+val covariance_opt : t -> (Arr.t) option
+
+
+(** Attribute precision_: get value or raise Not_found if None.*)
+val precision_ : t -> Arr.t
+
+(** Attribute precision_: get value as an option. *)
+val precision_opt : t -> (Arr.t) option
+
+
+(** Attribute support_: get value or raise Not_found if None.*)
+val support_ : t -> Arr.t
+
+(** Attribute support_: get value as an option. *)
+val support_opt : t -> (Arr.t) option
+
+
+(** Attribute offset_: get value or raise Not_found if None.*)
 val offset_ : t -> float
+
+(** Attribute offset_: get value as an option. *)
+val offset_opt : t -> (float) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -443,7 +466,7 @@ array([[0.7569..., 0.2818...],
 array([0.0622..., 0.0193...])
 *)
 
-val error_norm : ?norm:string -> ?scaling:bool -> ?squared:bool -> comp_cov:Ndarray.t -> t -> Py.Object.t
+val error_norm : ?norm:string -> ?scaling:bool -> ?squared:bool -> comp_cov:Arr.t -> t -> Py.Object.t
 (**
 Computes the Mean Squared Error between two covariance estimators.
 (In the sense of the Frobenius norm).
@@ -474,7 +497,7 @@ The Mean Squared Error (in the sense of the Frobenius norm) between
 `self` and `comp_cov` covariance estimators.
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fits the Maximum Likelihood Estimator covariance model
 according to the given training data and parameters.
@@ -493,7 +516,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -509,7 +532,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val get_precision : t -> Ndarray.t
+val get_precision : t -> Arr.t
 (**
 Getter for the precision matrix.
 
@@ -519,7 +542,7 @@ precision_ : array-like
     The precision matrix associated to the current covariance object.
 *)
 
-val mahalanobis : x:Ndarray.t -> t -> Ndarray.t
+val mahalanobis : x:Arr.t -> t -> Arr.t
 (**
 Computes the squared Mahalanobis distances of given observations.
 
@@ -536,7 +559,7 @@ dist : array, shape = [n_samples,]
     Squared Mahalanobis distances of the observations.
 *)
 
-val score : ?y:Py.Object.t -> x_test:Ndarray.t -> t -> float
+val score : ?y:Py.Object.t -> x_test:Arr.t -> t -> float
 (**
 Computes the log-likelihood of a Gaussian data set with
 `self.covariance_` as an estimator of its covariance matrix.
@@ -580,14 +603,26 @@ self : object
 *)
 
 
-(** Attribute location_: see constructor for documentation *)
-val location_ : t -> Ndarray.t
+(** Attribute location_: get value or raise Not_found if None.*)
+val location_ : t -> Arr.t
 
-(** Attribute covariance_: see constructor for documentation *)
+(** Attribute location_: get value as an option. *)
+val location_opt : t -> (Arr.t) option
+
+
+(** Attribute covariance_: get value or raise Not_found if None.*)
 val covariance_ : t -> Py.Object.t
 
-(** Attribute precision_: see constructor for documentation *)
+(** Attribute covariance_: get value as an option. *)
+val covariance_opt : t -> (Py.Object.t) option
+
+
+(** Attribute precision_: get value or raise Not_found if None.*)
 val precision_ : t -> Py.Object.t
+
+(** Attribute precision_: get value as an option. *)
+val precision_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -607,7 +642,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?alpha:float -> ?mode:[`Cd | `Lars] -> ?tol:float -> ?enet_tol:float -> ?max_iter:int -> ?verbose:bool -> ?assume_centered:bool -> unit -> t
+val create : ?alpha:float -> ?mode:[`Cd | `Lars] -> ?tol:float -> ?enet_tol:float -> ?max_iter:int -> ?verbose:int -> ?assume_centered:bool -> unit -> t
 (**
 Sparse inverse covariance estimation with an l1-penalized estimator.
 
@@ -687,7 +722,7 @@ See Also
 graphical_lasso, GraphicalLassoCV
 *)
 
-val error_norm : ?norm:string -> ?scaling:bool -> ?squared:bool -> comp_cov:Ndarray.t -> t -> Py.Object.t
+val error_norm : ?norm:string -> ?scaling:bool -> ?squared:bool -> comp_cov:Arr.t -> t -> Py.Object.t
 (**
 Computes the Mean Squared Error between two covariance estimators.
 (In the sense of the Frobenius norm).
@@ -718,7 +753,7 @@ The Mean Squared Error (in the sense of the Frobenius norm) between
 `self` and `comp_cov` covariance estimators.
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fits the GraphicalLasso model to X.
 
@@ -729,7 +764,7 @@ X : ndarray, shape (n_samples, n_features)
 y : (ignored)
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -745,7 +780,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val get_precision : t -> Ndarray.t
+val get_precision : t -> Arr.t
 (**
 Getter for the precision matrix.
 
@@ -755,7 +790,7 @@ precision_ : array-like
     The precision matrix associated to the current covariance object.
 *)
 
-val mahalanobis : x:Ndarray.t -> t -> Ndarray.t
+val mahalanobis : x:Arr.t -> t -> Arr.t
 (**
 Computes the squared Mahalanobis distances of given observations.
 
@@ -772,7 +807,7 @@ dist : array, shape = [n_samples,]
     Squared Mahalanobis distances of the observations.
 *)
 
-val score : ?y:Py.Object.t -> x_test:Ndarray.t -> t -> float
+val score : ?y:Py.Object.t -> x_test:Arr.t -> t -> float
 (**
 Computes the log-likelihood of a Gaussian data set with
 `self.covariance_` as an estimator of its covariance matrix.
@@ -816,17 +851,33 @@ self : object
 *)
 
 
-(** Attribute location_: see constructor for documentation *)
-val location_ : t -> Ndarray.t
+(** Attribute location_: get value or raise Not_found if None.*)
+val location_ : t -> Arr.t
 
-(** Attribute covariance_: see constructor for documentation *)
-val covariance_ : t -> Ndarray.t
+(** Attribute location_: get value as an option. *)
+val location_opt : t -> (Arr.t) option
 
-(** Attribute precision_: see constructor for documentation *)
-val precision_ : t -> Ndarray.t
 
-(** Attribute n_iter_: see constructor for documentation *)
+(** Attribute covariance_: get value or raise Not_found if None.*)
+val covariance_ : t -> Arr.t
+
+(** Attribute covariance_: get value as an option. *)
+val covariance_opt : t -> (Arr.t) option
+
+
+(** Attribute precision_: get value or raise Not_found if None.*)
+val precision_ : t -> Arr.t
+
+(** Attribute precision_: get value as an option. *)
+val precision_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -846,7 +897,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?alphas:[`Int of int | `PyObject of Py.Object.t] -> ?n_refinements:Py.Object.t -> ?cv:[`Int of int | `CrossValGenerator of Py.Object.t | `Ndarray of Ndarray.t] -> ?tol:float -> ?enet_tol:float -> ?max_iter:int -> ?mode:[`Cd | `Lars] -> ?n_jobs:[`Int of int | `None] -> ?verbose:bool -> ?assume_centered:bool -> unit -> t
+val create : ?alphas:[`I of int | `List_positive_float of Py.Object.t] -> ?n_refinements:Py.Object.t -> ?cv:[`I of int | `CrossValGenerator of Py.Object.t | `Arr of Arr.t] -> ?tol:float -> ?enet_tol:float -> ?max_iter:int -> ?mode:[`Cd | `Lars] -> ?n_jobs:int -> ?verbose:int -> ?assume_centered:bool -> unit -> t
 (**
 Sparse inverse covariance w/ cross-validated choice of the l1 penalty.
 
@@ -979,7 +1030,7 @@ values of alpha then come out as missing values, but the optimum may
 be close to these missing values.
 *)
 
-val error_norm : ?norm:string -> ?scaling:bool -> ?squared:bool -> comp_cov:Ndarray.t -> t -> Py.Object.t
+val error_norm : ?norm:string -> ?scaling:bool -> ?squared:bool -> comp_cov:Arr.t -> t -> Py.Object.t
 (**
 Computes the Mean Squared Error between two covariance estimators.
 (In the sense of the Frobenius norm).
@@ -1010,7 +1061,7 @@ The Mean Squared Error (in the sense of the Frobenius norm) between
 `self` and `comp_cov` covariance estimators.
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fits the GraphicalLasso covariance model to X.
 
@@ -1021,7 +1072,7 @@ X : ndarray, shape (n_samples, n_features)
 y : (ignored)
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1037,7 +1088,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val get_precision : t -> Ndarray.t
+val get_precision : t -> Arr.t
 (**
 Getter for the precision matrix.
 
@@ -1047,7 +1098,7 @@ precision_ : array-like
     The precision matrix associated to the current covariance object.
 *)
 
-val mahalanobis : x:Ndarray.t -> t -> Ndarray.t
+val mahalanobis : x:Arr.t -> t -> Arr.t
 (**
 Computes the squared Mahalanobis distances of given observations.
 
@@ -1064,7 +1115,7 @@ dist : array, shape = [n_samples,]
     Squared Mahalanobis distances of the observations.
 *)
 
-val score : ?y:Py.Object.t -> x_test:Ndarray.t -> t -> float
+val score : ?y:Py.Object.t -> x_test:Arr.t -> t -> float
 (**
 Computes the log-likelihood of a Gaussian data set with
 `self.covariance_` as an estimator of its covariance matrix.
@@ -1108,26 +1159,54 @@ self : object
 *)
 
 
-(** Attribute location_: see constructor for documentation *)
-val location_ : t -> Ndarray.t
+(** Attribute location_: get value or raise Not_found if None.*)
+val location_ : t -> Arr.t
 
-(** Attribute covariance_: see constructor for documentation *)
-val covariance_ : t -> Py.Object.t
+(** Attribute location_: get value as an option. *)
+val location_opt : t -> (Arr.t) option
 
-(** Attribute precision_: see constructor for documentation *)
-val precision_ : t -> Py.Object.t
 
-(** Attribute alpha_: see constructor for documentation *)
+(** Attribute covariance_: get value or raise Not_found if None.*)
+val covariance_ : t -> Arr.t
+
+(** Attribute covariance_: get value as an option. *)
+val covariance_opt : t -> (Arr.t) option
+
+
+(** Attribute precision_: get value or raise Not_found if None.*)
+val precision_ : t -> Arr.t
+
+(** Attribute precision_: get value as an option. *)
+val precision_opt : t -> (Arr.t) option
+
+
+(** Attribute alpha_: get value or raise Not_found if None.*)
 val alpha_ : t -> float
 
-(** Attribute cv_alphas_: see constructor for documentation *)
+(** Attribute alpha_: get value as an option. *)
+val alpha_opt : t -> (float) option
+
+
+(** Attribute cv_alphas_: get value or raise Not_found if None.*)
 val cv_alphas_ : t -> Py.Object.t
 
-(** Attribute grid_scores_: see constructor for documentation *)
+(** Attribute cv_alphas_: get value as an option. *)
+val cv_alphas_opt : t -> (Py.Object.t) option
+
+
+(** Attribute grid_scores_: get value or raise Not_found if None.*)
 val grid_scores_ : t -> Py.Object.t
 
-(** Attribute n_iter_: see constructor for documentation *)
+(** Attribute grid_scores_: get value as an option. *)
+val grid_scores_opt : t -> (Py.Object.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1224,7 +1303,7 @@ Ledoit and Wolf, Journal of Multivariate Analysis, Volume 88, Issue 2,
 February 2004, pages 365-411.
 *)
 
-val error_norm : ?norm:string -> ?scaling:bool -> ?squared:bool -> comp_cov:Ndarray.t -> t -> Py.Object.t
+val error_norm : ?norm:string -> ?scaling:bool -> ?squared:bool -> comp_cov:Arr.t -> t -> Py.Object.t
 (**
 Computes the Mean Squared Error between two covariance estimators.
 (In the sense of the Frobenius norm).
@@ -1255,7 +1334,7 @@ The Mean Squared Error (in the sense of the Frobenius norm) between
 `self` and `comp_cov` covariance estimators.
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fits the Ledoit-Wolf shrunk covariance model
 according to the given training data and parameters.
@@ -1273,7 +1352,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1289,7 +1368,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val get_precision : t -> Ndarray.t
+val get_precision : t -> Arr.t
 (**
 Getter for the precision matrix.
 
@@ -1299,7 +1378,7 @@ precision_ : array-like
     The precision matrix associated to the current covariance object.
 *)
 
-val mahalanobis : x:Ndarray.t -> t -> Ndarray.t
+val mahalanobis : x:Arr.t -> t -> Arr.t
 (**
 Computes the squared Mahalanobis distances of given observations.
 
@@ -1316,7 +1395,7 @@ dist : array, shape = [n_samples,]
     Squared Mahalanobis distances of the observations.
 *)
 
-val score : ?y:Py.Object.t -> x_test:Ndarray.t -> t -> float
+val score : ?y:Py.Object.t -> x_test:Arr.t -> t -> float
 (**
 Computes the log-likelihood of a Gaussian data set with
 `self.covariance_` as an estimator of its covariance matrix.
@@ -1360,17 +1439,33 @@ self : object
 *)
 
 
-(** Attribute location_: see constructor for documentation *)
-val location_ : t -> Ndarray.t
+(** Attribute location_: get value or raise Not_found if None.*)
+val location_ : t -> Arr.t
 
-(** Attribute covariance_: see constructor for documentation *)
-val covariance_ : t -> Ndarray.t
+(** Attribute location_: get value as an option. *)
+val location_opt : t -> (Arr.t) option
 
-(** Attribute precision_: see constructor for documentation *)
-val precision_ : t -> Ndarray.t
 
-(** Attribute shrinkage_: see constructor for documentation *)
+(** Attribute covariance_: get value or raise Not_found if None.*)
+val covariance_ : t -> Arr.t
+
+(** Attribute covariance_: get value as an option. *)
+val covariance_opt : t -> (Arr.t) option
+
+
+(** Attribute precision_: get value or raise Not_found if None.*)
+val precision_ : t -> Arr.t
+
+(** Attribute precision_: get value as an option. *)
+val precision_opt : t -> (Arr.t) option
+
+
+(** Attribute shrinkage_: get value or raise Not_found if None.*)
 val shrinkage_ : t -> Py.Object.t
+
+(** Attribute shrinkage_: get value as an option. *)
+val shrinkage_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1390,7 +1485,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?store_precision:bool -> ?assume_centered:bool -> ?support_fraction:[`Float of float | `PyObject of Py.Object.t] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
+val create : ?store_precision:bool -> ?assume_centered:bool -> ?support_fraction:[`F of float | `T0_support_fraction_1 of Py.Object.t] -> ?random_state:int -> unit -> t
 (**
 Minimum Covariance Determinant (MCD): robust estimator of covariance.
 
@@ -1492,7 +1587,7 @@ References
     The Annals of Statistics, 1993, Vol. 21, No. 3, 1385-1400
 *)
 
-val correct_covariance : data:Ndarray.t -> t -> Ndarray.t
+val correct_covariance : data:Arr.t -> t -> Arr.t
 (**
 Apply a correction to raw Minimum Covariance Determinant estimates.
 
@@ -1519,7 +1614,7 @@ covariance_corrected : array-like, shape (n_features, n_features)
     Corrected robust covariance estimate.
 *)
 
-val error_norm : ?norm:string -> ?scaling:bool -> ?squared:bool -> comp_cov:Ndarray.t -> t -> Py.Object.t
+val error_norm : ?norm:string -> ?scaling:bool -> ?squared:bool -> comp_cov:Arr.t -> t -> Py.Object.t
 (**
 Computes the Mean Squared Error between two covariance estimators.
 (In the sense of the Frobenius norm).
@@ -1550,7 +1645,7 @@ The Mean Squared Error (in the sense of the Frobenius norm) between
 `self` and `comp_cov` covariance estimators.
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fits a Minimum Covariance Determinant with the FastMCD algorithm.
 
@@ -1568,7 +1663,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1584,7 +1679,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val get_precision : t -> Ndarray.t
+val get_precision : t -> Arr.t
 (**
 Getter for the precision matrix.
 
@@ -1594,7 +1689,7 @@ precision_ : array-like
     The precision matrix associated to the current covariance object.
 *)
 
-val mahalanobis : x:Ndarray.t -> t -> Ndarray.t
+val mahalanobis : x:Arr.t -> t -> Arr.t
 (**
 Computes the squared Mahalanobis distances of given observations.
 
@@ -1611,7 +1706,7 @@ dist : array, shape = [n_samples,]
     Squared Mahalanobis distances of the observations.
 *)
 
-val reweight_covariance : data:Ndarray.t -> t -> (Ndarray.t * Ndarray.t * Py.Object.t)
+val reweight_covariance : data:Arr.t -> t -> (Arr.t * Arr.t * Py.Object.t)
 (**
 Re-weight raw Minimum Covariance Determinant estimates.
 
@@ -1647,7 +1742,7 @@ support_reweighted : array-like, type boolean, shape (n_samples,)
     the re-weighted robust location and covariance estimates.
 *)
 
-val score : ?y:Py.Object.t -> x_test:Ndarray.t -> t -> float
+val score : ?y:Py.Object.t -> x_test:Arr.t -> t -> float
 (**
 Computes the log-likelihood of a Gaussian data set with
 `self.covariance_` as an estimator of its covariance matrix.
@@ -1691,29 +1786,61 @@ self : object
 *)
 
 
-(** Attribute raw_location_: see constructor for documentation *)
-val raw_location_ : t -> Ndarray.t
+(** Attribute raw_location_: get value or raise Not_found if None.*)
+val raw_location_ : t -> Arr.t
 
-(** Attribute raw_covariance_: see constructor for documentation *)
-val raw_covariance_ : t -> Ndarray.t
+(** Attribute raw_location_: get value as an option. *)
+val raw_location_opt : t -> (Arr.t) option
 
-(** Attribute raw_support_: see constructor for documentation *)
-val raw_support_ : t -> Ndarray.t
 
-(** Attribute location_: see constructor for documentation *)
-val location_ : t -> Ndarray.t
+(** Attribute raw_covariance_: get value or raise Not_found if None.*)
+val raw_covariance_ : t -> Arr.t
 
-(** Attribute covariance_: see constructor for documentation *)
-val covariance_ : t -> Ndarray.t
+(** Attribute raw_covariance_: get value as an option. *)
+val raw_covariance_opt : t -> (Arr.t) option
 
-(** Attribute precision_: see constructor for documentation *)
-val precision_ : t -> Ndarray.t
 
-(** Attribute support_: see constructor for documentation *)
-val support_ : t -> Ndarray.t
+(** Attribute raw_support_: get value or raise Not_found if None.*)
+val raw_support_ : t -> Arr.t
 
-(** Attribute dist_: see constructor for documentation *)
-val dist_ : t -> Ndarray.t
+(** Attribute raw_support_: get value as an option. *)
+val raw_support_opt : t -> (Arr.t) option
+
+
+(** Attribute location_: get value or raise Not_found if None.*)
+val location_ : t -> Arr.t
+
+(** Attribute location_: get value as an option. *)
+val location_opt : t -> (Arr.t) option
+
+
+(** Attribute covariance_: get value or raise Not_found if None.*)
+val covariance_ : t -> Arr.t
+
+(** Attribute covariance_: get value as an option. *)
+val covariance_opt : t -> (Arr.t) option
+
+
+(** Attribute precision_: get value or raise Not_found if None.*)
+val precision_ : t -> Arr.t
+
+(** Attribute precision_: get value as an option. *)
+val precision_opt : t -> (Arr.t) option
+
+
+(** Attribute support_: get value or raise Not_found if None.*)
+val support_ : t -> Arr.t
+
+(** Attribute support_: get value as an option. *)
+val support_opt : t -> (Arr.t) option
+
+
+(** Attribute dist_: get value or raise Not_found if None.*)
+val dist_ : t -> Arr.t
+
+(** Attribute dist_: get value as an option. *)
+val dist_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1788,7 +1915,7 @@ References
 Chen et al., IEEE Trans. on Sign. Proc., Volume 58, Issue 10, October 2010.
 *)
 
-val error_norm : ?norm:string -> ?scaling:bool -> ?squared:bool -> comp_cov:Ndarray.t -> t -> Py.Object.t
+val error_norm : ?norm:string -> ?scaling:bool -> ?squared:bool -> comp_cov:Arr.t -> t -> Py.Object.t
 (**
 Computes the Mean Squared Error between two covariance estimators.
 (In the sense of the Frobenius norm).
@@ -1819,7 +1946,7 @@ The Mean Squared Error (in the sense of the Frobenius norm) between
 `self` and `comp_cov` covariance estimators.
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fits the Oracle Approximating Shrinkage covariance model
 according to the given training data and parameters.
@@ -1837,7 +1964,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1853,7 +1980,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val get_precision : t -> Ndarray.t
+val get_precision : t -> Arr.t
 (**
 Getter for the precision matrix.
 
@@ -1863,7 +1990,7 @@ precision_ : array-like
     The precision matrix associated to the current covariance object.
 *)
 
-val mahalanobis : x:Ndarray.t -> t -> Ndarray.t
+val mahalanobis : x:Arr.t -> t -> Arr.t
 (**
 Computes the squared Mahalanobis distances of given observations.
 
@@ -1880,7 +2007,7 @@ dist : array, shape = [n_samples,]
     Squared Mahalanobis distances of the observations.
 *)
 
-val score : ?y:Py.Object.t -> x_test:Ndarray.t -> t -> float
+val score : ?y:Py.Object.t -> x_test:Arr.t -> t -> float
 (**
 Computes the log-likelihood of a Gaussian data set with
 `self.covariance_` as an estimator of its covariance matrix.
@@ -1924,14 +2051,26 @@ self : object
 *)
 
 
-(** Attribute covariance_: see constructor for documentation *)
-val covariance_ : t -> Ndarray.t
+(** Attribute covariance_: get value or raise Not_found if None.*)
+val covariance_ : t -> Arr.t
 
-(** Attribute precision_: see constructor for documentation *)
-val precision_ : t -> Ndarray.t
+(** Attribute covariance_: get value as an option. *)
+val covariance_opt : t -> (Arr.t) option
 
-(** Attribute shrinkage_: see constructor for documentation *)
+
+(** Attribute precision_: get value or raise Not_found if None.*)
+val precision_ : t -> Arr.t
+
+(** Attribute precision_: get value as an option. *)
+val precision_opt : t -> (Arr.t) option
+
+
+(** Attribute shrinkage_: get value or raise Not_found if None.*)
 val shrinkage_ : t -> Py.Object.t
+
+(** Attribute shrinkage_: get value as an option. *)
+val shrinkage_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1951,7 +2090,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?store_precision:bool -> ?assume_centered:bool -> ?shrinkage:[`Float of float | `PyObject of Py.Object.t] -> unit -> t
+val create : ?store_precision:bool -> ?assume_centered:bool -> ?shrinkage:[`F of float | `T0_shrinkage_1 of Py.Object.t] -> unit -> t
 (**
 Covariance estimator with shrinkage
 
@@ -2011,7 +2150,7 @@ The regularized covariance is given by:
 where mu = trace(cov) / n_features
 *)
 
-val error_norm : ?norm:string -> ?scaling:bool -> ?squared:bool -> comp_cov:Ndarray.t -> t -> Py.Object.t
+val error_norm : ?norm:string -> ?scaling:bool -> ?squared:bool -> comp_cov:Arr.t -> t -> Py.Object.t
 (**
 Computes the Mean Squared Error between two covariance estimators.
 (In the sense of the Frobenius norm).
@@ -2042,7 +2181,7 @@ The Mean Squared Error (in the sense of the Frobenius norm) between
 `self` and `comp_cov` covariance estimators.
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fits the shrunk covariance model
 according to the given training data and parameters.
@@ -2061,7 +2200,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2077,7 +2216,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val get_precision : t -> Ndarray.t
+val get_precision : t -> Arr.t
 (**
 Getter for the precision matrix.
 
@@ -2087,7 +2226,7 @@ precision_ : array-like
     The precision matrix associated to the current covariance object.
 *)
 
-val mahalanobis : x:Ndarray.t -> t -> Ndarray.t
+val mahalanobis : x:Arr.t -> t -> Arr.t
 (**
 Computes the squared Mahalanobis distances of given observations.
 
@@ -2104,7 +2243,7 @@ dist : array, shape = [n_samples,]
     Squared Mahalanobis distances of the observations.
 *)
 
-val score : ?y:Py.Object.t -> x_test:Ndarray.t -> t -> float
+val score : ?y:Py.Object.t -> x_test:Arr.t -> t -> float
 (**
 Computes the log-likelihood of a Gaussian data set with
 `self.covariance_` as an estimator of its covariance matrix.
@@ -2148,14 +2287,26 @@ self : object
 *)
 
 
-(** Attribute location_: see constructor for documentation *)
-val location_ : t -> Ndarray.t
+(** Attribute location_: get value or raise Not_found if None.*)
+val location_ : t -> Arr.t
 
-(** Attribute covariance_: see constructor for documentation *)
-val covariance_ : t -> Ndarray.t
+(** Attribute location_: get value as an option. *)
+val location_opt : t -> (Arr.t) option
 
-(** Attribute precision_: see constructor for documentation *)
-val precision_ : t -> Ndarray.t
+
+(** Attribute covariance_: get value or raise Not_found if None.*)
+val covariance_ : t -> Arr.t
+
+(** Attribute covariance_: get value as an option. *)
+val covariance_opt : t -> (Arr.t) option
+
+
+(** Attribute precision_: get value or raise Not_found if None.*)
+val precision_ : t -> Arr.t
+
+(** Attribute precision_: get value as an option. *)
+val precision_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2170,7 +2321,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val empirical_covariance : ?assume_centered:bool -> x:Ndarray.t -> unit -> Py.Object.t
+val empirical_covariance : ?assume_centered:bool -> x:Arr.t -> unit -> Py.Object.t
 (**
 Computes the Maximum likelihood covariance estimator
 
@@ -2192,7 +2343,7 @@ covariance : 2D ndarray, shape (n_features, n_features)
     Empirical covariance (Maximum Likelihood Estimator).
 *)
 
-val fast_mcd : ?support_fraction:[`Float of float | `PyObject of Py.Object.t] -> ?cov_computation_method:Py.Object.t -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> x:Ndarray.t -> unit -> (Ndarray.t * Ndarray.t * Py.Object.t)
+val fast_mcd : ?support_fraction:[`F of float | `T0_support_fraction_1 of Py.Object.t] -> ?cov_computation_method:Py.Object.t -> ?random_state:int -> x:Arr.t -> unit -> (Arr.t * Arr.t * Py.Object.t)
 (**
 Estimates the Minimum Covariance Determinant matrix.
 
@@ -2258,7 +2409,7 @@ support : array-like, type boolean, shape (n_samples,)
     the robust location and covariance estimates of the data set.
 *)
 
-val graphical_lasso : ?cov_init:Py.Object.t -> ?mode:[`Cd | `Lars] -> ?tol:float -> ?enet_tol:float -> ?max_iter:int -> ?verbose:bool -> ?return_costs:bool -> ?eps:float -> ?return_n_iter:bool -> emp_cov:Py.Object.t -> alpha:float -> unit -> (Py.Object.t * Py.Object.t * Py.Object.t * int)
+val graphical_lasso : ?cov_init:Py.Object.t -> ?mode:[`Cd | `Lars] -> ?tol:float -> ?enet_tol:float -> ?max_iter:int -> ?verbose:int -> ?return_costs:bool -> ?eps:float -> ?return_n_iter:bool -> emp_cov:Py.Object.t -> alpha:float -> unit -> (Py.Object.t * Py.Object.t * Py.Object.t * int)
 (**
 l1-penalized covariance estimator
 
@@ -2339,7 +2490,7 @@ One possible difference with the `glasso` R package is that the
 diagonal coefficients are not penalized.
 *)
 
-val ledoit_wolf : ?assume_centered:bool -> ?block_size:int -> x:Ndarray.t -> unit -> (Ndarray.t * float)
+val ledoit_wolf : ?assume_centered:bool -> ?block_size:int -> x:Arr.t -> unit -> (Arr.t * float)
 (**
 Estimates the shrunk Ledoit-Wolf covariance matrix.
 
@@ -2378,7 +2529,7 @@ The regularized (shrunk) covariance is:
 where mu = trace(cov) / n_features
 *)
 
-val ledoit_wolf_shrinkage : ?assume_centered:bool -> ?block_size:int -> x:Ndarray.t -> unit -> float
+val ledoit_wolf_shrinkage : ?assume_centered:bool -> ?block_size:int -> x:Arr.t -> unit -> float
 (**
 Estimates the shrunk Ledoit-Wolf covariance matrix.
 
@@ -2434,7 +2585,7 @@ Returns
 sample mean of the log-likelihood
 *)
 
-val oas : ?assume_centered:bool -> x:Ndarray.t -> unit -> (Ndarray.t * float)
+val oas : ?assume_centered:bool -> x:Arr.t -> unit -> (Arr.t * float)
 (**
 Estimate covariance with the Oracle Approximating Shrinkage algorithm.
 
@@ -2470,7 +2621,7 @@ The formula we used to implement the OAS is slightly modified compared
 to the one given in the article. See :class:`OAS` for more details.
 *)
 
-val shrunk_covariance : ?shrinkage:[`Float of float | `PyObject of Py.Object.t] -> emp_cov:Ndarray.t -> unit -> Ndarray.t
+val shrunk_covariance : ?shrinkage:[`F of float | `T0_shrinkage_1 of Py.Object.t] -> emp_cov:Arr.t -> unit -> Arr.t
 (**
 Calculates a covariance matrix shrunk on the diagonal
 

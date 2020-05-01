@@ -1,3 +1,6 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module BaseEstimator : sig
 type t
 val of_pyobject : Py.Object.t -> t
@@ -14,7 +17,7 @@ at the class level in their ``__init__`` as explicit keyword
 arguments (no ``*args`` or ``**kwargs``).
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -108,7 +111,7 @@ shape : (int, int)
     Number of rows and columns (resp.) in the bicluster.
 *)
 
-val get_submatrix : i:int -> data:Py.Object.t -> t -> Ndarray.t
+val get_submatrix : i:int -> data:Py.Object.t -> t -> Arr.t
 (**
 Return the submatrix corresponding to bicluster `i`.
 
@@ -154,7 +157,7 @@ val create : unit -> t
 Mixin class for all classifiers in scikit-learn.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -203,7 +206,7 @@ val create : unit -> t
 Mixin class for all cluster estimators in scikit-learn.
 *)
 
-val fit_predict : ?y:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_predict : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Perform clustering on X and returns cluster labels.
 
@@ -245,7 +248,7 @@ val create : unit -> t
 Mixin class for all density estimators in scikit-learn.
 *)
 
-val score : ?y:Py.Object.t -> x:Ndarray.t -> t -> float
+val score : ?y:Py.Object.t -> x:Arr.t -> t -> float
 (**
 Return the score of the model on the data X
 
@@ -330,7 +333,7 @@ val create : unit -> t
 Mixin class for all outlier detection estimators in scikit-learn.
 *)
 
-val fit_predict : ?y:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_predict : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Perform fit on X and returns labels for X.
 
@@ -374,7 +377,7 @@ val create : unit -> t
 Mixin class for all regression estimators in scikit-learn.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -443,7 +446,7 @@ val create : unit -> t
 Mixin class for all transformers in scikit-learn.
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -481,7 +484,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val clone : ?safe:bool -> estimator:[`Estimator of Py.Object.t | `ArrayLike of Py.Object.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val clone : ?safe:bool -> estimator:[`Estimator of Py.Object.t | `Arr of Arr.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
 (**
 Constructs a new estimator with the same parameters.
 

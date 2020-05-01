@@ -1,9 +1,12 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module LabelPropagation : sig
 type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?kernel:[`Knn | `Rbf | `Callable of Py.Object.t] -> ?gamma:float -> ?n_neighbors:int -> ?max_iter:int -> ?tol:float -> ?n_jobs:[`Int of int | `None] -> unit -> t
+val create : ?kernel:[`Knn | `Rbf | `Callable of Py.Object.t] -> ?gamma:float -> ?n_neighbors:int -> ?max_iter:int -> ?tol:float -> ?n_jobs:int -> unit -> t
 (**
 Label Propagation classifier
 
@@ -100,7 +103,7 @@ Returns
 self : returns an instance of self.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -116,7 +119,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:Ndarray.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Performs inductive inference across the model.
 
@@ -130,7 +133,7 @@ y : array_like, shape = [n_samples]
     Predictions for input data
 *)
 
-val predict_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Predict probability for each possible outcome.
 
@@ -149,7 +152,7 @@ probabilities : array, shape = [n_samples, n_classes]
     class labels
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -195,20 +198,40 @@ self : object
 *)
 
 
-(** Attribute X_: see constructor for documentation *)
-val x_ : t -> Ndarray.t
+(** Attribute X_: get value or raise Not_found if None.*)
+val x_ : t -> Arr.t
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute X_: get value as an option. *)
+val x_opt : t -> (Arr.t) option
 
-(** Attribute label_distributions_: see constructor for documentation *)
-val label_distributions_ : t -> Ndarray.t
 
-(** Attribute transduction_: see constructor for documentation *)
-val transduction_ : t -> Ndarray.t
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
 
-(** Attribute n_iter_: see constructor for documentation *)
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute label_distributions_: get value or raise Not_found if None.*)
+val label_distributions_ : t -> Arr.t
+
+(** Attribute label_distributions_: get value as an option. *)
+val label_distributions_opt : t -> (Arr.t) option
+
+
+(** Attribute transduction_: get value or raise Not_found if None.*)
+val transduction_ : t -> Arr.t
+
+(** Attribute transduction_: get value as an option. *)
+val transduction_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -228,7 +251,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?kernel:[`Knn | `Rbf | `Callable of Py.Object.t] -> ?gamma:float -> ?n_neighbors:int -> ?alpha:float -> ?max_iter:int -> ?tol:float -> ?n_jobs:[`Int of int | `None] -> unit -> t
+val create : ?kernel:[`Knn | `Rbf | `Callable of Py.Object.t] -> ?gamma:float -> ?n_neighbors:int -> ?alpha:float -> ?max_iter:int -> ?tol:float -> ?n_jobs:int -> unit -> t
 (**
 LabelSpreading model for semi-supervised learning
 
@@ -314,7 +337,7 @@ See Also
 LabelPropagation : Unregularized graph based semi-supervised learning
 *)
 
-val fit : x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit a semi-supervised label propagation model based
 
@@ -336,7 +359,7 @@ Returns
 self : returns an instance of self.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -352,7 +375,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:Ndarray.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Performs inductive inference across the model.
 
@@ -366,7 +389,7 @@ y : array_like, shape = [n_samples]
     Predictions for input data
 *)
 
-val predict_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Predict probability for each possible outcome.
 
@@ -385,7 +408,7 @@ probabilities : array, shape = [n_samples, n_classes]
     class labels
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -431,20 +454,40 @@ self : object
 *)
 
 
-(** Attribute X_: see constructor for documentation *)
-val x_ : t -> Ndarray.t
+(** Attribute X_: get value or raise Not_found if None.*)
+val x_ : t -> Arr.t
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute X_: get value as an option. *)
+val x_opt : t -> (Arr.t) option
 
-(** Attribute label_distributions_: see constructor for documentation *)
-val label_distributions_ : t -> Ndarray.t
 
-(** Attribute transduction_: see constructor for documentation *)
-val transduction_ : t -> Ndarray.t
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
 
-(** Attribute n_iter_: see constructor for documentation *)
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute label_distributions_: get value or raise Not_found if None.*)
+val label_distributions_ : t -> Arr.t
+
+(** Attribute label_distributions_: get value as an option. *)
+val label_distributions_opt : t -> (Arr.t) option
+
+
+(** Attribute transduction_: get value or raise Not_found if None.*)
+val transduction_ : t -> Arr.t
+
+(** Attribute transduction_: get value as an option. *)
+val transduction_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string

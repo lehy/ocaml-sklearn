@@ -1,3 +1,6 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module BaseEstimator : sig
 type t
 val of_pyobject : Py.Object.t -> t
@@ -14,7 +17,7 @@ at the class level in their ``__init__`` as explicit keyword
 arguments (no ``*args`` or ``**kwargs``).
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -69,7 +72,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?alpha:[`Float of float | `Ndarray of Ndarray.t] -> ?kernel:[`String of string | `Callable of Py.Object.t] -> ?gamma:float -> ?degree:float -> ?coef0:float -> ?kernel_params:Py.Object.t -> unit -> t
+val create : ?alpha:[`F of float | `Arr of Arr.t] -> ?kernel:[`S of string | `Callable of Py.Object.t] -> ?gamma:float -> ?degree:float -> ?coef0:float -> ?kernel_params:Dict.t -> unit -> t
 (**
 Kernel ridge regression.
 
@@ -162,7 +165,7 @@ Examples
 KernelRidge(alpha=1.0)
 *)
 
-val fit : ?y:Ndarray.t -> ?sample_weight:[`Float of float | `Ndarray of Ndarray.t] -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : ?y:Arr.t -> ?sample_weight:[`F of float | `Arr of Arr.t] -> x:Arr.t -> t -> t
 (**
 Fit Kernel Ridge regression model
 
@@ -184,7 +187,7 @@ Returns
 self : returns an instance of self.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -200,7 +203,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the kernel ridge model
 
@@ -218,7 +221,7 @@ C : ndarray of shape (n_samples,) or (n_samples, n_targets)
     Returns predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -284,11 +287,19 @@ self : object
 *)
 
 
-(** Attribute dual_coef_: see constructor for documentation *)
-val dual_coef_ : t -> Ndarray.t
+(** Attribute dual_coef_: get value or raise Not_found if None.*)
+val dual_coef_ : t -> Arr.t
 
-(** Attribute X_fit_: see constructor for documentation *)
-val x_fit_ : t -> Py.Object.t
+(** Attribute dual_coef_: get value as an option. *)
+val dual_coef_opt : t -> (Arr.t) option
+
+
+(** Attribute X_fit_: get value or raise Not_found if None.*)
+val x_fit_ : t -> Arr.t
+
+(** Attribute X_fit_: get value as an option. *)
+val x_fit_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -337,7 +348,7 @@ val create : unit -> t
 Mixin class for all regression estimators in scikit-learn.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -396,7 +407,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val check_X_y : ?accept_sparse:[`String of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`String of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C | `None] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?multi_output:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?y_numeric:bool -> ?warn_on_dtype:[`Bool of bool | `None] -> ?estimator:[`String of string | `Estimator of Py.Object.t] -> x:[`Ndarray of Ndarray.t | `ArrayLike of Py.Object.t | `SparseMatrix of Csr_matrix.t] -> y:[`Ndarray of Ndarray.t | `ArrayLike of Py.Object.t | `SparseMatrix of Csr_matrix.t] -> unit -> (Py.Object.t * Py.Object.t)
+val check_X_y : ?accept_sparse:[`S of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`S of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?multi_output:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?y_numeric:bool -> ?warn_on_dtype:bool -> ?estimator:[`S of string | `Estimator of Py.Object.t] -> x:Arr.t -> y:Arr.t -> unit -> (Py.Object.t * Py.Object.t)
 (**
 Input validation for standard estimators.
 
@@ -502,7 +513,7 @@ y_converted : object
     The converted and validated y.
 *)
 
-val check_array : ?accept_sparse:[`String of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`String of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C | `None] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:[`Bool of bool | `None] -> ?estimator:[`String of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
+val check_array : ?accept_sparse:[`S of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`S of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:bool -> ?estimator:[`S of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
 (**
 Input validation on an array, list, sparse matrix or similar.
 
@@ -594,7 +605,7 @@ array_converted : object
     The converted and validated array.
 *)
 
-val check_is_fitted : ?attributes:[`String of string | `ArrayLike of Py.Object.t | `StringList of string list] -> ?msg:string -> ?all_or_any:[`Callable of Py.Object.t | `PyObject of Py.Object.t] -> estimator:Py.Object.t -> unit -> Py.Object.t
+val check_is_fitted : ?attributes:[`S of string | `Arr of Arr.t | `StringList of string list] -> ?msg:string -> ?all_or_any:[`Callable of Py.Object.t | `PyObject of Py.Object.t] -> estimator:Py.Object.t -> unit -> Py.Object.t
 (**
 Perform is_fitted validation for estimator.
 
@@ -641,7 +652,7 @@ NotFittedError
     If the attributes are not found.
 *)
 
-val pairwise_kernels : ?y:Ndarray.t -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?filter_params:bool -> ?n_jobs:[`Int of int | `None] -> ?kwds:(string * Py.Object.t) list -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val pairwise_kernels : ?y:Arr.t -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?filter_params:bool -> ?n_jobs:int -> ?kwds:(string * Py.Object.t) list -> x:[`Arr of Arr.t | `Otherwise of Py.Object.t] -> unit -> Py.Object.t
 (**
 Compute the kernel between arrays X and optional array Y.
 

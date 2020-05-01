@@ -1,9 +1,12 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module GaussianProcessClassifier : sig
 type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?kernel:Py.Object.t -> ?optimizer:[`String of string | `Callable of Py.Object.t] -> ?n_restarts_optimizer:int -> ?max_iter_predict:int -> ?warm_start:bool -> ?copy_X_train:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?multi_class:string -> ?n_jobs:[`Int of int | `None] -> unit -> t
+val create : ?kernel:Py.Object.t -> ?optimizer:[`S of string | `Callable of Py.Object.t] -> ?n_restarts_optimizer:int -> ?max_iter_predict:int -> ?warm_start:bool -> ?copy_X_train:bool -> ?random_state:int -> ?multi_class:string -> ?n_jobs:int -> unit -> t
 (**
 Gaussian process classification (GPC) based on Laplace approximation.
 
@@ -139,7 +142,7 @@ array([[0.83548752, 0.03228706, 0.13222543],
 .. versionadded:: 0.18
 *)
 
-val fit : x:Py.Object.t -> y:Ndarray.t -> t -> t
+val fit : x:Py.Object.t -> y:Arr.t -> t -> t
 (**
 Fit Gaussian process classification model
 
@@ -158,7 +161,7 @@ Returns
 self : returns an instance of self.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -174,7 +177,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val log_marginal_likelihood : ?theta:[`Ndarray of Ndarray.t | `None] -> ?eval_gradient:bool -> ?clone_kernel:bool -> t -> (float * Ndarray.t)
+val log_marginal_likelihood : ?theta:Arr.t -> ?eval_gradient:bool -> ?clone_kernel:bool -> t -> (float * Arr.t)
 (**
 Returns log-marginal likelihood of theta for training data.
 
@@ -212,7 +215,7 @@ log_likelihood_gradient : array, shape = (n_kernel_params,), optional
     Only returned when eval_gradient is True.
 *)
 
-val predict : x:Py.Object.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Perform classification on an array of test vectors X.
 
@@ -229,7 +232,7 @@ C : ndarray of shape (n_samples,)
     Predicted target values for X, values are from ``classes_``
 *)
 
-val predict_proba : x:Py.Object.t -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Return probability estimates for the test vector X.
 
@@ -248,7 +251,7 @@ C : array-like of shape (n_samples, n_classes)
     order, as they appear in the attribute :term:`classes_`.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -294,17 +297,33 @@ self : object
 *)
 
 
-(** Attribute kernel_: see constructor for documentation *)
+(** Attribute kernel_: get value or raise Not_found if None.*)
 val kernel_ : t -> Py.Object.t
 
-(** Attribute log_marginal_likelihood_value_: see constructor for documentation *)
+(** Attribute kernel_: get value as an option. *)
+val kernel_opt : t -> (Py.Object.t) option
+
+
+(** Attribute log_marginal_likelihood_value_: get value or raise Not_found if None.*)
 val log_marginal_likelihood_value_ : t -> float
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute log_marginal_likelihood_value_: get value as an option. *)
+val log_marginal_likelihood_value_opt : t -> (float) option
 
-(** Attribute n_classes_: see constructor for documentation *)
+
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
+
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute n_classes_: get value or raise Not_found if None.*)
 val n_classes_ : t -> int
+
+(** Attribute n_classes_: get value as an option. *)
+val n_classes_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -324,7 +343,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?kernel:Py.Object.t -> ?alpha:[`Float of float | `Ndarray of Ndarray.t] -> ?optimizer:[`String of string | `Callable of Py.Object.t] -> ?n_restarts_optimizer:int -> ?normalize_y:bool -> ?copy_X_train:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
+val create : ?kernel:Py.Object.t -> ?alpha:[`F of float | `Arr of Arr.t] -> ?optimizer:[`S of string | `Callable of Py.Object.t] -> ?n_restarts_optimizer:int -> ?normalize_y:bool -> ?copy_X_train:bool -> ?random_state:int -> unit -> t
 (**
 Gaussian process regression (GPR).
 
@@ -455,7 +474,7 @@ Examples
 (array([653.0..., 592.1...]), array([316.6..., 316.6...]))
 *)
 
-val fit : x:Py.Object.t -> y:Ndarray.t -> t -> t
+val fit : x:Py.Object.t -> y:Arr.t -> t -> t
 (**
 Fit Gaussian process regression model.
 
@@ -474,7 +493,7 @@ Returns
 self : returns an instance of self.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -490,7 +509,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val log_marginal_likelihood : ?theta:[`Ndarray of Ndarray.t | `None] -> ?eval_gradient:bool -> ?clone_kernel:bool -> t -> (float * Ndarray.t)
+val log_marginal_likelihood : ?theta:Arr.t -> ?eval_gradient:bool -> ?clone_kernel:bool -> t -> (float * Arr.t)
 (**
 Returns log-marginal likelihood of theta for training data.
 
@@ -521,7 +540,7 @@ log_likelihood_gradient : array, shape = (n_kernel_params,), optional
     Only returned when eval_gradient is True.
 *)
 
-val predict : ?return_std:bool -> ?return_cov:bool -> x:Py.Object.t -> t -> Ndarray.t
+val predict : ?return_std:bool -> ?return_cov:bool -> x:Arr.t -> t -> Arr.t
 (**
 Predict using the Gaussian process regression model
 
@@ -559,7 +578,7 @@ y_cov : array, shape = (n_samples, n_samples), optional
     Only returned when return_cov is True.
 *)
 
-val sample_y : ?n_samples:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> x:Py.Object.t -> t -> Ndarray.t
+val sample_y : ?n_samples:int -> ?random_state:int -> x:Py.Object.t -> t -> Arr.t
 (**
 Draw samples from Gaussian process and evaluate at X.
 
@@ -586,7 +605,7 @@ y_samples : array, shape = (n_samples_X, [n_output_dims], n_samples)
     evaluated at query points.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -652,23 +671,47 @@ self : object
 *)
 
 
-(** Attribute X_train_: see constructor for documentation *)
+(** Attribute X_train_: get value or raise Not_found if None.*)
 val x_train_ : t -> Py.Object.t
 
-(** Attribute y_train_: see constructor for documentation *)
-val y_train_ : t -> Ndarray.t
+(** Attribute X_train_: get value as an option. *)
+val x_train_opt : t -> (Py.Object.t) option
 
-(** Attribute kernel_: see constructor for documentation *)
+
+(** Attribute y_train_: get value or raise Not_found if None.*)
+val y_train_ : t -> Arr.t
+
+(** Attribute y_train_: get value as an option. *)
+val y_train_opt : t -> (Arr.t) option
+
+
+(** Attribute kernel_: get value or raise Not_found if None.*)
 val kernel_ : t -> Py.Object.t
 
-(** Attribute L_: see constructor for documentation *)
-val l_ : t -> Ndarray.t
+(** Attribute kernel_: get value as an option. *)
+val kernel_opt : t -> (Py.Object.t) option
 
-(** Attribute alpha_: see constructor for documentation *)
-val alpha_ : t -> Ndarray.t
 
-(** Attribute log_marginal_likelihood_value_: see constructor for documentation *)
+(** Attribute L_: get value or raise Not_found if None.*)
+val l_ : t -> Arr.t
+
+(** Attribute L_: get value as an option. *)
+val l_opt : t -> (Arr.t) option
+
+
+(** Attribute alpha_: get value or raise Not_found if None.*)
+val alpha_ : t -> Arr.t
+
+(** Attribute alpha_: get value as an option. *)
+val alpha_opt : t -> (Arr.t) option
+
+
+(** Attribute log_marginal_likelihood_value_: get value or raise Not_found if None.*)
 val log_marginal_likelihood_value_ : t -> float
+
+(** Attribute log_marginal_likelihood_value_: get value as an option. *)
+val log_marginal_likelihood_value_opt : t -> (float) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -684,6 +727,9 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 end
 
 module Kernels : sig
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module ABCMeta : sig
 type t
 val of_pyobject : Py.Object.t -> t
@@ -740,7 +786,7 @@ kernels : list of Kernel objects
     The other kernels
 *)
 
-val clone_with_theta : theta:Ndarray.t -> t -> Py.Object.t
+val clone_with_theta : theta:Arr.t -> t -> Py.Object.t
 (**
 Returns a clone of self with given hyperparameters theta.
 
@@ -750,7 +796,7 @@ theta : array, shape (n_dims,)
     The hyperparameters
 *)
 
-val diag : x:Py.Object.t -> t -> Ndarray.t
+val diag : x:Py.Object.t -> t -> Arr.t
 (**
 Returns the diagonal of the kernel k(X, X).
 
@@ -770,7 +816,7 @@ K_diag : array, shape (n_samples_X, n_kernels)
     Diagonal of kernel k(X, X)
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters of this kernel.
 
@@ -845,7 +891,7 @@ constant_value_bounds : pair of floats >= 0, default: (1e-5, 1e5)
     The lower and upper bound on constant_value
 *)
 
-val clone_with_theta : theta:Ndarray.t -> t -> Py.Object.t
+val clone_with_theta : theta:Arr.t -> t -> Py.Object.t
 (**
 Returns a clone of self with given hyperparameters theta.
 
@@ -855,7 +901,7 @@ theta : array, shape (n_dims,)
     The hyperparameters
 *)
 
-val diag : x:Py.Object.t -> t -> Ndarray.t
+val diag : x:Py.Object.t -> t -> Arr.t
 (**
 Returns the diagonal of the kernel k(X, X).
 
@@ -875,7 +921,7 @@ K_diag : array, shape (n_samples_X,)
     Diagonal of kernel k(X, X)
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters of this kernel.
 
@@ -956,7 +1002,7 @@ sigma_0_bounds : pair of floats >= 0, default: (1e-5, 1e5)
     The lower and upper bound on l
 *)
 
-val clone_with_theta : theta:Ndarray.t -> t -> Py.Object.t
+val clone_with_theta : theta:Arr.t -> t -> Py.Object.t
 (**
 Returns a clone of self with given hyperparameters theta.
 
@@ -966,7 +1012,7 @@ theta : array, shape (n_dims,)
     The hyperparameters
 *)
 
-val diag : x:Ndarray.t -> t -> Ndarray.t
+val diag : x:Arr.t -> t -> Arr.t
 (**
 Returns the diagonal of the kernel k(X, X).
 
@@ -985,7 +1031,7 @@ K_diag : array, shape (n_samples_X,)
     Diagonal of kernel k(X, X)
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters of this kernel.
 
@@ -1067,7 +1113,7 @@ periodicity_bounds : pair of floats >= 0, default: (1e-5, 1e5)
     The lower and upper bound on periodicity
 *)
 
-val clone_with_theta : theta:Ndarray.t -> t -> Py.Object.t
+val clone_with_theta : theta:Arr.t -> t -> Py.Object.t
 (**
 Returns a clone of self with given hyperparameters theta.
 
@@ -1077,7 +1123,7 @@ theta : array, shape (n_dims,)
     The hyperparameters
 *)
 
-val diag : x:Py.Object.t -> t -> Ndarray.t
+val diag : x:Py.Object.t -> t -> Arr.t
 (**
 Returns the diagonal of the kernel k(X, X).
 
@@ -1096,7 +1142,7 @@ K_diag : array, shape (n_samples_X,)
     Diagonal of kernel k(X, X)
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters of this kernel.
 
@@ -1167,7 +1213,7 @@ exponent : float
     The exponent for the base kernel
 *)
 
-val clone_with_theta : theta:Ndarray.t -> t -> Py.Object.t
+val clone_with_theta : theta:Arr.t -> t -> Py.Object.t
 (**
 Returns a clone of self with given hyperparameters theta.
 
@@ -1177,7 +1223,7 @@ theta : array, shape (n_dims,)
     The hyperparameters
 *)
 
-val diag : x:Py.Object.t -> t -> Ndarray.t
+val diag : x:Py.Object.t -> t -> Arr.t
 (**
 Returns the diagonal of the kernel k(X, X).
 
@@ -1197,7 +1243,7 @@ K_diag : array, shape (n_samples_X,)
     Diagonal of kernel k(X, X)
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters of this kernel.
 
@@ -1330,20 +1376,40 @@ Raises ValueError if the value is not present.
 *)
 
 
-(** Attribute name: see constructor for documentation *)
+(** Attribute name: get value or raise Not_found if None.*)
 val name : t -> string
 
-(** Attribute value_type: see constructor for documentation *)
+(** Attribute name: get value as an option. *)
+val name_opt : t -> (string) option
+
+
+(** Attribute value_type: get value or raise Not_found if None.*)
 val value_type : t -> string
 
-(** Attribute bounds: see constructor for documentation *)
+(** Attribute value_type: get value as an option. *)
+val value_type_opt : t -> (string) option
+
+
+(** Attribute bounds: get value or raise Not_found if None.*)
 val bounds : t -> Py.Object.t
 
-(** Attribute n_elements: see constructor for documentation *)
+(** Attribute bounds: get value as an option. *)
+val bounds_opt : t -> (Py.Object.t) option
+
+
+(** Attribute n_elements: get value or raise Not_found if None.*)
 val n_elements : t -> int
 
-(** Attribute fixed: see constructor for documentation *)
+(** Attribute n_elements: get value as an option. *)
+val n_elements_opt : t -> (int) option
+
+
+(** Attribute fixed: get value or raise Not_found if None.*)
 val fixed : t -> bool
+
+(** Attribute fixed: get value as an option. *)
+val fixed_opt : t -> (bool) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1363,7 +1429,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?length_scale:[`Float of float | `PyObject of Py.Object.t] -> ?length_scale_bounds:Py.Object.t -> ?nu:float -> unit -> t
+val create : ?length_scale:[`F of float | `Array_with of Py.Object.t] -> ?length_scale_bounds:Py.Object.t -> ?nu:float -> unit -> t
 (**
 Matern kernel.
 
@@ -1403,7 +1469,7 @@ nu : float, default: 1.5
     its initial value and not optimized.
 *)
 
-val clone_with_theta : theta:Ndarray.t -> t -> Py.Object.t
+val clone_with_theta : theta:Arr.t -> t -> Py.Object.t
 (**
 Returns a clone of self with given hyperparameters theta.
 
@@ -1413,7 +1479,7 @@ theta : array, shape (n_dims,)
     The hyperparameters
 *)
 
-val diag : x:Py.Object.t -> t -> Ndarray.t
+val diag : x:Py.Object.t -> t -> Arr.t
 (**
 Returns the diagonal of the kernel k(X, X).
 
@@ -1432,7 +1498,7 @@ K_diag : array, shape (n_samples_X,)
     Diagonal of kernel k(X, X)
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters of this kernel.
 
@@ -1492,7 +1558,7 @@ Mixin for kernels which are normalized: k(X, X)=1.
 .. versionadded:: 0.18
 *)
 
-val diag : x:Py.Object.t -> t -> Ndarray.t
+val diag : x:Py.Object.t -> t -> Arr.t
 (**
 Returns the diagonal of the kernel k(X, X).
 
@@ -1530,7 +1596,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?gamma:float -> ?gamma_bounds:Py.Object.t -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?pairwise_kernels_kwargs:Py.Object.t -> unit -> t
+val create : ?gamma:float -> ?gamma_bounds:Py.Object.t -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?pairwise_kernels_kwargs:Dict.t -> unit -> t
 (**
 Wrapper for kernels in sklearn.metrics.pairwise.
 
@@ -1568,7 +1634,7 @@ pairwise_kernels_kwargs : dict, default: None
     the pairwise kernel function.
 *)
 
-val clone_with_theta : theta:Ndarray.t -> t -> Py.Object.t
+val clone_with_theta : theta:Arr.t -> t -> Py.Object.t
 (**
 Returns a clone of self with given hyperparameters theta.
 
@@ -1578,7 +1644,7 @@ theta : array, shape (n_dims,)
     The hyperparameters
 *)
 
-val diag : x:Ndarray.t -> t -> Ndarray.t
+val diag : x:Arr.t -> t -> Arr.t
 (**
 Returns the diagonal of the kernel k(X, X).
 
@@ -1597,7 +1663,7 @@ K_diag : array, shape (n_samples_X,)
     Diagonal of kernel k(X, X)
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters of this kernel.
 
@@ -1668,7 +1734,7 @@ k2 : Kernel object
     The second base-kernel of the product-kernel
 *)
 
-val clone_with_theta : theta:Ndarray.t -> t -> Py.Object.t
+val clone_with_theta : theta:Arr.t -> t -> Py.Object.t
 (**
 Returns a clone of self with given hyperparameters theta.
 
@@ -1678,7 +1744,7 @@ theta : array, shape (n_dims,)
     The hyperparameters
 *)
 
-val diag : x:Py.Object.t -> t -> Ndarray.t
+val diag : x:Py.Object.t -> t -> Arr.t
 (**
 Returns the diagonal of the kernel k(X, X).
 
@@ -1698,7 +1764,7 @@ K_diag : array, shape (n_samples_X,)
     Diagonal of kernel k(X, X)
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters of this kernel.
 
@@ -1751,7 +1817,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?length_scale:[`Float of float | `PyObject of Py.Object.t] -> ?length_scale_bounds:Py.Object.t -> unit -> t
+val create : ?length_scale:[`F of float | `Array_with of Py.Object.t] -> ?length_scale_bounds:Py.Object.t -> unit -> t
 (**
 Radial-basis function kernel (aka squared-exponential kernel).
 
@@ -1780,7 +1846,7 @@ length_scale_bounds : pair of floats >= 0, default: (1e-5, 1e5)
     The lower and upper bound on length_scale
 *)
 
-val clone_with_theta : theta:Ndarray.t -> t -> Py.Object.t
+val clone_with_theta : theta:Arr.t -> t -> Py.Object.t
 (**
 Returns a clone of self with given hyperparameters theta.
 
@@ -1790,7 +1856,7 @@ theta : array, shape (n_dims,)
     The hyperparameters
 *)
 
-val diag : x:Py.Object.t -> t -> Ndarray.t
+val diag : x:Py.Object.t -> t -> Arr.t
 (**
 Returns the diagonal of the kernel k(X, X).
 
@@ -1809,7 +1875,7 @@ K_diag : array, shape (n_samples_X,)
     Diagonal of kernel k(X, X)
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters of this kernel.
 
@@ -1891,7 +1957,7 @@ alpha_bounds : pair of floats >= 0, default: (1e-5, 1e5)
     The lower and upper bound on alpha
 *)
 
-val clone_with_theta : theta:Ndarray.t -> t -> Py.Object.t
+val clone_with_theta : theta:Arr.t -> t -> Py.Object.t
 (**
 Returns a clone of self with given hyperparameters theta.
 
@@ -1901,7 +1967,7 @@ theta : array, shape (n_dims,)
     The hyperparameters
 *)
 
-val diag : x:Py.Object.t -> t -> Ndarray.t
+val diag : x:Py.Object.t -> t -> Arr.t
 (**
 Returns the diagonal of the kernel k(X, X).
 
@@ -1920,7 +1986,7 @@ K_diag : array, shape (n_samples_X,)
     Diagonal of kernel k(X, X)
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters of this kernel.
 
@@ -2022,7 +2088,7 @@ k2 : Kernel object
     The second base-kernel of the sum-kernel
 *)
 
-val clone_with_theta : theta:Ndarray.t -> t -> Py.Object.t
+val clone_with_theta : theta:Arr.t -> t -> Py.Object.t
 (**
 Returns a clone of self with given hyperparameters theta.
 
@@ -2032,7 +2098,7 @@ theta : array, shape (n_dims,)
     The hyperparameters
 *)
 
-val diag : x:Py.Object.t -> t -> Ndarray.t
+val diag : x:Py.Object.t -> t -> Arr.t
 (**
 Returns the diagonal of the kernel k(X, X).
 
@@ -2052,7 +2118,7 @@ K_diag : array, shape (n_samples_X,)
     Diagonal of kernel k(X, X)
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters of this kernel.
 
@@ -2127,7 +2193,7 @@ noise_level_bounds : pair of floats >= 0, default: (1e-5, 1e5)
     The lower and upper bound on noise_level
 *)
 
-val clone_with_theta : theta:Ndarray.t -> t -> Py.Object.t
+val clone_with_theta : theta:Arr.t -> t -> Py.Object.t
 (**
 Returns a clone of self with given hyperparameters theta.
 
@@ -2137,7 +2203,7 @@ theta : array, shape (n_dims,)
     The hyperparameters
 *)
 
-val diag : x:Py.Object.t -> t -> Ndarray.t
+val diag : x:Py.Object.t -> t -> Arr.t
 (**
 Returns the diagonal of the kernel k(X, X).
 
@@ -2157,7 +2223,7 @@ K_diag : array, shape (n_samples_X,)
     Diagonal of kernel k(X, X)
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters of this kernel.
 
@@ -2223,7 +2289,7 @@ Usage:
             ...
 *)
 
-val cdist : ?metric:Py.Object.t -> ?kwargs:(string * Py.Object.t) list -> xa:Ndarray.t -> xb:Py.Object.t -> Py.Object.t list -> Ndarray.t
+val cdist : ?metric:Py.Object.t -> ?kwargs:(string * Py.Object.t) list -> xa:Arr.t -> xb:Py.Object.t -> Py.Object.t list -> Arr.t
 (**
 Compute distance between each pair of the two collections of inputs.
 
@@ -2513,7 +2579,7 @@ array([[ 0.7],
        [ 2.3]])
 *)
 
-val clone : ?safe:bool -> estimator:[`Estimator of Py.Object.t | `ArrayLike of Py.Object.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val clone : ?safe:bool -> estimator:[`Estimator of Py.Object.t | `Arr of Arr.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
 (**
 Constructs a new estimator with the same parameters.
 
@@ -2555,7 +2621,7 @@ Point(x=11, y=22)
 Point(x=100, y=22)
 *)
 
-val pairwise_kernels : ?y:Ndarray.t -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?filter_params:bool -> ?n_jobs:[`Int of int | `None] -> ?kwds:(string * Py.Object.t) list -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val pairwise_kernels : ?y:Arr.t -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?filter_params:bool -> ?n_jobs:int -> ?kwds:(string * Py.Object.t) list -> x:[`Arr of Arr.t | `Otherwise of Py.Object.t] -> unit -> Py.Object.t
 (**
 Compute the kernel between arrays X and optional array Y.
 
@@ -2625,7 +2691,7 @@ Notes
 If metric is 'precomputed', Y is ignored and X is returned.
 *)
 
-val pdist : ?metric:Py.Object.t -> ?kwargs:(string * Py.Object.t) list -> x:Ndarray.t -> Py.Object.t list -> Ndarray.t
+val pdist : ?metric:Py.Object.t -> ?kwargs:(string * Py.Object.t) list -> x:Arr.t -> Py.Object.t list -> Arr.t
 (**
 Pairwise distances between observations in n-dimensional space.
 
@@ -2879,7 +2945,7 @@ val signature : ?follow_wrapped:Py.Object.t -> obj:Py.Object.t -> unit -> Py.Obj
 Get a signature object for the passed callable.
 *)
 
-val squareform : ?force:Py.Object.t -> ?checks:Py.Object.t -> x:Ndarray.t -> unit -> Ndarray.t
+val squareform : ?force:Py.Object.t -> ?checks:Py.Object.t -> x:Arr.t -> unit -> Arr.t
 (**
 Convert a vector-form distance vector to a square-form distance
 matrix, and vice-versa.

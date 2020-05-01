@@ -1,3 +1,6 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 val clear_data_home : ?data_home:string -> unit -> Py.Object.t
 (**
 Delete all the content of the data home cache.
@@ -8,7 +11,7 @@ data_home : str | None
     The path to scikit-learn data dir.
 *)
 
-val dump_svmlight_file : ?zero_based:bool -> ?comment:string -> ?query_id:Ndarray.t -> ?multilabel:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t | `PyObject of Py.Object.t] -> f:[`String of string | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val dump_svmlight_file : ?zero_based:bool -> ?comment:string -> ?query_id:Arr.t -> ?multilabel:bool -> x:Arr.t -> y:[`Arr of Arr.t | `PyObject of Py.Object.t] -> f:[`S of string | `File_like_in_binary_mode of Py.Object.t] -> unit -> Py.Object.t
 (**
 Dump the dataset in svmlight / libsvm file format.
 
@@ -58,7 +61,7 @@ multilabel : boolean, optional
        parameter *multilabel* to support multilabel datasets.
 *)
 
-val fetch_20newsgroups : ?data_home:Py.Object.t -> ?subset:[`Train | `Test | `All] -> ?categories:[`String of string | `None | `PyObject of Py.Object.t] -> ?shuffle:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?remove:Py.Object.t -> ?download_if_missing:Py.Object.t -> unit -> < data: Py.Object.t; target: Ndarray.t; filenames: string list; descr: Py.Object.t; target_names: Py.Object.t >
+val fetch_20newsgroups : ?data_home:Py.Object.t -> ?subset:[`Train | `Test | `All] -> ?categories:[`Collection_of_string of Py.Object.t | `S of string] -> ?shuffle:bool -> ?random_state:int -> ?remove:Py.Object.t -> ?download_if_missing:Py.Object.t -> unit -> < data: Arr.t; target: Arr.t; filenames: string list; descr: Py.Object.t; target_names: Py.Object.t >
 (**
 Load the filenames and data from the 20 newsgroups dataset (classification).
 
@@ -135,7 +138,7 @@ bunch : Bunch object with the following attribute:
     .. versionadded:: 0.22
 *)
 
-val fetch_20newsgroups_vectorized : ?subset:[`Train | `Test | `All] -> ?remove:Py.Object.t -> ?data_home:Py.Object.t -> ?download_if_missing:Py.Object.t -> ?normalize:bool -> unit -> < data: Csr_matrix.t; target: Ndarray.t; target_names: Py.Object.t; descr: Py.Object.t >
+val fetch_20newsgroups_vectorized : ?subset:[`Train | `Test | `All] -> ?remove:Py.Object.t -> ?data_home:Py.Object.t -> ?download_if_missing:Py.Object.t -> ?normalize:bool -> unit -> < data: Csr_matrix.t; target: Arr.t; target_names: Py.Object.t; descr: Py.Object.t >
 (**
 Load the 20 newsgroups dataset and vectorize it into token counts (classification).
 
@@ -213,7 +216,7 @@ bunch : Bunch object with the following attribute:
     .. versionadded:: 0.20
 *)
 
-val fetch_california_housing : ?data_home:Py.Object.t -> ?download_if_missing:Py.Object.t -> unit -> < data: Ndarray.t; target: Ndarray.t; feature_names: string list; descr: string >
+val fetch_california_housing : ?data_home:Py.Object.t -> ?download_if_missing:Py.Object.t -> unit -> < data: Arr.t; target: Arr.t; feature_names: string list; descr: string >
 (**
 Load the California housing dataset (regression).
 
@@ -269,7 +272,7 @@ Notes
 This dataset consists of 20,640 samples and 9 features.
 *)
 
-val fetch_covtype : ?data_home:string -> ?download_if_missing:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?shuffle:bool -> unit -> < data: Ndarray.t; target: Ndarray.t; descr: string >
+val fetch_covtype : ?data_home:string -> ?download_if_missing:bool -> ?random_state:int -> ?shuffle:bool -> unit -> < data: Arr.t; target: Arr.t; descr: string >
 (**
 Load the covertype dataset (classification).
 
@@ -327,7 +330,7 @@ dataset.DESCR : string
     .. versionadded:: 0.20
 *)
 
-val fetch_kddcup99 : ?subset:[`SA | `SF | `Http | `Smtp | `None] -> ?data_home:string -> ?shuffle:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?percent10:bool -> ?download_if_missing:bool -> unit -> < data: Py.Object.t; target: Py.Object.t; descr: Py.Object.t >
+val fetch_kddcup99 : ?subset:[`SA | `SF | `Http | `Smtp] -> ?data_home:string -> ?shuffle:bool -> ?random_state:int -> ?percent10:bool -> ?download_if_missing:bool -> unit -> < data: Arr.t; target: Arr.t; descr: string >
 (**
 Load the kddcup99 dataset (classification).
 
@@ -470,7 +473,7 @@ DESCR : string
     Description of the Labeled Faces in the Wild (LFW) dataset.
 *)
 
-val fetch_lfw_people : ?data_home:Py.Object.t -> ?funneled:bool -> ?resize:float -> ?min_faces_per_person:int -> ?color:bool -> ?slice_:Py.Object.t -> ?download_if_missing:Py.Object.t -> unit -> < data: Ndarray.t; images: Ndarray.t; target: Ndarray.t; descr: string >
+val fetch_lfw_people : ?data_home:Py.Object.t -> ?funneled:bool -> ?resize:float -> ?min_faces_per_person:int -> ?color:bool -> ?slice_:Py.Object.t -> ?download_if_missing:Py.Object.t -> unit -> < data: Arr.t; images: Arr.t; target: Arr.t; descr: string >
 (**
 Load the Labeled Faces in the Wild (LFW) people dataset (classification).
 
@@ -548,7 +551,7 @@ dataset.DESCR : string
     .. versionadded:: 0.20
 *)
 
-val fetch_olivetti_faces : ?data_home:Py.Object.t -> ?shuffle:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?download_if_missing:Py.Object.t -> unit -> < data: Py.Object.t; images: Py.Object.t; target: Py.Object.t; descr: Py.Object.t >
+val fetch_olivetti_faces : ?data_home:Py.Object.t -> ?shuffle:bool -> ?random_state:int -> ?download_if_missing:Py.Object.t -> unit -> < data: Py.Object.t; images: Py.Object.t; target: Py.Object.t; descr: Py.Object.t >
 (**
 Load the Olivetti faces data-set from AT&T (classification).
 
@@ -604,7 +607,7 @@ bunch : Bunch object with the following attributes:
     .. versionadded:: 0.22
 *)
 
-val fetch_openml : ?name:string -> ?version:[`Int of int | `Active] -> ?data_id:[`Int of int | `None] -> ?data_home:string -> ?target_column:[`String of string | `ArrayLike of Py.Object.t | `None] -> ?cache:bool -> ?as_frame:bool -> unit -> < data: Py.Object.t; target: Py.Object.t; descr: string; feature_names: string list; target_names: string list; categories: Py.Object.t; details: Py.Object.t; frame: Py.Object.t >
+val fetch_openml : ?name:string -> ?version:[`I of int | `Active] -> ?data_id:int -> ?data_home:string -> ?target_column:[`S of string | `Arr of Arr.t | `None] -> ?cache:bool -> ?as_frame:bool -> unit -> < data: Py.Object.t; target: Py.Object.t; descr: string; feature_names: string list; target_names: string list; categories: Py.Object.t; details: Dict.t; frame: Py.Object.t >
 (**
 Fetch dataset from openml by name or dataset id.
 
@@ -710,7 +713,7 @@ data : Bunch
     (categorical target)
 *)
 
-val fetch_rcv1 : ?data_home:string -> ?subset:[`Train | `Test | `All] -> ?download_if_missing:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?shuffle:bool -> unit -> < data: Py.Object.t; target: Py.Object.t; sample_id: Py.Object.t; target_names: Py.Object.t; descr: string >
+val fetch_rcv1 : ?data_home:string -> ?subset:[`Train | `Test | `All] -> ?download_if_missing:bool -> ?random_state:int -> ?shuffle:bool -> unit -> < data: Py.Object.t; target: Py.Object.t; sample_id: Py.Object.t; target_names: Py.Object.t; descr: string >
 (**
 Load the RCV1 multilabel dataset (classification).
 
@@ -785,7 +788,7 @@ dataset.DESCR : string
     .. versionadded:: 0.20
 *)
 
-val fetch_species_distributions : ?data_home:Py.Object.t -> ?download_if_missing:Py.Object.t -> unit -> < coverages: Ndarray.t; train: Py.Object.t; test: Py.Object.t; nx: Py.Object.t; x_left_lower_corner: Py.Object.t; grid_size: float >
+val fetch_species_distributions : ?data_home:Py.Object.t -> ?download_if_missing:Py.Object.t -> unit -> < coverages: Arr.t; train: Py.Object.t; test: Py.Object.t; nx: Py.Object.t; x_left_lower_corner: Py.Object.t; grid_size: float >
 (**
 Loader for species distribution dataset from Phillips et. al. (2006)
 
@@ -881,7 +884,7 @@ data_home : str | None
     The path to scikit-learn data dir.
 *)
 
-val load_boston : unit -> < data: Py.Object.t; descr: Py.Object.t >
+val load_boston : unit -> < data: Arr.t; target: Arr.t; feature_names: Arr.t; descr: string; filename: string >
 (**
 Load and return the boston house-prices dataset (regression).
 
@@ -928,7 +931,7 @@ Examples
 (506, 13)
 *)
 
-val load_breast_cancer : unit -> < data: Py.Object.t; target_names: Py.Object.t; https: Py.Object.t >
+val load_breast_cancer : unit -> < data: Arr.t; target: Arr.t; target_names: Arr.t; feature_names: Arr.t; descr: string; filename: string >
 (**
 Load and return the breast cancer wisconsin dataset (classification).
 
@@ -984,7 +987,7 @@ array([0, 1, 0])
 ['malignant', 'benign']
 *)
 
-val load_diabetes : unit -> < data: Py.Object.t; sample: Py.Object.t >
+val load_diabetes : unit -> < data: Arr.t; target: Arr.t; data_filename: string; target_filename: string >
 (**
 Load and return the diabetes dataset (regression).
 
@@ -1019,7 +1022,7 @@ data : Bunch
     .. versionadded:: 0.18
 *)
 
-val load_digits : ?n_class:[`Int of int | `PyObject of Py.Object.t] -> unit -> < data: Py.Object.t; sample: Py.Object.t; https: Py.Object.t >
+val load_digits : ?n_class:[`I of int | `Between_0_and_10 of Py.Object.t] -> unit -> < data: Arr.t; images: Arr.t; target: Arr.t; target_names: Arr.t; descr: string >
 (**
 Load and return the digits dataset (classification).
 
@@ -1076,7 +1079,7 @@ To load the data and visualize the images::
     >>> plt.show() #doctest: +SKIP
 *)
 
-val load_files : ?description:string -> ?categories:[`None | `PyObject of Py.Object.t] -> ?load_content:bool -> ?shuffle:bool -> ?encoding:[`String of string | `PyObject of Py.Object.t] -> ?decode_error:[`Strict | `Ignore | `Replace] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> container_path:string -> unit -> < data: Py.Object.t; target_names: Py.Object.t >
+val load_files : ?description:string -> ?categories:Py.Object.t -> ?load_content:bool -> ?shuffle:bool -> ?encoding:[`S of string | `None_ of Py.Object.t] -> ?decode_error:[`Strict | `Ignore | `Replace] -> ?random_state:int -> container_path:string -> unit -> < filenames: Arr.t; target: Arr.t; target_names: Arr.t; descr: string >
 (**
 Load text files with categories as subfolder names.
 
@@ -1165,7 +1168,7 @@ data : Bunch
     description of the dataset.
 *)
 
-val load_iris : unit -> < data: Ndarray.t; target: Ndarray.t; target_names: string array; feature_names: string array; descr: string; filename: string >
+val load_iris : unit -> < data: Arr.t; target: Arr.t; target_names: Arr.t; feature_names: Arr.t; descr: string; filename: string >
 (**
 Load and return the iris dataset (classification).
 
@@ -1224,7 +1227,7 @@ array([0, 0, 1])
 ['setosa', 'versicolor', 'virginica']
 *)
 
-val load_linnerud : unit -> < data: Py.Object.t; target: Py.Object.t; measurements: Py.Object.t; target_filename: Py.Object.t >
+val load_linnerud : unit -> < data: Arr.t; target: Arr.t; feature_names: Arr.t; target_names: Arr.t; data_filename: string; target_filename: string >
 (**
 Load and return the linnerud dataset (multivariate regression).
 
@@ -1324,7 +1327,7 @@ To load the data and visualize the images:
 dtype('uint8')
 *)
 
-val load_svmlight_file : ?n_features:[`Int of int | `None] -> ?dtype:Py.Object.t -> ?multilabel:bool -> ?zero_based:[`Bool of bool | `Auto] -> ?query_id:bool -> ?offset:int -> ?length:int -> f:[`String of string | `Int of int | `PyObject of Py.Object.t] -> unit -> < x: Py.Object.t; y: Py.Object.t; query_id: Ndarray.t >
+val load_svmlight_file : ?n_features:int -> ?dtype:Py.Object.t -> ?multilabel:bool -> ?zero_based:[`Bool of bool | `Auto] -> ?query_id:bool -> ?offset:int -> ?length:int -> f:[`S of string | `File_like of Py.Object.t | `I of int] -> unit -> < x: Py.Object.t; y: Py.Object.t; query_id: Arr.t >
 (**
 Load datasets in the svmlight / libsvm format into sparse CSR matrix
 
@@ -1438,7 +1441,7 @@ To use joblib.Memory to cache the svmlight file::
     X, y = get_data()
 *)
 
-val load_svmlight_files : ?n_features:[`Int of int | `None] -> ?dtype:Py.Object.t -> ?multilabel:bool -> ?zero_based:[`Bool of bool | `Auto] -> ?query_id:bool -> ?offset:int -> ?length:int -> files:Py.Object.t -> unit -> Py.Object.t
+val load_svmlight_files : ?n_features:int -> ?dtype:Py.Object.t -> ?multilabel:bool -> ?zero_based:[`Bool of bool | `Auto] -> ?query_id:bool -> ?offset:int -> ?length:int -> files:Py.Object.t -> unit -> Py.Object.t
 (**
 Load dataset from multiple files in SVMlight format
 
@@ -1525,7 +1528,7 @@ See also
 load_svmlight_file
 *)
 
-val load_wine : unit -> < data: Py.Object.t; https: Py.Object.t >
+val load_wine : unit -> < data: Arr.t; target: Arr.t; target_names: Arr.t; feature_names: Arr.t; descr: string >
 (**
 Load and return the wine dataset (classification).
 
@@ -1577,7 +1580,7 @@ array([0, 1, 2])
 ['class_0', 'class_1', 'class_2']
 *)
 
-val make_biclusters : ?noise:float -> ?minval:int -> ?maxval:int -> ?shuffle:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> shape:int list -> n_clusters:int -> unit -> (Py.Object.t * Py.Object.t * Py.Object.t)
+val make_biclusters : ?noise:float -> ?minval:int -> ?maxval:int -> ?shuffle:bool -> ?random_state:int -> shape:int list -> n_clusters:int -> unit -> (Py.Object.t * Py.Object.t * Py.Object.t)
 (**
 Generate an array with constant block diagonal structure for
 biclustering.
@@ -1633,7 +1636,7 @@ See also
 make_checkerboard
 *)
 
-val make_blobs : ?n_samples:[`Int of int | `Ndarray of Ndarray.t] -> ?n_features:int -> ?centers:[`Int of int | `Ndarray of Ndarray.t] -> ?cluster_std:[`Float of float | `PyObject of Py.Object.t] -> ?center_box:Py.Object.t -> ?shuffle:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> (Ndarray.t * Ndarray.t)
+val make_blobs : ?n_samples:[`I of int | `Arr of Arr.t] -> ?n_features:int -> ?centers:[`I of int | `Arr of Arr.t] -> ?cluster_std:[`F of float | `Sequence_of_floats of Py.Object.t] -> ?center_box:Py.Object.t -> ?shuffle:bool -> ?random_state:int -> unit -> (Arr.t * Arr.t)
 (**
 Generate isotropic Gaussian blobs for clustering.
 
@@ -1701,7 +1704,7 @@ See also
 make_classification: a more intricate variant
 *)
 
-val make_checkerboard : ?noise:float -> ?minval:int -> ?maxval:int -> ?shuffle:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> shape:int list -> n_clusters:[`Int of int | `PyObject of Py.Object.t] -> unit -> (Py.Object.t * Py.Object.t * Py.Object.t)
+val make_checkerboard : ?noise:float -> ?minval:int -> ?maxval:int -> ?shuffle:bool -> ?random_state:int -> shape:int list -> n_clusters:[`I of int | `PyObject of Py.Object.t] -> unit -> (Py.Object.t * Py.Object.t * Py.Object.t)
 (**
 Generate an array with block checkerboard structure for
 biclustering.
@@ -1757,7 +1760,7 @@ See also
 make_biclusters
 *)
 
-val make_circles : ?n_samples:int -> ?shuffle:bool -> ?noise:[`Float of float | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?factor:Py.Object.t -> unit -> (Ndarray.t * Ndarray.t)
+val make_circles : ?n_samples:int -> ?shuffle:bool -> ?noise:float -> ?random_state:int -> ?factor:Py.Object.t -> unit -> (Arr.t * Arr.t)
 (**
 Make a large circle containing a smaller circle in 2d.
 
@@ -1795,7 +1798,7 @@ y : array of shape [n_samples]
     The integer labels (0 or 1) for class membership of each sample.
 *)
 
-val make_classification : ?n_samples:int -> ?n_features:int -> ?n_informative:int -> ?n_redundant:int -> ?n_repeated:int -> ?n_classes:int -> ?n_clusters_per_class:int -> ?weights:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> ?flip_y:float -> ?class_sep:float -> ?hypercube:bool -> ?shift:[`Float of float | `Ndarray of Ndarray.t | `None] -> ?scale:[`Float of float | `Ndarray of Ndarray.t | `None] -> ?shuffle:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> (Ndarray.t * Ndarray.t)
+val make_classification : ?n_samples:int -> ?n_features:int -> ?n_informative:int -> ?n_redundant:int -> ?n_repeated:int -> ?n_classes:int -> ?n_clusters_per_class:int -> ?weights:[`Arr of Arr.t | `N_classes_1 of Py.Object.t] -> ?flip_y:float -> ?class_sep:float -> ?hypercube:bool -> ?shift:[`F of float | `Arr of Arr.t | `None] -> ?scale:[`F of float | `Arr of Arr.t | `None] -> ?shuffle:bool -> ?random_state:int -> unit -> (Arr.t * Arr.t)
 (**
 Generate a random n-class classification problem.
 
@@ -1911,7 +1914,7 @@ make_blobs: simplified variant
 make_multilabel_classification: unrelated generator for multilabel tasks
 *)
 
-val make_friedman1 : ?n_samples:int -> ?n_features:int -> ?noise:float -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> (Ndarray.t * Ndarray.t)
+val make_friedman1 : ?n_samples:int -> ?n_features:int -> ?noise:float -> ?random_state:int -> unit -> (Arr.t * Arr.t)
 (**
 Generate the "Friedman #1" regression problem
 
@@ -1962,7 +1965,7 @@ References
        pages 123-140, 1996.
 *)
 
-val make_friedman2 : ?n_samples:int -> ?noise:float -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> (Ndarray.t * Ndarray.t)
+val make_friedman2 : ?n_samples:int -> ?noise:float -> ?random_state:int -> unit -> (Arr.t * Arr.t)
 (**
 Generate the "Friedman #2" regression problem
 
@@ -2012,7 +2015,7 @@ References
        pages 123-140, 1996.
 *)
 
-val make_friedman3 : ?n_samples:int -> ?noise:float -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> (Ndarray.t * Ndarray.t)
+val make_friedman3 : ?n_samples:int -> ?noise:float -> ?random_state:int -> unit -> (Arr.t * Arr.t)
 (**
 Generate the "Friedman #3" regression problem
 
@@ -2062,7 +2065,7 @@ References
        pages 123-140, 1996.
 *)
 
-val make_gaussian_quantiles : ?mean:Ndarray.t -> ?cov:float -> ?n_samples:int -> ?n_features:int -> ?n_classes:int -> ?shuffle:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> (Ndarray.t * Ndarray.t)
+val make_gaussian_quantiles : ?mean:Arr.t -> ?cov:float -> ?n_samples:int -> ?n_features:int -> ?n_classes:int -> ?shuffle:bool -> ?random_state:int -> unit -> (Arr.t * Arr.t)
 (**
 Generate isotropic Gaussian and label samples by quantile
 
@@ -2117,7 +2120,7 @@ References
 .. [1] J. Zhu, H. Zou, S. Rosset, T. Hastie, "Multi-class AdaBoost", 2009.
 *)
 
-val make_hastie_10_2 : ?n_samples:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> (Ndarray.t * Ndarray.t)
+val make_hastie_10_2 : ?n_samples:int -> ?random_state:int -> unit -> (Arr.t * Arr.t)
 (**
 Generates data for binary classification used in
 Hastie et al. 2009, Example 10.2.
@@ -2157,7 +2160,7 @@ See also
 make_gaussian_quantiles: a generalization of this dataset approach
 *)
 
-val make_low_rank_matrix : ?n_samples:int -> ?n_features:int -> ?effective_rank:int -> ?tail_strength:Py.Object.t -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> Ndarray.t
+val make_low_rank_matrix : ?n_samples:int -> ?n_features:int -> ?effective_rank:int -> ?tail_strength:Py.Object.t -> ?random_state:int -> unit -> Arr.t
 (**
 Generate a mostly low rank matrix with bell-shaped singular values
 
@@ -2208,7 +2211,7 @@ X : array of shape [n_samples, n_features]
     The matrix.
 *)
 
-val make_moons : ?n_samples:int -> ?shuffle:bool -> ?noise:[`Float of float | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> (Ndarray.t * Ndarray.t)
+val make_moons : ?n_samples:int -> ?shuffle:bool -> ?noise:float -> ?random_state:int -> unit -> (Arr.t * Arr.t)
 (**
 Make two interleaving half circles
 
@@ -2240,7 +2243,7 @@ y : array of shape [n_samples]
     The integer labels (0 or 1) for class membership of each sample.
 *)
 
-val make_multilabel_classification : ?n_samples:int -> ?n_features:int -> ?n_classes:int -> ?n_labels:int -> ?length:int -> ?allow_unlabeled:bool -> ?sparse:bool -> ?return_indicator:string -> ?return_distributions:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> (Ndarray.t * Py.Object.t * Ndarray.t * Ndarray.t)
+val make_multilabel_classification : ?n_samples:int -> ?n_features:int -> ?n_classes:int -> ?n_labels:int -> ?length:int -> ?allow_unlabeled:bool -> ?sparse:bool -> ?return_indicator:[`Dense | `Sparse | `False] -> ?return_distributions:bool -> ?random_state:int -> unit -> (Arr.t * Py.Object.t * Arr.t * Arr.t)
 (**
 Generate a random multilabel classification problem.
 
@@ -2319,7 +2322,7 @@ p_w_c : array, shape [n_features, n_classes]
     Only returned if ``return_distributions=True``.
 *)
 
-val make_regression : ?n_samples:int -> ?n_features:int -> ?n_informative:int -> ?n_targets:int -> ?bias:float -> ?effective_rank:[`Int of int | `None] -> ?tail_strength:Py.Object.t -> ?noise:float -> ?shuffle:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> (Ndarray.t * Ndarray.t * Ndarray.t)
+val make_regression : ?n_samples:int -> ?n_features:int -> ?n_informative:int -> ?n_targets:int -> ?bias:float -> ?effective_rank:int -> ?tail_strength:Py.Object.t -> ?noise:float -> ?shuffle:bool -> ?random_state:int -> unit -> (Arr.t * Arr.t * Arr.t)
 (**
 Generate a random regression problem.
 
@@ -2394,7 +2397,7 @@ coef : array of shape [n_features] or [n_features, n_targets], optional
     coef is True.
 *)
 
-val make_s_curve : ?n_samples:int -> ?noise:float -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> (Ndarray.t * Ndarray.t)
+val make_s_curve : ?n_samples:int -> ?noise:float -> ?random_state:int -> unit -> (Arr.t * Arr.t)
 (**
 Generate an S curve dataset.
 
@@ -2423,7 +2426,7 @@ t : array of shape [n_samples]
     of the points in the manifold.
 *)
 
-val make_sparse_coded_signal : ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> n_samples:int -> n_components:int -> n_features:int -> n_nonzero_coefs:int -> unit -> (Ndarray.t * Ndarray.t * Ndarray.t)
+val make_sparse_coded_signal : ?random_state:int -> n_samples:int -> n_components:int -> n_features:int -> n_nonzero_coefs:int -> unit -> (Arr.t * Arr.t * Arr.t)
 (**
 Generate a signal as a sparse combination of dictionary elements.
 
@@ -2465,7 +2468,7 @@ code : array of shape [n_components, n_samples]
     n_nonzero_coefs non-zero items (X).
 *)
 
-val make_sparse_spd_matrix : ?dim:int -> ?alpha:Py.Object.t -> ?norm_diag:bool -> ?smallest_coef:Py.Object.t -> ?largest_coef:Py.Object.t -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> Csr_matrix.t
+val make_sparse_spd_matrix : ?dim:int -> ?alpha:Py.Object.t -> ?norm_diag:bool -> ?smallest_coef:Py.Object.t -> ?largest_coef:Py.Object.t -> ?random_state:int -> unit -> Csr_matrix.t
 (**
 Generate a sparse symmetric definite positive matrix.
 
@@ -2511,7 +2514,7 @@ See also
 make_spd_matrix
 *)
 
-val make_sparse_uncorrelated : ?n_samples:int -> ?n_features:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> (Ndarray.t * Ndarray.t)
+val make_sparse_uncorrelated : ?n_samples:int -> ?n_features:int -> ?random_state:int -> unit -> (Arr.t * Arr.t)
 (**
 Generate a random regression problem with sparse uncorrelated design
 
@@ -2553,7 +2556,7 @@ References
        methods in a poorly informative situation", 2009.
 *)
 
-val make_spd_matrix : ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> n_dim:int -> unit -> Ndarray.t
+val make_spd_matrix : ?random_state:int -> n_dim:int -> unit -> Arr.t
 (**
 Generate a random symmetric, positive-definite matrix.
 
@@ -2579,7 +2582,7 @@ See also
 make_sparse_spd_matrix
 *)
 
-val make_swiss_roll : ?n_samples:int -> ?noise:float -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> (Ndarray.t * Ndarray.t)
+val make_swiss_roll : ?n_samples:int -> ?noise:float -> ?random_state:int -> unit -> (Arr.t * Arr.t)
 (**
 Generate a swiss roll dataset.
 

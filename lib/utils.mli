@@ -1,3 +1,6 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module Bunch : sig
 type t
 val of_pyobject : Py.Object.t -> t
@@ -323,7 +326,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val all_estimators : ?include_meta_estimators:bool -> ?include_other:bool -> ?type_filter:[`String of string | `StringList of string list | `None] -> ?include_dont_test:bool -> unit -> Py.Object.t
+val all_estimators : ?include_meta_estimators:bool -> ?include_other:bool -> ?type_filter:[`S of string | `StringList of string list] -> ?include_dont_test:bool -> unit -> Py.Object.t
 (**
 Get a list of all estimators from sklearn.
 
@@ -370,6 +373,9 @@ estimators : list of tuples
 *)
 
 module Arrayfuncs : sig
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 val cholesky_delete : l:Py.Object.t -> go_out:Py.Object.t -> unit -> Py.Object.t
 (**
 None
@@ -378,7 +384,7 @@ None
 
 end
 
-val as_float_array : ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> Py.Object.t
+val as_float_array : ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> x:Arr.t -> unit -> Arr.t
 (**
 Converts an array-like to an array of floats.
 
@@ -412,7 +418,7 @@ XT : {array, sparse matrix}
     An array of type np.float
 *)
 
-val assert_all_finite : ?allow_nan:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> Py.Object.t
+val assert_all_finite : ?allow_nan:bool -> x:Arr.t -> unit -> Py.Object.t
 (**
 Throw a ValueError if X contains NaN or infinity.
 
@@ -423,7 +429,7 @@ X : array or sparse matrix
 allow_nan : bool
 *)
 
-val axis0_safe_slice : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> mask:Ndarray.t -> len_mask:int -> unit -> Py.Object.t
+val axis0_safe_slice : x:Arr.t -> mask:Arr.t -> len_mask:int -> unit -> Py.Object.t
 (**
 This mask is safer than safe_mask since it returns an
 empty array, when a sparse matrix is sliced with a boolean mask
@@ -454,7 +460,7 @@ Returns
     mask
 *)
 
-val check_X_y : ?accept_sparse:[`String of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`String of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C | `None] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?multi_output:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?y_numeric:bool -> ?warn_on_dtype:[`Bool of bool | `None] -> ?estimator:[`String of string | `Estimator of Py.Object.t] -> x:[`Ndarray of Ndarray.t | `ArrayLike of Py.Object.t | `SparseMatrix of Csr_matrix.t] -> y:[`Ndarray of Ndarray.t | `ArrayLike of Py.Object.t | `SparseMatrix of Csr_matrix.t] -> unit -> (Py.Object.t * Py.Object.t)
+val check_X_y : ?accept_sparse:[`S of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`S of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?multi_output:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?y_numeric:bool -> ?warn_on_dtype:bool -> ?estimator:[`S of string | `Estimator of Py.Object.t] -> x:Arr.t -> y:Arr.t -> unit -> (Py.Object.t * Py.Object.t)
 (**
 Input validation for standard estimators.
 
@@ -560,7 +566,7 @@ y_converted : object
     The converted and validated y.
 *)
 
-val check_array : ?accept_sparse:[`String of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`String of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C | `None] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:[`Bool of bool | `None] -> ?estimator:[`String of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
+val check_array : ?accept_sparse:[`S of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`S of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:bool -> ?estimator:[`S of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
 (**
 Input validation on an array, list, sparse matrix or similar.
 
@@ -691,7 +697,7 @@ caller_name : str
     The name of the caller that requires pandas.
 *)
 
-val check_random_state : seed:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> Py.Object.t
+val check_random_state : seed:[`I of int | `RandomState of Py.Object.t | `None] -> unit -> Py.Object.t
 (**
 Turn seed into a np.random.RandomState instance
 
@@ -704,7 +710,7 @@ seed : None | int | instance of RandomState
     Otherwise raise ValueError.
 *)
 
-val check_scalar : ?min_val:[`Float of float | `Int of int] -> ?max_val:[`Float of float | `Int of int] -> x:Py.Object.t -> name:string -> target_type:[`Dtype of Py.Object.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val check_scalar : ?min_val:[`F of float | `I of int] -> ?max_val:[`F of float | `I of int] -> x:Py.Object.t -> name:string -> target_type:[`Dtype of Py.Object.t | `Tuple of Py.Object.t] -> unit -> Py.Object.t
 (**
 Validate scalar parameters type and value.
 
@@ -736,7 +742,7 @@ ValueError
     If the parameter's value violates the given bounds.
 *)
 
-val check_symmetric : ?tol:Py.Object.t -> ?raise_warning:Py.Object.t -> ?raise_exception:Py.Object.t -> array:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> Py.Object.t
+val check_symmetric : ?tol:Py.Object.t -> ?raise_warning:Py.Object.t -> ?raise_exception:Py.Object.t -> array:Arr.t -> unit -> Arr.t
 (**
 Make sure that array is 2D, square and symmetric.
 
@@ -765,7 +771,10 @@ array_sym : ndarray or sparse matrix
 *)
 
 module Class_weight : sig
-val compute_class_weight : class_weight:[`DictIntToFloat of (int * float) list | `Balanced | `None] -> classes:Ndarray.t -> y:Ndarray.t -> unit -> Ndarray.t
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
+val compute_class_weight : class_weight:[`DictIntToFloat of (int * float) list | `Balanced | `None] -> classes:Arr.t -> y:Arr.t -> unit -> Arr.t
 (**
 Estimate class weights for unbalanced datasets.
 
@@ -796,7 +805,7 @@ The "balanced" heuristic is inspired by
 Logistic Regression in Rare Events Data, King, Zen, 2001.
 *)
 
-val compute_sample_weight : ?indices:[`Ndarray of Ndarray.t | `None] -> class_weight:[`DictIntToFloat of (int * float) list | `Balanced | `None | `PyObject of Py.Object.t] -> y:Ndarray.t -> unit -> Ndarray.t
+val compute_sample_weight : ?indices:Arr.t -> class_weight:[`DictIntToFloat of (int * float) list | `List_of_dicts of Py.Object.t | `Balanced | `None] -> y:Arr.t -> unit -> Arr.t
 (**
 Estimate sample weights by class for unbalanced datasets.
 
@@ -839,7 +848,7 @@ sample_weight_vect : ndarray, shape (n_samples,)
 
 end
 
-val column_or_1d : ?warn:bool -> y:Ndarray.t -> unit -> Ndarray.t
+val column_or_1d : ?warn:bool -> y:Arr.t -> unit -> Arr.t
 (**
 Ravel column or 1d numpy array, else raises an error
 
@@ -855,7 +864,7 @@ Returns
 y : array
 *)
 
-val compute_class_weight : class_weight:[`DictIntToFloat of (int * float) list | `Balanced | `None] -> classes:Ndarray.t -> y:Ndarray.t -> unit -> Ndarray.t
+val compute_class_weight : class_weight:[`DictIntToFloat of (int * float) list | `Balanced | `None] -> classes:Arr.t -> y:Arr.t -> unit -> Arr.t
 (**
 Estimate class weights for unbalanced datasets.
 
@@ -886,7 +895,7 @@ The "balanced" heuristic is inspired by
 Logistic Regression in Rare Events Data, King, Zen, 2001.
 *)
 
-val compute_sample_weight : ?indices:[`Ndarray of Ndarray.t | `None] -> class_weight:[`DictIntToFloat of (int * float) list | `Balanced | `None | `PyObject of Py.Object.t] -> y:Ndarray.t -> unit -> Ndarray.t
+val compute_sample_weight : ?indices:Arr.t -> class_weight:[`DictIntToFloat of (int * float) list | `List_of_dicts of Py.Object.t | `Balanced | `None] -> y:Arr.t -> unit -> Arr.t
 (**
 Estimate sample weights by class for unbalanced datasets.
 
@@ -1037,6 +1046,9 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 end
 
 module Deprecation : sig
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module Deprecated : sig
 type t
 val of_pyobject : Py.Object.t -> t
@@ -1111,7 +1123,10 @@ Determine the number of jobs that can actually run in parallel
 *)
 
 module Extmath : sig
-val cartesian : ?out:Py.Object.t -> arrays:Py.Object.t -> unit -> Ndarray.t
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
+val cartesian : ?out:Py.Object.t -> arrays:Py.Object.t -> unit -> Arr.t
 (**
 Generate a cartesian product of input arrays.
 
@@ -1145,7 +1160,7 @@ array([[1, 4, 6],
        [3, 5, 7]])
 *)
 
-val check_array : ?accept_sparse:[`String of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`String of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C | `None] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:[`Bool of bool | `None] -> ?estimator:[`String of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
+val check_array : ?accept_sparse:[`S of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`S of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:bool -> ?estimator:[`S of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
 (**
 Input validation on an array, list, sparse matrix or similar.
 
@@ -1237,7 +1252,7 @@ array_converted : object
     The converted and validated array.
 *)
 
-val check_random_state : seed:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> Py.Object.t
+val check_random_state : seed:[`I of int | `RandomState of Py.Object.t | `None] -> unit -> Py.Object.t
 (**
 Turn seed into a np.random.RandomState instance
 
@@ -1250,7 +1265,7 @@ seed : None | int | instance of RandomState
     Otherwise raise ValueError.
 *)
 
-val density : ?kwargs:(string * Py.Object.t) list -> w:Ndarray.t -> unit -> Py.Object.t
+val density : ?kwargs:(string * Py.Object.t) list -> w:Arr.t -> unit -> Py.Object.t
 (**
 Compute density of a sparse vector
 
@@ -1308,7 +1323,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val fast_logdet : a:Ndarray.t -> unit -> Py.Object.t
+val fast_logdet : a:Arr.t -> unit -> Py.Object.t
 (**
 Compute log(det(A)) for A symmetric
 
@@ -1321,7 +1336,7 @@ A : array_like
     The matrix
 *)
 
-val log_logistic : ?out:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> x:Ndarray.t -> unit -> Ndarray.t
+val log_logistic : ?out:[`Arr of Arr.t | `T_ of Py.Object.t] -> x:Arr.t -> unit -> Arr.t
 (**
 Compute the log of the logistic function, ``log(1 / (1 + e ** -x))``.
 
@@ -1352,7 +1367,7 @@ See the blog post describing this implementation:
 http://fa.bianp.net/blog/2013/numerical-optimizers-for-logistic-regression/
 *)
 
-val make_nonnegative : ?min_value:Py.Object.t -> x:Ndarray.t -> unit -> Py.Object.t
+val make_nonnegative : ?min_value:Py.Object.t -> x:Arr.t -> unit -> Py.Object.t
 (**
 Ensure `X.min()` >= `min_value`.
 
@@ -1374,7 +1389,7 @@ ValueError
     When X is sparse
 *)
 
-val randomized_range_finder : ?power_iteration_normalizer:string -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> a:Py.Object.t -> size:int -> n_iter:int -> unit -> Py.Object.t
+val randomized_range_finder : ?power_iteration_normalizer:[`Auto | `QR | `LU | `None] -> ?random_state:int -> a:Py.Object.t -> size:int -> n_iter:int -> unit -> Py.Object.t
 (**
 Computes an orthonormal matrix whose range approximates the range of A.
 
@@ -1425,7 +1440,7 @@ analysis
 A. Szlam et al. 2014
 *)
 
-val randomized_svd : ?n_oversamples:Py.Object.t -> ?n_iter:[`Int of int | `PyObject of Py.Object.t] -> ?power_iteration_normalizer:string -> ?transpose:[`Bool of bool | `Auto] -> ?flip_sign:[`Bool of bool | `PyObject of Py.Object.t] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> m:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> n_components:int -> unit -> Py.Object.t
+val randomized_svd : ?n_oversamples:Py.Object.t -> ?n_iter:[`I of int | `T_auto_ of Py.Object.t] -> ?power_iteration_normalizer:[`Auto | `QR | `LU | `None] -> ?transpose:[`Bool of bool | `Auto] -> ?flip_sign:[`Bool of bool | `T_True_by of Py.Object.t] -> ?random_state:int -> m:Arr.t -> n_components:int -> unit -> Py.Object.t
 (**
 Computes a truncated randomized SVD
 
@@ -1507,7 +1522,7 @@ References
   A. Szlam et al. 2014
 *)
 
-val row_norms : ?squared:Py.Object.t -> x:Ndarray.t -> unit -> Py.Object.t
+val row_norms : ?squared:Py.Object.t -> x:Arr.t -> unit -> Py.Object.t
 (**
 Row-wise (squared) Euclidean norm of X.
 
@@ -1529,7 +1544,7 @@ array_like
     The row-wise (squared) Euclidean norm of X.
 *)
 
-val safe_min : x:Ndarray.t -> unit -> Py.Object.t
+val safe_min : x:Arr.t -> unit -> Py.Object.t
 (**
 DEPRECATED: safe_min is deprecated in version 0.22 and will be removed in version 0.24.
 
@@ -1551,7 +1566,7 @@ Returns the minimum value of a dense or a CSR/CSC matrix.
     
 *)
 
-val safe_sparse_dot : ?dense_output:Py.Object.t -> a:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> b:Py.Object.t -> unit -> Py.Object.t
+val safe_sparse_dot : ?dense_output:Py.Object.t -> a:Arr.t -> b:Py.Object.t -> unit -> Arr.t
 (**
 Dot product that handle the sparse matrix case correctly
 
@@ -1569,7 +1584,7 @@ dot_product : array or sparse matrix
     sparse if ``a`` and ``b`` are sparse and ``dense_output=False``.
 *)
 
-val softmax : ?copy:bool -> x:Py.Object.t -> unit -> Ndarray.t
+val softmax : ?copy:bool -> x:Py.Object.t -> unit -> Arr.t
 (**
 Calculate the softmax function.
 
@@ -1594,7 +1609,7 @@ out : array, shape (M, N)
     Softmax function evaluated at every point in x
 *)
 
-val squared_norm : x:Ndarray.t -> unit -> Py.Object.t
+val squared_norm : x:Arr.t -> unit -> Py.Object.t
 (**
 Squared Euclidean or Frobenius norm of x.
 
@@ -1611,7 +1626,7 @@ float
     is a matrix (2-d array).
 *)
 
-val stable_cumsum : ?axis:Py.Object.t -> ?rtol:Py.Object.t -> ?atol:Py.Object.t -> arr:Ndarray.t -> unit -> Py.Object.t
+val stable_cumsum : ?axis:Py.Object.t -> ?rtol:Py.Object.t -> ?atol:Py.Object.t -> arr:Arr.t -> unit -> Py.Object.t
 (**
 Use high precision for cumsum and check that final value matches sum
 
@@ -1628,7 +1643,7 @@ atol : float
     Absolute tolerance, see ``np.allclose``
 *)
 
-val svd_flip : ?u_based_decision:bool -> u:Ndarray.t -> v:Ndarray.t -> unit -> Py.Object.t
+val svd_flip : ?u_based_decision:bool -> u:Arr.t -> v:Arr.t -> unit -> Py.Object.t
 (**
 Sign correction to ensure deterministic output from SVD.
 
@@ -1658,7 +1673,7 @@ Returns
 u_adjusted, v_adjusted : arrays with the same dimensions as the input.
 *)
 
-val weighted_mode : ?axis:Py.Object.t -> a:Ndarray.t -> w:Py.Object.t -> unit -> Ndarray.t
+val weighted_mode : ?axis:Py.Object.t -> a:Arr.t -> w:Py.Object.t -> unit -> Arr.t
 (**
 Returns an array of the weighted modal (most common) value in a
 
@@ -1710,6 +1725,9 @@ scipy.stats.mode
 end
 
 module Fixes : sig
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module LooseVersion : sig
 type t
 val of_pyobject : Py.Object.t -> t
@@ -1772,7 +1790,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?data:Ndarray.t -> ?mask:Py.Object.t -> ?dtype:Py.Object.t -> ?copy:Py.Object.t -> ?subok:Py.Object.t -> ?ndmin:Py.Object.t -> ?fill_value:Py.Object.t -> ?keep_mask:Py.Object.t -> ?hard_mask:Py.Object.t -> ?shrink:Py.Object.t -> ?order:Py.Object.t -> ?options:(string * Py.Object.t) list -> unit -> t
+val create : ?data:Arr.t -> ?mask:Py.Object.t -> ?dtype:Py.Object.t -> ?copy:Py.Object.t -> ?subok:Py.Object.t -> ?ndmin:Py.Object.t -> ?fill_value:Py.Object.t -> ?keep_mask:Py.Object.t -> ?hard_mask:Py.Object.t -> ?shrink:Py.Object.t -> ?order:Py.Object.t -> ?options:(string * Py.Object.t) list -> unit -> t
 (**
 An array class with possibly masked values.
 
@@ -1902,7 +1920,7 @@ numpy.ndarray.any : corresponding function for ndarrays
 numpy.any : equivalent function
 *)
 
-val argmax : ?axis:[`Int of int | `None] -> ?fill_value:Py.Object.t -> ?out:Py.Object.t -> t -> Py.Object.t
+val argmax : ?axis:int -> ?fill_value:Py.Object.t -> ?out:Py.Object.t -> t -> Py.Object.t
 (**
 Returns array of indices of the maximum values along the given axis.
 Masked values are treated as if they had the value fill_value.
@@ -1934,7 +1952,7 @@ array([1, 1, 1])
 array([2, 2])
 *)
 
-val argmin : ?axis:[`Int of int | `None] -> ?fill_value:Py.Object.t -> ?out:Py.Object.t -> t -> Py.Object.t
+val argmin : ?axis:int -> ?fill_value:Py.Object.t -> ?out:Py.Object.t -> t -> Py.Object.t
 (**
 Return array of indices to the minimum values along the given axis.
 
@@ -1989,7 +2007,7 @@ See Also
 numpy.argpartition : equivalent function
 *)
 
-val argsort : ?axis:int -> ?kind:[`Quicksort | `Mergesort | `Heapsort | `Stable] -> ?order:Py.Object.t -> ?endwith:bool -> ?fill_value:Py.Object.t -> t -> Py.Object.t
+val argsort : ?axis:int -> ?kind:[`Quicksort | `Mergesort | `Heapsort | `Stable] -> ?order:Arr.t -> ?endwith:bool -> ?fill_value:Py.Object.t -> t -> [`Arr of Arr.t | `I of int]
 (**
 Return an ndarray of indices that sort the array along the
 specified axis.  Masked values are filled beforehand to
@@ -2109,7 +2127,7 @@ masked_array(
   fill_value=999999)
 *)
 
-val compressed : t -> Ndarray.t
+val compressed : t -> Arr.t
 (**
 Return all the non-masked data as a 1-D array.
 
@@ -2172,7 +2190,7 @@ array([[1, 2, 3],
 True
 *)
 
-val count : ?axis:[`Int of int | `None | `PyObject of Py.Object.t] -> ?keepdims:bool -> t -> Py.Object.t
+val count : ?axis:[`I of int | `Tuple_of_ints of Py.Object.t] -> ?keepdims:bool -> t -> Py.Object.t
 (**
 Count the non-masked elements of the array along the given axis.
 
@@ -2335,7 +2353,7 @@ See Also
 numpy.ma.dot : equivalent function
 *)
 
-val filled : ?fill_value:Ndarray.t -> t -> Ndarray.t
+val filled : ?fill_value:Arr.t -> t -> Arr.t
 (**
 Return a copy of self, with masked values filled with a given value.
 **However**, if there are no masked values to fill, self will be
@@ -2381,7 +2399,7 @@ rec.array([(999999,      2), (    -3, 999999)],
           dtype=[('f0', '<i8'), ('f1', '<i8')])
 *)
 
-val flatten : ?params:(string * Py.Object.t) list -> Py.Object.t list -> t -> Ndarray.t
+val flatten : ?params:(string * Py.Object.t) list -> Py.Object.t list -> t -> Arr.t
 (**
 a.flatten(order='C')
 
@@ -2544,7 +2562,7 @@ True
   UPDATEIFCOPY : False
 *)
 
-val max : ?axis:[`Int of int | `None] -> ?out:Py.Object.t -> ?fill_value:Py.Object.t -> ?keepdims:Py.Object.t -> t -> Ndarray.t
+val max : ?axis:int -> ?out:Py.Object.t -> ?fill_value:Py.Object.t -> ?keepdims:Py.Object.t -> t -> Arr.t
 (**
 Return the maximum along a given axis.
 
@@ -2602,7 +2620,7 @@ masked_array(data=[1, 2, --],
 1.5
 *)
 
-val min : ?axis:[`Int of int | `None] -> ?out:Py.Object.t -> ?fill_value:Py.Object.t -> ?keepdims:Py.Object.t -> t -> Ndarray.t
+val min : ?axis:int -> ?out:Py.Object.t -> ?fill_value:Py.Object.t -> ?keepdims:Py.Object.t -> t -> Arr.t
 (**
 Return the minimum along a given axis.
 
@@ -2883,7 +2901,7 @@ numpy.ndarray.prod : corresponding function for ndarrays
 numpy.prod : equivalent function
 *)
 
-val ptp : ?axis:[`Int of int | `None] -> ?out:Py.Object.t -> ?fill_value:Py.Object.t -> ?keepdims:Py.Object.t -> t -> Ndarray.t
+val ptp : ?axis:int -> ?out:Py.Object.t -> ?fill_value:Py.Object.t -> ?keepdims:Py.Object.t -> t -> Arr.t
 (**
 Return (maximum - minimum) along the given dimension
 (i.e. peak-to-peak value).
@@ -3029,7 +3047,7 @@ See Also
 numpy.repeat : equivalent function
 *)
 
-val reshape : ?kwargs:(string * Py.Object.t) list -> Py.Object.t list -> t -> Ndarray.t
+val reshape : ?kwargs:(string * Py.Object.t) list -> Py.Object.t list -> t -> Arr.t
 (**
 Give a new shape to the array without changing its data.
 
@@ -3180,7 +3198,7 @@ See Also
 hardmask
 *)
 
-val sort : ?axis:Py.Object.t -> ?kind:Py.Object.t -> ?order:Py.Object.t -> ?endwith:Py.Object.t -> ?fill_value:Py.Object.t -> t -> Ndarray.t
+val sort : ?axis:Py.Object.t -> ?kind:Py.Object.t -> ?order:Py.Object.t -> ?endwith:Py.Object.t -> ?fill_value:Py.Object.t -> t -> Arr.t
 (**
 Sort the array, in-place
 
@@ -3385,7 +3403,7 @@ NotImplementedError
     When `tofile` is called.
 *)
 
-val toflex : t -> Ndarray.t
+val toflex : t -> Arr.t
 (**
 Transforms a masked array into a flexible-type array.
 
@@ -3429,7 +3447,7 @@ array([[(1, False), (2,  True), (3, False)],
       dtype=[('_data', '<i8'), ('_mask', '?')])
 *)
 
-val tolist : ?fill_value:Py.Object.t -> t -> Py.Object.t
+val tolist : ?fill_value:Py.Object.t -> t -> Arr.t
 (**
 Return the data portion of the masked array as a hierarchical Python list.
 
@@ -3456,7 +3474,7 @@ Examples
 [[1, -999, 3], [-999, 5, -999], [7, -999, 9]]
 *)
 
-val torecords : t -> Ndarray.t
+val torecords : t -> Arr.t
 (**
 Transforms a masked array into a flexible-type array.
 
@@ -3519,7 +3537,7 @@ See Also
 numpy.trace : equivalent function
 *)
 
-val transpose : ?params:(string * Py.Object.t) list -> Py.Object.t list -> t -> Ndarray.t
+val transpose : ?params:(string * Py.Object.t) list -> Py.Object.t list -> t -> Arr.t
 (**
 a.transpose( *axes)
 
@@ -3587,7 +3605,7 @@ See Also
 sharedmask
 *)
 
-val var : ?axis:Py.Object.t -> ?dtype:Py.Object.t -> ?out:Ndarray.t -> ?ddof:int -> ?keepdims:bool -> t -> Py.Object.t
+val var : ?axis:Py.Object.t -> ?dtype:Py.Object.t -> ?out:Arr.t -> ?ddof:int -> ?keepdims:bool -> t -> Py.Object.t
 (**
 Compute the variance along the specified axis.
 
@@ -3759,7 +3777,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val comb : ?exact:Py.Object.t -> ?repetition:Py.Object.t -> n:[`Int of int | `Ndarray of Ndarray.t] -> k:Py.Object.t -> unit -> Py.Object.t
+val comb : ?exact:Py.Object.t -> ?repetition:Py.Object.t -> n:[`I of int | `Arr of Arr.t] -> k:Py.Object.t -> unit -> [`I of int | `F of float | `Arr of Arr.t]
 (**
 The number of combinations of N things taken k at a time.
 
@@ -3806,7 +3824,7 @@ array([ 120.,  210.])
 220L
 *)
 
-val lobpcg : ?b:Py.Object.t -> ?m:Py.Object.t -> ?y:Py.Object.t -> ?tol:Py.Object.t -> ?maxiter:Py.Object.t -> ?largest:Py.Object.t -> ?verbosityLevel:Py.Object.t -> ?retLambdaHistory:Py.Object.t -> ?retResidualNormsHistory:Py.Object.t -> a:[`SparseMatrix of Csr_matrix.t | `LinearOperator of Py.Object.t | `PyObject of Py.Object.t] -> x:Py.Object.t -> unit -> Ndarray.t
+val lobpcg : ?b:Py.Object.t -> ?m:Py.Object.t -> ?y:Py.Object.t -> ?tol:Py.Object.t -> ?maxiter:Py.Object.t -> ?largest:Py.Object.t -> ?verbosityLevel:Py.Object.t -> ?retLambdaHistory:Py.Object.t -> ?retResidualNormsHistory:Py.Object.t -> a:[`SparseMatrix of Csr_matrix.t | `Dense_matrix of Py.Object.t | `LinearOperator of Py.Object.t] -> x:Py.Object.t -> unit -> Arr.t
 (**
 Locally Optimal Block Preconditioned Conjugate Gradient Method (LOBPCG)
 
@@ -3962,7 +3980,7 @@ Note that the vectors passed in Y are the eigenvectors of the 3 smallest
 eigenvalues. The results returned are orthogonal to those.
 *)
 
-val logsumexp : ?axis:Py.Object.t -> ?b:Ndarray.t -> ?keepdims:bool -> ?return_sign:bool -> a:Ndarray.t -> unit -> Ndarray.t
+val logsumexp : ?axis:Py.Object.t -> ?b:Arr.t -> ?keepdims:bool -> ?return_sign:bool -> a:Arr.t -> unit -> Arr.t
 (**
 Compute the log of the sum of exponentials of input elements.
 
@@ -4245,7 +4263,7 @@ True
 True
 *)
 
-val sparse_lsqr : ?damp:Py.Object.t -> ?atol:Py.Object.t -> ?btol:Py.Object.t -> ?conlim:Py.Object.t -> ?iter_lim:Py.Object.t -> ?show:Py.Object.t -> ?calc_var:Py.Object.t -> ?x0:Py.Object.t -> a:[`SparseMatrix of Csr_matrix.t | `Ndarray of Ndarray.t | `LinearOperator of Py.Object.t] -> b:Py.Object.t -> unit -> Py.Object.t
+val sparse_lsqr : ?damp:Py.Object.t -> ?atol:Py.Object.t -> ?btol:Py.Object.t -> ?conlim:Py.Object.t -> ?iter_lim:Py.Object.t -> ?show:Py.Object.t -> ?calc_var:Py.Object.t -> ?x0:Py.Object.t -> a:[`Arr of Arr.t | `LinearOperator of Py.Object.t] -> b:Py.Object.t -> unit -> Py.Object.t
 (**
 Find the least-squares solution to a large, sparse, linear system
 of equations.
@@ -4552,7 +4570,7 @@ Warns
 Issues a UserWarning if ``row_bytes`` exceeds ``working_memory`` MiB.
 *)
 
-val get_config : unit -> Py.Object.t
+val get_config : unit -> Dict.t
 (**
 Retrieve current values for configuration set by :func:`set_config`
 
@@ -4568,7 +4586,10 @@ set_config: Set global scikit-learn configuration
 *)
 
 module Graph : sig
-val single_source_shortest_path_length : ?cutoff:Py.Object.t -> graph:[`SparseMatrix of Csr_matrix.t | `PyObject of Py.Object.t] -> source:Py.Object.t -> unit -> Py.Object.t
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
+val single_source_shortest_path_length : ?cutoff:Py.Object.t -> graph:[`SparseMatrix of Csr_matrix.t | `T2D_array_preferably_LIL_matrix_ of Py.Object.t] -> source:Py.Object.t -> unit -> Py.Object.t
 (**
 Return the shortest path length from source to all reachable nodes.
 
@@ -4603,6 +4624,9 @@ Examples
 end
 
 module Graph_shortest_path : sig
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module Float64 : sig
 type t
 val of_pyobject : Py.Object.t -> t
@@ -4760,7 +4784,7 @@ Parameters
     List of objects to ensure sliceability.
 *)
 
-val indices_to_mask : indices:Py.Object.t -> mask_length:Py.Object.t -> unit -> Py.Object.t
+val indices_to_mask : indices:Arr.t -> mask_length:Py.Object.t -> unit -> Py.Object.t
 (**
 Convert list of indices to boolean mask.
 
@@ -4844,6 +4868,9 @@ False
 *)
 
 module Metaestimators : sig
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module ABCMeta : sig
 type t
 val of_pyobject : Py.Object.t -> t
@@ -4899,7 +4926,7 @@ at the class level in their ``__init__`` as explicit keyword
 arguments (no ``*args`` or ``**kwargs``).
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -4967,7 +4994,7 @@ Usage:
             ...
 *)
 
-val if_delegate_has_method : delegate:[`String of string | `StringList of string list | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val if_delegate_has_method : delegate:[`S of string | `StringList of string list | `Tuple_of_strings of Py.Object.t] -> unit -> Py.Object.t
 (**
 Create a decorator for methods that are delegated to a sub-estimator
 
@@ -5000,7 +5027,10 @@ function (defaults to functools.WRAPPER_UPDATES)
 end
 
 module Multiclass : sig
-val check_array : ?accept_sparse:[`String of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`String of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C | `None] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:[`Bool of bool | `None] -> ?estimator:[`String of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
+val check_array : ?accept_sparse:[`S of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`S of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:bool -> ?estimator:[`S of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
 (**
 Input validation on an array, list, sparse matrix or similar.
 
@@ -5092,7 +5122,7 @@ array_converted : object
     The converted and validated array.
 *)
 
-val check_classification_targets : y:Ndarray.t -> unit -> Py.Object.t
+val check_classification_targets : y:Arr.t -> unit -> Py.Object.t
 (**
 Ensure that target y is of a non-regression type.
 
@@ -5105,7 +5135,7 @@ Parameters
 y : array-like
 *)
 
-val class_distribution : ?sample_weight:Ndarray.t -> y:Py.Object.t -> unit -> (Py.Object.t * Py.Object.t * Py.Object.t)
+val class_distribution : ?sample_weight:Arr.t -> y:[`Arr of Arr.t | `PyObject of Py.Object.t] -> unit -> (Py.Object.t * Py.Object.t * Py.Object.t)
 (**
 Compute class priors from multioutput-multiclass target data
 
@@ -5188,7 +5218,7 @@ val get_item : key:Py.Object.t -> t -> Py.Object.t
 None
 *)
 
-val asformat : ?copy:Py.Object.t -> format:string -> t -> Py.Object.t
+val asformat : ?copy:Py.Object.t -> format:[`S of string | `None] -> t -> Py.Object.t
 (**
 Return this matrix in the passed format.
 
@@ -5210,7 +5240,7 @@ val asfptype : t -> Py.Object.t
 Upcast matrix to a floating point format (if necessary)
 *)
 
-val astype : ?casting:Py.Object.t -> ?copy:Py.Object.t -> dtype:[`String of string | `PyObject of Py.Object.t] -> t -> Py.Object.t
+val astype : ?casting:Py.Object.t -> ?copy:Py.Object.t -> dtype:[`S of string | `Dtype of Py.Object.t] -> t -> Py.Object.t
 (**
 Cast the matrix elements to a specified type.
 
@@ -5372,7 +5402,7 @@ val getmaxprint : t -> Py.Object.t
 Maximum number of elements to display when printed.
 *)
 
-val getnnz : ?axis:[`None | `PyObject of Py.Object.t] -> t -> Py.Object.t
+val getnnz : ?axis:[`Zero | `One] -> t -> Py.Object.t
 (**
 Number of stored values, including explicit zeros.
 
@@ -5398,7 +5428,7 @@ val maximum : other:Py.Object.t -> t -> Py.Object.t
 Element-wise maximum between this and another matrix.
 *)
 
-val mean : ?axis:[`None | `PyObject of Py.Object.t] -> ?dtype:Py.Object.t -> ?out:Py.Object.t -> t -> Py.Object.t
+val mean : ?axis:[`Zero | `One | `PyObject of Py.Object.t] -> ?dtype:Py.Object.t -> ?out:Arr.t -> t -> Arr.t
 (**
 Compute the arithmetic mean along the specified axis.
 
@@ -5536,7 +5566,7 @@ Insert key with a value of default if key is not in the dictionary.
 Return the value for key if key is in the dictionary, else default.
 *)
 
-val setdiag : ?k:int -> values:Ndarray.t -> t -> Py.Object.t
+val setdiag : ?k:int -> values:Arr.t -> t -> Py.Object.t
 (**
 Set diagonal or off-diagonal elements of the array.
 
@@ -5556,7 +5586,7 @@ k : int, optional
     Default: 0 (the main diagonal).
 *)
 
-val sum : ?axis:[`None | `PyObject of Py.Object.t] -> ?dtype:Py.Object.t -> ?out:Py.Object.t -> t -> Py.Object.t
+val sum : ?axis:[`Zero | `One | `PyObject of Py.Object.t] -> ?dtype:Py.Object.t -> ?out:Arr.t -> t -> Arr.t
 (**
 Sum the matrix elements over a given axis.
 
@@ -5594,7 +5624,7 @@ See Also
 numpy.matrix.sum : NumPy's implementation of 'sum' for matrices
 *)
 
-val toarray : ?order:[`C | `F] -> ?out:Ndarray.t -> t -> Ndarray.t
+val toarray : ?order:[`C | `F] -> ?out:Arr.t -> t -> Arr.t
 (**
 Return a dense ndarray representation of this matrix.
 
@@ -5660,7 +5690,7 @@ With copy=False, the data/indices may be shared between this matrix and
 the resultant csr_matrix.
 *)
 
-val todense : ?order:[`C | `F] -> ?out:Ndarray.t -> t -> Py.Object.t
+val todense : ?order:[`C | `F] -> ?out:Arr.t -> t -> Arr.t
 (**
 Return a dense matrix representation of this matrix.
 
@@ -5750,8 +5780,12 @@ In either case, this is followed by: for k in F:  D[k] = F[k]
 *)
 
 
-(** Attribute dtype: see constructor for documentation *)
+(** Attribute dtype: get value or raise Not_found if None.*)
 val dtype : t -> Py.Object.t
+
+(** Attribute dtype: get value as an option. *)
+val dtype_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -5766,7 +5800,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val is_multilabel : y:Ndarray.t -> unit -> bool
+val is_multilabel : y:Arr.t -> unit -> bool
 (**
 Check if ``y`` is in a multilabel format.
 
@@ -5898,7 +5932,7 @@ val get_item : key:Py.Object.t -> t -> Py.Object.t
 None
 *)
 
-val asformat : ?copy:Py.Object.t -> format:string -> t -> Py.Object.t
+val asformat : ?copy:Py.Object.t -> format:[`S of string | `None] -> t -> Py.Object.t
 (**
 Return this matrix in the passed format.
 
@@ -5920,7 +5954,7 @@ val asfptype : t -> Py.Object.t
 Upcast matrix to a floating point format (if necessary)
 *)
 
-val astype : ?casting:Py.Object.t -> ?copy:Py.Object.t -> dtype:[`String of string | `PyObject of Py.Object.t] -> t -> Py.Object.t
+val astype : ?casting:Py.Object.t -> ?copy:Py.Object.t -> dtype:[`S of string | `Dtype of Py.Object.t] -> t -> Py.Object.t
 (**
 Cast the matrix elements to a specified type.
 
@@ -6066,7 +6100,7 @@ val getmaxprint : t -> Py.Object.t
 Maximum number of elements to display when printed.
 *)
 
-val getnnz : ?axis:[`None | `PyObject of Py.Object.t] -> t -> Py.Object.t
+val getnnz : ?axis:[`Zero | `One] -> t -> Py.Object.t
 (**
 Number of stored values, including explicit zeros.
 
@@ -6098,7 +6132,7 @@ val maximum : other:Py.Object.t -> t -> Py.Object.t
 Element-wise maximum between this and another matrix.
 *)
 
-val mean : ?axis:[`None | `PyObject of Py.Object.t] -> ?dtype:Py.Object.t -> ?out:Py.Object.t -> t -> Py.Object.t
+val mean : ?axis:[`Zero | `One | `PyObject of Py.Object.t] -> ?dtype:Py.Object.t -> ?out:Arr.t -> t -> Arr.t
 (**
 Compute the arithmetic mean along the specified axis.
 
@@ -6229,7 +6263,7 @@ val set_shape : shape:int list -> t -> Py.Object.t
 See `reshape`.
 *)
 
-val setdiag : ?k:int -> values:Ndarray.t -> t -> Py.Object.t
+val setdiag : ?k:int -> values:Arr.t -> t -> Py.Object.t
 (**
 Set diagonal or off-diagonal elements of the array.
 
@@ -6249,7 +6283,7 @@ k : int, optional
     Default: 0 (the main diagonal).
 *)
 
-val sum : ?axis:[`None | `PyObject of Py.Object.t] -> ?dtype:Py.Object.t -> ?out:Py.Object.t -> t -> Py.Object.t
+val sum : ?axis:[`Zero | `One | `PyObject of Py.Object.t] -> ?dtype:Py.Object.t -> ?out:Arr.t -> t -> Arr.t
 (**
 Sum the matrix elements over a given axis.
 
@@ -6287,7 +6321,7 @@ See Also
 numpy.matrix.sum : NumPy's implementation of 'sum' for matrices
 *)
 
-val toarray : ?order:[`C | `F] -> ?out:Ndarray.t -> t -> Ndarray.t
+val toarray : ?order:[`C | `F] -> ?out:Arr.t -> t -> Arr.t
 (**
 Return a dense ndarray representation of this matrix.
 
@@ -6353,7 +6387,7 @@ With copy=False, the data/indices may be shared between this matrix and
 the resultant csr_matrix.
 *)
 
-val todense : ?order:[`C | `F] -> ?out:Ndarray.t -> t -> Py.Object.t
+val todense : ?order:[`C | `F] -> ?out:Arr.t -> t -> Arr.t
 (**
 Return a dense matrix representation of this matrix.
 
@@ -6435,8 +6469,12 @@ numpy.matrix.transpose : NumPy's implementation of 'transpose'
 *)
 
 
-(** Attribute dtype: see constructor for documentation *)
+(** Attribute dtype: get value or raise Not_found if None.*)
 val dtype : t -> Py.Object.t
+
+(** Attribute dtype: get value as an option. *)
+val dtype_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -6462,7 +6500,7 @@ This class provides a base class for all sparse matrices.  It
 cannot be instantiated.  Most of the work is provided by subclasses.
 *)
 
-val asformat : ?copy:Py.Object.t -> format:string -> t -> Py.Object.t
+val asformat : ?copy:Py.Object.t -> format:[`S of string | `None] -> t -> Py.Object.t
 (**
 Return this matrix in the passed format.
 
@@ -6484,7 +6522,7 @@ val asfptype : t -> Py.Object.t
 Upcast matrix to a floating point format (if necessary)
 *)
 
-val astype : ?casting:Py.Object.t -> ?copy:Py.Object.t -> dtype:[`String of string | `PyObject of Py.Object.t] -> t -> Py.Object.t
+val astype : ?casting:Py.Object.t -> ?copy:Py.Object.t -> dtype:[`S of string | `Dtype of Py.Object.t] -> t -> Py.Object.t
 (**
 Cast the matrix elements to a specified type.
 
@@ -6630,7 +6668,7 @@ val getmaxprint : t -> Py.Object.t
 Maximum number of elements to display when printed.
 *)
 
-val getnnz : ?axis:[`None | `PyObject of Py.Object.t] -> t -> Py.Object.t
+val getnnz : ?axis:[`Zero | `One] -> t -> Py.Object.t
 (**
 Number of stored values, including explicit zeros.
 
@@ -6656,7 +6694,7 @@ val maximum : other:Py.Object.t -> t -> Py.Object.t
 Element-wise maximum between this and another matrix.
 *)
 
-val mean : ?axis:[`None | `PyObject of Py.Object.t] -> ?dtype:Py.Object.t -> ?out:Py.Object.t -> t -> Py.Object.t
+val mean : ?axis:[`Zero | `One | `PyObject of Py.Object.t] -> ?dtype:Py.Object.t -> ?out:Arr.t -> t -> Arr.t
 (**
 Compute the arithmetic mean along the specified axis.
 
@@ -6787,7 +6825,7 @@ val set_shape : shape:int list -> t -> Py.Object.t
 See `reshape`.
 *)
 
-val setdiag : ?k:int -> values:Ndarray.t -> t -> Py.Object.t
+val setdiag : ?k:int -> values:Arr.t -> t -> Py.Object.t
 (**
 Set diagonal or off-diagonal elements of the array.
 
@@ -6807,7 +6845,7 @@ k : int, optional
     Default: 0 (the main diagonal).
 *)
 
-val sum : ?axis:[`None | `PyObject of Py.Object.t] -> ?dtype:Py.Object.t -> ?out:Py.Object.t -> t -> Py.Object.t
+val sum : ?axis:[`Zero | `One | `PyObject of Py.Object.t] -> ?dtype:Py.Object.t -> ?out:Arr.t -> t -> Arr.t
 (**
 Sum the matrix elements over a given axis.
 
@@ -6845,7 +6883,7 @@ See Also
 numpy.matrix.sum : NumPy's implementation of 'sum' for matrices
 *)
 
-val toarray : ?order:[`C | `F] -> ?out:Ndarray.t -> t -> Ndarray.t
+val toarray : ?order:[`C | `F] -> ?out:Arr.t -> t -> Arr.t
 (**
 Return a dense ndarray representation of this matrix.
 
@@ -6911,7 +6949,7 @@ With copy=False, the data/indices may be shared between this matrix and
 the resultant csr_matrix.
 *)
 
-val todense : ?order:[`C | `F] -> ?out:Ndarray.t -> t -> Py.Object.t
+val todense : ?order:[`C | `F] -> ?out:Arr.t -> t -> Arr.t
 (**
 Return a dense matrix representation of this matrix.
 
@@ -7006,7 +7044,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val type_of_target : y:Ndarray.t -> unit -> string
+val type_of_target : y:Arr.t -> unit -> string
 (**
 Determine the type of data indicated by the target.
 
@@ -7072,7 +7110,7 @@ Examples
 'multilabel-indicator'
 *)
 
-val unique_labels : Py.Object.t list -> Ndarray.t
+val unique_labels : Py.Object.t list -> Arr.t
 (**
 Extract an ordered array of unique labels
 
@@ -7109,10 +7147,16 @@ array([ 1,  2,  5, 10, 11])
 end
 
 module Murmurhash : sig
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 
 end
 
 module Optimize : sig
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module Deprecated : sig
 type t
 val of_pyobject : Py.Object.t -> t
@@ -7156,7 +7200,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val line_search_wolfe1 : ?gfk:Ndarray.t -> ?old_fval:Py.Object.t -> ?old_old_fval:Py.Object.t -> ?args:Py.Object.t -> ?c1:Py.Object.t -> ?c2:Py.Object.t -> ?amax:Py.Object.t -> ?amin:Py.Object.t -> ?xtol:Py.Object.t -> f:Py.Object.t -> fprime:Py.Object.t -> xk:Py.Object.t -> pk:Py.Object.t -> unit -> Py.Object.t
+val line_search_wolfe1 : ?gfk:Arr.t -> ?old_fval:Py.Object.t -> ?old_old_fval:Py.Object.t -> ?args:Py.Object.t -> ?c1:Py.Object.t -> ?c2:Py.Object.t -> ?amax:Py.Object.t -> ?amin:Py.Object.t -> ?xtol:Py.Object.t -> f:Py.Object.t -> fprime:Py.Object.t -> xk:Py.Object.t -> pk:Py.Object.t -> unit -> Py.Object.t
 (**
 As `scalar_search_wolfe1` but do a line search to direction `pk`
 
@@ -7344,7 +7388,10 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 end
 
 module Random : sig
-val check_random_state : seed:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> Py.Object.t
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
+val check_random_state : seed:[`I of int | `RandomState of Py.Object.t | `None] -> unit -> Py.Object.t
 (**
 Turn seed into a np.random.RandomState instance
 
@@ -7400,7 +7447,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val random_choice_csc : ?class_probability:Py.Object.t -> ?random_state:Py.Object.t -> n_samples:Py.Object.t -> classes:Py.Object.t -> unit -> Py.Object.t
+val random_choice_csc : ?class_probability:Py.Object.t -> ?random_state:int -> n_samples:Py.Object.t -> classes:Py.Object.t -> unit -> Py.Object.t
 (**
 DEPRECATED: random_choice_csc is deprecated in version 0.22 and will be removed in version 0.24.
 *)
@@ -7512,7 +7559,7 @@ See also
 :func:`sklearn.utils.shuffle`
 *)
 
-val safe_indexing : ?axis:int -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t | `ArrayLike of Py.Object.t | `PyObject of Py.Object.t] -> indices:[`Bool of bool | `Int of int | `String of string | `Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val safe_indexing : ?axis:int -> x:[`Arr of Arr.t | `PyObject of Py.Object.t] -> indices:[`Bool of bool | `I of int | `S of string | `Slice of Py.Object.t | `Arr of Arr.t] -> unit -> Py.Object.t
 (**
 DEPRECATED: safe_indexing is deprecated in version 0.22 and will be removed in version 0.24.
 
@@ -7560,7 +7607,7 @@ Return rows, items or columns of X using indices.
     
 *)
 
-val safe_mask : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> mask:Ndarray.t -> unit -> Py.Object.t
+val safe_mask : x:Arr.t -> mask:Arr.t -> unit -> Py.Object.t
 (**
 Return a mask which is safe to use on X.
 
@@ -7577,7 +7624,7 @@ Returns
     mask
 *)
 
-val safe_sqr : ?copy:bool -> x:[`SparseMatrix of Csr_matrix.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val safe_sqr : ?copy:bool -> x:Arr.t -> unit -> Py.Object.t
 (**
 Element wise squaring of array-likes and sparse matrices.
 
@@ -7594,7 +7641,7 @@ Returns
 X ** 2 : element wise square
 *)
 
-val shuffle : ?options:(string * Py.Object.t) list -> Py.Object.t list -> Py.Object.t
+val shuffle : ?random_state:int -> ?n_samples:int -> Arr.t list -> Arr.t list
 (**
 Shuffle arrays or sparse matrices in a consistent way
 
@@ -7664,7 +7711,10 @@ See also
 *)
 
 module Sparsefuncs : sig
-val count_nonzero : ?axis:[`None | `PyObject of Py.Object.t] -> ?sample_weight:Ndarray.t -> x:Py.Object.t -> unit -> Py.Object.t
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
+val count_nonzero : ?axis:[`Zero | `One] -> ?sample_weight:Arr.t -> x:Csr_matrix.t -> unit -> Py.Object.t
 (**
 A variant of X.getnnz() with extension to weighting on axis 0
 
@@ -7682,7 +7732,7 @@ sample_weight : array-like of shape (n_samples,), default=None
     Weight for each row of X.
 *)
 
-val csc_median_axis_0 : x:Py.Object.t -> unit -> Ndarray.t
+val csc_median_axis_0 : x:Py.Object.t -> unit -> Arr.t
 (**
 Find the median across axis 0 of a CSC matrix.
 It is equivalent to doing np.median(X, axis=0).
@@ -7698,7 +7748,7 @@ median : ndarray, shape (n_features,)
     Median.
 *)
 
-val incr_mean_variance_axis : x:Py.Object.t -> axis:Py.Object.t -> last_mean:Py.Object.t -> last_var:Py.Object.t -> last_n:Py.Object.t -> unit -> (Py.Object.t * Py.Object.t * Py.Object.t)
+val incr_mean_variance_axis : x:[`SparseMatrix of Csr_matrix.t | `CSC_sparse_matrix of Py.Object.t] -> axis:Py.Object.t -> last_mean:Arr.t -> last_var:Arr.t -> last_n:int -> unit -> (Arr.t * Arr.t * int)
 (**
 Compute incremental mean and variance along an axix on a CSR or
 CSC matrix.
@@ -7742,7 +7792,7 @@ Notes
 NaNs are ignored in the algorithm.
 *)
 
-val inplace_column_scale : x:Py.Object.t -> scale:Py.Object.t -> unit -> Py.Object.t
+val inplace_column_scale : x:[`CSC of Py.Object.t | `SparseMatrix of Csr_matrix.t] -> scale:Arr.t -> unit -> Py.Object.t
 (**
 Inplace column scaling of a CSC/CSR matrix.
 
@@ -7758,7 +7808,7 @@ scale : float array with shape (n_features,)
     Array of precomputed feature-wise values to use for scaling.
 *)
 
-val inplace_csr_column_scale : x:Py.Object.t -> scale:Py.Object.t -> unit -> Py.Object.t
+val inplace_csr_column_scale : x:Csr_matrix.t -> scale:Arr.t -> unit -> Py.Object.t
 (**
 Inplace column scaling of a CSR matrix.
 
@@ -7774,7 +7824,7 @@ scale : float array with shape (n_features,)
     Array of precomputed feature-wise values to use for scaling.
 *)
 
-val inplace_csr_row_scale : x:Py.Object.t -> scale:Py.Object.t -> unit -> Py.Object.t
+val inplace_csr_row_scale : x:Csr_matrix.t -> scale:Arr.t -> unit -> Py.Object.t
 (**
 Inplace row scaling of a CSR matrix.
 
@@ -7790,7 +7840,7 @@ scale : float array with shape (n_samples,)
     Array of precomputed sample-wise values to use for scaling.
 *)
 
-val inplace_row_scale : x:Py.Object.t -> scale:Py.Object.t -> unit -> Py.Object.t
+val inplace_row_scale : x:[`SparseMatrix of Csr_matrix.t | `CSC_sparse_matrix of Py.Object.t] -> scale:Arr.t -> unit -> Py.Object.t
 (**
 Inplace row scaling of a CSR or CSC matrix.
 
@@ -7806,7 +7856,7 @@ scale : float array with shape (n_features,)
     Array of precomputed sample-wise values to use for scaling.
 *)
 
-val inplace_swap_column : x:Py.Object.t -> m:int -> n:int -> unit -> Py.Object.t
+val inplace_swap_column : x:[`SparseMatrix of Csr_matrix.t | `CSC_sparse_matrix of Py.Object.t] -> m:int -> n:int -> unit -> Py.Object.t
 (**
 Swaps two columns of a CSC/CSR matrix in-place.
 
@@ -7822,7 +7872,7 @@ n : int
     Index of the column of X to be swapped.
 *)
 
-val inplace_swap_row : x:Py.Object.t -> m:int -> n:int -> unit -> Py.Object.t
+val inplace_swap_row : x:[`SparseMatrix of Csr_matrix.t | `CSC_sparse_matrix of Py.Object.t] -> m:int -> n:int -> unit -> Py.Object.t
 (**
 Swaps two rows of a CSC/CSR matrix in-place.
 
@@ -7854,7 +7904,7 @@ n : int
     Index of the row of X to be swapped.
 *)
 
-val inplace_swap_row_csr : x:Py.Object.t -> m:int -> n:int -> unit -> Py.Object.t
+val inplace_swap_row_csr : x:Csr_matrix.t -> m:int -> n:int -> unit -> Py.Object.t
 (**
 Swaps two rows of a CSR matrix in-place.
 
@@ -7870,7 +7920,7 @@ n : int
     Index of the row of X to be swapped.
 *)
 
-val mean_variance_axis : x:Py.Object.t -> axis:Py.Object.t -> unit -> (Py.Object.t * Py.Object.t)
+val mean_variance_axis : x:[`SparseMatrix of Csr_matrix.t | `CSC_sparse_matrix of Py.Object.t] -> axis:Py.Object.t -> unit -> (Arr.t * Arr.t)
 (**
 Compute mean and variance along an axix on a CSR or CSC matrix
 
@@ -7892,7 +7942,7 @@ variances : float array with shape (n_features,)
     Feature-wise variances
 *)
 
-val min_max_axis : ?ignore_nan:bool -> x:Py.Object.t -> axis:Py.Object.t -> unit -> (Py.Object.t * Py.Object.t)
+val min_max_axis : ?ignore_nan:bool -> x:[`SparseMatrix of Csr_matrix.t | `CSC_sparse_matrix of Py.Object.t] -> axis:Py.Object.t -> unit -> (Arr.t * Arr.t)
 (**
 Compute minimum and maximum along an axis on a CSR or CSC matrix and
 optionally ignore NaN values.
@@ -7924,7 +7974,10 @@ maxs : float array with shape (n_features,)
 end
 
 module Sparsefuncs_fast : sig
-val assign_rows_csr : x:Py.Object.t -> x_rows:Py.Object.t -> out_rows:Py.Object.t -> out:Py.Object.t -> unit -> Py.Object.t
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
+val assign_rows_csr : x:Csr_matrix.t -> x_rows:Py.Object.t -> out_rows:Py.Object.t -> out:Py.Object.t -> unit -> Py.Object.t
 (**
 Densify selected rows of a CSR matrix into a preallocated array.
 
@@ -7943,7 +7996,10 @@ out : array, shape=(arbitrary, n_features)
 end
 
 module Stats : sig
-val stable_cumsum : ?axis:Py.Object.t -> ?rtol:Py.Object.t -> ?atol:Py.Object.t -> arr:Ndarray.t -> unit -> Py.Object.t
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
+val stable_cumsum : ?axis:Py.Object.t -> ?rtol:Py.Object.t -> ?atol:Py.Object.t -> arr:Arr.t -> unit -> Py.Object.t
 (**
 Use high precision for cumsum and check that final value matches sum
 
@@ -7963,7 +8019,7 @@ atol : float
 
 end
 
-val tosequence : x:Ndarray.t -> unit -> Py.Object.t
+val tosequence : x:Arr.t -> unit -> Py.Object.t
 (**
 Cast iterable x to a Sequence, avoiding a copy if possible.
 
@@ -7973,6 +8029,9 @@ x : iterable
 *)
 
 module Validation : sig
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module LooseVersion : sig
 type t
 val of_pyobject : Py.Object.t -> t
@@ -8077,7 +8136,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val as_float_array : ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> Py.Object.t
+val as_float_array : ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> x:Arr.t -> unit -> Arr.t
 (**
 Converts an array-like to an array of floats.
 
@@ -8111,7 +8170,7 @@ XT : {array, sparse matrix}
     An array of type np.float
 *)
 
-val assert_all_finite : ?allow_nan:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> Py.Object.t
+val assert_all_finite : ?allow_nan:bool -> x:Arr.t -> unit -> Py.Object.t
 (**
 Throw a ValueError if X contains NaN or infinity.
 
@@ -8122,7 +8181,7 @@ X : array or sparse matrix
 allow_nan : bool
 *)
 
-val check_X_y : ?accept_sparse:[`String of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`String of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C | `None] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?multi_output:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?y_numeric:bool -> ?warn_on_dtype:[`Bool of bool | `None] -> ?estimator:[`String of string | `Estimator of Py.Object.t] -> x:[`Ndarray of Ndarray.t | `ArrayLike of Py.Object.t | `SparseMatrix of Csr_matrix.t] -> y:[`Ndarray of Ndarray.t | `ArrayLike of Py.Object.t | `SparseMatrix of Csr_matrix.t] -> unit -> (Py.Object.t * Py.Object.t)
+val check_X_y : ?accept_sparse:[`S of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`S of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?multi_output:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?y_numeric:bool -> ?warn_on_dtype:bool -> ?estimator:[`S of string | `Estimator of Py.Object.t] -> x:Arr.t -> y:Arr.t -> unit -> (Py.Object.t * Py.Object.t)
 (**
 Input validation for standard estimators.
 
@@ -8228,7 +8287,7 @@ y_converted : object
     The converted and validated y.
 *)
 
-val check_array : ?accept_sparse:[`String of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`String of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C | `None] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:[`Bool of bool | `None] -> ?estimator:[`String of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
+val check_array : ?accept_sparse:[`S of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`S of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:bool -> ?estimator:[`S of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
 (**
 Input validation on an array, list, sparse matrix or similar.
 
@@ -8332,7 +8391,7 @@ Parameters
     Objects that will be checked for consistent length.
 *)
 
-val check_is_fitted : ?attributes:[`String of string | `ArrayLike of Py.Object.t | `StringList of string list] -> ?msg:string -> ?all_or_any:[`Callable of Py.Object.t | `PyObject of Py.Object.t] -> estimator:Py.Object.t -> unit -> Py.Object.t
+val check_is_fitted : ?attributes:[`S of string | `Arr of Arr.t | `StringList of string list] -> ?msg:string -> ?all_or_any:[`Callable of Py.Object.t | `PyObject of Py.Object.t] -> estimator:Py.Object.t -> unit -> Py.Object.t
 (**
 Perform is_fitted validation for estimator.
 
@@ -8379,7 +8438,7 @@ NotFittedError
     If the attributes are not found.
 *)
 
-val check_memory : memory:[`String of string | `JoblibMemory of Py.Object.t | `None] -> unit -> Py.Object.t
+val check_memory : memory:[`S of string | `JoblibMemory of Py.Object.t | `None] -> unit -> Py.Object.t
 (**
 Check that ``memory`` is joblib.Memory-like.
 
@@ -8401,7 +8460,7 @@ ValueError
     If ``memory`` is not joblib.Memory-like.
 *)
 
-val check_non_negative : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> whom:string -> unit -> Py.Object.t
+val check_non_negative : x:Arr.t -> whom:string -> unit -> Py.Object.t
 (**
 Check if there is any negative value in an array.
 
@@ -8414,7 +8473,7 @@ whom : string
     Who passed X to this function.
 *)
 
-val check_random_state : seed:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> Py.Object.t
+val check_random_state : seed:[`I of int | `RandomState of Py.Object.t | `None] -> unit -> Py.Object.t
 (**
 Turn seed into a np.random.RandomState instance
 
@@ -8427,7 +8486,7 @@ seed : None | int | instance of RandomState
     Otherwise raise ValueError.
 *)
 
-val check_scalar : ?min_val:[`Float of float | `Int of int] -> ?max_val:[`Float of float | `Int of int] -> x:Py.Object.t -> name:string -> target_type:[`Dtype of Py.Object.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val check_scalar : ?min_val:[`F of float | `I of int] -> ?max_val:[`F of float | `I of int] -> x:Py.Object.t -> name:string -> target_type:[`Dtype of Py.Object.t | `Tuple of Py.Object.t] -> unit -> Py.Object.t
 (**
 Validate scalar parameters type and value.
 
@@ -8459,7 +8518,7 @@ ValueError
     If the parameter's value violates the given bounds.
 *)
 
-val check_symmetric : ?tol:Py.Object.t -> ?raise_warning:Py.Object.t -> ?raise_exception:Py.Object.t -> array:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> Py.Object.t
+val check_symmetric : ?tol:Py.Object.t -> ?raise_warning:Py.Object.t -> ?raise_exception:Py.Object.t -> array:Arr.t -> unit -> Arr.t
 (**
 Make sure that array is 2D, square and symmetric.
 
@@ -8487,7 +8546,7 @@ array_sym : ndarray or sparse matrix
     summed and zeros are eliminated.
 *)
 
-val column_or_1d : ?warn:bool -> y:Ndarray.t -> unit -> Ndarray.t
+val column_or_1d : ?warn:bool -> y:Arr.t -> unit -> Arr.t
 (**
 Ravel column or 1d numpy array, else raises an error
 

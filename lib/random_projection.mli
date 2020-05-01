@@ -1,3 +1,6 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module ABCMeta : sig
 type t
 val of_pyobject : Py.Object.t -> t
@@ -53,7 +56,7 @@ at the class level in their ``__init__`` as explicit keyword
 arguments (no ``*args`` or ``**kwargs``).
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -108,7 +111,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_components:[`Int of int | `Auto] -> ?eps:float -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
+val create : ?n_components:[`I of int | `Auto] -> ?eps:float -> ?random_state:int -> unit -> t
 (**
 Reduce dimensionality through Gaussian random projection
 
@@ -171,7 +174,7 @@ See Also
 SparseRandomProjection
 *)
 
-val fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Generate a sparse random projection matrix
 
@@ -190,7 +193,7 @@ Returns
 self
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -214,7 +217,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -250,7 +253,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Project the data by using matrix product with the random matrix
 
@@ -266,11 +269,19 @@ X_new : numpy array or scipy sparse of shape [n_samples, n_components]
 *)
 
 
-(** Attribute n_components_: see constructor for documentation *)
+(** Attribute n_components_: get value or raise Not_found if None.*)
 val n_components_ : t -> int
 
-(** Attribute components_: see constructor for documentation *)
-val components_ : t -> Ndarray.t
+(** Attribute n_components_: get value as an option. *)
+val n_components_opt : t -> (int) option
+
+
+(** Attribute components_: get value or raise Not_found if None.*)
+val components_ : t -> Arr.t
+
+(** Attribute components_: get value as an option. *)
+val components_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -290,7 +301,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_components:[`Int of int | `Auto] -> ?density:float -> ?eps:float -> ?dense_output:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
+val create : ?n_components:[`I of int | `Auto] -> ?density:float -> ?eps:float -> ?dense_output:bool -> ?random_state:int -> unit -> t
 (**
 Reduce dimensionality through sparse random projection
 
@@ -399,7 +410,7 @@ References
        https://users.soe.ucsc.edu/~optas/papers/jl.pdf
 *)
 
-val fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Generate a sparse random projection matrix
 
@@ -418,7 +429,7 @@ Returns
 self
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -442,7 +453,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -478,7 +489,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Project the data by using matrix product with the random matrix
 
@@ -494,14 +505,26 @@ X_new : numpy array or scipy sparse of shape [n_samples, n_components]
 *)
 
 
-(** Attribute n_components_: see constructor for documentation *)
+(** Attribute n_components_: get value or raise Not_found if None.*)
 val n_components_ : t -> int
 
-(** Attribute components_: see constructor for documentation *)
-val components_ : t -> Py.Object.t
+(** Attribute n_components_: get value as an option. *)
+val n_components_opt : t -> (int) option
 
-(** Attribute density_: see constructor for documentation *)
+
+(** Attribute components_: get value or raise Not_found if None.*)
+val components_ : t -> Csr_matrix.t
+
+(** Attribute components_: get value as an option. *)
+val components_opt : t -> (Csr_matrix.t) option
+
+
+(** Attribute density_: get value or raise Not_found if None.*)
 val density_ : t -> Py.Object.t
+
+(** Attribute density_: get value as an option. *)
+val density_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -526,7 +549,7 @@ val create : unit -> t
 Mixin class for all transformers in scikit-learn.
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -582,7 +605,7 @@ Usage:
             ...
 *)
 
-val check_array : ?accept_sparse:[`String of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`String of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C | `None] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:[`Bool of bool | `None] -> ?estimator:[`String of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
+val check_array : ?accept_sparse:[`S of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`S of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:bool -> ?estimator:[`S of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
 (**
 Input validation on an array, list, sparse matrix or similar.
 
@@ -674,7 +697,7 @@ array_converted : object
     The converted and validated array.
 *)
 
-val check_is_fitted : ?attributes:[`String of string | `ArrayLike of Py.Object.t | `StringList of string list] -> ?msg:string -> ?all_or_any:[`Callable of Py.Object.t | `PyObject of Py.Object.t] -> estimator:Py.Object.t -> unit -> Py.Object.t
+val check_is_fitted : ?attributes:[`S of string | `Arr of Arr.t | `StringList of string list] -> ?msg:string -> ?all_or_any:[`Callable of Py.Object.t | `PyObject of Py.Object.t] -> estimator:Py.Object.t -> unit -> Py.Object.t
 (**
 Perform is_fitted validation for estimator.
 
@@ -721,7 +744,7 @@ NotFittedError
     If the attributes are not found.
 *)
 
-val check_random_state : seed:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> Py.Object.t
+val check_random_state : seed:[`I of int | `RandomState of Py.Object.t | `None] -> unit -> Py.Object.t
 (**
 Turn seed into a np.random.RandomState instance
 
@@ -777,12 +800,12 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val gaussian_random_matrix : ?random_state:Py.Object.t -> n_components:Py.Object.t -> n_features:Py.Object.t -> unit -> Py.Object.t
+val gaussian_random_matrix : ?random_state:int -> n_components:Py.Object.t -> n_features:Py.Object.t -> unit -> Py.Object.t
 (**
 DEPRECATED: gaussian_random_matrix is deprecated in 0.22 and will be removed in version 0.24.
 *)
 
-val johnson_lindenstrauss_min_dim : ?eps:[`Float of float | `PyObject of Py.Object.t] -> n_samples:[`Int of int | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val johnson_lindenstrauss_min_dim : ?eps:[`F of float | `Arr of Arr.t] -> n_samples:[`I of int | `Arr of Arr.t] -> unit -> [`I of int | `Arr of Arr.t]
 (**
 Find a 'safe' number of components to randomly project to
 
@@ -849,7 +872,7 @@ References
        http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.45.3654
 *)
 
-val safe_sparse_dot : ?dense_output:Py.Object.t -> a:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> b:Py.Object.t -> unit -> Py.Object.t
+val safe_sparse_dot : ?dense_output:Py.Object.t -> a:Arr.t -> b:Py.Object.t -> unit -> Arr.t
 (**
 Dot product that handle the sparse matrix case correctly
 
@@ -867,7 +890,7 @@ dot_product : array or sparse matrix
     sparse if ``a`` and ``b`` are sparse and ``dense_output=False``.
 *)
 
-val sparse_random_matrix : ?density:Py.Object.t -> ?random_state:Py.Object.t -> n_components:Py.Object.t -> n_features:Py.Object.t -> unit -> Py.Object.t
+val sparse_random_matrix : ?density:Py.Object.t -> ?random_state:int -> n_components:Py.Object.t -> n_features:Py.Object.t -> unit -> Py.Object.t
 (**
 DEPRECATED: gaussian_random_matrix is deprecated in 0.22 and will be removed in version 0.24.
 *)

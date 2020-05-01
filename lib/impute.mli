@@ -1,9 +1,12 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module KNNImputer : sig
 type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?missing_values:[`String of string | `None | `PyObject of Py.Object.t] -> ?n_neighbors:int -> ?weights:[`Uniform | `Distance | `Callable of Py.Object.t] -> ?metric:[`Nan_euclidean | `Callable of Py.Object.t] -> ?copy:bool -> ?add_indicator:bool -> unit -> t
+val create : ?missing_values:[`S of string | `None | `PyObject of Py.Object.t] -> ?n_neighbors:int -> ?weights:[`Uniform | `Distance | `Callable of Py.Object.t] -> ?metric:[`Nan_euclidean | `Callable of Py.Object.t] -> ?copy:bool -> ?add_indicator:bool -> unit -> t
 (**
 Imputation for completing missing values using k-Nearest Neighbors.
 
@@ -98,7 +101,7 @@ Returns
 self : object
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -122,7 +125,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -158,7 +161,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Impute all missing values in X.
 
@@ -175,8 +178,12 @@ X : array-like of shape (n_samples, n_output_features)
 *)
 
 
-(** Attribute indicator_: see constructor for documentation *)
+(** Attribute indicator_: get value or raise Not_found if None.*)
 val indicator_ : t -> Py.Object.t
+
+(** Attribute indicator_: get value as an option. *)
+val indicator_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -196,7 +203,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?missing_values:[`String of string | `PyObject of Py.Object.t] -> ?features:string -> ?sparse:[`Bool of bool | `Auto] -> ?error_on_new:bool -> unit -> t
+val create : ?missing_values:[`S of string | `None | `PyObject of Py.Object.t] -> ?features:string -> ?sparse:[`Bool of bool | `Auto] -> ?error_on_new:bool -> unit -> t
 (**
 Binary indicators for missing values.
 
@@ -261,7 +268,7 @@ array([[False,  True],
        [False, False]])
 *)
 
-val fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fit the transformer on X.
 
@@ -277,7 +284,7 @@ self : object
     Returns self.
 *)
 
-val fit_transform : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val fit_transform : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Generate missing values indicator for X.
 
@@ -293,7 +300,7 @@ Xt : {ndarray or sparse matrix}, shape (n_samples, n_features)         or (n_sam
     will be boolean.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -329,7 +336,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Generate missing values indicator for X.
 
@@ -346,8 +353,12 @@ Xt : {ndarray or sparse matrix}, shape (n_samples, n_features)         or (n_sam
 *)
 
 
-(** Attribute features_: see constructor for documentation *)
-val features_ : t -> Ndarray.t
+(** Attribute features_: get value or raise Not_found if None.*)
+val features_ : t -> Arr.t
+
+(** Attribute features_: get value as an option. *)
+val features_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -367,7 +378,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?missing_values:[`String of string | `PyObject of Py.Object.t] -> ?strategy:string -> ?fill_value:[`String of string | `PyObject of Py.Object.t] -> ?verbose:int -> ?copy:bool -> ?add_indicator:bool -> unit -> t
+val create : ?missing_values:[`S of string | `None | `PyObject of Py.Object.t] -> ?strategy:string -> ?fill_value:[`S of string | `Numerical_value of Py.Object.t] -> ?verbose:int -> ?copy:bool -> ?add_indicator:bool -> unit -> t
 (**
 Imputation transformer for completing missing values.
 
@@ -455,7 +466,7 @@ Columns which only contained missing values at :meth:`fit` are discarded
 upon :meth:`transform` if strategy is not "constant".
 *)
 
-val fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fit the imputer on X.
 
@@ -470,7 +481,7 @@ Returns
 self : SimpleImputer
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -494,7 +505,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -530,7 +541,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Impute all missing values in X.
 
@@ -541,11 +552,19 @@ X : {array-like, sparse matrix}, shape (n_samples, n_features)
 *)
 
 
-(** Attribute statistics_: see constructor for documentation *)
-val statistics_ : t -> Ndarray.t
+(** Attribute statistics_: get value or raise Not_found if None.*)
+val statistics_ : t -> Arr.t
 
-(** Attribute indicator_: see constructor for documentation *)
+(** Attribute statistics_: get value as an option. *)
+val statistics_opt : t -> (Arr.t) option
+
+
+(** Attribute indicator_: get value or raise Not_found if None.*)
 val indicator_ : t -> Py.Object.t
+
+(** Attribute indicator_: get value as an option. *)
+val indicator_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string

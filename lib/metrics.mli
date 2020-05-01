@@ -1,9 +1,12 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module ConfusionMatrixDisplay : sig
 type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : confusion_matrix:Ndarray.t -> display_labels:Ndarray.t -> unit -> t
+val create : confusion_matrix:Arr.t -> display_labels:Arr.t -> unit -> t
 (**
 Confusion Matrix visualization.
 
@@ -36,7 +39,7 @@ figure_ : matplotlib Figure
     Figure containing the confusion matrix.
 *)
 
-val plot : ?include_values:bool -> ?cmap:[`String of string | `PyObject of Py.Object.t] -> ?xticks_rotation:[`Vertical | `Horizontal | `Float of float] -> ?values_format:string -> ?ax:Py.Object.t -> t -> Py.Object.t
+val plot : ?include_values:bool -> ?cmap:[`S of string | `Matplotlib_Colormap of Py.Object.t] -> ?xticks_rotation:[`Vertical | `Horizontal | `F of float] -> ?values_format:string -> ?ax:Py.Object.t -> t -> Py.Object.t
 (**
 Plot visualization.
 
@@ -65,17 +68,33 @@ display : :class:`~sklearn.metrics.ConfusionMatrixDisplay`
 *)
 
 
-(** Attribute im_: see constructor for documentation *)
+(** Attribute im_: get value or raise Not_found if None.*)
 val im_ : t -> Py.Object.t
 
-(** Attribute text_: see constructor for documentation *)
+(** Attribute im_: get value as an option. *)
+val im_opt : t -> (Py.Object.t) option
+
+
+(** Attribute text_: get value or raise Not_found if None.*)
 val text_ : t -> Py.Object.t
 
-(** Attribute ax_: see constructor for documentation *)
+(** Attribute text_: get value as an option. *)
+val text_opt : t -> (Py.Object.t) option
+
+
+(** Attribute ax_: get value or raise Not_found if None.*)
 val ax_ : t -> Py.Object.t
 
-(** Attribute figure_: see constructor for documentation *)
+(** Attribute ax_: get value as an option. *)
+val ax_opt : t -> (Py.Object.t) option
+
+
+(** Attribute figure_: get value or raise Not_found if None.*)
 val figure_ : t -> Py.Object.t
+
+(** Attribute figure_: get value as an option. *)
+val figure_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -95,7 +114,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : precision:Ndarray.t -> recall:Ndarray.t -> average_precision:float -> estimator_name:string -> unit -> t
+val create : precision:Arr.t -> recall:Arr.t -> average_precision:float -> estimator_name:string -> unit -> t
 (**
 Precision Recall visualization.
 
@@ -156,14 +175,26 @@ display : :class:`~sklearn.metrics.PrecisionRecallDisplay`
 *)
 
 
-(** Attribute line_: see constructor for documentation *)
+(** Attribute line_: get value or raise Not_found if None.*)
 val line_ : t -> Py.Object.t
 
-(** Attribute ax_: see constructor for documentation *)
+(** Attribute line_: get value as an option. *)
+val line_opt : t -> (Py.Object.t) option
+
+
+(** Attribute ax_: get value or raise Not_found if None.*)
 val ax_ : t -> Py.Object.t
 
-(** Attribute figure_: see constructor for documentation *)
+(** Attribute ax_: get value as an option. *)
+val ax_opt : t -> (Py.Object.t) option
+
+
+(** Attribute figure_: get value or raise Not_found if None.*)
 val figure_ : t -> Py.Object.t
+
+(** Attribute figure_: get value as an option. *)
+val figure_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -183,7 +214,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : fpr:Ndarray.t -> tpr:Ndarray.t -> roc_auc:float -> estimator_name:string -> unit -> t
+val create : fpr:Arr.t -> tpr:Arr.t -> roc_auc:float -> estimator_name:string -> unit -> t
 (**
 ROC Curve visualization.
 
@@ -254,14 +285,26 @@ display : :class:`~sklearn.metrics.plot.RocCurveDisplay`
 *)
 
 
-(** Attribute line_: see constructor for documentation *)
+(** Attribute line_: get value or raise Not_found if None.*)
 val line_ : t -> Py.Object.t
 
-(** Attribute ax_: see constructor for documentation *)
+(** Attribute line_: get value as an option. *)
+val line_opt : t -> (Py.Object.t) option
+
+
+(** Attribute ax_: get value or raise Not_found if None.*)
 val ax_ : t -> Py.Object.t
 
-(** Attribute figure_: see constructor for documentation *)
+(** Attribute ax_: get value as an option. *)
+val ax_opt : t -> (Py.Object.t) option
+
+
+(** Attribute figure_: get value or raise Not_found if None.*)
 val figure_ : t -> Py.Object.t
+
+(** Attribute figure_: get value as an option. *)
+val figure_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -276,7 +319,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val accuracy_score : ?normalize:bool -> ?sample_weight:Ndarray.t -> y_true:Py.Object.t -> y_pred:Py.Object.t -> unit -> float
+val accuracy_score : ?normalize:bool -> ?sample_weight:Arr.t -> y_true:Arr.t -> y_pred:Arr.t -> unit -> float
 (**
 Accuracy classification score.
 
@@ -337,7 +380,7 @@ In the multilabel case with binary label indicators:
 0.5
 *)
 
-val adjusted_mutual_info_score : ?average_method:string -> labels_true:Py.Object.t -> labels_pred:Py.Object.t -> unit -> Py.Object.t
+val adjusted_mutual_info_score : ?average_method:string -> labels_true:Arr.t -> labels_pred:Arr.t -> unit -> float
 (**
 Adjusted Mutual Information between two clusterings.
 
@@ -425,7 +468,7 @@ References
    <https://en.wikipedia.org/wiki/Adjusted_Mutual_Information>`_
 *)
 
-val adjusted_rand_score : labels_true:Py.Object.t -> labels_pred:Ndarray.t -> unit -> float
+val adjusted_rand_score : labels_true:Arr.t -> labels_pred:Arr.t -> unit -> float
 (**
 Rand index adjusted for chance.
 
@@ -507,7 +550,7 @@ See also
 adjusted_mutual_info_score: Adjusted Mutual Information
 *)
 
-val auc : x:Ndarray.t -> y:Py.Object.t -> unit -> float
+val auc : x:Arr.t -> y:Arr.t -> unit -> float
 (**
 Compute Area Under the Curve (AUC) using the trapezoidal rule
 
@@ -546,7 +589,7 @@ precision_recall_curve :
     Compute precision-recall pairs for different probability thresholds
 *)
 
-val average_precision_score : ?average:[`String of string | `Micro | `Macro | `PyObject of Py.Object.t] -> ?pos_label:[`Int of int | `String of string] -> ?sample_weight:Ndarray.t -> y_true:Ndarray.t -> y_score:Ndarray.t -> unit -> float
+val average_precision_score : ?average:[`Micro | `Macro | `Samples | `Weighted | `None] -> ?pos_label:[`I of int | `S of string] -> ?sample_weight:Arr.t -> y_true:Arr.t -> y_score:Arr.t -> unit -> float
 (**
 Compute average precision (AP) from prediction scores
 
@@ -636,7 +679,7 @@ Notes
   are weighted by the change in recall since the last operating point.
 *)
 
-val balanced_accuracy_score : ?sample_weight:Ndarray.t -> ?adjusted:bool -> y_true:Py.Object.t -> y_pred:Py.Object.t -> unit -> float
+val balanced_accuracy_score : ?sample_weight:Arr.t -> ?adjusted:bool -> y_true:Arr.t -> y_pred:Arr.t -> unit -> float
 (**
 Compute the balanced accuracy
 
@@ -698,7 +741,7 @@ Examples
 0.625
 *)
 
-val brier_score_loss : ?sample_weight:Ndarray.t -> ?pos_label:[`Int of int | `String of string] -> y_true:Ndarray.t -> y_prob:Ndarray.t -> unit -> float
+val brier_score_loss : ?sample_weight:Arr.t -> ?pos_label:[`I of int | `S of string] -> y_true:Arr.t -> y_prob:Arr.t -> unit -> float
 (**
 Compute the Brier score.
 The smaller the Brier score, the better, hence the naming with "loss".
@@ -763,7 +806,7 @@ References
         <https://en.wikipedia.org/wiki/Brier_score>`_
 *)
 
-val calinski_harabasz_score : x:Ndarray.t -> labels:Ndarray.t -> unit -> float
+val calinski_harabasz_score : x:Arr.t -> labels:Arr.t -> unit -> float
 (**
 Compute the Calinski and Harabasz score.
 
@@ -800,7 +843,7 @@ val calinski_harabaz_score : x:Py.Object.t -> labels:Py.Object.t -> unit -> Py.O
 DEPRECATED: Function 'calinski_harabaz_score' has been renamed to 'calinski_harabasz_score' and will be removed in version 0.23.
 *)
 
-val check_scoring : ?scoring:[`String of string | `Callable of Py.Object.t | `None] -> ?allow_none:bool -> estimator:Py.Object.t -> unit -> Py.Object.t
+val check_scoring : ?scoring:[`S of string | `Callable of Py.Object.t] -> ?allow_none:bool -> estimator:Py.Object.t -> unit -> Py.Object.t
 (**
 Determine scorer from user options.
 
@@ -827,7 +870,7 @@ scoring : callable
     ``scorer(estimator, X, y)``.
 *)
 
-val classification_report : ?labels:Ndarray.t -> ?target_names:string list -> ?sample_weight:Ndarray.t -> ?digits:int -> ?output_dict:bool -> ?zero_division:[`Warn | `PyObject of Py.Object.t] -> y_true:Py.Object.t -> y_pred:Py.Object.t -> unit -> Py.Object.t
+val classification_report : ?labels:Arr.t -> ?target_names:Arr.t -> ?sample_weight:Arr.t -> ?digits:int -> ?output_dict:bool -> ?zero_division:[`Warn | `Zero | `One] -> y_true:Arr.t -> y_pred:Arr.t -> unit -> [`S of string | `Dict of (string * <precision:float; recall:float; f1_score:float; support:float>) list]
 (**
 Build a text report showing the main classification metrics
 
@@ -928,7 +971,10 @@ weighted avg       1.00      0.67      0.80         3
 *)
 
 module Cluster : sig
-val adjusted_mutual_info_score : ?average_method:string -> labels_true:Py.Object.t -> labels_pred:Py.Object.t -> unit -> Py.Object.t
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
+val adjusted_mutual_info_score : ?average_method:string -> labels_true:Arr.t -> labels_pred:Arr.t -> unit -> float
 (**
 Adjusted Mutual Information between two clusterings.
 
@@ -1016,7 +1062,7 @@ References
    <https://en.wikipedia.org/wiki/Adjusted_Mutual_Information>`_
 *)
 
-val adjusted_rand_score : labels_true:Py.Object.t -> labels_pred:Ndarray.t -> unit -> float
+val adjusted_rand_score : labels_true:Arr.t -> labels_pred:Arr.t -> unit -> float
 (**
 Rand index adjusted for chance.
 
@@ -1098,7 +1144,7 @@ See also
 adjusted_mutual_info_score: Adjusted Mutual Information
 *)
 
-val calinski_harabasz_score : x:Ndarray.t -> labels:Ndarray.t -> unit -> float
+val calinski_harabasz_score : x:Arr.t -> labels:Arr.t -> unit -> float
 (**
 Compute the Calinski and Harabasz score.
 
@@ -1135,7 +1181,7 @@ val calinski_harabaz_score : x:Py.Object.t -> labels:Py.Object.t -> unit -> Py.O
 DEPRECATED: Function 'calinski_harabaz_score' has been renamed to 'calinski_harabasz_score' and will be removed in version 0.23.
 *)
 
-val completeness_score : labels_true:Py.Object.t -> labels_pred:Ndarray.t -> unit -> float
+val completeness_score : labels_true:Arr.t -> labels_pred:Arr.t -> unit -> float
 (**
 Completeness metric of a cluster labeling given a ground truth.
 
@@ -1203,7 +1249,7 @@ assignment cannot be complete::
   0.0
 *)
 
-val consensus_score : ?similarity:[`String of string | `Callable of Py.Object.t] -> a:Py.Object.t -> b:Py.Object.t -> unit -> Py.Object.t
+val consensus_score : ?similarity:[`S of string | `Callable of Py.Object.t] -> a:Py.Object.t -> b:Py.Object.t -> unit -> Py.Object.t
 (**
 The similarity of two sets of biclusters.
 
@@ -1235,7 +1281,7 @@ References
   <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2881408/>`__.
 *)
 
-val contingency_matrix : ?eps:[`Float of float | `None] -> ?sparse:bool -> labels_true:Py.Object.t -> labels_pred:Ndarray.t -> unit -> Py.Object.t
+val contingency_matrix : ?eps:float -> ?sparse:bool -> labels_true:Arr.t -> labels_pred:Arr.t -> unit -> Py.Object.t
 (**
 Build a contingency matrix describing the relationship between labels.
 
@@ -1268,7 +1314,7 @@ contingency : {array-like, sparse}, shape=[n_classes_true, n_classes_pred]
     Will be a ``scipy.sparse.csr_matrix`` if ``sparse=True``.
 *)
 
-val davies_bouldin_score : x:Ndarray.t -> labels:Ndarray.t -> unit -> float
+val davies_bouldin_score : x:Arr.t -> labels:Arr.t -> unit -> float
 (**
 Computes the Davies-Bouldin score.
 
@@ -1304,7 +1350,7 @@ References
    PAMI-1 (2): 224-227
 *)
 
-val entropy : labels:Py.Object.t -> unit -> Py.Object.t
+val entropy : labels:Arr.t -> unit -> Py.Object.t
 (**
 Calculates the entropy for a labeling.
 
@@ -1318,7 +1364,7 @@ Notes
 The logarithm used is the natural logarithm (base-e).
 *)
 
-val fowlkes_mallows_score : ?sparse:bool -> labels_true:Py.Object.t -> labels_pred:Ndarray.t -> unit -> float
+val fowlkes_mallows_score : ?sparse:bool -> labels_true:Arr.t -> labels_pred:Arr.t -> unit -> float
 (**
 Measure the similarity of two clusterings of a set of points.
 
@@ -1385,7 +1431,7 @@ References
        <https://en.wikipedia.org/wiki/Fowlkes-Mallows_index>`_
 *)
 
-val homogeneity_completeness_v_measure : ?beta:float -> labels_true:Py.Object.t -> labels_pred:Ndarray.t -> unit -> (float * float * float)
+val homogeneity_completeness_v_measure : ?beta:float -> labels_true:Arr.t -> labels_pred:Arr.t -> unit -> (float * float * float)
 (**
 Compute the homogeneity and completeness and V-Measure scores at once.
 
@@ -1446,7 +1492,7 @@ completeness_score
 v_measure_score
 *)
 
-val homogeneity_score : labels_true:Py.Object.t -> labels_pred:Ndarray.t -> unit -> float
+val homogeneity_score : labels_true:Arr.t -> labels_pred:Arr.t -> unit -> float
 (**
 Homogeneity metric of a cluster labeling given a ground truth.
 
@@ -1514,7 +1560,7 @@ homogeneous labeling::
   0.0...
 *)
 
-val mutual_info_score : ?contingency:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t | `None] -> labels_true:Py.Object.t -> labels_pred:Py.Object.t -> unit -> float
+val mutual_info_score : ?contingency:Arr.t -> labels_true:Arr.t -> labels_pred:Arr.t -> unit -> float
 (**
 Mutual Information between two clusterings.
 
@@ -1568,7 +1614,7 @@ adjusted_mutual_info_score: Adjusted against chance Mutual Information
 normalized_mutual_info_score: Normalized Mutual Information
 *)
 
-val normalized_mutual_info_score : ?average_method:string -> labels_true:Py.Object.t -> labels_pred:Py.Object.t -> unit -> float
+val normalized_mutual_info_score : ?average_method:string -> labels_true:Arr.t -> labels_pred:Arr.t -> unit -> float
 (**
 Normalized Mutual Information between two clusterings.
 
@@ -1644,7 +1690,7 @@ the assignment is totally in-complete, hence the NMI is null::
   0.0
 *)
 
-val silhouette_samples : ?metric:[`String of string | `Callable of Py.Object.t] -> ?kwds:(string * Py.Object.t) list -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> labels:Ndarray.t -> unit -> Ndarray.t
+val silhouette_samples : ?metric:[`S of string | `Callable of Py.Object.t] -> ?kwds:(string * Py.Object.t) list -> x:[`Arr of Arr.t | `Otherwise of Py.Object.t] -> labels:Arr.t -> unit -> Arr.t
 (**
 Compute the Silhouette Coefficient for each sample.
 
@@ -1705,7 +1751,7 @@ References
    <https://en.wikipedia.org/wiki/Silhouette_(clustering)>`_
 *)
 
-val silhouette_score : ?metric:[`String of string | `Callable of Py.Object.t] -> ?sample_size:[`Int of int | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?kwds:(string * Py.Object.t) list -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> labels:Ndarray.t -> unit -> float
+val silhouette_score : ?metric:[`S of string | `Callable of Py.Object.t] -> ?sample_size:int -> ?random_state:int -> ?kwds:(string * Py.Object.t) list -> x:[`Arr of Arr.t | `Otherwise of Py.Object.t] -> labels:Arr.t -> unit -> float
 (**
 Compute the mean Silhouette Coefficient of all samples.
 
@@ -1775,7 +1821,7 @@ References
        <https://en.wikipedia.org/wiki/Silhouette_(clustering)>`_
 *)
 
-val v_measure_score : ?beta:float -> labels_true:Py.Object.t -> labels_pred:Ndarray.t -> unit -> float
+val v_measure_score : ?beta:float -> labels_true:Arr.t -> labels_pred:Arr.t -> unit -> float
 (**
 V-measure cluster labeling given a ground truth.
 
@@ -1875,7 +1921,7 @@ destroy the homogeneity of the labeling, hence::
 
 end
 
-val cohen_kappa_score : ?labels:Ndarray.t -> ?weights:string -> ?sample_weight:Ndarray.t -> y1:Ndarray.t -> y2:Ndarray.t -> unit -> float
+val cohen_kappa_score : ?labels:Arr.t -> ?weights:string -> ?sample_weight:Arr.t -> y1:Arr.t -> y2:Arr.t -> unit -> float
 (**
 Cohen's kappa: a statistic that measures inter-annotator agreement.
 
@@ -1933,7 +1979,7 @@ References
         <https://en.wikipedia.org/wiki/Cohen%27s_kappa>`_
 *)
 
-val completeness_score : labels_true:Py.Object.t -> labels_pred:Ndarray.t -> unit -> float
+val completeness_score : labels_true:Arr.t -> labels_pred:Arr.t -> unit -> float
 (**
 Completeness metric of a cluster labeling given a ground truth.
 
@@ -2001,7 +2047,7 @@ assignment cannot be complete::
   0.0
 *)
 
-val confusion_matrix : ?labels:Ndarray.t -> ?sample_weight:Ndarray.t -> ?normalize:[`True | `Pred | `All] -> y_true:Ndarray.t -> y_pred:Ndarray.t -> unit -> Ndarray.t
+val confusion_matrix : ?labels:Arr.t -> ?sample_weight:Arr.t -> ?normalize:[`True | `Pred | `All] -> y_true:Arr.t -> y_pred:Arr.t -> unit -> Arr.t
 (**
 Compute confusion matrix to evaluate the accuracy of a classification.
 
@@ -2073,7 +2119,7 @@ In the binary case, we can extract true positives, etc as follows:
 (0, 2, 1, 1)
 *)
 
-val consensus_score : ?similarity:[`String of string | `Callable of Py.Object.t] -> a:Py.Object.t -> b:Py.Object.t -> unit -> Py.Object.t
+val consensus_score : ?similarity:[`S of string | `Callable of Py.Object.t] -> a:Py.Object.t -> b:Py.Object.t -> unit -> Py.Object.t
 (**
 The similarity of two sets of biclusters.
 
@@ -2105,7 +2151,7 @@ References
   <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2881408/>`__.
 *)
 
-val coverage_error : ?sample_weight:Ndarray.t -> y_true:Ndarray.t -> y_score:Ndarray.t -> unit -> float
+val coverage_error : ?sample_weight:Arr.t -> y_true:Arr.t -> y_score:Arr.t -> unit -> float
 (**
 Coverage error measure
 
@@ -2146,7 +2192,7 @@ References
        handbook (pp. 667-685). Springer US.
 *)
 
-val davies_bouldin_score : x:Ndarray.t -> labels:Ndarray.t -> unit -> float
+val davies_bouldin_score : x:Arr.t -> labels:Arr.t -> unit -> float
 (**
 Computes the Davies-Bouldin score.
 
@@ -2182,7 +2228,7 @@ References
    PAMI-1 (2): 224-227
 *)
 
-val dcg_score : ?k:int -> ?log_base:float -> ?sample_weight:Ndarray.t -> ?ignore_ties:bool -> y_true:Ndarray.t -> y_score:Ndarray.t -> unit -> float
+val dcg_score : ?k:int -> ?log_base:float -> ?sample_weight:Arr.t -> ?ignore_ties:bool -> y_true:Arr.t -> y_score:Arr.t -> unit -> float
 (**
 Compute Discounted Cumulative Gain.
 
@@ -2277,7 +2323,7 @@ Examples
 5.0
 *)
 
-val euclidean_distances : ?y:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> ?y_norm_squared:Ndarray.t -> ?squared:bool -> ?x_norm_squared:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> Ndarray.t
+val euclidean_distances : ?y:Arr.t -> ?y_norm_squared:Arr.t -> ?squared:bool -> ?x_norm_squared:Arr.t -> x:Arr.t -> unit -> Arr.t
 (**
 Considering the rows of X (and Y=X) as vectors, compute the
 distance matrix between each pair of vectors.
@@ -2344,7 +2390,7 @@ See also
 paired_distances : distances betweens pairs of elements of X and Y.
 *)
 
-val explained_variance_score : ?sample_weight:Ndarray.t -> ?multioutput:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> y_true:Ndarray.t -> y_pred:Ndarray.t -> unit -> Py.Object.t
+val explained_variance_score : ?sample_weight:Arr.t -> ?multioutput:[`Raw_values | `Uniform_average | `Variance_weighted | `Arr of Arr.t] -> y_true:Arr.t -> y_pred:Arr.t -> unit -> [`F of float | `Arr of Arr.t]
 (**
 Explained variance regression score function
 
@@ -2399,7 +2445,7 @@ Examples
 0.983...
 *)
 
-val f1_score : ?labels:Py.Object.t -> ?pos_label:[`String of string | `Int of int] -> ?average:[`String of string | `Binary | `PyObject of Py.Object.t] -> ?sample_weight:Ndarray.t -> ?zero_division:[`Warn | `PyObject of Py.Object.t] -> y_true:Py.Object.t -> y_pred:Py.Object.t -> unit -> Py.Object.t
+val f1_score : ?labels:Arr.t -> ?pos_label:[`S of string | `I of int] -> ?average:[`Binary | `Micro | `Macro | `Samples | `Weighted | `None] -> ?sample_weight:Arr.t -> ?zero_division:[`Warn | `Zero | `One] -> y_true:Arr.t -> y_pred:Arr.t -> unit -> [`F of float | `Arr of Arr.t]
 (**
 Compute the F1 score, also known as balanced F-score or F-measure
 
@@ -2517,7 +2563,7 @@ and ``UndefinedMetricWarning`` will be raised. This behavior can be
 modified with ``zero_division``.
 *)
 
-val fbeta_score : ?labels:Py.Object.t -> ?pos_label:[`String of string | `Int of int] -> ?average:[`String of string | `Binary | `PyObject of Py.Object.t] -> ?sample_weight:Ndarray.t -> ?zero_division:[`Warn | `PyObject of Py.Object.t] -> y_true:Py.Object.t -> y_pred:Py.Object.t -> beta:float -> unit -> Py.Object.t
+val fbeta_score : ?labels:Arr.t -> ?pos_label:[`S of string | `I of int] -> ?average:[`Binary | `Micro | `Macro | `Samples | `Weighted | `None] -> ?sample_weight:Arr.t -> ?zero_division:[`Warn | `Zero | `One] -> y_true:Arr.t -> y_pred:Arr.t -> beta:float -> unit -> [`F of float | `Arr of Arr.t]
 (**
 Compute the F-beta score
 
@@ -2632,7 +2678,7 @@ When ``true positive + false positive == 0`` or
 modified with ``zero_division``.
 *)
 
-val fowlkes_mallows_score : ?sparse:bool -> labels_true:Py.Object.t -> labels_pred:Ndarray.t -> unit -> float
+val fowlkes_mallows_score : ?sparse:bool -> labels_true:Arr.t -> labels_pred:Arr.t -> unit -> float
 (**
 Measure the similarity of two clusterings of a set of points.
 
@@ -2699,7 +2745,7 @@ References
        <https://en.wikipedia.org/wiki/Fowlkes-Mallows_index>`_
 *)
 
-val get_scorer : scoring:[`String of string | `Callable of Py.Object.t] -> unit -> Py.Object.t
+val get_scorer : scoring:[`S of string | `Callable of Py.Object.t] -> unit -> Py.Object.t
 (**
 Get a scorer from string.
 
@@ -2716,7 +2762,7 @@ scorer : callable
     The scorer.
 *)
 
-val hamming_loss : ?labels:Ndarray.t -> ?sample_weight:Ndarray.t -> y_true:Py.Object.t -> y_pred:Py.Object.t -> unit -> Py.Object.t
+val hamming_loss : ?labels:Arr.t -> ?sample_weight:Arr.t -> y_true:Arr.t -> y_pred:Arr.t -> unit -> float
 (**
 Compute the average Hamming loss.
 
@@ -2799,7 +2845,7 @@ In the multilabel case with binary label indicators:
 0.75
 *)
 
-val hinge_loss : ?labels:Ndarray.t -> ?sample_weight:Ndarray.t -> y_true:Ndarray.t -> pred_decision:Ndarray.t -> unit -> float
+val hinge_loss : ?labels:Arr.t -> ?sample_weight:Arr.t -> y_true:Arr.t -> pred_decision:Arr.t -> unit -> float
 (**
 Average hinge loss (non-regularized)
 
@@ -2881,7 +2927,7 @@ LinearSVC()
 0.56...
 *)
 
-val homogeneity_completeness_v_measure : ?beta:float -> labels_true:Py.Object.t -> labels_pred:Ndarray.t -> unit -> (float * float * float)
+val homogeneity_completeness_v_measure : ?beta:float -> labels_true:Arr.t -> labels_pred:Arr.t -> unit -> (float * float * float)
 (**
 Compute the homogeneity and completeness and V-Measure scores at once.
 
@@ -2942,7 +2988,7 @@ completeness_score
 v_measure_score
 *)
 
-val homogeneity_score : labels_true:Py.Object.t -> labels_pred:Ndarray.t -> unit -> float
+val homogeneity_score : labels_true:Arr.t -> labels_pred:Arr.t -> unit -> float
 (**
 Homogeneity metric of a cluster labeling given a ground truth.
 
@@ -3010,7 +3056,7 @@ homogeneous labeling::
   0.0...
 *)
 
-val jaccard_score : ?labels:Py.Object.t -> ?pos_label:[`String of string | `Int of int] -> ?average:[`String of string | `Binary | `PyObject of Py.Object.t] -> ?sample_weight:Ndarray.t -> y_true:Py.Object.t -> y_pred:Py.Object.t -> unit -> Py.Object.t
+val jaccard_score : ?labels:Arr.t -> ?pos_label:[`S of string | `I of int] -> ?average:[`Binary | `Micro | `Macro | `Samples | `Weighted | `None] -> ?sample_weight:Arr.t -> y_true:Arr.t -> y_pred:Arr.t -> unit -> [`F of float | `Arr of Arr.t]
 (**
 Jaccard similarity coefficient score
 
@@ -3119,7 +3165,7 @@ In the multiclass case:
 array([1. , 0. , 0.33...])
 *)
 
-val jaccard_similarity_score : ?normalize:bool -> ?sample_weight:Ndarray.t -> y_true:Py.Object.t -> y_pred:Py.Object.t -> unit -> float
+val jaccard_similarity_score : ?normalize:bool -> ?sample_weight:Arr.t -> y_true:Arr.t -> y_pred:Arr.t -> unit -> float
 (**
 Jaccard similarity coefficient score
 
@@ -3172,7 +3218,7 @@ References
        <https://en.wikipedia.org/wiki/Jaccard_index>`_
 *)
 
-val label_ranking_average_precision_score : ?sample_weight:Ndarray.t -> y_true:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y_score:Ndarray.t -> unit -> float
+val label_ranking_average_precision_score : ?sample_weight:Arr.t -> y_true:Arr.t -> y_score:Arr.t -> unit -> float
 (**
 Compute ranking-based average precision
 
@@ -3215,7 +3261,7 @@ Examples
 0.416...
 *)
 
-val label_ranking_loss : ?sample_weight:Ndarray.t -> y_true:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y_score:Ndarray.t -> unit -> float
+val label_ranking_loss : ?sample_weight:Arr.t -> y_true:Arr.t -> y_score:Arr.t -> unit -> float
 (**
 Compute Ranking loss measure
 
@@ -3256,7 +3302,7 @@ References
        handbook (pp. 667-685). Springer US.
 *)
 
-val log_loss : ?eps:float -> ?normalize:bool -> ?sample_weight:Ndarray.t -> ?labels:Ndarray.t -> y_true:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> y_pred:Py.Object.t -> unit -> float
+val log_loss : ?eps:float -> ?normalize:bool -> ?sample_weight:Arr.t -> ?labels:Arr.t -> y_true:Arr.t -> y_pred:Arr.t -> unit -> float
 (**
 Log loss, aka logistic loss or cross-entropy loss.
 
@@ -3394,7 +3440,7 @@ supposed to accept probability of the positive class). If
 output of :term:`decision_function`.
 *)
 
-val matthews_corrcoef : ?sample_weight:Ndarray.t -> y_true:Ndarray.t -> y_pred:Ndarray.t -> unit -> float
+val matthews_corrcoef : ?sample_weight:Arr.t -> y_true:Arr.t -> y_pred:Arr.t -> unit -> float
 (**
 Compute the Matthews correlation coefficient (MCC)
 
@@ -3457,7 +3503,7 @@ Examples
 -0.33...
 *)
 
-val max_error : y_true:Ndarray.t -> y_pred:Ndarray.t -> unit -> float
+val max_error : y_true:Arr.t -> y_pred:Arr.t -> unit -> float
 (**
 max_error metric calculates the maximum residual error.
 
@@ -3485,7 +3531,7 @@ Examples
 1
 *)
 
-val mean_absolute_error : ?sample_weight:Ndarray.t -> ?multioutput:Py.Object.t -> y_true:Ndarray.t -> y_pred:Ndarray.t -> unit -> Py.Object.t
+val mean_absolute_error : ?sample_weight:Arr.t -> ?multioutput:[`Raw_values | `Uniform_average | `Arr of Arr.t] -> y_true:Arr.t -> y_pred:Arr.t -> unit -> [`F of float | `Arr of Arr.t]
 (**
 Mean absolute error regression loss
 
@@ -3541,7 +3587,7 @@ array([0.5, 1. ])
 0.85...
 *)
 
-val mean_gamma_deviance : ?sample_weight:Ndarray.t -> y_true:Ndarray.t -> y_pred:Ndarray.t -> unit -> float
+val mean_gamma_deviance : ?sample_weight:Arr.t -> y_true:Arr.t -> y_pred:Arr.t -> unit -> float
 (**
 Mean Gamma deviance regression loss.
 
@@ -3576,7 +3622,7 @@ Examples
 1.0568...
 *)
 
-val mean_poisson_deviance : ?sample_weight:Ndarray.t -> y_true:Ndarray.t -> y_pred:Ndarray.t -> unit -> float
+val mean_poisson_deviance : ?sample_weight:Arr.t -> y_true:Arr.t -> y_pred:Arr.t -> unit -> float
 (**
 Mean Poisson deviance regression loss.
 
@@ -3610,7 +3656,7 @@ Examples
 1.4260...
 *)
 
-val mean_squared_error : ?sample_weight:Ndarray.t -> ?multioutput:Py.Object.t -> ?squared:Py.Object.t -> y_true:Ndarray.t -> y_pred:Ndarray.t -> unit -> Py.Object.t
+val mean_squared_error : ?sample_weight:Arr.t -> ?multioutput:[`Raw_values | `Uniform_average | `Arr of Arr.t] -> ?squared:bool -> y_true:Arr.t -> y_pred:Arr.t -> unit -> [`F of float | `Arr of Arr.t]
 (**
 Mean squared error regression loss
 
@@ -3668,7 +3714,7 @@ array([0.41666667, 1.        ])
 0.825...
 *)
 
-val mean_squared_log_error : ?sample_weight:Ndarray.t -> ?multioutput:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> y_true:Ndarray.t -> y_pred:Ndarray.t -> unit -> Py.Object.t
+val mean_squared_log_error : ?sample_weight:Arr.t -> ?multioutput:[`Raw_values | `Uniform_average | `Arr of Arr.t] -> y_true:Arr.t -> y_pred:Arr.t -> unit -> [`F of float | `Arr of Arr.t]
 (**
 Mean squared logarithmic error regression loss
 
@@ -3720,7 +3766,7 @@ array([0.00462428, 0.08377444])
 0.060...
 *)
 
-val mean_tweedie_deviance : ?sample_weight:Ndarray.t -> ?power:float -> y_true:Ndarray.t -> y_pred:Ndarray.t -> unit -> float
+val mean_tweedie_deviance : ?sample_weight:Arr.t -> ?power:float -> y_true:Arr.t -> y_pred:Arr.t -> unit -> float
 (**
 Mean Tweedie deviance regression loss.
 
@@ -3770,7 +3816,7 @@ Examples
 1.4260...
 *)
 
-val median_absolute_error : ?multioutput:[`Raw_values | `Uniform_average | `PyObject of Py.Object.t] -> y_true:Ndarray.t -> y_pred:Ndarray.t -> unit -> Py.Object.t
+val median_absolute_error : ?multioutput:[`Raw_values | `Uniform_average | `Array_like_of_shape of Py.Object.t] -> y_true:Arr.t -> y_pred:Arr.t -> unit -> [`F of float | `Arr of Arr.t]
 (**
 Median absolute error regression loss
 
@@ -3821,7 +3867,7 @@ array([0.5, 1. ])
 0.85
 *)
 
-val multilabel_confusion_matrix : ?sample_weight:Ndarray.t -> ?labels:Ndarray.t -> ?samplewise:bool -> y_true:Py.Object.t -> y_pred:Py.Object.t -> unit -> Ndarray.t
+val multilabel_confusion_matrix : ?sample_weight:Arr.t -> ?labels:Arr.t -> ?samplewise:bool -> y_true:Arr.t -> y_pred:Arr.t -> unit -> Arr.t
 (**
 Compute a confusion matrix for each class or sample
 
@@ -3920,7 +3966,7 @@ array([[[3, 1],
         [1, 2]]])
 *)
 
-val mutual_info_score : ?contingency:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t | `None] -> labels_true:Py.Object.t -> labels_pred:Py.Object.t -> unit -> float
+val mutual_info_score : ?contingency:Arr.t -> labels_true:Arr.t -> labels_pred:Arr.t -> unit -> float
 (**
 Mutual Information between two clusterings.
 
@@ -3974,7 +4020,7 @@ adjusted_mutual_info_score: Adjusted against chance Mutual Information
 normalized_mutual_info_score: Normalized Mutual Information
 *)
 
-val nan_euclidean_distances : ?y:Ndarray.t -> ?squared:bool -> ?missing_values:[`Int of int | `PyObject of Py.Object.t] -> ?copy:bool -> x:Ndarray.t -> unit -> Ndarray.t
+val nan_euclidean_distances : ?y:Arr.t -> ?squared:bool -> ?missing_values:[`Np_nan of Py.Object.t | `I of int] -> ?copy:bool -> x:Arr.t -> unit -> Arr.t
 (**
 Calculate the euclidean distances in the presence of missing values.
 
@@ -4046,7 +4092,7 @@ See also
 paired_distances : distances between pairs of elements of X and Y.
 *)
 
-val ndcg_score : ?k:int -> ?sample_weight:Ndarray.t -> ?ignore_ties:bool -> y_true:Ndarray.t -> y_score:Ndarray.t -> unit -> Py.Object.t
+val ndcg_score : ?k:int -> ?sample_weight:Arr.t -> ?ignore_ties:bool -> y_true:Arr.t -> y_score:Arr.t -> unit -> Py.Object.t
 (**
 Compute Normalized Discounted Cumulative Gain.
 
@@ -4140,7 +4186,7 @@ Examples
 0.5
 *)
 
-val normalized_mutual_info_score : ?average_method:string -> labels_true:Py.Object.t -> labels_pred:Py.Object.t -> unit -> float
+val normalized_mutual_info_score : ?average_method:string -> labels_true:Arr.t -> labels_pred:Arr.t -> unit -> float
 (**
 Normalized Mutual Information between two clusterings.
 
@@ -4217,12 +4263,15 @@ the assignment is totally in-complete, hence the NMI is null::
 *)
 
 module Pairwise : sig
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module Parallel : sig
 type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_jobs:int -> ?backend:Py.Object.t -> ?verbose:int -> ?timeout:float -> ?pre_dispatch:[`All | `Int of int | `PyObject of Py.Object.t] -> ?batch_size:[`Int of int | `Auto] -> ?temp_folder:string -> ?max_nbytes:Py.Object.t -> ?mmap_mode:[`R_ | `R | `W_ | `C | `None] -> ?prefer:[`Processes | `Threads | `None] -> ?require:[`Sharedmem | `None] -> unit -> t
+val create : ?n_jobs:int -> ?backend:Py.Object.t -> ?verbose:int -> ?timeout:float -> ?pre_dispatch:[`All | `I of int | `PyObject of Py.Object.t] -> ?batch_size:[`I of int | `Auto] -> ?temp_folder:string -> ?max_nbytes:Py.Object.t -> ?mmap_mode:[`R_ | `R | `W_ | `C | `None] -> ?prefer:[`Processes | `Threads] -> ?require:string -> unit -> t
 (**
 Helper class for readable parallel mapping.
 
@@ -4506,7 +4555,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val additive_chi2_kernel : ?y:Ndarray.t -> x:Ndarray.t -> unit -> Ndarray.t
+val additive_chi2_kernel : ?y:Arr.t -> x:Arr.t -> unit -> Arr.t
 (**
 Computes the additive chi-squared kernel between observations in X and Y
 
@@ -4556,7 +4605,7 @@ sklearn.kernel_approximation.AdditiveChi2Sampler : A Fourier approximation
     to this kernel.
 *)
 
-val check_array : ?accept_sparse:[`String of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`String of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C | `None] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:[`Bool of bool | `None] -> ?estimator:[`String of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
+val check_array : ?accept_sparse:[`S of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`S of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:bool -> ?estimator:[`S of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
 (**
 Input validation on an array, list, sparse matrix or similar.
 
@@ -4648,7 +4697,7 @@ array_converted : object
     The converted and validated array.
 *)
 
-val check_non_negative : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> whom:string -> unit -> Py.Object.t
+val check_non_negative : x:Arr.t -> whom:string -> unit -> Py.Object.t
 (**
 Check if there is any negative value in an array.
 
@@ -4661,7 +4710,7 @@ whom : string
     Who passed X to this function.
 *)
 
-val check_paired_arrays : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> (Py.Object.t * Py.Object.t)
+val check_paired_arrays : x:Arr.t -> y:Arr.t -> unit -> (Arr.t * Arr.t)
 (**
 Set X and Y appropriately and checks inputs for paired distances
 
@@ -4689,7 +4738,7 @@ safe_Y : {array-like, sparse matrix}, shape (n_samples_b, n_features)
     If Y was None, safe_Y will be a pointer to X.
 *)
 
-val check_pairwise_arrays : ?precomputed:bool -> ?dtype:[`String of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?accept_sparse:[`String of string | `Bool of bool | `StringList of string list] -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?copy:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> (Py.Object.t * Py.Object.t)
+val check_pairwise_arrays : ?precomputed:bool -> ?dtype:[`S of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t] -> ?accept_sparse:[`S of string | `Bool of bool | `StringList of string list] -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?copy:bool -> x:Arr.t -> y:Arr.t -> unit -> (Arr.t * Arr.t)
 (**
 Set X and Y appropriately and checks inputs
 
@@ -4755,7 +4804,7 @@ safe_Y : {array-like, sparse matrix}, shape (n_samples_b, n_features)
     If Y was None, safe_Y will be a pointer to X.
 *)
 
-val chi2_kernel : ?y:Ndarray.t -> ?gamma:float -> x:Ndarray.t -> unit -> Ndarray.t
+val chi2_kernel : ?y:Arr.t -> ?gamma:float -> x:Arr.t -> unit -> Arr.t
 (**
 Computes the exponential chi-squared kernel X and Y.
 
@@ -4800,7 +4849,7 @@ sklearn.kernel_approximation.AdditiveChi2Sampler : A Fourier approximation
     to the additive version of this kernel.
 *)
 
-val cosine_distances : ?y:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> Py.Object.t
+val cosine_distances : ?y:Arr.t -> x:Arr.t -> unit -> Py.Object.t
 (**
 Compute cosine distance between samples in X and Y.
 
@@ -4827,7 +4876,7 @@ sklearn.metrics.pairwise.cosine_similarity
 scipy.spatial.distance.cosine : dense matrices only
 *)
 
-val cosine_similarity : ?y:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> ?dense_output:bool -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val cosine_similarity : ?y:[`Arr of Arr.t | `Sparse_array of Py.Object.t] -> ?dense_output:bool -> x:[`Arr of Arr.t | `Sparse_array of Py.Object.t] -> unit -> Py.Object.t
 (**
 Compute cosine similarity between samples in X and Y.
 
@@ -4916,7 +4965,7 @@ version of joblib.
 .. versionadded:: 0.10
 *)
 
-val euclidean_distances : ?y:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> ?y_norm_squared:Ndarray.t -> ?squared:bool -> ?x_norm_squared:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> Ndarray.t
+val euclidean_distances : ?y:Arr.t -> ?y_norm_squared:Arr.t -> ?squared:bool -> ?x_norm_squared:Arr.t -> x:Arr.t -> unit -> Arr.t
 (**
 Considering the rows of X (and Y=X) as vectors, compute the
 distance matrix between each pair of vectors.
@@ -5073,7 +5122,7 @@ Warns
 Issues a UserWarning if ``row_bytes`` exceeds ``working_memory`` MiB.
 *)
 
-val haversine_distances : ?y:Ndarray.t -> x:Ndarray.t -> unit -> Ndarray.t
+val haversine_distances : ?y:Arr.t -> x:Arr.t -> unit -> Arr.t
 (**
 Compute the Haversine distance between samples in X and Y
 
@@ -5203,7 +5252,7 @@ The valid distance metrics, and the function they map to, are:
 Read more in the :ref:`User Guide <metrics>`.
 *)
 
-val laplacian_kernel : ?y:Ndarray.t -> ?gamma:float -> x:Ndarray.t -> unit -> Ndarray.t
+val laplacian_kernel : ?y:Arr.t -> ?gamma:float -> x:Arr.t -> unit -> Arr.t
 (**
 Compute the laplacian kernel between X and Y.
 
@@ -5230,7 +5279,7 @@ Returns
 kernel_matrix : array of shape (n_samples_X, n_samples_Y)
 *)
 
-val linear_kernel : ?y:Ndarray.t -> ?dense_output:bool -> x:Ndarray.t -> unit -> Py.Object.t
+val linear_kernel : ?y:Arr.t -> ?dense_output:bool -> x:Arr.t -> unit -> Py.Object.t
 (**
 Compute the linear kernel between X and Y.
 
@@ -5253,7 +5302,7 @@ Returns
 Gram matrix : array of shape (n_samples_1, n_samples_2)
 *)
 
-val manhattan_distances : ?y:Ndarray.t -> ?sum_over_features:bool -> x:Ndarray.t -> unit -> Ndarray.t
+val manhattan_distances : ?y:Arr.t -> ?sum_over_features:bool -> x:Arr.t -> unit -> Arr.t
 (**
 Compute the L1 distances between the vectors in X and Y.
 
@@ -5310,7 +5359,7 @@ array([[1., 1.],
        [1., 1.]])
 *)
 
-val nan_euclidean_distances : ?y:Ndarray.t -> ?squared:bool -> ?missing_values:[`Int of int | `PyObject of Py.Object.t] -> ?copy:bool -> x:Ndarray.t -> unit -> Ndarray.t
+val nan_euclidean_distances : ?y:Arr.t -> ?squared:bool -> ?missing_values:[`Np_nan of Py.Object.t | `I of int] -> ?copy:bool -> x:Arr.t -> unit -> Arr.t
 (**
 Calculate the euclidean distances in the presence of missing values.
 
@@ -5382,7 +5431,7 @@ See also
 paired_distances : distances between pairs of elements of X and Y.
 *)
 
-val normalize : ?norm:[`L1 | `L2 | `Max | `PyObject of Py.Object.t] -> ?axis:Py.Object.t -> ?copy:bool -> ?return_norm:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> (Py.Object.t * Py.Object.t)
+val normalize : ?norm:[`L1 | `L2 | `Max | `T_l2_by of Py.Object.t] -> ?axis:[`Zero | `One | `T_1_by of Py.Object.t] -> ?copy:bool -> ?return_norm:bool -> x:Arr.t -> unit -> (Arr.t * Py.Object.t)
 (**
 Scale input vectors individually to unit norm (vector length).
 
@@ -5433,7 +5482,7 @@ see :ref:`examples/preprocessing/plot_all_scaling.py
 <sphx_glr_auto_examples_preprocessing_plot_all_scaling.py>`.
 *)
 
-val paired_cosine_distances : x:Ndarray.t -> y:Ndarray.t -> unit -> Ndarray.t
+val paired_cosine_distances : x:Arr.t -> y:Arr.t -> unit -> Arr.t
 (**
 Computes the paired cosine distances between X and Y
 
@@ -5455,7 +5504,7 @@ The cosine distance is equivalent to the half the squared
 euclidean distance if each sample is normalized to unit norm
 *)
 
-val paired_distances : ?metric:[`String of string | `Callable of Py.Object.t] -> ?kwds:(string * Py.Object.t) list -> x:Py.Object.t -> y:Py.Object.t -> unit -> Py.Object.t
+val paired_distances : ?metric:[`S of string | `Callable of Py.Object.t] -> ?kwds:(string * Py.Object.t) list -> x:Py.Object.t -> y:Py.Object.t -> unit -> Py.Object.t
 (**
 Computes the paired distances between X and Y.
 
@@ -5498,7 +5547,7 @@ See also
 pairwise_distances : Computes the distance between every pair of samples
 *)
 
-val paired_euclidean_distances : x:Ndarray.t -> y:Ndarray.t -> unit -> Py.Object.t
+val paired_euclidean_distances : x:Arr.t -> y:Arr.t -> unit -> Py.Object.t
 (**
 Computes the paired euclidean distances between X and Y
 
@@ -5515,7 +5564,7 @@ Returns
 distances : ndarray (n_samples, )
 *)
 
-val paired_manhattan_distances : x:Ndarray.t -> y:Ndarray.t -> unit -> Py.Object.t
+val paired_manhattan_distances : x:Arr.t -> y:Arr.t -> unit -> Py.Object.t
 (**
 Compute the L1 distances between the vectors in X and Y.
 
@@ -5532,7 +5581,7 @@ Returns
 distances : ndarray (n_samples, )
 *)
 
-val pairwise_distances : ?y:Ndarray.t -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?n_jobs:[`Int of int | `None] -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?kwds:(string * Py.Object.t) list -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val pairwise_distances : ?y:Arr.t -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?n_jobs:int -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?kwds:(string * Py.Object.t) list -> x:[`Arr of Arr.t | `Otherwise of Py.Object.t] -> unit -> Py.Object.t
 (**
 Compute the distance matrix from a vector array X and optional Y.
 
@@ -5632,7 +5681,7 @@ paired_distances : Computes the distances between corresponding
                    elements of two arrays
 *)
 
-val pairwise_distances_argmin : ?axis:int -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?metric_kwargs:Py.Object.t -> x:Ndarray.t -> y:Ndarray.t -> unit -> Py.Object.t
+val pairwise_distances_argmin : ?axis:int -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?metric_kwargs:Dict.t -> x:Arr.t -> y:Arr.t -> unit -> Arr.t
 (**
 Compute minimum distances between one point and a set of points.
 
@@ -5700,7 +5749,7 @@ sklearn.metrics.pairwise_distances
 sklearn.metrics.pairwise_distances_argmin_min
 *)
 
-val pairwise_distances_argmin_min : ?axis:int -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?metric_kwargs:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> (Py.Object.t * Py.Object.t)
+val pairwise_distances_argmin_min : ?axis:int -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?metric_kwargs:Dict.t -> x:Arr.t -> y:Arr.t -> unit -> (Arr.t * Arr.t)
 (**
 Compute minimum distances between one point and a set of points.
 
@@ -5770,7 +5819,7 @@ sklearn.metrics.pairwise_distances
 sklearn.metrics.pairwise_distances_argmin
 *)
 
-val pairwise_distances_chunked : ?y:Ndarray.t -> ?reduce_func:Py.Object.t -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?n_jobs:[`Int of int | `None] -> ?working_memory:int -> ?kwds:(string * Py.Object.t) list -> x:Py.Object.t -> unit -> Py.Object.t
+val pairwise_distances_chunked : ?y:Arr.t -> ?reduce_func:Py.Object.t -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?n_jobs:int -> ?working_memory:int -> ?kwds:(string * Py.Object.t) list -> x:Py.Object.t -> unit -> Py.Object.t
 (**
 Generate a distance matrix chunk by chunk with optional reduction
 
@@ -5888,7 +5937,7 @@ Force row-by-row generation by reducing ``working_memory``:
 [array([0, 1])]
 *)
 
-val pairwise_kernels : ?y:Ndarray.t -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?filter_params:bool -> ?n_jobs:[`Int of int | `None] -> ?kwds:(string * Py.Object.t) list -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val pairwise_kernels : ?y:Arr.t -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?filter_params:bool -> ?n_jobs:int -> ?kwds:(string * Py.Object.t) list -> x:[`Arr of Arr.t | `Otherwise of Py.Object.t] -> unit -> Py.Object.t
 (**
 Compute the kernel between arrays X and optional array Y.
 
@@ -5958,7 +6007,7 @@ Notes
 If metric is 'precomputed', Y is ignored and X is returned.
 *)
 
-val polynomial_kernel : ?y:Ndarray.t -> ?degree:int -> ?gamma:float -> ?coef0:float -> x:Ndarray.t -> unit -> Py.Object.t
+val polynomial_kernel : ?y:Arr.t -> ?degree:int -> ?gamma:float -> ?coef0:float -> x:Arr.t -> unit -> Py.Object.t
 (**
 Compute the polynomial kernel between X and Y::
 
@@ -5984,7 +6033,7 @@ Returns
 Gram matrix : array of shape (n_samples_1, n_samples_2)
 *)
 
-val rbf_kernel : ?y:Ndarray.t -> ?gamma:float -> x:Ndarray.t -> unit -> Ndarray.t
+val rbf_kernel : ?y:Arr.t -> ?gamma:float -> x:Arr.t -> unit -> Arr.t
 (**
 Compute the rbf (gaussian) kernel between X and Y::
 
@@ -6008,7 +6057,7 @@ Returns
 kernel_matrix : array of shape (n_samples_X, n_samples_Y)
 *)
 
-val row_norms : ?squared:Py.Object.t -> x:Ndarray.t -> unit -> Py.Object.t
+val row_norms : ?squared:Py.Object.t -> x:Arr.t -> unit -> Py.Object.t
 (**
 Row-wise (squared) Euclidean norm of X.
 
@@ -6030,7 +6079,7 @@ array_like
     The row-wise (squared) Euclidean norm of X.
 *)
 
-val safe_sparse_dot : ?dense_output:Py.Object.t -> a:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> b:Py.Object.t -> unit -> Py.Object.t
+val safe_sparse_dot : ?dense_output:Py.Object.t -> a:Arr.t -> b:Py.Object.t -> unit -> Arr.t
 (**
 Dot product that handle the sparse matrix case correctly
 
@@ -6048,7 +6097,7 @@ dot_product : array or sparse matrix
     sparse if ``a`` and ``b`` are sparse and ``dense_output=False``.
 *)
 
-val sigmoid_kernel : ?y:Ndarray.t -> ?gamma:float -> ?coef0:float -> x:Ndarray.t -> unit -> Py.Object.t
+val sigmoid_kernel : ?y:Arr.t -> ?gamma:float -> ?coef0:float -> x:Arr.t -> unit -> Py.Object.t
 (**
 Compute the sigmoid kernel between X and Y::
 
@@ -6075,7 +6124,7 @@ Gram matrix : array of shape (n_samples_1, n_samples_2)
 
 end
 
-val pairwise_distances : ?y:Ndarray.t -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?n_jobs:[`Int of int | `None] -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?kwds:(string * Py.Object.t) list -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val pairwise_distances : ?y:Arr.t -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?n_jobs:int -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?kwds:(string * Py.Object.t) list -> x:[`Arr of Arr.t | `Otherwise of Py.Object.t] -> unit -> Py.Object.t
 (**
 Compute the distance matrix from a vector array X and optional Y.
 
@@ -6175,7 +6224,7 @@ paired_distances : Computes the distances between corresponding
                    elements of two arrays
 *)
 
-val pairwise_distances_argmin : ?axis:int -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?metric_kwargs:Py.Object.t -> x:Ndarray.t -> y:Ndarray.t -> unit -> Py.Object.t
+val pairwise_distances_argmin : ?axis:int -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?metric_kwargs:Dict.t -> x:Arr.t -> y:Arr.t -> unit -> Arr.t
 (**
 Compute minimum distances between one point and a set of points.
 
@@ -6243,7 +6292,7 @@ sklearn.metrics.pairwise_distances
 sklearn.metrics.pairwise_distances_argmin_min
 *)
 
-val pairwise_distances_argmin_min : ?axis:int -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?metric_kwargs:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> (Py.Object.t * Py.Object.t)
+val pairwise_distances_argmin_min : ?axis:int -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?metric_kwargs:Dict.t -> x:Arr.t -> y:Arr.t -> unit -> (Arr.t * Arr.t)
 (**
 Compute minimum distances between one point and a set of points.
 
@@ -6313,7 +6362,7 @@ sklearn.metrics.pairwise_distances
 sklearn.metrics.pairwise_distances_argmin
 *)
 
-val pairwise_distances_chunked : ?y:Ndarray.t -> ?reduce_func:Py.Object.t -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?n_jobs:[`Int of int | `None] -> ?working_memory:int -> ?kwds:(string * Py.Object.t) list -> x:Py.Object.t -> unit -> Py.Object.t
+val pairwise_distances_chunked : ?y:Arr.t -> ?reduce_func:Py.Object.t -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?n_jobs:int -> ?working_memory:int -> ?kwds:(string * Py.Object.t) list -> x:Py.Object.t -> unit -> Py.Object.t
 (**
 Generate a distance matrix chunk by chunk with optional reduction
 
@@ -6431,7 +6480,7 @@ Force row-by-row generation by reducing ``working_memory``:
 [array([0, 1])]
 *)
 
-val pairwise_kernels : ?y:Ndarray.t -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?filter_params:bool -> ?n_jobs:[`Int of int | `None] -> ?kwds:(string * Py.Object.t) list -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val pairwise_kernels : ?y:Arr.t -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?filter_params:bool -> ?n_jobs:int -> ?kwds:(string * Py.Object.t) list -> x:[`Arr of Arr.t | `Otherwise of Py.Object.t] -> unit -> Py.Object.t
 (**
 Compute the kernel between arrays X and optional array Y.
 
@@ -6501,7 +6550,7 @@ Notes
 If metric is 'precomputed', Y is ignored and X is returned.
 *)
 
-val plot_confusion_matrix : ?labels:Ndarray.t -> ?sample_weight:Ndarray.t -> ?normalize:[`True | `Pred | `All] -> ?display_labels:Ndarray.t -> ?include_values:bool -> ?xticks_rotation:[`Vertical | `Horizontal | `Float of float] -> ?values_format:string -> ?cmap:[`String of string | `PyObject of Py.Object.t] -> ?ax:Py.Object.t -> estimator:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y_true:Py.Object.t -> unit -> Py.Object.t
+val plot_confusion_matrix : ?labels:Arr.t -> ?sample_weight:Arr.t -> ?normalize:[`True | `Pred | `All] -> ?display_labels:Arr.t -> ?include_values:bool -> ?xticks_rotation:[`Vertical | `Horizontal | `F of float] -> ?values_format:string -> ?cmap:[`S of string | `Matplotlib_Colormap of Py.Object.t] -> ?ax:Py.Object.t -> estimator:Py.Object.t -> x:Arr.t -> y_true:Py.Object.t -> unit -> Py.Object.t
 (**
 Plot Confusion Matrix.
 
@@ -6558,7 +6607,7 @@ Returns
 display : :class:`~sklearn.metrics.ConfusionMatrixDisplay`
 *)
 
-val plot_precision_recall_curve : ?sample_weight:Ndarray.t -> ?response_method:[`Predict_proba | `Decision_function | `Auto] -> ?name:string -> ?ax:Py.Object.t -> ?kwargs:(string * Py.Object.t) list -> estimator:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> unit -> Py.Object.t
+val plot_precision_recall_curve : ?sample_weight:Arr.t -> ?response_method:[`Predict_proba | `Decision_function | `Auto] -> ?name:string -> ?ax:Py.Object.t -> ?kwargs:(string * Py.Object.t) list -> estimator:Py.Object.t -> x:Arr.t -> y:Arr.t -> unit -> Py.Object.t
 (**
 Plot Precision Recall Curve for binary classifiers.
 
@@ -6602,7 +6651,7 @@ display : :class:`~sklearn.metrics.PrecisionRecallDisplay`
     Object that stores computed values.
 *)
 
-val plot_roc_curve : ?sample_weight:Ndarray.t -> ?drop_intermediate:bool -> ?response_method:[`Predict_proba | `Decision_function | `Auto] -> ?name:string -> ?ax:Py.Object.t -> ?kwargs:(string * Py.Object.t) list -> estimator:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> unit -> Py.Object.t
+val plot_roc_curve : ?sample_weight:Arr.t -> ?drop_intermediate:bool -> ?response_method:[`Predict_proba | `Decision_function | `Auto] -> ?name:string -> ?ax:Py.Object.t -> ?kwargs:(string * Py.Object.t) list -> estimator:Py.Object.t -> x:Arr.t -> y:Arr.t -> unit -> Py.Object.t
 (**
 Plot Receiver operating characteristic (ROC) curve.
 
@@ -6660,7 +6709,7 @@ SVC(random_state=0)
 >>> plt.show()                                   # doctest: +SKIP
 *)
 
-val precision_recall_curve : ?pos_label:[`Int of int | `String of string] -> ?sample_weight:Ndarray.t -> y_true:Ndarray.t -> probas_pred:Ndarray.t -> unit -> (Py.Object.t * Py.Object.t * Py.Object.t)
+val precision_recall_curve : ?pos_label:[`I of int | `S of string] -> ?sample_weight:Arr.t -> y_true:Arr.t -> probas_pred:Arr.t -> unit -> (Py.Object.t * Py.Object.t * Py.Object.t)
 (**
 Compute precision-recall pairs for different probability thresholds
 
@@ -6734,7 +6783,7 @@ array([1. , 0.5, 0.5, 0. ])
 array([0.35, 0.4 , 0.8 ])
 *)
 
-val precision_recall_fscore_support : ?beta:float -> ?labels:Py.Object.t -> ?pos_label:[`String of string | `Int of int] -> ?average:[`String of string | `PyObject of Py.Object.t] -> ?warn_for:Py.Object.t -> ?sample_weight:Ndarray.t -> ?zero_division:[`Warn | `PyObject of Py.Object.t] -> y_true:Py.Object.t -> y_pred:Py.Object.t -> unit -> (Py.Object.t * Py.Object.t * Py.Object.t * Py.Object.t)
+val precision_recall_fscore_support : ?beta:float -> ?labels:Arr.t -> ?pos_label:[`S of string | `I of int] -> ?average:[`Binary | `Micro | `Macro | `Samples | `Weighted] -> ?warn_for:Py.Object.t -> ?sample_weight:Arr.t -> ?zero_division:[`Warn | `Zero | `One] -> y_true:Arr.t -> y_pred:Arr.t -> unit -> ([`F of float | `Arr of Arr.t] * [`F of float | `Arr of Arr.t] * [`F of float | `Arr of Arr.t] * Py.Object.t)
 (**
 Compute precision, recall, F-measure and support for each class
 
@@ -6881,7 +6930,7 @@ and ``UndefinedMetricWarning`` will be raised. This behavior can be
 modified with ``zero_division``.
 *)
 
-val precision_score : ?labels:Py.Object.t -> ?pos_label:[`String of string | `Int of int] -> ?average:[`String of string | `Binary | `PyObject of Py.Object.t] -> ?sample_weight:Ndarray.t -> ?zero_division:[`Warn | `PyObject of Py.Object.t] -> y_true:Py.Object.t -> y_pred:Py.Object.t -> unit -> Py.Object.t
+val precision_score : ?labels:Arr.t -> ?pos_label:[`S of string | `I of int] -> ?average:[`Binary | `Micro | `Macro | `Samples | `Weighted | `None] -> ?sample_weight:Arr.t -> ?zero_division:[`Warn | `Zero | `One] -> y_true:Arr.t -> y_pred:Arr.t -> unit -> [`F of float | `Arr of Arr.t]
 (**
 Compute the precision
 
@@ -6987,7 +7036,7 @@ raises ``UndefinedMetricWarning``. This behavior can be
 modified with ``zero_division``.
 *)
 
-val r2_score : ?sample_weight:Ndarray.t -> ?multioutput:[`Ndarray of Ndarray.t | `None | `PyObject of Py.Object.t] -> y_true:Ndarray.t -> y_pred:Ndarray.t -> unit -> Py.Object.t
+val r2_score : ?sample_weight:Arr.t -> ?multioutput:[`Raw_values | `Uniform_average | `Variance_weighted | `Arr of Arr.t | `None] -> y_true:Arr.t -> y_pred:Arr.t -> unit -> [`F of float | `Arr of Arr.t]
 (**
 R^2 (coefficient of determination) regression score function.
 
@@ -7075,7 +7124,7 @@ Examples
 -3.0
 *)
 
-val recall_score : ?labels:Py.Object.t -> ?pos_label:[`String of string | `Int of int] -> ?average:[`String of string | `Binary | `PyObject of Py.Object.t] -> ?sample_weight:Ndarray.t -> ?zero_division:[`Warn | `PyObject of Py.Object.t] -> y_true:Py.Object.t -> y_pred:Py.Object.t -> unit -> Py.Object.t
+val recall_score : ?labels:Arr.t -> ?pos_label:[`S of string | `I of int] -> ?average:[`Binary | `Micro | `Macro | `Samples | `Weighted | `None] -> ?sample_weight:Arr.t -> ?zero_division:[`Warn | `Zero | `One] -> y_true:Arr.t -> y_pred:Arr.t -> unit -> [`F of float | `Arr of Arr.t]
 (**
 Compute the recall
 
@@ -7181,7 +7230,7 @@ When ``true positive + false negative == 0``, recall returns 0 and raises
 ``zero_division``.
 *)
 
-val roc_auc_score : ?average:[`Micro | `Macro | `Samples | `Weighted | `None] -> ?sample_weight:Ndarray.t -> ?max_fpr:Py.Object.t -> ?multi_class:[`Raise | `Ovr | `Ovo] -> ?labels:Ndarray.t -> y_true:Ndarray.t -> y_score:Ndarray.t -> unit -> float
+val roc_auc_score : ?average:[`Micro | `Macro | `Samples | `Weighted | `None] -> ?sample_weight:Arr.t -> ?max_fpr:Py.Object.t -> ?multi_class:[`Raise | `Ovr | `Ovo] -> ?labels:Arr.t -> y_true:Arr.t -> y_score:Arr.t -> unit -> float
 (**
 Compute Area Under the Receiver Operating Characteristic Curve (ROC AUC)
 from prediction scores.
@@ -7301,7 +7350,7 @@ Examples
 0.75
 *)
 
-val roc_curve : ?pos_label:[`Int of int | `String of string] -> ?sample_weight:Ndarray.t -> ?drop_intermediate:bool -> y_true:Ndarray.t -> y_score:Ndarray.t -> unit -> (Ndarray.t * Ndarray.t * Ndarray.t)
+val roc_curve : ?pos_label:[`I of int | `S of string] -> ?sample_weight:Arr.t -> ?drop_intermediate:bool -> y_true:Arr.t -> y_score:Arr.t -> unit -> (Arr.t * Arr.t * Arr.t)
 (**
 Compute Receiver operating characteristic (ROC)
 
@@ -7385,7 +7434,7 @@ array([0. , 0.5, 0.5, 1. , 1. ])
 array([1.8 , 0.8 , 0.4 , 0.35, 0.1 ])
 *)
 
-val silhouette_samples : ?metric:[`String of string | `Callable of Py.Object.t] -> ?kwds:(string * Py.Object.t) list -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> labels:Ndarray.t -> unit -> Ndarray.t
+val silhouette_samples : ?metric:[`S of string | `Callable of Py.Object.t] -> ?kwds:(string * Py.Object.t) list -> x:[`Arr of Arr.t | `Otherwise of Py.Object.t] -> labels:Arr.t -> unit -> Arr.t
 (**
 Compute the Silhouette Coefficient for each sample.
 
@@ -7446,7 +7495,7 @@ References
    <https://en.wikipedia.org/wiki/Silhouette_(clustering)>`_
 *)
 
-val silhouette_score : ?metric:[`String of string | `Callable of Py.Object.t] -> ?sample_size:[`Int of int | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?kwds:(string * Py.Object.t) list -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> labels:Ndarray.t -> unit -> float
+val silhouette_score : ?metric:[`S of string | `Callable of Py.Object.t] -> ?sample_size:int -> ?random_state:int -> ?kwds:(string * Py.Object.t) list -> x:[`Arr of Arr.t | `Otherwise of Py.Object.t] -> labels:Arr.t -> unit -> float
 (**
 Compute the mean Silhouette Coefficient of all samples.
 
@@ -7516,7 +7565,7 @@ References
        <https://en.wikipedia.org/wiki/Silhouette_(clustering)>`_
 *)
 
-val v_measure_score : ?beta:float -> labels_true:Py.Object.t -> labels_pred:Ndarray.t -> unit -> float
+val v_measure_score : ?beta:float -> labels_true:Arr.t -> labels_pred:Arr.t -> unit -> float
 (**
 V-measure cluster labeling given a ground truth.
 
@@ -7613,7 +7662,7 @@ destroy the homogeneity of the labeling, hence::
   0.0...
 *)
 
-val zero_one_loss : ?normalize:bool -> ?sample_weight:Ndarray.t -> y_true:Py.Object.t -> y_pred:Py.Object.t -> unit -> Py.Object.t
+val zero_one_loss : ?normalize:bool -> ?sample_weight:Arr.t -> y_true:Arr.t -> y_pred:Arr.t -> unit -> [`F of float | `I of int]
 (**
 Zero-one classification loss.
 

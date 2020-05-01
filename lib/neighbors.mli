@@ -1,9 +1,12 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module KNeighborsClassifier : sig
 type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_neighbors:int -> ?weights:[`String of string | `Callable of Py.Object.t] -> ?algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> ?leaf_size:int -> ?p:int -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?metric_params:Py.Object.t -> ?n_jobs:[`Int of int | `None] -> ?kwargs:(string * Py.Object.t) list -> unit -> t
+val create : ?n_neighbors:int -> ?weights:[`S of string | `Callable of Py.Object.t] -> ?algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> ?leaf_size:int -> ?p:int -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?metric_params:Dict.t -> ?n_jobs:int -> ?kwargs:(string * Py.Object.t) list -> unit -> t
 (**
 Classifier implementing the k-nearest neighbors vote.
 
@@ -123,7 +126,7 @@ for a discussion of the choice of ``algorithm`` and ``leaf_size``.
 https://en.wikipedia.org/wiki/K-nearest_neighbor_algorithm
 *)
 
-val fit : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t | `PyObject of Py.Object.t] -> y:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : x:[`Arr of Arr.t | `PyObject of Py.Object.t] -> y:Arr.t -> t -> t
 (**
 Fit the model using X as training data and y as target values
 
@@ -137,7 +140,7 @@ y : {array-like, sparse matrix}
     Target values of shape = [n_samples] or [n_samples, n_outputs]
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -153,7 +156,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val kneighbors : ?x:Ndarray.t -> ?n_neighbors:int -> t -> (Ndarray.t * Ndarray.t)
+val kneighbors : ?x:Arr.t -> ?n_neighbors:int -> t -> (Arr.t * Arr.t)
 (**
 Finds the K-neighbors of a point.
 Returns indices of and distances to the neighbors of each point.
@@ -205,7 +208,7 @@ array([[1],
        [2]]...)
 *)
 
-val kneighbors_graph : ?x:Ndarray.t -> ?n_neighbors:int -> ?mode:[`Connectivity | `Distance] -> t -> Csr_matrix.t
+val kneighbors_graph : ?x:Arr.t -> ?n_neighbors:int -> ?mode:[`Connectivity | `Distance] -> t -> Csr_matrix.t
 (**
 Computes the (weighted) graph of k-Neighbors for points in X
 
@@ -249,7 +252,7 @@ See also
 NearestNeighbors.radius_neighbors_graph
 *)
 
-val predict : x:Ndarray.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict the class labels for the provided data.
 
@@ -264,7 +267,7 @@ y : array of shape [n_queries] or [n_queries, n_outputs]
     Class labels for each data sample.
 *)
 
-val predict_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Return probability estimates for the test data X.
 
@@ -281,7 +284,7 @@ p : array of shape = [n_queries, n_classes], or a list of n_outputs
     by lexicographic order.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -327,17 +330,33 @@ self : object
 *)
 
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
 
-(** Attribute effective_metric_: see constructor for documentation *)
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute effective_metric_: get value or raise Not_found if None.*)
 val effective_metric_ : t -> Py.Object.t
 
-(** Attribute effective_metric_params_: see constructor for documentation *)
-val effective_metric_params_ : t -> Py.Object.t
+(** Attribute effective_metric_: get value as an option. *)
+val effective_metric_opt : t -> (Py.Object.t) option
 
-(** Attribute outputs_2d_: see constructor for documentation *)
+
+(** Attribute effective_metric_params_: get value or raise Not_found if None.*)
+val effective_metric_params_ : t -> Dict.t
+
+(** Attribute effective_metric_params_: get value as an option. *)
+val effective_metric_params_opt : t -> (Dict.t) option
+
+
+(** Attribute outputs_2d_: get value or raise Not_found if None.*)
 val outputs_2d_ : t -> bool
+
+(** Attribute outputs_2d_: get value as an option. *)
+val outputs_2d_opt : t -> (bool) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -357,7 +376,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_neighbors:int -> ?weights:[`String of string | `Callable of Py.Object.t] -> ?algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> ?leaf_size:int -> ?p:int -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?metric_params:Py.Object.t -> ?n_jobs:[`Int of int | `None] -> ?kwargs:(string * Py.Object.t) list -> unit -> t
+val create : ?n_neighbors:int -> ?weights:[`S of string | `Callable of Py.Object.t] -> ?algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> ?leaf_size:int -> ?p:int -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?metric_params:Dict.t -> ?n_jobs:int -> ?kwargs:(string * Py.Object.t) list -> unit -> t
 (**
 Regression based on k-nearest neighbors.
 
@@ -475,7 +494,7 @@ for a discussion of the choice of ``algorithm`` and ``leaf_size``.
 https://en.wikipedia.org/wiki/K-nearest_neighbor_algorithm
 *)
 
-val fit : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t | `PyObject of Py.Object.t] -> y:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : x:[`Arr of Arr.t | `PyObject of Py.Object.t] -> y:Arr.t -> t -> t
 (**
 Fit the model using X as training data and y as target values
 
@@ -490,7 +509,7 @@ y : {array-like, sparse matrix}
      or [n_samples, n_outputs]
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -506,7 +525,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val kneighbors : ?x:Ndarray.t -> ?n_neighbors:int -> t -> (Ndarray.t * Ndarray.t)
+val kneighbors : ?x:Arr.t -> ?n_neighbors:int -> t -> (Arr.t * Arr.t)
 (**
 Finds the K-neighbors of a point.
 Returns indices of and distances to the neighbors of each point.
@@ -558,7 +577,7 @@ array([[1],
        [2]]...)
 *)
 
-val kneighbors_graph : ?x:Ndarray.t -> ?n_neighbors:int -> ?mode:[`Connectivity | `Distance] -> t -> Csr_matrix.t
+val kneighbors_graph : ?x:Arr.t -> ?n_neighbors:int -> ?mode:[`Connectivity | `Distance] -> t -> Csr_matrix.t
 (**
 Computes the (weighted) graph of k-Neighbors for points in X
 
@@ -602,7 +621,7 @@ See also
 NearestNeighbors.radius_neighbors_graph
 *)
 
-val predict : x:Ndarray.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict the target for the provided data
 
@@ -617,7 +636,7 @@ y : array of int, shape = [n_queries] or [n_queries, n_outputs]
     Target values
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -683,11 +702,19 @@ self : object
 *)
 
 
-(** Attribute effective_metric_: see constructor for documentation *)
+(** Attribute effective_metric_: get value or raise Not_found if None.*)
 val effective_metric_ : t -> Py.Object.t
 
-(** Attribute effective_metric_params_: see constructor for documentation *)
-val effective_metric_params_ : t -> Py.Object.t
+(** Attribute effective_metric_: get value as an option. *)
+val effective_metric_opt : t -> (Py.Object.t) option
+
+
+(** Attribute effective_metric_params_: get value or raise Not_found if None.*)
+val effective_metric_params_ : t -> Dict.t
+
+(** Attribute effective_metric_params_: get value as an option. *)
+val effective_metric_params_opt : t -> (Dict.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -707,7 +734,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?mode:[`Distance | `Connectivity] -> ?n_neighbors:int -> ?algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> ?leaf_size:int -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?p:int -> ?metric_params:Py.Object.t -> ?n_jobs:int -> unit -> t
+val create : ?mode:[`Distance | `Connectivity] -> ?n_neighbors:int -> ?algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> ?leaf_size:int -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?p:int -> ?metric_params:Dict.t -> ?n_jobs:int -> unit -> t
 (**
 Transform X into a (weighted) graph of k nearest neighbors
 
@@ -797,7 +824,7 @@ Examples
 ...     Isomap(neighbors_algorithm='precomputed'))
 *)
 
-val fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t | `PyObject of Py.Object.t] -> t -> t
+val fit : ?y:Py.Object.t -> x:[`Arr of Arr.t | `PyObject of Py.Object.t] -> t -> t
 (**
 Fit the model using X as training data
 
@@ -808,7 +835,7 @@ X : {array-like, sparse matrix, BallTree, KDTree}
     or [n_samples, n_samples] if metric='precomputed'.
 *)
 
-val fit_transform : ?y:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -830,7 +857,7 @@ Xt : CSR sparse graph of shape (n_samples, n_samples)
     The diagonal is always explicit.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -846,7 +873,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val kneighbors : ?x:Ndarray.t -> ?n_neighbors:int -> t -> (Ndarray.t * Ndarray.t)
+val kneighbors : ?x:Arr.t -> ?n_neighbors:int -> t -> (Arr.t * Arr.t)
 (**
 Finds the K-neighbors of a point.
 Returns indices of and distances to the neighbors of each point.
@@ -898,7 +925,7 @@ array([[1],
        [2]]...)
 *)
 
-val kneighbors_graph : ?x:Ndarray.t -> ?n_neighbors:int -> ?mode:[`Connectivity | `Distance] -> t -> Csr_matrix.t
+val kneighbors_graph : ?x:Arr.t -> ?n_neighbors:int -> ?mode:[`Connectivity | `Distance] -> t -> Csr_matrix.t
 (**
 Computes the (weighted) graph of k-Neighbors for points in X
 
@@ -962,7 +989,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Computes the (weighted) graph of Neighbors for points in X
 
@@ -998,7 +1025,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?bandwidth:float -> ?algorithm:string -> ?kernel:string -> ?metric:string -> ?atol:float -> ?rtol:float -> ?breadth_first:bool -> ?leaf_size:int -> ?metric_params:Py.Object.t -> unit -> t
+val create : ?bandwidth:float -> ?algorithm:string -> ?kernel:string -> ?metric:string -> ?atol:float -> ?rtol:float -> ?breadth_first:bool -> ?leaf_size:int -> ?metric_params:Dict.t -> unit -> t
 (**
 Kernel Density Estimation.
 
@@ -1066,7 +1093,7 @@ Compute a gaussian kernel density estimate with a fixed bandwidth.
 array([-1.52955942, -1.51462041, -1.60244657])
 *)
 
-val fit : ?y:Py.Object.t -> ?sample_weight:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> ?sample_weight:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fit the Kernel Density model on the data.
 
@@ -1087,7 +1114,7 @@ self : object
     Returns instance of object.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1103,7 +1130,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val sample : ?n_samples:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> t -> Ndarray.t
+val sample : ?n_samples:int -> ?random_state:int -> t -> Arr.t
 (**
 Generate random samples from the model.
 
@@ -1126,7 +1153,7 @@ X : array_like, shape (n_samples, n_features)
     List of samples.
 *)
 
-val score : ?y:Py.Object.t -> x:Ndarray.t -> t -> float
+val score : ?y:Py.Object.t -> x:Arr.t -> t -> float
 (**
 Compute the total log probability density under the model.
 
@@ -1147,7 +1174,7 @@ logprob : float
     data.
 *)
 
-val score_samples : x:Ndarray.t -> t -> Ndarray.t
+val score_samples : x:Arr.t -> t -> Arr.t
 (**
 Evaluate the log density model on the data.
 
@@ -1204,7 +1231,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_neighbors:int -> ?algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> ?leaf_size:int -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?p:int -> ?metric_params:Py.Object.t -> ?contamination:[`Auto | `Float of float] -> ?novelty:bool -> ?n_jobs:[`Int of int | `None] -> unit -> t
+val create : ?n_neighbors:int -> ?algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> ?leaf_size:int -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?p:int -> ?metric_params:Dict.t -> ?contamination:[`Auto | `F of float] -> ?novelty:bool -> ?n_jobs:int -> unit -> t
 (**
 Unsupervised Outlier Detection using Local Outlier Factor (LOF)
 
@@ -1351,7 +1378,7 @@ References
        LOF: identifying density-based local outliers. In ACM sigmod record.
 *)
 
-val fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t | `PyObject of Py.Object.t] -> t -> t
+val fit : ?y:Py.Object.t -> x:[`Arr of Arr.t | `PyObject of Py.Object.t] -> t -> t
 (**
 Fit the model using X as training data.
 
@@ -1369,7 +1396,7 @@ Returns
 self : object
 *)
 
-val fit_predict : ?y:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_predict : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 "Fits the model to the training set X and returns the labels.
 
@@ -1388,7 +1415,7 @@ is_inlier : array, shape (n_samples,)
     Returns -1 for anomalies/outliers and 1 for inliers."
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1404,7 +1431,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val kneighbors : ?x:Ndarray.t -> ?n_neighbors:int -> t -> (Ndarray.t * Ndarray.t)
+val kneighbors : ?x:Arr.t -> ?n_neighbors:int -> t -> (Arr.t * Arr.t)
 (**
 Finds the K-neighbors of a point.
 Returns indices of and distances to the neighbors of each point.
@@ -1456,7 +1483,7 @@ array([[1],
        [2]]...)
 *)
 
-val kneighbors_graph : ?x:Ndarray.t -> ?n_neighbors:int -> ?mode:[`Connectivity | `Distance] -> t -> Csr_matrix.t
+val kneighbors_graph : ?x:Arr.t -> ?n_neighbors:int -> ?mode:[`Connectivity | `Distance] -> t -> Csr_matrix.t
 (**
 Computes the (weighted) graph of k-Neighbors for points in X
 
@@ -1521,14 +1548,26 @@ self : object
 *)
 
 
-(** Attribute negative_outlier_factor_: see constructor for documentation *)
-val negative_outlier_factor_ : t -> Ndarray.t
+(** Attribute negative_outlier_factor_: get value or raise Not_found if None.*)
+val negative_outlier_factor_ : t -> Arr.t
 
-(** Attribute n_neighbors_: see constructor for documentation *)
+(** Attribute negative_outlier_factor_: get value as an option. *)
+val negative_outlier_factor_opt : t -> (Arr.t) option
+
+
+(** Attribute n_neighbors_: get value or raise Not_found if None.*)
 val n_neighbors_ : t -> int
 
-(** Attribute offset_: see constructor for documentation *)
+(** Attribute n_neighbors_: get value as an option. *)
+val n_neighbors_opt : t -> (int) option
+
+
+(** Attribute offset_: get value or raise Not_found if None.*)
 val offset_ : t -> float
+
+(** Attribute offset_: get value as an option. *)
+val offset_opt : t -> (float) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1548,7 +1587,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?metric:[`String of string | `Callable of Py.Object.t] -> ?shrink_threshold:float -> unit -> t
+val create : ?metric:[`S of string | `Callable of Py.Object.t] -> ?shrink_threshold:float -> unit -> t
 (**
 Nearest centroid classifier.
 
@@ -1610,7 +1649,7 @@ of the National Academy of Sciences of the United States of America,
 99(10), 6567-6572. The National Academy of Sciences.
 *)
 
-val fit : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the NearestCentroid model according to the given training data.
 
@@ -1624,7 +1663,7 @@ y : array, shape = [n_samples]
     Target values (integers)
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1640,7 +1679,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:Ndarray.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Perform classification on an array of test vectors X.
 
@@ -1661,7 +1700,7 @@ be the distance matrix between the data to be predicted and
 ``self.centroids_``.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -1707,11 +1746,19 @@ self : object
 *)
 
 
-(** Attribute centroids_: see constructor for documentation *)
-val centroids_ : t -> Ndarray.t
+(** Attribute centroids_: get value or raise Not_found if None.*)
+val centroids_ : t -> Arr.t
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute centroids_: get value as an option. *)
+val centroids_opt : t -> (Arr.t) option
+
+
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
+
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1731,7 +1778,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_neighbors:int -> ?radius:float -> ?algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> ?leaf_size:int -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?p:int -> ?metric_params:Py.Object.t -> ?n_jobs:[`Int of int | `None] -> unit -> t
+val create : ?n_neighbors:int -> ?radius:float -> ?algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> ?leaf_size:int -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?p:int -> ?metric_params:Dict.t -> ?n_jobs:int -> unit -> t
 (**
 Unsupervised learner for implementing neighbor searches.
 
@@ -1831,7 +1878,7 @@ for a discussion of the choice of ``algorithm`` and ``leaf_size``.
 https://en.wikipedia.org/wiki/K-nearest_neighbor_algorithm
 *)
 
-val fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t | `PyObject of Py.Object.t] -> t -> t
+val fit : ?y:Py.Object.t -> x:[`Arr of Arr.t | `PyObject of Py.Object.t] -> t -> t
 (**
 Fit the model using X as training data
 
@@ -1842,7 +1889,7 @@ X : {array-like, sparse matrix, BallTree, KDTree}
     or [n_samples, n_samples] if metric='precomputed'.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1858,7 +1905,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val kneighbors : ?x:Ndarray.t -> ?n_neighbors:int -> t -> (Ndarray.t * Ndarray.t)
+val kneighbors : ?x:Arr.t -> ?n_neighbors:int -> t -> (Arr.t * Arr.t)
 (**
 Finds the K-neighbors of a point.
 Returns indices of and distances to the neighbors of each point.
@@ -1910,7 +1957,7 @@ array([[1],
        [2]]...)
 *)
 
-val kneighbors_graph : ?x:Ndarray.t -> ?n_neighbors:int -> ?mode:[`Connectivity | `Distance] -> t -> Csr_matrix.t
+val kneighbors_graph : ?x:Arr.t -> ?n_neighbors:int -> ?mode:[`Connectivity | `Distance] -> t -> Csr_matrix.t
 (**
 Computes the (weighted) graph of k-Neighbors for points in X
 
@@ -1954,7 +2001,7 @@ See also
 NearestNeighbors.radius_neighbors_graph
 *)
 
-val radius_neighbors : ?x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> ?radius:float -> ?sort_results:bool -> t -> (Ndarray.t array * Ndarray.t array)
+val radius_neighbors : ?x:[`Arr of Arr.t | `PyObject of Py.Object.t] -> ?radius:float -> ?sort_results:bool -> t -> (Arr.List.t * Arr.List.t)
 (**
 Finds the neighbors within a given radius of a point or points.
 
@@ -2030,7 +2077,7 @@ For efficiency, `radius_neighbors` returns arrays of objects, where
 each object is a 1D array of indices or distances.
 *)
 
-val radius_neighbors_graph : ?x:Ndarray.t -> ?radius:float -> ?mode:[`Connectivity | `Distance] -> ?sort_results:bool -> t -> Csr_matrix.t
+val radius_neighbors_graph : ?x:Arr.t -> ?radius:float -> ?mode:[`Connectivity | `Distance] -> ?sort_results:bool -> t -> Csr_matrix.t
 (**
 Computes the (weighted) graph of Neighbors for points in X
 
@@ -2105,11 +2152,19 @@ self : object
 *)
 
 
-(** Attribute effective_metric_: see constructor for documentation *)
+(** Attribute effective_metric_: get value or raise Not_found if None.*)
 val effective_metric_ : t -> string
 
-(** Attribute effective_metric_params_: see constructor for documentation *)
-val effective_metric_params_ : t -> Py.Object.t
+(** Attribute effective_metric_: get value as an option. *)
+val effective_metric_opt : t -> (string) option
+
+
+(** Attribute effective_metric_params_: get value or raise Not_found if None.*)
+val effective_metric_params_ : t -> Dict.t
+
+(** Attribute effective_metric_params_: get value as an option. *)
+val effective_metric_params_opt : t -> (Dict.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2129,7 +2184,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_components:int -> ?init:[`String of string | `Ndarray of Ndarray.t] -> ?warm_start:bool -> ?max_iter:int -> ?tol:float -> ?callback:Py.Object.t -> ?verbose:int -> ?random_state:[`Int of int | `None | `PyObject of Py.Object.t] -> unit -> t
+val create : ?n_components:int -> ?init:[`S of string | `Arr of Arr.t] -> ?warm_start:bool -> ?max_iter:int -> ?tol:float -> ?callback:Py.Object.t -> ?verbose:int -> ?random_state:int -> unit -> t
 (**
 Neighborhood Components Analysis
 
@@ -2261,7 +2316,7 @@ References
        https://en.wikipedia.org/wiki/Neighbourhood_components_analysis
 *)
 
-val fit : x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the model according to the given training data.
 
@@ -2279,7 +2334,7 @@ self : object
     returns a trained NeighborhoodComponentsAnalysis model.
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -2303,7 +2358,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2339,7 +2394,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Applies the learned transformation to the given data.
 
@@ -2360,14 +2415,26 @@ NotFittedError
 *)
 
 
-(** Attribute components_: see constructor for documentation *)
-val components_ : t -> Ndarray.t
+(** Attribute components_: get value or raise Not_found if None.*)
+val components_ : t -> Arr.t
 
-(** Attribute n_iter_: see constructor for documentation *)
+(** Attribute components_: get value as an option. *)
+val components_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
 
-(** Attribute random_state_: see constructor for documentation *)
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
+
+(** Attribute random_state_: get value or raise Not_found if None.*)
 val random_state_ : t -> Py.Object.t
+
+(** Attribute random_state_: get value as an option. *)
+val random_state_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2387,7 +2454,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?radius:float -> ?weights:[`String of string | `Callable of Py.Object.t] -> ?algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> ?leaf_size:int -> ?p:int -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?outlier_label:[`Most_frequent | `PyObject of Py.Object.t] -> ?metric_params:Py.Object.t -> ?n_jobs:[`Int of int | `None] -> ?kwargs:(string * Py.Object.t) list -> unit -> t
+val create : ?radius:float -> ?weights:[`S of string | `Callable of Py.Object.t] -> ?algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> ?leaf_size:int -> ?p:int -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?outlier_label:[`Manual_label of Py.Object.t | `Most_frequent] -> ?metric_params:Dict.t -> ?n_jobs:int -> ?kwargs:(string * Py.Object.t) list -> unit -> t
 (**
 Classifier implementing a vote among neighbors within a given radius
 
@@ -2510,7 +2577,7 @@ for a discussion of the choice of ``algorithm`` and ``leaf_size``.
 https://en.wikipedia.org/wiki/K-nearest_neighbor_algorithm
 *)
 
-val fit : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t | `PyObject of Py.Object.t] -> y:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : x:[`Arr of Arr.t | `PyObject of Py.Object.t] -> y:Arr.t -> t -> t
 (**
 Fit the model using X as training data and y as target values
 
@@ -2524,7 +2591,7 @@ y : {array-like, sparse matrix}
     Target values of shape = [n_samples] or [n_samples, n_outputs]
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2540,7 +2607,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:Ndarray.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict the class labels for the provided data.
 
@@ -2555,7 +2622,7 @@ y : array of shape [n_queries] or [n_queries, n_outputs]
     Class labels for each data sample.
 *)
 
-val predict_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Return probability estimates for the test data X.
 
@@ -2572,7 +2639,7 @@ p : array of shape = [n_queries, n_classes], or a list of n_outputs
     by lexicographic order.
 *)
 
-val radius_neighbors : ?x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> ?radius:float -> ?sort_results:bool -> t -> (Ndarray.t array * Ndarray.t array)
+val radius_neighbors : ?x:[`Arr of Arr.t | `PyObject of Py.Object.t] -> ?radius:float -> ?sort_results:bool -> t -> (Arr.List.t * Arr.List.t)
 (**
 Finds the neighbors within a given radius of a point or points.
 
@@ -2648,7 +2715,7 @@ For efficiency, `radius_neighbors` returns arrays of objects, where
 each object is a 1D array of indices or distances.
 *)
 
-val radius_neighbors_graph : ?x:Ndarray.t -> ?radius:float -> ?mode:[`Connectivity | `Distance] -> ?sort_results:bool -> t -> Csr_matrix.t
+val radius_neighbors_graph : ?x:Arr.t -> ?radius:float -> ?mode:[`Connectivity | `Distance] -> ?sort_results:bool -> t -> Csr_matrix.t
 (**
 Computes the (weighted) graph of Neighbors for points in X
 
@@ -2702,7 +2769,7 @@ See also
 kneighbors_graph
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -2748,17 +2815,33 @@ self : object
 *)
 
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
 
-(** Attribute effective_metric_: see constructor for documentation *)
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute effective_metric_: get value or raise Not_found if None.*)
 val effective_metric_ : t -> Py.Object.t
 
-(** Attribute effective_metric_params_: see constructor for documentation *)
-val effective_metric_params_ : t -> Py.Object.t
+(** Attribute effective_metric_: get value as an option. *)
+val effective_metric_opt : t -> (Py.Object.t) option
 
-(** Attribute outputs_2d_: see constructor for documentation *)
+
+(** Attribute effective_metric_params_: get value or raise Not_found if None.*)
+val effective_metric_params_ : t -> Dict.t
+
+(** Attribute effective_metric_params_: get value as an option. *)
+val effective_metric_params_opt : t -> (Dict.t) option
+
+
+(** Attribute outputs_2d_: get value or raise Not_found if None.*)
 val outputs_2d_ : t -> bool
+
+(** Attribute outputs_2d_: get value as an option. *)
+val outputs_2d_opt : t -> (bool) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2778,7 +2861,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?radius:float -> ?weights:[`String of string | `Callable of Py.Object.t] -> ?algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> ?leaf_size:int -> ?p:int -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?metric_params:Py.Object.t -> ?n_jobs:[`Int of int | `None] -> ?kwargs:(string * Py.Object.t) list -> unit -> t
+val create : ?radius:float -> ?weights:[`S of string | `Callable of Py.Object.t] -> ?algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> ?leaf_size:int -> ?p:int -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?metric_params:Dict.t -> ?n_jobs:int -> ?kwargs:(string * Py.Object.t) list -> unit -> t
 (**
 Regression based on neighbors within a fixed radius.
 
@@ -2889,7 +2972,7 @@ for a discussion of the choice of ``algorithm`` and ``leaf_size``.
 https://en.wikipedia.org/wiki/K-nearest_neighbor_algorithm
 *)
 
-val fit : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t | `PyObject of Py.Object.t] -> y:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : x:[`Arr of Arr.t | `PyObject of Py.Object.t] -> y:Arr.t -> t -> t
 (**
 Fit the model using X as training data and y as target values
 
@@ -2904,7 +2987,7 @@ y : {array-like, sparse matrix}
      or [n_samples, n_outputs]
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2920,7 +3003,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:Ndarray.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict the target for the provided data
 
@@ -2935,7 +3018,7 @@ y : array of float, shape = [n_queries] or [n_queries, n_outputs]
     Target values
 *)
 
-val radius_neighbors : ?x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> ?radius:float -> ?sort_results:bool -> t -> (Ndarray.t array * Ndarray.t array)
+val radius_neighbors : ?x:[`Arr of Arr.t | `PyObject of Py.Object.t] -> ?radius:float -> ?sort_results:bool -> t -> (Arr.List.t * Arr.List.t)
 (**
 Finds the neighbors within a given radius of a point or points.
 
@@ -3011,7 +3094,7 @@ For efficiency, `radius_neighbors` returns arrays of objects, where
 each object is a 1D array of indices or distances.
 *)
 
-val radius_neighbors_graph : ?x:Ndarray.t -> ?radius:float -> ?mode:[`Connectivity | `Distance] -> ?sort_results:bool -> t -> Csr_matrix.t
+val radius_neighbors_graph : ?x:Arr.t -> ?radius:float -> ?mode:[`Connectivity | `Distance] -> ?sort_results:bool -> t -> Csr_matrix.t
 (**
 Computes the (weighted) graph of Neighbors for points in X
 
@@ -3065,7 +3148,7 @@ See also
 kneighbors_graph
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -3131,11 +3214,19 @@ self : object
 *)
 
 
-(** Attribute effective_metric_: see constructor for documentation *)
+(** Attribute effective_metric_: get value or raise Not_found if None.*)
 val effective_metric_ : t -> Py.Object.t
 
-(** Attribute effective_metric_params_: see constructor for documentation *)
-val effective_metric_params_ : t -> Py.Object.t
+(** Attribute effective_metric_: get value as an option. *)
+val effective_metric_opt : t -> (Py.Object.t) option
+
+
+(** Attribute effective_metric_params_: get value or raise Not_found if None.*)
+val effective_metric_params_ : t -> Dict.t
+
+(** Attribute effective_metric_params_: get value as an option. *)
+val effective_metric_params_opt : t -> (Dict.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -3155,7 +3246,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?mode:[`Distance | `Connectivity] -> ?radius:float -> ?algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> ?leaf_size:int -> ?metric:[`String of string | `Callable of Py.Object.t] -> ?p:int -> ?metric_params:Py.Object.t -> ?n_jobs:int -> unit -> t
+val create : ?mode:[`Distance | `Connectivity] -> ?radius:float -> ?algorithm:[`Auto | `Ball_tree | `Kd_tree | `Brute] -> ?leaf_size:int -> ?metric:[`S of string | `Callable of Py.Object.t] -> ?p:int -> ?metric_params:Dict.t -> ?n_jobs:int -> unit -> t
 (**
 Transform X into a (weighted) graph of neighbors nearer than a radius
 
@@ -3243,7 +3334,7 @@ Examples
 ...     DBSCAN(min_samples=30, metric='precomputed'))
 *)
 
-val fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t | `PyObject of Py.Object.t] -> t -> t
+val fit : ?y:Py.Object.t -> x:[`Arr of Arr.t | `PyObject of Py.Object.t] -> t -> t
 (**
 Fit the model using X as training data
 
@@ -3254,7 +3345,7 @@ X : {array-like, sparse matrix, BallTree, KDTree}
     or [n_samples, n_samples] if metric='precomputed'.
 *)
 
-val fit_transform : ?y:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -3276,7 +3367,7 @@ Xt : CSR sparse graph, shape (n_samples, n_samples)
     The diagonal is always explicit.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -3292,7 +3383,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val radius_neighbors : ?x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> ?radius:float -> ?sort_results:bool -> t -> (Ndarray.t array * Ndarray.t array)
+val radius_neighbors : ?x:[`Arr of Arr.t | `PyObject of Py.Object.t] -> ?radius:float -> ?sort_results:bool -> t -> (Arr.List.t * Arr.List.t)
 (**
 Finds the neighbors within a given radius of a point or points.
 
@@ -3368,7 +3459,7 @@ For efficiency, `radius_neighbors` returns arrays of objects, where
 each object is a 1D array of indices or distances.
 *)
 
-val radius_neighbors_graph : ?x:Ndarray.t -> ?radius:float -> ?mode:[`Connectivity | `Distance] -> ?sort_results:bool -> t -> Csr_matrix.t
+val radius_neighbors_graph : ?x:Arr.t -> ?radius:float -> ?mode:[`Connectivity | `Distance] -> ?sort_results:bool -> t -> Csr_matrix.t
 (**
 Computes the (weighted) graph of Neighbors for points in X
 
@@ -3442,7 +3533,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Computes the (weighted) graph of Neighbors for points in X
 
@@ -3473,7 +3564,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val kneighbors_graph : ?mode:[`Connectivity | `Distance] -> ?metric:string -> ?p:int -> ?metric_params:Py.Object.t -> ?include_self:[`Bool of bool | `Auto] -> ?n_jobs:[`Int of int | `None] -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> n_neighbors:int -> unit -> Csr_matrix.t
+val kneighbors_graph : ?mode:[`Connectivity | `Distance] -> ?metric:string -> ?p:int -> ?metric_params:Dict.t -> ?include_self:[`Bool of bool | `Auto] -> ?n_jobs:int -> x:[`Arr of Arr.t | `BallTree of Py.Object.t] -> n_neighbors:int -> unit -> Csr_matrix.t
 (**
 Computes the (weighted) graph of k-Neighbors for points in X
 
@@ -3538,7 +3629,7 @@ See also
 radius_neighbors_graph
 *)
 
-val radius_neighbors_graph : ?mode:[`Connectivity | `Distance] -> ?metric:string -> ?p:int -> ?metric_params:Py.Object.t -> ?include_self:[`Bool of bool | `Auto] -> ?n_jobs:[`Int of int | `None] -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> radius:float -> unit -> Csr_matrix.t
+val radius_neighbors_graph : ?mode:[`Connectivity | `Distance] -> ?metric:string -> ?p:int -> ?metric_params:Dict.t -> ?include_self:[`Bool of bool | `Auto] -> ?n_jobs:int -> x:[`Arr of Arr.t | `BallTree of Py.Object.t] -> radius:float -> unit -> Csr_matrix.t
 (**
 Computes the (weighted) graph of Neighbors for points in X
 

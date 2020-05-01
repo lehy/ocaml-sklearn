@@ -1,3 +1,6 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module DictVectorizer : sig
 type t
 val of_pyobject : Py.Object.t -> t
@@ -89,7 +92,7 @@ Returns
 self
 *)
 
-val fit_transform : ?y:Py.Object.t -> x:Py.Object.t -> t -> Ndarray.t
+val fit_transform : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Learn a list of feature name -> indices mappings and transform X.
 
@@ -117,7 +120,7 @@ If one-of-K coding is applied to categorical features, this will
 include the constructed feature names but not the original ones.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -133,7 +136,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : ?dict_type:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Py.Object.t
+val inverse_transform : ?dict_type:Py.Object.t -> x:Arr.t -> t -> Py.Object.t
 (**
 Transform array or sparse matrix X back to feature mappings.
 
@@ -158,7 +161,7 @@ D : list of dict_type objects, length = n_samples
     Feature mappings for the samples in X.
 *)
 
-val restrict : ?indices:Py.Object.t -> support:Ndarray.t -> t -> Py.Object.t
+val restrict : ?indices:Py.Object.t -> support:Arr.t -> t -> Py.Object.t
 (**
 Restrict the features to those in support using feature selection.
 
@@ -212,7 +215,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Py.Object.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Transform feature->value dicts to array or sparse matrix.
 
@@ -232,11 +235,19 @@ Xa : {array, sparse matrix}
 *)
 
 
-(** Attribute vocabulary_: see constructor for documentation *)
-val vocabulary_ : t -> Py.Object.t
+(** Attribute vocabulary_: get value or raise Not_found if None.*)
+val vocabulary_ : t -> Dict.t
 
-(** Attribute feature_names_: see constructor for documentation *)
-val feature_names_ : t -> Py.Object.t
+(** Attribute vocabulary_: get value as an option. *)
+val vocabulary_opt : t -> (Dict.t) option
+
+
+(** Attribute feature_names_: get value or raise Not_found if None.*)
+val feature_names_ : t -> Arr.t
+
+(** Attribute feature_names_: get value as an option. *)
+val feature_names_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -318,7 +329,7 @@ DictVectorizer : vectorizes string-valued features using a hash table.
 sklearn.preprocessing.OneHotEncoder : handles nominal/categorical features.
 *)
 
-val fit : ?x:Ndarray.t -> ?y:Py.Object.t -> t -> t
+val fit : ?x:Arr.t -> ?y:Py.Object.t -> t -> t
 (**
 No-op.
 
@@ -334,7 +345,7 @@ Returns
 self : FeatureHasher
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -358,7 +369,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -394,7 +405,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : raw_X:Py.Object.t -> t -> Ndarray.t
+val transform : raw_X:Py.Object.t -> t -> Arr.t
 (**
 Transform a sequence of instances to a scipy.sparse matrix.
 
@@ -460,6 +471,9 @@ calls in ``np.asarray`` to avoid type issues.
 *)
 
 module Image : sig
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module BaseEstimator : sig
 type t
 val of_pyobject : Py.Object.t -> t
@@ -476,7 +490,7 @@ at the class level in their ``__init__`` as explicit keyword
 arguments (no ``*args`` or ``**kwargs``).
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -531,7 +545,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?patch_size:Py.Object.t -> ?max_patches:[`Int of int | `Float of float] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
+val create : ?patch_size:Py.Object.t -> ?max_patches:[`I of int | `F of float] -> ?random_state:int -> unit -> t
 (**
 Extracts patches from a collection of images
 
@@ -571,7 +585,7 @@ Image shape: (427, 640, 3)
 Patches shape: (545706, 2, 2)
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Do nothing and return the estimator unchanged
 
@@ -584,7 +598,7 @@ X : array-like, shape [n_samples, n_features]
     Training data.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -620,7 +634,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Transforms the image samples in X into a matrix of patch data.
 
@@ -655,7 +669,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val as_strided : ?shape:int list -> ?strides:Py.Object.t -> ?subok:Py.Object.t -> ?writeable:bool -> x:Ndarray.t -> unit -> Ndarray.t
+val as_strided : ?shape:int list -> ?strides:Py.Object.t -> ?subok:Py.Object.t -> ?writeable:bool -> x:Arr.t -> unit -> Arr.t
 (**
 Create a view into the array with the given shape and strides.
 
@@ -712,7 +726,7 @@ For these reasons it is advisable to avoid ``as_strided`` when
 possible.
 *)
 
-val check_array : ?accept_sparse:[`String of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`String of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C | `None] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:[`Bool of bool | `None] -> ?estimator:[`String of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
+val check_array : ?accept_sparse:[`S of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`S of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:bool -> ?estimator:[`S of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
 (**
 Input validation on an array, list, sparse matrix or similar.
 
@@ -804,7 +818,7 @@ array_converted : object
     The converted and validated array.
 *)
 
-val check_random_state : seed:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> Py.Object.t
+val check_random_state : seed:[`I of int | `RandomState of Py.Object.t | `None] -> unit -> Py.Object.t
 (**
 Turn seed into a np.random.RandomState instance
 
@@ -860,7 +874,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val extract_patches : ?patch_shape:[`Int of int | `PyObject of Py.Object.t] -> ?extraction_step:[`Int of int | `PyObject of Py.Object.t] -> arr:Ndarray.t -> unit -> Py.Object.t
+val extract_patches : ?patch_shape:[`I of int | `Tuple of Py.Object.t] -> ?extraction_step:[`I of int | `Tuple of Py.Object.t] -> arr:Arr.t -> unit -> Py.Object.t
 (**
 DEPRECATED: The function feature_extraction.image.extract_patches has been deprecated in 0.22 and will be removed in 0.24.
 
@@ -900,7 +914,7 @@ Extracts patches of any n-dimensional array in place using strides.
     
 *)
 
-val extract_patches_2d : ?max_patches:[`Int of int | `Float of float] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> image:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> patch_size:Py.Object.t -> unit -> Py.Object.t
+val extract_patches_2d : ?max_patches:[`I of int | `F of float] -> ?random_state:int -> image:[`Arr of Arr.t | `Or of Py.Object.t] -> patch_size:Py.Object.t -> unit -> Py.Object.t
 (**
 Reshape a 2D image into a collection of patches
 
@@ -993,7 +1007,7 @@ For compatibility, user code relying on this method should wrap its
 calls in ``np.asarray`` to avoid type issues.
 *)
 
-val img_to_graph : ?mask:Py.Object.t -> ?return_as:Py.Object.t -> ?dtype:Py.Object.t -> img:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val img_to_graph : ?mask:Py.Object.t -> ?return_as:Py.Object.t -> ?dtype:Py.Object.t -> img:[`Arr of Arr.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
 (**
 Graph of the pixel-to-pixel gradient connections
 
@@ -1024,7 +1038,7 @@ For compatibility, user code relying on this method should wrap its
 calls in ``np.asarray`` to avoid type issues.
 *)
 
-val reconstruct_from_patches_2d : patches:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> image_size:Py.Object.t -> unit -> Py.Object.t
+val reconstruct_from_patches_2d : patches:[`Arr of Arr.t | `Or of Py.Object.t] -> image_size:Py.Object.t -> unit -> Py.Object.t
 (**
 Reconstruct the image from all of its patches.
 
@@ -1055,7 +1069,7 @@ image : array, shape = image_size
 
 end
 
-val img_to_graph : ?mask:Py.Object.t -> ?return_as:Py.Object.t -> ?dtype:Py.Object.t -> img:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val img_to_graph : ?mask:Py.Object.t -> ?return_as:Py.Object.t -> ?dtype:Py.Object.t -> img:[`Arr of Arr.t | `PyObject of Py.Object.t] -> unit -> Py.Object.t
 (**
 Graph of the pixel-to-pixel gradient connections
 
@@ -1087,6 +1101,9 @@ calls in ``np.asarray`` to avoid type issues.
 *)
 
 module Text : sig
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module BaseEstimator : sig
 type t
 val of_pyobject : Py.Object.t -> t
@@ -1103,7 +1120,7 @@ at the class level in their ``__init__`` as explicit keyword
 arguments (no ``*args`` or ``**kwargs``).
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1158,7 +1175,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?input:[`Filename | `File | `Content] -> ?encoding:[`String of string | `PyObject of Py.Object.t] -> ?decode_error:[`Strict | `Ignore | `Replace] -> ?strip_accents:[`Ascii | `Unicode | `None] -> ?lowercase:bool -> ?preprocessor:[`Callable of Py.Object.t | `None] -> ?tokenizer:[`Callable of Py.Object.t | `None] -> ?stop_words:[`English | `ArrayLike of Py.Object.t | `None] -> ?token_pattern:string -> ?ngram_range:Py.Object.t -> ?analyzer:[`String of string | `Word | `Char | `Char_wb | `Callable of Py.Object.t] -> ?max_df:[`Int of int | `PyObject of Py.Object.t] -> ?min_df:[`Int of int | `PyObject of Py.Object.t] -> ?max_features:[`Int of int | `None] -> ?vocabulary:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> ?binary:bool -> ?dtype:Py.Object.t -> unit -> t
+val create : ?input:[`Filename | `File | `Content] -> ?encoding:[`S of string | `T_utf_8_by of Py.Object.t] -> ?decode_error:[`Strict | `Ignore | `Replace] -> ?strip_accents:[`Ascii | `Unicode] -> ?lowercase:bool -> ?preprocessor:Py.Object.t -> ?tokenizer:Py.Object.t -> ?stop_words:[`English | `Arr of Arr.t] -> ?token_pattern:string -> ?ngram_range:Py.Object.t -> ?analyzer:[`S of string | `Word | `Char | `Char_wb | `Callable of Py.Object.t] -> ?max_df:[`F of float | `I of int] -> ?min_df:[`F of float | `I of int] -> ?max_features:int -> ?vocabulary:[`Mapping of Py.Object.t | `Arr of Arr.t] -> ?binary:bool -> ?dtype:Py.Object.t -> unit -> t
 (**
 Convert a collection of text documents to a matrix of token counts
 
@@ -1405,7 +1422,7 @@ doc: str
     A string of unicode symbols.
 *)
 
-val fit : ?y:Py.Object.t -> raw_documents:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> raw_documents:Arr.t -> t -> t
 (**
 Learn a vocabulary dictionary of all tokens in the raw documents.
 
@@ -1419,7 +1436,7 @@ Returns
 self
 *)
 
-val fit_transform : ?y:Py.Object.t -> raw_documents:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Py.Object.t -> raw_documents:Arr.t -> t -> Arr.t
 (**
 Learn the vocabulary dictionary and return term-document matrix.
 
@@ -1447,7 +1464,7 @@ feature_names : list
     A list of feature names.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1473,7 +1490,7 @@ stop_words: list or None
         A list of stop words.
 *)
 
-val inverse_transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Py.Object.t
+val inverse_transform : x:Arr.t -> t -> Py.Object.t
 (**
 Return terms per document with nonzero entries in X.
 
@@ -1508,7 +1525,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : raw_documents:Ndarray.t -> t -> Ndarray.t
+val transform : raw_documents:Arr.t -> t -> Arr.t
 (**
 Transform documents to document-term matrix.
 
@@ -1527,14 +1544,26 @@ X : sparse matrix, [n_samples, n_features]
 *)
 
 
-(** Attribute vocabulary_: see constructor for documentation *)
-val vocabulary_ : t -> Py.Object.t
+(** Attribute vocabulary_: get value or raise Not_found if None.*)
+val vocabulary_ : t -> Dict.t
 
-(** Attribute fixed_vocabulary_: see constructor for documentation *)
+(** Attribute vocabulary_: get value as an option. *)
+val vocabulary_opt : t -> (Dict.t) option
+
+
+(** Attribute fixed_vocabulary_: get value or raise Not_found if None.*)
 val fixed_vocabulary_ : t -> bool
 
-(** Attribute stop_words_: see constructor for documentation *)
+(** Attribute fixed_vocabulary_: get value as an option. *)
+val fixed_vocabulary_opt : t -> (bool) option
+
+
+(** Attribute stop_words_: get value or raise Not_found if None.*)
 val stop_words_ : t -> Py.Object.t
+
+(** Attribute stop_words_: get value as an option. *)
+val stop_words_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1616,7 +1645,7 @@ DictVectorizer : vectorizes string-valued features using a hash table.
 sklearn.preprocessing.OneHotEncoder : handles nominal/categorical features.
 *)
 
-val fit : ?x:Ndarray.t -> ?y:Py.Object.t -> t -> t
+val fit : ?x:Arr.t -> ?y:Py.Object.t -> t -> t
 (**
 No-op.
 
@@ -1632,7 +1661,7 @@ Returns
 self : FeatureHasher
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -1656,7 +1685,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1692,7 +1721,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : raw_X:Py.Object.t -> t -> Ndarray.t
+val transform : raw_X:Py.Object.t -> t -> Arr.t
 (**
 Transform a sequence of instances to a scipy.sparse matrix.
 
@@ -1730,7 +1759,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?input:[`Filename | `File | `Content] -> ?encoding:string -> ?decode_error:[`Strict | `Ignore | `Replace] -> ?strip_accents:[`Ascii | `Unicode | `None] -> ?lowercase:bool -> ?preprocessor:[`Callable of Py.Object.t | `None] -> ?tokenizer:[`Callable of Py.Object.t | `None] -> ?stop_words:[`English | `ArrayLike of Py.Object.t | `None] -> ?token_pattern:string -> ?ngram_range:Py.Object.t -> ?analyzer:[`String of string | `Word | `Char | `Char_wb | `Callable of Py.Object.t] -> ?n_features:int -> ?binary:bool -> ?norm:[`L1 | `L2 | `None] -> ?alternate_sign:bool -> ?dtype:Py.Object.t -> unit -> t
+val create : ?input:[`Filename | `File | `Content] -> ?encoding:string -> ?decode_error:[`Strict | `Ignore | `Replace] -> ?strip_accents:[`Ascii | `Unicode] -> ?lowercase:bool -> ?preprocessor:Py.Object.t -> ?tokenizer:Py.Object.t -> ?stop_words:[`English | `Arr of Arr.t] -> ?token_pattern:string -> ?ngram_range:Py.Object.t -> ?analyzer:[`S of string | `Word | `Char | `Char_wb | `Callable of Py.Object.t] -> ?n_features:int -> ?binary:bool -> ?norm:[`L1 | `L2 | `None] -> ?alternate_sign:bool -> ?dtype:Py.Object.t -> unit -> t
 (**
 Convert a collection of text documents to a matrix of token occurrences
 
@@ -1946,7 +1975,7 @@ doc: str
     A string of unicode symbols.
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Does nothing: this transformer is stateless.
 
@@ -1956,7 +1985,7 @@ X : array-like, shape [n_samples, n_features]
     Training data.
 *)
 
-val fit_transform : ?y:Py.Object.t -> x:Py.Object.t -> t -> Ndarray.t
+val fit_transform : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Transform a sequence of documents to a document-term matrix.
 
@@ -1976,7 +2005,7 @@ X : sparse matrix of shape (n_samples, n_features)
     Document-term matrix.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2002,7 +2031,7 @@ stop_words: list or None
         A list of stop words.
 *)
 
-val partial_fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> Py.Object.t
+val partial_fit : ?y:Py.Object.t -> x:Arr.t -> t -> Py.Object.t
 (**
 Does nothing: this transformer is stateless.
 
@@ -2035,7 +2064,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Py.Object.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Transform a sequence of documents to a document-term matrix.
 
@@ -2188,7 +2217,7 @@ X : sparse matrix, [n_samples, n_features]
     a matrix of term/token counts
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -2212,7 +2241,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2248,7 +2277,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : ?copy:bool -> x:Csr_matrix.t -> t -> Ndarray.t
+val transform : ?copy:bool -> x:Arr.t -> t -> Arr.t
 (**
 Transform a count matrix to a tf or tf-idf representation
 
@@ -2267,8 +2296,12 @@ vectors : sparse matrix, [n_samples, n_features]
 *)
 
 
-(** Attribute idf_: see constructor for documentation *)
-val idf_ : t -> Ndarray.t
+(** Attribute idf_: get value or raise Not_found if None.*)
+val idf_ : t -> Arr.t
+
+(** Attribute idf_: get value as an option. *)
+val idf_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2288,7 +2321,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?input:[`Filename | `File | `Content] -> ?encoding:string -> ?decode_error:[`Strict | `Ignore | `Replace] -> ?strip_accents:[`Ascii | `Unicode | `None] -> ?lowercase:bool -> ?preprocessor:[`Callable of Py.Object.t | `None] -> ?tokenizer:[`Callable of Py.Object.t | `None] -> ?analyzer:[`String of string | `Word | `Char | `Char_wb | `Callable of Py.Object.t] -> ?stop_words:[`English | `ArrayLike of Py.Object.t | `None] -> ?token_pattern:string -> ?ngram_range:Py.Object.t -> ?max_df:[`Int of int | `PyObject of Py.Object.t] -> ?min_df:[`Int of int | `PyObject of Py.Object.t] -> ?max_features:[`Int of int | `None] -> ?vocabulary:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> ?binary:bool -> ?dtype:Py.Object.t -> ?norm:[`L1 | `L2 | `None] -> ?use_idf:bool -> ?smooth_idf:bool -> ?sublinear_tf:bool -> unit -> t
+val create : ?input:[`Filename | `File | `Content] -> ?encoding:string -> ?decode_error:[`Strict | `Ignore | `Replace] -> ?strip_accents:[`Ascii | `Unicode] -> ?lowercase:bool -> ?preprocessor:Py.Object.t -> ?tokenizer:Py.Object.t -> ?analyzer:[`S of string | `Word | `Char | `Char_wb | `Callable of Py.Object.t] -> ?stop_words:[`English | `Arr of Arr.t] -> ?token_pattern:string -> ?ngram_range:Py.Object.t -> ?max_df:[`F of float | `I of int] -> ?min_df:[`F of float | `I of int] -> ?max_features:int -> ?vocabulary:[`Mapping of Py.Object.t | `Arr of Arr.t] -> ?binary:bool -> ?dtype:Py.Object.t -> ?norm:[`L1 | `L2 | `None] -> ?use_idf:bool -> ?smooth_idf:bool -> ?sublinear_tf:bool -> unit -> t
 (**
 Convert a collection of raw documents to a matrix of TF-IDF features.
 
@@ -2542,7 +2575,7 @@ doc: str
     A string of unicode symbols.
 *)
 
-val fit : ?y:Py.Object.t -> raw_documents:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> raw_documents:Arr.t -> t -> t
 (**
 Learn vocabulary and idf from training set.
 
@@ -2559,7 +2592,7 @@ self : object
     Fitted vectorizer.
 *)
 
-val fit_transform : ?y:Py.Object.t -> raw_documents:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Py.Object.t -> raw_documents:Arr.t -> t -> Arr.t
 (**
 Learn vocabulary and idf, return term-document matrix.
 
@@ -2589,7 +2622,7 @@ feature_names : list
     A list of feature names.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2615,7 +2648,7 @@ stop_words: list or None
         A list of stop words.
 *)
 
-val inverse_transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Py.Object.t
+val inverse_transform : x:Arr.t -> t -> Py.Object.t
 (**
 Return terms per document with nonzero entries in X.
 
@@ -2650,7 +2683,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : ?copy:bool -> raw_documents:Ndarray.t -> t -> Ndarray.t
+val transform : ?copy:bool -> raw_documents:Arr.t -> t -> Arr.t
 (**
 Transform documents to document-term matrix.
 
@@ -2678,17 +2711,33 @@ X : sparse matrix, [n_samples, n_features]
 *)
 
 
-(** Attribute vocabulary_: see constructor for documentation *)
-val vocabulary_ : t -> Py.Object.t
+(** Attribute vocabulary_: get value or raise Not_found if None.*)
+val vocabulary_ : t -> Dict.t
 
-(** Attribute fixed_vocabulary_: see constructor for documentation *)
+(** Attribute vocabulary_: get value as an option. *)
+val vocabulary_opt : t -> (Dict.t) option
+
+
+(** Attribute fixed_vocabulary_: get value or raise Not_found if None.*)
 val fixed_vocabulary_ : t -> bool
 
-(** Attribute idf_: see constructor for documentation *)
-val idf_ : t -> Ndarray.t
+(** Attribute fixed_vocabulary_: get value as an option. *)
+val fixed_vocabulary_opt : t -> (bool) option
 
-(** Attribute stop_words_: see constructor for documentation *)
+
+(** Attribute idf_: get value or raise Not_found if None.*)
+val idf_ : t -> Arr.t
+
+(** Attribute idf_: get value as an option. *)
+val idf_opt : t -> (Arr.t) option
+
+
+(** Attribute stop_words_: get value or raise Not_found if None.*)
 val stop_words_ : t -> Py.Object.t
+
+(** Attribute stop_words_: get value as an option. *)
+val stop_words_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2713,7 +2762,7 @@ val create : unit -> t
 Mixin class for all transformers in scikit-learn.
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -2751,7 +2800,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val check_array : ?accept_sparse:[`String of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`String of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C | `None] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:[`Bool of bool | `None] -> ?estimator:[`String of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
+val check_array : ?accept_sparse:[`S of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`S of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:bool -> ?estimator:[`S of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
 (**
 Input validation on an array, list, sparse matrix or similar.
 
@@ -2843,7 +2892,7 @@ array_converted : object
     The converted and validated array.
 *)
 
-val check_is_fitted : ?attributes:[`String of string | `ArrayLike of Py.Object.t | `StringList of string list] -> ?msg:string -> ?all_or_any:[`Callable of Py.Object.t | `PyObject of Py.Object.t] -> estimator:Py.Object.t -> unit -> Py.Object.t
+val check_is_fitted : ?attributes:[`S of string | `Arr of Arr.t | `StringList of string list] -> ?msg:string -> ?all_or_any:[`Callable of Py.Object.t | `PyObject of Py.Object.t] -> estimator:Py.Object.t -> unit -> Py.Object.t
 (**
 Perform is_fitted validation for estimator.
 
@@ -2933,7 +2982,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val normalize : ?norm:[`L1 | `L2 | `Max | `PyObject of Py.Object.t] -> ?axis:Py.Object.t -> ?copy:bool -> ?return_norm:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> (Py.Object.t * Py.Object.t)
+val normalize : ?norm:[`L1 | `L2 | `Max | `T_l2_by of Py.Object.t] -> ?axis:[`Zero | `One | `T_1_by of Py.Object.t] -> ?copy:bool -> ?return_norm:bool -> x:Arr.t -> unit -> (Arr.t * Py.Object.t)
 (**
 Scale input vectors individually to unit norm (vector length).
 

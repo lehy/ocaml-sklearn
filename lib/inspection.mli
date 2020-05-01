@@ -1,9 +1,12 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module PartialDependenceDisplay : sig
 type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : pd_results:Py.Object.t -> features:Py.Object.t -> feature_names:string list -> target_idx:int -> pdp_lim:Py.Object.t -> deciles:Py.Object.t -> unit -> t
+val create : pd_results:Py.Object.t -> features:Py.Object.t -> feature_names:string list -> target_idx:int -> pdp_lim:Dict.t -> deciles:Dict.t -> unit -> t
 (**
 Partial Dependence Plot (PDP) visualization.
 
@@ -82,7 +85,7 @@ figure_ : matplotlib Figure
     Figure containing partial dependence plots.
 *)
 
-val plot : ?ax:Py.Object.t -> ?n_cols:int -> ?line_kw:Py.Object.t -> ?contour_kw:Py.Object.t -> t -> Py.Object.t
+val plot : ?ax:Py.Object.t -> ?n_cols:int -> ?line_kw:Dict.t -> ?contour_kw:Dict.t -> t -> Py.Object.t
 (**
 Plot partial dependence plots.
 
@@ -116,20 +119,40 @@ display: :class:`~sklearn.inspection.PartialDependenceDisplay`
 *)
 
 
-(** Attribute bounding_ax_: see constructor for documentation *)
+(** Attribute bounding_ax_: get value or raise Not_found if None.*)
 val bounding_ax_ : t -> Py.Object.t
 
-(** Attribute axes_: see constructor for documentation *)
+(** Attribute bounding_ax_: get value as an option. *)
+val bounding_ax_opt : t -> (Py.Object.t) option
+
+
+(** Attribute axes_: get value or raise Not_found if None.*)
 val axes_ : t -> Py.Object.t
 
-(** Attribute lines_: see constructor for documentation *)
+(** Attribute axes_: get value as an option. *)
+val axes_opt : t -> (Py.Object.t) option
+
+
+(** Attribute lines_: get value or raise Not_found if None.*)
 val lines_ : t -> Py.Object.t
 
-(** Attribute contours_: see constructor for documentation *)
+(** Attribute lines_: get value as an option. *)
+val lines_opt : t -> (Py.Object.t) option
+
+
+(** Attribute contours_: get value or raise Not_found if None.*)
 val contours_ : t -> Py.Object.t
 
-(** Attribute figure_: see constructor for documentation *)
+(** Attribute contours_: get value as an option. *)
+val contours_opt : t -> (Py.Object.t) option
+
+
+(** Attribute figure_: get value or raise Not_found if None.*)
 val figure_ : t -> Py.Object.t
+
+(** Attribute figure_: get value as an option. *)
+val figure_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -144,7 +167,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val partial_dependence : ?response_method:[`Auto | `Predict_proba | `Decision_function] -> ?percentiles:Py.Object.t -> ?grid_resolution:int -> ?method_:string -> estimator:Py.Object.t -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> features:Py.Object.t -> unit -> (Ndarray.t * Py.Object.t)
+val partial_dependence : ?response_method:[`Auto | `Predict_proba | `Decision_function] -> ?percentiles:Py.Object.t -> ?grid_resolution:int -> ?method_:string -> estimator:Py.Object.t -> x:[`Arr of Arr.t | `Dataframe of Py.Object.t] -> features:Py.Object.t -> unit -> (Arr.t * Py.Object.t)
 (**
 Partial dependence of ``features``.
 
@@ -267,7 +290,7 @@ dependence values are incorrect for 'recursion'. This is not relevant for
 ``init`` parameter.
 *)
 
-val permutation_importance : ?scoring:[`String of string | `Callable of Py.Object.t | `None] -> ?n_repeats:int -> ?n_jobs:[`Int of int | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> estimator:Py.Object.t -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> y:[`Ndarray of Ndarray.t | `None] -> unit -> (Py.Object.t * Ndarray.t)
+val permutation_importance : ?scoring:[`S of string | `Callable of Py.Object.t] -> ?n_repeats:int -> ?n_jobs:int -> ?random_state:int -> estimator:Py.Object.t -> x:[`Arr of Arr.t | `DataFrame of Py.Object.t] -> y:[`Arr of Arr.t | `None] -> unit -> (Py.Object.t * Arr.t)
 (**
 Permutation importance for feature evaluation [BRE]_.
 
@@ -330,7 +353,7 @@ References
          2001. https://doi.org/10.1023/A:1010933404324
 *)
 
-val plot_partial_dependence : ?feature_names:[`StringList of string list | `PyObject of Py.Object.t] -> ?target:int -> ?response_method:[`Auto | `Predict_proba | `Decision_function] -> ?n_cols:int -> ?grid_resolution:int -> ?percentiles:Py.Object.t -> ?method_:string -> ?n_jobs:int -> ?verbose:int -> ?fig:Py.Object.t -> ?line_kw:Py.Object.t -> ?contour_kw:Py.Object.t -> ?ax:Py.Object.t -> estimator:Py.Object.t -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> features:[`String of string | `PyObject of Py.Object.t] -> unit -> Py.Object.t
+val plot_partial_dependence : ?feature_names:[`StringList of string list | `Dtype_str of Py.Object.t] -> ?target:int -> ?response_method:[`Auto | `Predict_proba | `Decision_function] -> ?n_cols:int -> ?grid_resolution:int -> ?percentiles:Py.Object.t -> ?method_:string -> ?n_jobs:int -> ?verbose:int -> ?fig:Py.Object.t -> ?line_kw:Dict.t -> ?contour_kw:Dict.t -> ?ax:Py.Object.t -> estimator:Py.Object.t -> x:[`Arr of Arr.t | `Dataframe of Py.Object.t] -> features:[`S of string | `PyObject of Py.Object.t] -> unit -> Py.Object.t
 (**
 Partial dependence plots.
 

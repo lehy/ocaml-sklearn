@@ -1,9 +1,12 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module DictionaryLearning : sig
 type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_components:int -> ?alpha:float -> ?max_iter:int -> ?tol:float -> ?fit_algorithm:[`Lars | `Cd] -> ?transform_algorithm:[`Lasso_lars | `Lasso_cd | `Lars | `Omp | `Threshold] -> ?transform_n_nonzero_coefs:int -> ?transform_alpha:float -> ?n_jobs:[`Int of int | `None] -> ?code_init:Ndarray.t -> ?dict_init:Ndarray.t -> ?verbose:bool -> ?split_sign:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?positive_code:bool -> ?positive_dict:bool -> ?transform_max_iter:int -> unit -> t
+val create : ?n_components:int -> ?alpha:float -> ?max_iter:int -> ?tol:float -> ?fit_algorithm:[`Lars | `Cd] -> ?transform_algorithm:[`Lasso_lars | `Lasso_cd | `Lars | `Omp | `Threshold] -> ?transform_n_nonzero_coefs:int -> ?transform_alpha:float -> ?n_jobs:int -> ?code_init:Arr.t -> ?dict_init:Arr.t -> ?verbose:int -> ?split_sign:bool -> ?random_state:int -> ?positive_code:bool -> ?positive_dict:bool -> ?transform_max_iter:int -> unit -> t
 (**
 Dictionary learning
 
@@ -138,7 +141,7 @@ SparsePCA
 MiniBatchSparsePCA
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fit the model from data in X.
 
@@ -156,7 +159,7 @@ self : object
     Returns the object itself
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -180,7 +183,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -216,7 +219,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Encode the data as a sparse combination of the dictionary atoms.
 
@@ -236,14 +239,26 @@ X_new : array, shape (n_samples, n_components)
 *)
 
 
-(** Attribute components_: see constructor for documentation *)
-val components_ : t -> Ndarray.t
+(** Attribute components_: get value or raise Not_found if None.*)
+val components_ : t -> Arr.t
 
-(** Attribute error_: see constructor for documentation *)
-val error_ : t -> Ndarray.t
+(** Attribute components_: get value as an option. *)
+val components_opt : t -> (Arr.t) option
 
-(** Attribute n_iter_: see constructor for documentation *)
+
+(** Attribute error_: get value or raise Not_found if None.*)
+val error_ : t -> Arr.t
+
+(** Attribute error_: get value as an option. *)
+val error_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -263,7 +278,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_components:[`Int of int | `None] -> ?tol:float -> ?copy:bool -> ?max_iter:int -> ?noise_variance_init:[`Ndarray of Ndarray.t | `None] -> ?svd_method:[`Lapack | `Randomized] -> ?iterated_power:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
+val create : ?n_components:int -> ?tol:float -> ?copy:bool -> ?max_iter:int -> ?noise_variance_init:Arr.t -> ?svd_method:[`Lapack | `Randomized] -> ?iterated_power:int -> ?random_state:int -> unit -> t
 (**
 Factor Analysis (FA)
 
@@ -372,7 +387,7 @@ FastICA: Independent component analysis, a latent variable model with
     non-Gaussian latent variables.
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fit the FactorAnalysis model to X using SVD based approach
 
@@ -388,7 +403,7 @@ Returns
 self
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -412,7 +427,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_covariance : t -> Ndarray.t
+val get_covariance : t -> Arr.t
 (**
 Compute data covariance with the FactorAnalysis model.
 
@@ -424,7 +439,7 @@ cov : array, shape (n_features, n_features)
     Estimated covariance of data.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -440,7 +455,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val get_precision : t -> Ndarray.t
+val get_precision : t -> Arr.t
 (**
 Compute data precision matrix with the FactorAnalysis model.
 
@@ -450,7 +465,7 @@ precision : array, shape (n_features, n_features)
     Estimated precision of data.
 *)
 
-val score : ?y:Py.Object.t -> x:Ndarray.t -> t -> float
+val score : ?y:Py.Object.t -> x:Arr.t -> t -> float
 (**
 Compute the average log-likelihood of the samples
 
@@ -467,7 +482,7 @@ ll : float
     Average log-likelihood of the samples under the current model
 *)
 
-val score_samples : x:Ndarray.t -> t -> Ndarray.t
+val score_samples : x:Arr.t -> t -> Arr.t
 (**
 Compute the log-likelihood of each sample
 
@@ -502,7 +517,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Apply dimensionality reduction to X using the model.
 
@@ -521,20 +536,40 @@ X_new : array-like, shape (n_samples, n_components)
 *)
 
 
-(** Attribute components_: see constructor for documentation *)
-val components_ : t -> Ndarray.t
+(** Attribute components_: get value or raise Not_found if None.*)
+val components_ : t -> Arr.t
 
-(** Attribute loglike_: see constructor for documentation *)
+(** Attribute components_: get value as an option. *)
+val components_opt : t -> (Arr.t) option
+
+
+(** Attribute loglike_: get value or raise Not_found if None.*)
 val loglike_ : t -> Py.Object.t
 
-(** Attribute noise_variance_: see constructor for documentation *)
-val noise_variance_ : t -> Ndarray.t
+(** Attribute loglike_: get value as an option. *)
+val loglike_opt : t -> (Py.Object.t) option
 
-(** Attribute n_iter_: see constructor for documentation *)
+
+(** Attribute noise_variance_: get value or raise Not_found if None.*)
+val noise_variance_ : t -> Arr.t
+
+(** Attribute noise_variance_: get value as an option. *)
+val noise_variance_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
 
-(** Attribute mean_: see constructor for documentation *)
-val mean_ : t -> Ndarray.t
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
+
+(** Attribute mean_: get value or raise Not_found if None.*)
+val mean_ : t -> Arr.t
+
+(** Attribute mean_: get value as an option. *)
+val mean_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -554,7 +589,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_components:int -> ?algorithm:[`Parallel | `Deflation] -> ?whiten:bool -> ?fun_:[`String of string | `Callable of Py.Object.t] -> ?fun_args:Py.Object.t -> ?max_iter:int -> ?tol:float -> ?w_init:Py.Object.t -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
+val create : ?n_components:int -> ?algorithm:[`Parallel | `Deflation] -> ?whiten:bool -> ?fun_:[`S of string | `Callable of Py.Object.t] -> ?fun_args:Dict.t -> ?max_iter:int -> ?tol:float -> ?w_init:Py.Object.t -> ?random_state:int -> unit -> t
 (**
 FastICA: a fast algorithm for Independent Component Analysis.
 
@@ -646,7 +681,7 @@ Algorithms and Applications, Neural Networks, 13(4-5), 2000,
 pp. 411-430*
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fit the model to X.
 
@@ -663,7 +698,7 @@ Returns
 self
 *)
 
-val fit_transform : ?y:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Fit the model and recover the sources from X.
 
@@ -680,7 +715,7 @@ Returns
 X_new : array-like, shape (n_samples, n_components)
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -696,7 +731,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : ?copy:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : ?copy:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Transform the sources back to the mixed data (apply mixing matrix).
 
@@ -733,7 +768,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : ?copy:bool -> x:Ndarray.t -> t -> Ndarray.t
+val transform : ?copy:bool -> x:Arr.t -> t -> Arr.t
 (**
 Recover the sources from X (apply the unmixing matrix).
 
@@ -752,20 +787,40 @@ X_new : array-like, shape (n_samples, n_components)
 *)
 
 
-(** Attribute components_: see constructor for documentation *)
+(** Attribute components_: get value or raise Not_found if None.*)
 val components_ : t -> Py.Object.t
 
-(** Attribute mixing_: see constructor for documentation *)
-val mixing_ : t -> Ndarray.t
+(** Attribute components_: get value as an option. *)
+val components_opt : t -> (Py.Object.t) option
 
-(** Attribute mean_: see constructor for documentation *)
-val mean_ : t -> Ndarray.t
 
-(** Attribute n_iter_: see constructor for documentation *)
+(** Attribute mixing_: get value or raise Not_found if None.*)
+val mixing_ : t -> Arr.t
+
+(** Attribute mixing_: get value as an option. *)
+val mixing_opt : t -> (Arr.t) option
+
+
+(** Attribute mean_: get value or raise Not_found if None.*)
+val mean_ : t -> Arr.t
+
+(** Attribute mean_: get value as an option. *)
+val mean_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
 
-(** Attribute whitening_: see constructor for documentation *)
-val whitening_ : t -> Ndarray.t
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
+
+(** Attribute whitening_: get value or raise Not_found if None.*)
+val whitening_ : t -> Arr.t
+
+(** Attribute whitening_: get value as an option. *)
+val whitening_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -785,7 +840,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_components:[`Int of int | `None] -> ?whiten:bool -> ?copy:bool -> ?batch_size:[`Int of int | `None] -> unit -> t
+val create : ?n_components:int -> ?whiten:bool -> ?copy:bool -> ?batch_size:int -> unit -> t
 (**
 Incremental principal components analysis (IPCA).
 
@@ -935,7 +990,7 @@ SparsePCA
 TruncatedSVD
 *)
 
-val fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fit the model with X, using minibatches of size batch_size.
 
@@ -953,7 +1008,7 @@ self : object
     Returns the instance itself.
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -977,7 +1032,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_covariance : t -> Ndarray.t
+val get_covariance : t -> Arr.t
 (**
 Compute data covariance with the generative model.
 
@@ -991,7 +1046,7 @@ cov : array, shape=(n_features, n_features)
     Estimated covariance of data.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1007,7 +1062,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val get_precision : t -> Ndarray.t
+val get_precision : t -> Arr.t
 (**
 Compute data precision matrix with the generative model.
 
@@ -1020,7 +1075,7 @@ precision : array, shape=(n_features, n_features)
     Estimated precision of data.
 *)
 
-val inverse_transform : x:Ndarray.t -> t -> Py.Object.t
+val inverse_transform : x:Arr.t -> t -> Py.Object.t
 (**
 Transform data back to its original space.
 
@@ -1042,7 +1097,7 @@ If whitening is enabled, inverse_transform will compute the
 exact inverse operation, which includes reversing whitening.
 *)
 
-val partial_fit : ?y:Py.Object.t -> ?check_input:Py.Object.t -> x:Ndarray.t -> t -> t
+val partial_fit : ?y:Py.Object.t -> ?check_input:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Incremental fit with X. All of X is processed as a single batch.
 
@@ -1082,7 +1137,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Apply dimensionality reduction to X.
 
@@ -1114,32 +1169,68 @@ IncrementalPCA(batch_size=3, n_components=2)
 *)
 
 
-(** Attribute components_: see constructor for documentation *)
-val components_ : t -> Ndarray.t
+(** Attribute components_: get value or raise Not_found if None.*)
+val components_ : t -> Arr.t
 
-(** Attribute explained_variance_: see constructor for documentation *)
-val explained_variance_ : t -> Ndarray.t
+(** Attribute components_: get value as an option. *)
+val components_opt : t -> (Arr.t) option
 
-(** Attribute explained_variance_ratio_: see constructor for documentation *)
-val explained_variance_ratio_ : t -> Ndarray.t
 
-(** Attribute singular_values_: see constructor for documentation *)
-val singular_values_ : t -> Ndarray.t
+(** Attribute explained_variance_: get value or raise Not_found if None.*)
+val explained_variance_ : t -> Arr.t
 
-(** Attribute mean_: see constructor for documentation *)
-val mean_ : t -> Ndarray.t
+(** Attribute explained_variance_: get value as an option. *)
+val explained_variance_opt : t -> (Arr.t) option
 
-(** Attribute var_: see constructor for documentation *)
-val var_ : t -> Ndarray.t
 
-(** Attribute noise_variance_: see constructor for documentation *)
+(** Attribute explained_variance_ratio_: get value or raise Not_found if None.*)
+val explained_variance_ratio_ : t -> Arr.t
+
+(** Attribute explained_variance_ratio_: get value as an option. *)
+val explained_variance_ratio_opt : t -> (Arr.t) option
+
+
+(** Attribute singular_values_: get value or raise Not_found if None.*)
+val singular_values_ : t -> Arr.t
+
+(** Attribute singular_values_: get value as an option. *)
+val singular_values_opt : t -> (Arr.t) option
+
+
+(** Attribute mean_: get value or raise Not_found if None.*)
+val mean_ : t -> Arr.t
+
+(** Attribute mean_: get value as an option. *)
+val mean_opt : t -> (Arr.t) option
+
+
+(** Attribute var_: get value or raise Not_found if None.*)
+val var_ : t -> Arr.t
+
+(** Attribute var_: get value as an option. *)
+val var_opt : t -> (Arr.t) option
+
+
+(** Attribute noise_variance_: get value or raise Not_found if None.*)
 val noise_variance_ : t -> float
 
-(** Attribute n_components_: see constructor for documentation *)
+(** Attribute noise_variance_: get value as an option. *)
+val noise_variance_opt : t -> (float) option
+
+
+(** Attribute n_components_: get value or raise Not_found if None.*)
 val n_components_ : t -> int
 
-(** Attribute n_samples_seen_: see constructor for documentation *)
+(** Attribute n_components_: get value as an option. *)
+val n_components_opt : t -> (int) option
+
+
+(** Attribute n_samples_seen_: get value or raise Not_found if None.*)
 val n_samples_seen_ : t -> int
+
+(** Attribute n_samples_seen_: get value as an option. *)
+val n_samples_seen_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1159,7 +1250,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_components:int -> ?kernel:[`Linear | `Poly | `Rbf | `Sigmoid | `Cosine | `Precomputed] -> ?gamma:float -> ?degree:int -> ?coef0:float -> ?kernel_params:Py.Object.t -> ?alpha:int -> ?fit_inverse_transform:bool -> ?eigen_solver:[`Auto | `Dense | `Arpack] -> ?tol:float -> ?max_iter:int -> ?remove_zero_eig:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?copy_X:bool -> ?n_jobs:[`Int of int | `None] -> unit -> t
+val create : ?n_components:int -> ?kernel:[`Linear | `Poly | `Rbf | `Sigmoid | `Cosine | `Precomputed] -> ?gamma:float -> ?degree:int -> ?coef0:float -> ?kernel_params:Dict.t -> ?alpha:int -> ?fit_inverse_transform:bool -> ?eigen_solver:[`Auto | `Dense | `Arpack] -> ?tol:float -> ?max_iter:int -> ?remove_zero_eig:bool -> ?random_state:int -> ?copy_X:bool -> ?n_jobs:int -> unit -> t
 (**
 Kernel Principal component analysis (KPCA)
 
@@ -1284,7 +1375,7 @@ Kernel PCA was introduced in:
     MIT Press, Cambridge, MA, USA 327-352.
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fit the model from data in X.
 
@@ -1300,7 +1391,7 @@ self : object
     Returns the instance itself.
 *)
 
-val fit_transform : ?y:Py.Object.t -> ?params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Py.Object.t -> ?params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit the model from data in X and transform X.
 
@@ -1315,7 +1406,7 @@ Returns
 X_new : array-like, shape (n_samples, n_components)
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1331,7 +1422,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : x:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : x:Arr.t -> t -> Arr.t
 (**
 Transform X back to original space.
 
@@ -1368,7 +1459,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Transform X.
 
@@ -1382,20 +1473,40 @@ X_new : array-like, shape (n_samples, n_components)
 *)
 
 
-(** Attribute lambdas_: see constructor for documentation *)
+(** Attribute lambdas_: get value or raise Not_found if None.*)
 val lambdas_ : t -> Py.Object.t
 
-(** Attribute alphas_: see constructor for documentation *)
+(** Attribute lambdas_: get value as an option. *)
+val lambdas_opt : t -> (Py.Object.t) option
+
+
+(** Attribute alphas_: get value or raise Not_found if None.*)
 val alphas_ : t -> Py.Object.t
 
-(** Attribute dual_coef_: see constructor for documentation *)
+(** Attribute alphas_: get value as an option. *)
+val alphas_opt : t -> (Py.Object.t) option
+
+
+(** Attribute dual_coef_: get value or raise Not_found if None.*)
 val dual_coef_ : t -> Py.Object.t
 
-(** Attribute X_transformed_fit_: see constructor for documentation *)
+(** Attribute dual_coef_: get value as an option. *)
+val dual_coef_opt : t -> (Py.Object.t) option
+
+
+(** Attribute X_transformed_fit_: get value or raise Not_found if None.*)
 val x_transformed_fit_ : t -> Py.Object.t
 
-(** Attribute X_fit_: see constructor for documentation *)
+(** Attribute X_transformed_fit_: get value as an option. *)
+val x_transformed_fit_opt : t -> (Py.Object.t) option
+
+
+(** Attribute X_fit_: get value or raise Not_found if None.*)
 val x_fit_ : t -> Py.Object.t
+
+(** Attribute X_fit_: get value as an option. *)
+val x_fit_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1415,7 +1526,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_components:int -> ?doc_topic_prior:float -> ?topic_word_prior:float -> ?learning_method:[`Batch | `Online] -> ?learning_decay:float -> ?learning_offset:float -> ?max_iter:int -> ?batch_size:int -> ?evaluate_every:int -> ?total_samples:int -> ?perp_tol:float -> ?mean_change_tol:float -> ?max_doc_update_iter:int -> ?n_jobs:[`Int of int | `None] -> ?verbose:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
+val create : ?n_components:int -> ?doc_topic_prior:float -> ?topic_word_prior:float -> ?learning_method:[`Batch | `Online] -> ?learning_decay:float -> ?learning_offset:float -> ?max_iter:int -> ?batch_size:int -> ?evaluate_every:int -> ?total_samples:int -> ?perp_tol:float -> ?mean_change_tol:float -> ?max_doc_update_iter:int -> ?n_jobs:int -> ?verbose:int -> ?random_state:int -> unit -> t
 (**
 Latent Dirichlet Allocation with online variational Bayes algorithm
 
@@ -1568,7 +1679,7 @@ References
     https://github.com/blei-lab/onlineldavb
 *)
 
-val fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Learn model for the data X with variational Bayes method.
 
@@ -1587,7 +1698,7 @@ Returns
 self
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -1611,7 +1722,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1627,7 +1738,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val partial_fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Py.Object.t
+val partial_fit : ?y:Py.Object.t -> x:Arr.t -> t -> Py.Object.t
 (**
 Online VB with Mini-Batch update.
 
@@ -1643,7 +1754,7 @@ Returns
 self
 *)
 
-val perplexity : ?sub_sampling:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> float
+val perplexity : ?sub_sampling:bool -> x:Arr.t -> t -> float
 (**
 Calculate approximate perplexity for data X.
 
@@ -1667,7 +1778,7 @@ score : float
     Perplexity score.
 *)
 
-val score : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> float
+val score : ?y:Py.Object.t -> x:Arr.t -> t -> float
 (**
 Calculate approximate log-likelihood as score.
 
@@ -1704,7 +1815,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Transform data X according to the fitted model.
 
@@ -1723,849 +1834,47 @@ doc_topic_distr : shape=(n_samples, n_components)
 *)
 
 
-(** Attribute components_: see constructor for documentation *)
-val components_ : t -> Ndarray.t
+(** Attribute components_: get value or raise Not_found if None.*)
+val components_ : t -> Arr.t
 
-(** Attribute n_batch_iter_: see constructor for documentation *)
+(** Attribute components_: get value as an option. *)
+val components_opt : t -> (Arr.t) option
+
+
+(** Attribute n_batch_iter_: get value or raise Not_found if None.*)
 val n_batch_iter_ : t -> int
 
-(** Attribute n_iter_: see constructor for documentation *)
+(** Attribute n_batch_iter_: get value as an option. *)
+val n_batch_iter_opt : t -> (int) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
 
-(** Attribute bound_: see constructor for documentation *)
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
+
+(** Attribute bound_: get value or raise Not_found if None.*)
 val bound_ : t -> float
 
-(** Attribute doc_topic_prior_: see constructor for documentation *)
+(** Attribute bound_: get value as an option. *)
+val bound_opt : t -> (float) option
+
+
+(** Attribute doc_topic_prior_: get value or raise Not_found if None.*)
 val doc_topic_prior_ : t -> float
 
-(** Attribute topic_word_prior_: see constructor for documentation *)
+(** Attribute doc_topic_prior_: get value as an option. *)
+val doc_topic_prior_opt : t -> (float) option
+
+
+(** Attribute topic_word_prior_: get value or raise Not_found if None.*)
 val topic_word_prior_ : t -> float
 
-(** Print the object to a human-readable representation. *)
-val to_string : t -> string
+(** Attribute topic_word_prior_: get value as an option. *)
+val topic_word_prior_opt : t -> (float) option
 
-
-(** Print the object to a human-readable representation. *)
-val show : t -> string
-
-(** Pretty-print the object to a formatter. *)
-val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
-
-
-end
-
-module MiniBatchDictionaryLearning : sig
-type t
-val of_pyobject : Py.Object.t -> t
-val to_pyobject : t -> Py.Object.t
-
-val create : ?n_components:int -> ?alpha:float -> ?n_iter:int -> ?fit_algorithm:[`Lars | `Cd] -> ?n_jobs:[`Int of int | `None] -> ?batch_size:int -> ?shuffle:bool -> ?dict_init:Ndarray.t -> ?transform_algorithm:[`Lasso_lars | `Lasso_cd | `Lars | `Omp | `Threshold] -> ?transform_n_nonzero_coefs:[`Int of int | `PyObject of Py.Object.t] -> ?transform_alpha:float -> ?verbose:bool -> ?split_sign:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?positive_code:bool -> ?positive_dict:bool -> ?transform_max_iter:int -> unit -> t
-(**
-Mini-batch dictionary learning
-
-Finds a dictionary (a set of atoms) that can best be used to represent data
-using a sparse code.
-
-Solves the optimization problem::
-
-   (U^*,V^* ) = argmin 0.5 || Y - U V ||_2^2 + alpha * || U ||_1
-                (U,V)
-                with || V_k ||_2 = 1 for all  0 <= k < n_components
-
-Read more in the :ref:`User Guide <DictionaryLearning>`.
-
-Parameters
-----------
-n_components : int,
-    number of dictionary elements to extract
-
-alpha : float,
-    sparsity controlling parameter
-
-n_iter : int,
-    total number of iterations to perform
-
-fit_algorithm : {'lars', 'cd'}
-    lars: uses the least angle regression method to solve the lasso problem
-    (linear_model.lars_path)
-    cd: uses the coordinate descent method to compute the
-    Lasso solution (linear_model.Lasso). Lars will be faster if
-    the estimated components are sparse.
-
-n_jobs : int or None, optional (default=None)
-    Number of parallel jobs to run.
-    ``None`` means 1 unless in a :obj:`joblib.parallel_backend` context.
-    ``-1`` means using all processors. See :term:`Glossary <n_jobs>`
-    for more details.
-
-batch_size : int,
-    number of samples in each mini-batch
-
-shuffle : bool,
-    whether to shuffle the samples before forming batches
-
-dict_init : array of shape (n_components, n_features),
-    initial value of the dictionary for warm restart scenarios
-
-transform_algorithm : {'lasso_lars', 'lasso_cd', 'lars', 'omp',     'threshold'}
-    Algorithm used to transform the data.
-    lars: uses the least angle regression method (linear_model.lars_path)
-    lasso_lars: uses Lars to compute the Lasso solution
-    lasso_cd: uses the coordinate descent method to compute the
-    Lasso solution (linear_model.Lasso). lasso_lars will be faster if
-    the estimated components are sparse.
-    omp: uses orthogonal matching pursuit to estimate the sparse solution
-    threshold: squashes to zero all coefficients less than alpha from
-    the projection dictionary * X'
-
-transform_n_nonzero_coefs : int, ``0.1 * n_features`` by default
-    Number of nonzero coefficients to target in each column of the
-    solution. This is only used by `algorithm='lars'` and `algorithm='omp'`
-    and is overridden by `alpha` in the `omp` case.
-
-transform_alpha : float, 1. by default
-    If `algorithm='lasso_lars'` or `algorithm='lasso_cd'`, `alpha` is the
-    penalty applied to the L1 norm.
-    If `algorithm='threshold'`, `alpha` is the absolute value of the
-    threshold below which coefficients will be squashed to zero.
-    If `algorithm='omp'`, `alpha` is the tolerance parameter: the value of
-    the reconstruction error targeted. In this case, it overrides
-    `n_nonzero_coefs`.
-
-verbose : bool, optional (default: False)
-    To control the verbosity of the procedure.
-
-split_sign : bool, False by default
-    Whether to split the sparse feature vector into the concatenation of
-    its negative part and its positive part. This can improve the
-    performance of downstream classifiers.
-
-random_state : int, RandomState instance or None, optional (default=None)
-    If int, random_state is the seed used by the random number generator;
-    If RandomState instance, random_state is the random number generator;
-    If None, the random number generator is the RandomState instance used
-    by `np.random`.
-
-positive_code : bool
-    Whether to enforce positivity when finding the code.
-
-    .. versionadded:: 0.20
-
-positive_dict : bool
-    Whether to enforce positivity when finding the dictionary.
-
-    .. versionadded:: 0.20
-
-transform_max_iter : int, optional (default=1000)
-    Maximum number of iterations to perform if `algorithm='lasso_cd'` or
-    `lasso_lars`.
-
-    .. versionadded:: 0.22
-
-Attributes
-----------
-components_ : array, [n_components, n_features]
-    components extracted from the data
-
-inner_stats_ : tuple of (A, B) ndarrays
-    Internal sufficient statistics that are kept by the algorithm.
-    Keeping them is useful in online settings, to avoid losing the
-    history of the evolution, but they shouldn't have any use for the
-    end user.
-    A (n_components, n_components) is the dictionary covariance matrix.
-    B (n_features, n_components) is the data approximation matrix
-
-n_iter_ : int
-    Number of iterations run.
-
-iter_offset_ : int
-    The number of iteration on data batches that has been
-    performed before.
-
-random_state_ : RandomState
-    RandomState instance that is generated either from a seed, the random
-    number generattor or by `np.random`.
-
-Notes
------
-**References:**
-
-J. Mairal, F. Bach, J. Ponce, G. Sapiro, 2009: Online dictionary learning
-for sparse coding (https://www.di.ens.fr/sierra/pdfs/icml09.pdf)
-
-See also
---------
-SparseCoder
-DictionaryLearning
-SparsePCA
-MiniBatchSparsePCA
-*)
-
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
-(**
-Fit the model from data in X.
-
-Parameters
-----------
-X : array-like, shape (n_samples, n_features)
-    Training vector, where n_samples in the number of samples
-    and n_features is the number of features.
-
-y : Ignored
-
-Returns
--------
-self : object
-    Returns the instance itself.
-*)
-
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
-(**
-Fit to data, then transform it.
-
-Fits transformer to X and y with optional parameters fit_params
-and returns a transformed version of X.
-
-Parameters
-----------
-X : numpy array of shape [n_samples, n_features]
-    Training set.
-
-y : numpy array of shape [n_samples]
-    Target values.
-
-**fit_params : dict
-    Additional fit parameters.
-
-Returns
--------
-X_new : numpy array of shape [n_samples, n_features_new]
-    Transformed array.
-*)
-
-val get_params : ?deep:bool -> t -> Py.Object.t
-(**
-Get parameters for this estimator.
-
-Parameters
-----------
-deep : bool, default=True
-    If True, will return the parameters for this estimator and
-    contained subobjects that are estimators.
-
-Returns
--------
-params : mapping of string to any
-    Parameter names mapped to their values.
-*)
-
-val partial_fit : ?y:Py.Object.t -> ?iter_offset:int -> x:Ndarray.t -> t -> t
-(**
-Updates the model using the data in X as a mini-batch.
-
-Parameters
-----------
-X : array-like, shape (n_samples, n_features)
-    Training vector, where n_samples in the number of samples
-    and n_features is the number of features.
-
-y : Ignored
-
-iter_offset : integer, optional
-    The number of iteration on data batches that has been
-    performed before this call to partial_fit. This is optional:
-    if no number is passed, the memory of the object is
-    used.
-
-Returns
--------
-self : object
-    Returns the instance itself.
-*)
-
-val set_params : ?params:(string * Py.Object.t) list -> t -> t
-(**
-Set the parameters of this estimator.
-
-The method works on simple estimators as well as on nested objects
-(such as pipelines). The latter have parameters of the form
-``<component>__<parameter>`` so that it's possible to update each
-component of a nested object.
-
-Parameters
-----------
-**params : dict
-    Estimator parameters.
-
-Returns
--------
-self : object
-    Estimator instance.
-*)
-
-val transform : x:Ndarray.t -> t -> Ndarray.t
-(**
-Encode the data as a sparse combination of the dictionary atoms.
-
-Coding method is determined by the object parameter
-`transform_algorithm`.
-
-Parameters
-----------
-X : array of shape (n_samples, n_features)
-    Test data to be transformed, must have the same number of
-    features as the data used to train the model.
-
-Returns
--------
-X_new : array, shape (n_samples, n_components)
-    Transformed data
-*)
-
-
-(** Attribute components_: see constructor for documentation *)
-val components_ : t -> Ndarray.t
-
-(** Attribute inner_stats_: see constructor for documentation *)
-val inner_stats_ : t -> Py.Object.t
-
-(** Attribute n_iter_: see constructor for documentation *)
-val n_iter_ : t -> int
-
-(** Attribute iter_offset_: see constructor for documentation *)
-val iter_offset_ : t -> int
-
-(** Attribute random_state_: see constructor for documentation *)
-val random_state_ : t -> Py.Object.t
-
-(** Print the object to a human-readable representation. *)
-val to_string : t -> string
-
-
-(** Print the object to a human-readable representation. *)
-val show : t -> string
-
-(** Pretty-print the object to a formatter. *)
-val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
-
-
-end
-
-module MiniBatchSparsePCA : sig
-type t
-val of_pyobject : Py.Object.t -> t
-val to_pyobject : t -> Py.Object.t
-
-val create : ?n_components:int -> ?alpha:int -> ?ridge_alpha:float -> ?n_iter:int -> ?callback:[`Callable of Py.Object.t | `None] -> ?batch_size:int -> ?verbose:int -> ?shuffle:bool -> ?n_jobs:[`Int of int | `None] -> ?method_:[`Lars | `Cd] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?normalize_components:string -> unit -> t
-(**
-Mini-batch Sparse Principal Components Analysis
-
-Finds the set of sparse components that can optimally reconstruct
-the data.  The amount of sparseness is controllable by the coefficient
-of the L1 penalty, given by the parameter alpha.
-
-Read more in the :ref:`User Guide <SparsePCA>`.
-
-Parameters
-----------
-n_components : int,
-    number of sparse atoms to extract
-
-alpha : int,
-    Sparsity controlling parameter. Higher values lead to sparser
-    components.
-
-ridge_alpha : float,
-    Amount of ridge shrinkage to apply in order to improve
-    conditioning when calling the transform method.
-
-n_iter : int,
-    number of iterations to perform for each mini batch
-
-callback : callable or None, optional (default: None)
-    callable that gets invoked every five iterations
-
-batch_size : int,
-    the number of features to take in each mini batch
-
-verbose : int
-    Controls the verbosity; the higher, the more messages. Defaults to 0.
-
-shuffle : boolean,
-    whether to shuffle the data before splitting it in batches
-
-n_jobs : int or None, optional (default=None)
-    Number of parallel jobs to run.
-    ``None`` means 1 unless in a :obj:`joblib.parallel_backend` context.
-    ``-1`` means using all processors. See :term:`Glossary <n_jobs>`
-    for more details.
-
-method : {'lars', 'cd'}
-    lars: uses the least angle regression method to solve the lasso problem
-    (linear_model.lars_path)
-    cd: uses the coordinate descent method to compute the
-    Lasso solution (linear_model.Lasso). Lars will be faster if
-    the estimated components are sparse.
-
-random_state : int, RandomState instance or None, optional (default=None)
-    If int, random_state is the seed used by the random number generator;
-    If RandomState instance, random_state is the random number generator;
-    If None, the random number generator is the RandomState instance used
-    by `np.random`.
-
-normalize_components : 'deprecated'
-    This parameter does not have any effect. The components are always
-    normalized.
-
-    .. versionadded:: 0.20
-
-    .. deprecated:: 0.22
-       ``normalize_components`` is deprecated in 0.22 and will be removed
-       in 0.24.
-
-Attributes
-----------
-components_ : array, [n_components, n_features]
-    Sparse components extracted from the data.
-
-n_iter_ : int
-    Number of iterations run.
-
-mean_ : array, shape (n_features,)
-    Per-feature empirical mean, estimated from the training set.
-    Equal to ``X.mean(axis=0)``.
-
-Examples
---------
->>> import numpy as np
->>> from sklearn.datasets import make_friedman1
->>> from sklearn.decomposition import MiniBatchSparsePCA
->>> X, _ = make_friedman1(n_samples=200, n_features=30, random_state=0)
->>> transformer = MiniBatchSparsePCA(n_components=5, batch_size=50,
-...                                  random_state=0)
->>> transformer.fit(X)
-MiniBatchSparsePCA(...)
->>> X_transformed = transformer.transform(X)
->>> X_transformed.shape
-(200, 5)
->>> # most values in the components_ are zero (sparsity)
->>> np.mean(transformer.components_ == 0)
-0.94
-
-See also
---------
-PCA
-SparsePCA
-DictionaryLearning
-*)
-
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
-(**
-Fit the model from data in X.
-
-Parameters
-----------
-X : array-like, shape (n_samples, n_features)
-    Training vector, where n_samples in the number of samples
-    and n_features is the number of features.
-
-y : Ignored
-
-Returns
--------
-self : object
-    Returns the instance itself.
-*)
-
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
-(**
-Fit to data, then transform it.
-
-Fits transformer to X and y with optional parameters fit_params
-and returns a transformed version of X.
-
-Parameters
-----------
-X : numpy array of shape [n_samples, n_features]
-    Training set.
-
-y : numpy array of shape [n_samples]
-    Target values.
-
-**fit_params : dict
-    Additional fit parameters.
-
-Returns
--------
-X_new : numpy array of shape [n_samples, n_features_new]
-    Transformed array.
-*)
-
-val get_params : ?deep:bool -> t -> Py.Object.t
-(**
-Get parameters for this estimator.
-
-Parameters
-----------
-deep : bool, default=True
-    If True, will return the parameters for this estimator and
-    contained subobjects that are estimators.
-
-Returns
--------
-params : mapping of string to any
-    Parameter names mapped to their values.
-*)
-
-val set_params : ?params:(string * Py.Object.t) list -> t -> t
-(**
-Set the parameters of this estimator.
-
-The method works on simple estimators as well as on nested objects
-(such as pipelines). The latter have parameters of the form
-``<component>__<parameter>`` so that it's possible to update each
-component of a nested object.
-
-Parameters
-----------
-**params : dict
-    Estimator parameters.
-
-Returns
--------
-self : object
-    Estimator instance.
-*)
-
-val transform : x:Ndarray.t -> t -> Ndarray.t
-(**
-Least Squares projection of the data onto the sparse components.
-
-To avoid instability issues in case the system is under-determined,
-regularization can be applied (Ridge regression) via the
-`ridge_alpha` parameter.
-
-Note that Sparse PCA components orthogonality is not enforced as in PCA
-hence one cannot use a simple linear projection.
-
-Parameters
-----------
-X : array of shape (n_samples, n_features)
-    Test data to be transformed, must have the same number of
-    features as the data used to train the model.
-
-Returns
--------
-X_new array, shape (n_samples, n_components)
-    Transformed data.
-*)
-
-
-(** Attribute components_: see constructor for documentation *)
-val components_ : t -> Ndarray.t
-
-(** Attribute n_iter_: see constructor for documentation *)
-val n_iter_ : t -> int
-
-(** Attribute mean_: see constructor for documentation *)
-val mean_ : t -> Ndarray.t
-
-(** Print the object to a human-readable representation. *)
-val to_string : t -> string
-
-
-(** Print the object to a human-readable representation. *)
-val show : t -> string
-
-(** Pretty-print the object to a formatter. *)
-val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
-
-
-end
-
-module NMF : sig
-type t
-val of_pyobject : Py.Object.t -> t
-val to_pyobject : t -> Py.Object.t
-
-val create : ?n_components:[`Int of int | `None] -> ?init:[`Random | `Nndsvd | `Nndsvda | `Nndsvdar | `Custom | `None] -> ?solver:[`Cd | `Mu] -> ?beta_loss:[`Float of float | `String of string] -> ?tol:float -> ?max_iter:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?alpha:float -> ?l1_ratio:float -> ?verbose:bool -> ?shuffle:bool -> unit -> t
-(**
-Non-Negative Matrix Factorization (NMF)
-
-Find two non-negative matrices (W, H) whose product approximates the non-
-negative matrix X. This factorization can be used for example for
-dimensionality reduction, source separation or topic extraction.
-
-The objective function is::
-
-    0.5 * ||X - WH||_Fro^2
-    + alpha * l1_ratio * ||vec(W)||_1
-    + alpha * l1_ratio * ||vec(H)||_1
-    + 0.5 * alpha * (1 - l1_ratio) * ||W||_Fro^2
-    + 0.5 * alpha * (1 - l1_ratio) * ||H||_Fro^2
-
-Where::
-
-    ||A||_Fro^2 = \sum_{i,j} A_{ij}^2 (Frobenius norm)
-    ||vec(A)||_1 = \sum_{i,j} abs(A_{ij}) (Elementwise L1 norm)
-
-For multiplicative-update ('mu') solver, the Frobenius norm
-(0.5 * ||X - WH||_Fro^2) can be changed into another beta-divergence loss,
-by changing the beta_loss parameter.
-
-The objective function is minimized with an alternating minimization of W
-and H.
-
-Read more in the :ref:`User Guide <NMF>`.
-
-Parameters
-----------
-n_components : int or None
-    Number of components, if n_components is not set all features
-    are kept.
-
-init : None | 'random' | 'nndsvd' |  'nndsvda' | 'nndsvdar' | 'custom'
-    Method used to initialize the procedure.
-    Default: None.
-    Valid options:
-
-    - None: 'nndsvd' if n_components <= min(n_samples, n_features),
-        otherwise random.
-
-    - 'random': non-negative random matrices, scaled with:
-        sqrt(X.mean() / n_components)
-
-    - 'nndsvd': Nonnegative Double Singular Value Decomposition (NNDSVD)
-        initialization (better for sparseness)
-
-    - 'nndsvda': NNDSVD with zeros filled with the average of X
-        (better when sparsity is not desired)
-
-    - 'nndsvdar': NNDSVD with zeros filled with small random values
-        (generally faster, less accurate alternative to NNDSVDa
-        for when sparsity is not desired)
-
-    - 'custom': use custom matrices W and H
-
-solver : 'cd' | 'mu'
-    Numerical solver to use:
-    'cd' is a Coordinate Descent solver.
-    'mu' is a Multiplicative Update solver.
-
-    .. versionadded:: 0.17
-       Coordinate Descent solver.
-
-    .. versionadded:: 0.19
-       Multiplicative Update solver.
-
-beta_loss : float or string, default 'frobenius'
-    String must be in {'frobenius', 'kullback-leibler', 'itakura-saito'}.
-    Beta divergence to be minimized, measuring the distance between X
-    and the dot product WH. Note that values different from 'frobenius'
-    (or 2) and 'kullback-leibler' (or 1) lead to significantly slower
-    fits. Note that for beta_loss <= 0 (or 'itakura-saito'), the input
-    matrix X cannot contain zeros. Used only in 'mu' solver.
-
-    .. versionadded:: 0.19
-
-tol : float, default: 1e-4
-    Tolerance of the stopping condition.
-
-max_iter : integer, default: 200
-    Maximum number of iterations before timing out.
-
-random_state : int, RandomState instance or None, optional, default: None
-    If int, random_state is the seed used by the random number generator;
-    If RandomState instance, random_state is the random number generator;
-    If None, the random number generator is the RandomState instance used
-    by `np.random`.
-
-alpha : double, default: 0.
-    Constant that multiplies the regularization terms. Set it to zero to
-    have no regularization.
-
-    .. versionadded:: 0.17
-       *alpha* used in the Coordinate Descent solver.
-
-l1_ratio : double, default: 0.
-    The regularization mixing parameter, with 0 <= l1_ratio <= 1.
-    For l1_ratio = 0 the penalty is an elementwise L2 penalty
-    (aka Frobenius Norm).
-    For l1_ratio = 1 it is an elementwise L1 penalty.
-    For 0 < l1_ratio < 1, the penalty is a combination of L1 and L2.
-
-    .. versionadded:: 0.17
-       Regularization parameter *l1_ratio* used in the Coordinate Descent
-       solver.
-
-verbose : bool, default=False
-    Whether to be verbose.
-
-shuffle : boolean, default: False
-    If true, randomize the order of coordinates in the CD solver.
-
-    .. versionadded:: 0.17
-       *shuffle* parameter used in the Coordinate Descent solver.
-
-Attributes
-----------
-components_ : array, [n_components, n_features]
-    Factorization matrix, sometimes called 'dictionary'.
-
-n_components_ : integer
-    The number of components. It is same as the `n_components` parameter
-    if it was given. Otherwise, it will be same as the number of
-    features.
-
-reconstruction_err_ : number
-    Frobenius norm of the matrix difference, or beta-divergence, between
-    the training data ``X`` and the reconstructed data ``WH`` from
-    the fitted model.
-
-n_iter_ : int
-    Actual number of iterations.
-
-Examples
---------
->>> import numpy as np
->>> X = np.array([[1, 1], [2, 1], [3, 1.2], [4, 1], [5, 0.8], [6, 1]])
->>> from sklearn.decomposition import NMF
->>> model = NMF(n_components=2, init='random', random_state=0)
->>> W = model.fit_transform(X)
->>> H = model.components_
-
-References
-----------
-Cichocki, Andrzej, and P. H. A. N. Anh-Huy. "Fast local algorithms for
-large scale nonnegative matrix and tensor factorizations."
-IEICE transactions on fundamentals of electronics, communications and
-computer sciences 92.3: 708-721, 2009.
-
-Fevotte, C., & Idier, J. (2011). Algorithms for nonnegative matrix
-factorization with the beta-divergence. Neural Computation, 23(9).
-*)
-
-val fit : ?y:Py.Object.t -> ?params:(string * Py.Object.t) list -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
-(**
-Learn a NMF model for the data X.
-
-Parameters
-----------
-X : {array-like, sparse matrix}, shape (n_samples, n_features)
-    Data matrix to be decomposed
-
-y : Ignored
-
-Returns
--------
-self
-*)
-
-val fit_transform : ?y:Py.Object.t -> ?w:Ndarray.t -> ?h:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
-(**
-Learn a NMF model for the data X and returns the transformed data.
-
-This is more efficient than calling fit followed by transform.
-
-Parameters
-----------
-X : {array-like, sparse matrix}, shape (n_samples, n_features)
-    Data matrix to be decomposed
-
-y : Ignored
-
-W : array-like, shape (n_samples, n_components)
-    If init='custom', it is used as initial guess for the solution.
-
-H : array-like, shape (n_components, n_features)
-    If init='custom', it is used as initial guess for the solution.
-
-Returns
--------
-W : array, shape (n_samples, n_components)
-    Transformed data.
-*)
-
-val get_params : ?deep:bool -> t -> Py.Object.t
-(**
-Get parameters for this estimator.
-
-Parameters
-----------
-deep : bool, default=True
-    If True, will return the parameters for this estimator and
-    contained subobjects that are estimators.
-
-Returns
--------
-params : mapping of string to any
-    Parameter names mapped to their values.
-*)
-
-val inverse_transform : w:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Py.Object.t
-(**
-Transform data back to its original space.
-
-Parameters
-----------
-W : {array-like, sparse matrix}, shape (n_samples, n_components)
-    Transformed data matrix
-
-Returns
--------
-X : {array-like, sparse matrix}, shape (n_samples, n_features)
-    Data matrix of original shape
-
-.. versionadded:: 0.18
-*)
-
-val set_params : ?params:(string * Py.Object.t) list -> t -> t
-(**
-Set the parameters of this estimator.
-
-The method works on simple estimators as well as on nested objects
-(such as pipelines). The latter have parameters of the form
-``<component>__<parameter>`` so that it's possible to update each
-component of a nested object.
-
-Parameters
-----------
-**params : dict
-    Estimator parameters.
-
-Returns
--------
-self : object
-    Estimator instance.
-*)
-
-val transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
-(**
-Transform the data X according to the fitted NMF model
-
-Parameters
-----------
-X : {array-like, sparse matrix}, shape (n_samples, n_features)
-    Data matrix to be transformed by the model
-
-Returns
--------
-W : array, shape (n_samples, n_components)
-    Transformed data
-*)
-
-
-(** Attribute components_: see constructor for documentation *)
-val components_ : t -> Ndarray.t
-
-(** Attribute n_components_: see constructor for documentation *)
-val n_components_ : t -> int
-
-(** Attribute reconstruction_err_: see constructor for documentation *)
-val reconstruction_err_ : t -> Py.Object.t
-
-(** Attribute n_iter_: see constructor for documentation *)
-val n_iter_ : t -> int
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2585,7 +1894,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_components:[`Int of int | `Float of float | `String of string | `None] -> ?copy:bool -> ?whiten:bool -> ?svd_solver:[`Auto | `Full | `Arpack | `Randomized] -> ?tol:float -> ?iterated_power:[`Int of int | `Auto] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
+val create : ?n_components:[`I of int | `F of float | `S of string] -> ?copy:bool -> ?whiten:bool -> ?svd_solver:[`Auto | `Full | `Arpack | `Randomized] -> ?tol:float -> ?iterated_power:[`I of int | `Auto] -> ?random_state:int -> unit -> t
 (**
 Principal component analysis (PCA).
 
@@ -2798,7 +2107,7 @@ PCA(n_components=1, svd_solver='arpack')
 [6.30061...]
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fit the model with X.
 
@@ -2817,7 +2126,7 @@ self : object
     Returns the instance itself.
 *)
 
-val fit_transform : ?y:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Fit the model with X and apply the dimensionality reduction on X.
 
@@ -2841,7 +2150,7 @@ This method returns a Fortran-ordered array. To convert it to a
 C-ordered array, use 'np.ascontiguousarray'.
 *)
 
-val get_covariance : t -> Ndarray.t
+val get_covariance : t -> Arr.t
 (**
 Compute data covariance with the generative model.
 
@@ -2855,7 +2164,7 @@ cov : array, shape=(n_features, n_features)
     Estimated covariance of data.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2871,7 +2180,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val get_precision : t -> Ndarray.t
+val get_precision : t -> Arr.t
 (**
 Compute data precision matrix with the generative model.
 
@@ -2884,7 +2193,7 @@ precision : array, shape=(n_features, n_features)
     Estimated precision of data.
 *)
 
-val inverse_transform : x:Ndarray.t -> t -> Py.Object.t
+val inverse_transform : x:Arr.t -> t -> Py.Object.t
 (**
 Transform data back to its original space.
 
@@ -2906,7 +2215,7 @@ If whitening is enabled, inverse_transform will compute the
 exact inverse operation, which includes reversing whitening.
 *)
 
-val score : ?y:Py.Object.t -> x:Ndarray.t -> t -> float
+val score : ?y:Py.Object.t -> x:Arr.t -> t -> float
 (**
 Return the average log-likelihood of all samples.
 
@@ -2928,7 +2237,7 @@ ll : float
     Average log-likelihood of the samples under the current model.
 *)
 
-val score_samples : x:Ndarray.t -> t -> Ndarray.t
+val score_samples : x:Arr.t -> t -> Arr.t
 (**
 Return the log-likelihood of each sample.
 
@@ -2967,7 +2276,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Apply dimensionality reduction to X.
 
@@ -2997,32 +2306,68 @@ IncrementalPCA(batch_size=3, n_components=2)
 *)
 
 
-(** Attribute components_: see constructor for documentation *)
-val components_ : t -> Ndarray.t
+(** Attribute components_: get value or raise Not_found if None.*)
+val components_ : t -> Arr.t
 
-(** Attribute explained_variance_: see constructor for documentation *)
-val explained_variance_ : t -> Ndarray.t
+(** Attribute components_: get value as an option. *)
+val components_opt : t -> (Arr.t) option
 
-(** Attribute explained_variance_ratio_: see constructor for documentation *)
-val explained_variance_ratio_ : t -> Ndarray.t
 
-(** Attribute singular_values_: see constructor for documentation *)
-val singular_values_ : t -> Ndarray.t
+(** Attribute explained_variance_: get value or raise Not_found if None.*)
+val explained_variance_ : t -> Arr.t
 
-(** Attribute mean_: see constructor for documentation *)
-val mean_ : t -> Ndarray.t
+(** Attribute explained_variance_: get value as an option. *)
+val explained_variance_opt : t -> (Arr.t) option
 
-(** Attribute n_components_: see constructor for documentation *)
+
+(** Attribute explained_variance_ratio_: get value or raise Not_found if None.*)
+val explained_variance_ratio_ : t -> Arr.t
+
+(** Attribute explained_variance_ratio_: get value as an option. *)
+val explained_variance_ratio_opt : t -> (Arr.t) option
+
+
+(** Attribute singular_values_: get value or raise Not_found if None.*)
+val singular_values_ : t -> Arr.t
+
+(** Attribute singular_values_: get value as an option. *)
+val singular_values_opt : t -> (Arr.t) option
+
+
+(** Attribute mean_: get value or raise Not_found if None.*)
+val mean_ : t -> Arr.t
+
+(** Attribute mean_: get value as an option. *)
+val mean_opt : t -> (Arr.t) option
+
+
+(** Attribute n_components_: get value or raise Not_found if None.*)
 val n_components_ : t -> int
 
-(** Attribute n_features_: see constructor for documentation *)
+(** Attribute n_components_: get value as an option. *)
+val n_components_opt : t -> (int) option
+
+
+(** Attribute n_features_: get value or raise Not_found if None.*)
 val n_features_ : t -> int
 
-(** Attribute n_samples_: see constructor for documentation *)
+(** Attribute n_features_: get value as an option. *)
+val n_features_opt : t -> (int) option
+
+
+(** Attribute n_samples_: get value or raise Not_found if None.*)
 val n_samples_ : t -> int
 
-(** Attribute noise_variance_: see constructor for documentation *)
+(** Attribute n_samples_: get value as an option. *)
+val n_samples_opt : t -> (int) option
+
+
+(** Attribute noise_variance_: get value or raise Not_found if None.*)
 val noise_variance_ : t -> float
+
+(** Attribute noise_variance_: get value as an option. *)
+val noise_variance_opt : t -> (float) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -3042,7 +2387,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?transform_algorithm:[`Lasso_lars | `Lasso_cd | `Lars | `Omp | `Threshold] -> ?transform_n_nonzero_coefs:int -> ?transform_alpha:float -> ?split_sign:bool -> ?n_jobs:[`Int of int | `None] -> ?positive_code:bool -> ?transform_max_iter:int -> dictionary:Ndarray.t -> unit -> t
+val create : ?transform_algorithm:[`Lasso_lars | `Lasso_cd | `Lars | `Omp | `Threshold] -> ?transform_n_nonzero_coefs:int -> ?transform_alpha:float -> ?split_sign:bool -> ?n_jobs:int -> ?positive_code:bool -> ?transform_max_iter:int -> dictionary:Arr.t -> unit -> t
 (**
 Sparse coding
 
@@ -3142,7 +2487,7 @@ self : object
     Returns the object itself
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -3166,7 +2511,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -3202,7 +2547,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Encode the data as a sparse combination of the dictionary atoms.
 
@@ -3222,8 +2567,12 @@ X_new : array, shape (n_samples, n_components)
 *)
 
 
-(** Attribute components_: see constructor for documentation *)
-val components_ : t -> Ndarray.t
+(** Attribute components_: get value or raise Not_found if None.*)
+val components_ : t -> Arr.t
+
+(** Attribute components_: get value as an option. *)
+val components_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -3243,7 +2592,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_components:int -> ?alpha:float -> ?ridge_alpha:float -> ?max_iter:int -> ?tol:float -> ?method_:[`Lars | `Cd] -> ?n_jobs:[`Int of int | `None] -> ?u_init:Ndarray.t -> ?v_init:Ndarray.t -> ?verbose:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?normalize_components:string -> unit -> t
+val create : ?n_components:int -> ?alpha:float -> ?ridge_alpha:float -> ?max_iter:int -> ?tol:float -> ?method_:[`Lars | `Cd] -> ?n_jobs:int -> ?u_init:Arr.t -> ?v_init:Arr.t -> ?verbose:int -> ?random_state:int -> ?normalize_components:string -> unit -> t
 (**
 Sparse Principal Components Analysis (SparsePCA)
 
@@ -3348,7 +2697,7 @@ MiniBatchSparsePCA
 DictionaryLearning
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fit the model from data in X.
 
@@ -3366,7 +2715,7 @@ self : object
     Returns the instance itself.
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -3390,7 +2739,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -3426,7 +2775,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Least Squares projection of the data onto the sparse components.
 
@@ -3450,17 +2799,33 @@ X_new array, shape (n_samples, n_components)
 *)
 
 
-(** Attribute components_: see constructor for documentation *)
-val components_ : t -> Ndarray.t
+(** Attribute components_: get value or raise Not_found if None.*)
+val components_ : t -> Arr.t
 
-(** Attribute error_: see constructor for documentation *)
-val error_ : t -> Ndarray.t
+(** Attribute components_: get value as an option. *)
+val components_opt : t -> (Arr.t) option
 
-(** Attribute n_iter_: see constructor for documentation *)
+
+(** Attribute error_: get value or raise Not_found if None.*)
+val error_ : t -> Arr.t
+
+(** Attribute error_: get value as an option. *)
+val error_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
 
-(** Attribute mean_: see constructor for documentation *)
-val mean_ : t -> Ndarray.t
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
+
+(** Attribute mean_: get value or raise Not_found if None.*)
+val mean_ : t -> Arr.t
+
+(** Attribute mean_: get value as an option. *)
+val mean_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -3480,7 +2845,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_components:int -> ?algorithm:string -> ?n_iter:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?tol:float -> unit -> t
+val create : ?n_components:int -> ?algorithm:string -> ?n_iter:int -> ?random_state:int -> ?tol:float -> unit -> t
 (**
 Dimensionality reduction using truncated SVD (aka LSA).
 
@@ -3580,7 +2945,7 @@ algorithm and random state. To work around this, fit instances of this
 class to data once, then keep the instance around to do transformations.
 *)
 
-val fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fit LSI model on training data X.
 
@@ -3597,7 +2962,7 @@ self : object
     Returns the transformer object.
 *)
 
-val fit_transform : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val fit_transform : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Fit LSI model to X and perform dimensionality reduction on X.
 
@@ -3614,7 +2979,7 @@ X_new : array, shape (n_samples, n_components)
     Reduced version of X. This will always be a dense array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -3630,7 +2995,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : x:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : x:Arr.t -> t -> Arr.t
 (**
 Transform X back to its original space.
 
@@ -3667,7 +3032,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Perform dimensionality reduction on X.
 
@@ -3683,17 +3048,33 @@ X_new : array, shape (n_samples, n_components)
 *)
 
 
-(** Attribute components_: see constructor for documentation *)
-val components_ : t -> Ndarray.t
+(** Attribute components_: get value or raise Not_found if None.*)
+val components_ : t -> Arr.t
 
-(** Attribute explained_variance_: see constructor for documentation *)
-val explained_variance_ : t -> Ndarray.t
+(** Attribute components_: get value as an option. *)
+val components_opt : t -> (Arr.t) option
 
-(** Attribute explained_variance_ratio_: see constructor for documentation *)
-val explained_variance_ratio_ : t -> Ndarray.t
 
-(** Attribute singular_values_: see constructor for documentation *)
-val singular_values_ : t -> Ndarray.t
+(** Attribute explained_variance_: get value or raise Not_found if None.*)
+val explained_variance_ : t -> Arr.t
+
+(** Attribute explained_variance_: get value as an option. *)
+val explained_variance_opt : t -> (Arr.t) option
+
+
+(** Attribute explained_variance_ratio_: get value or raise Not_found if None.*)
+val explained_variance_ratio_ : t -> Arr.t
+
+(** Attribute explained_variance_ratio_: get value as an option. *)
+val explained_variance_ratio_opt : t -> (Arr.t) option
+
+
+(** Attribute singular_values_: get value or raise Not_found if None.*)
+val singular_values_ : t -> Arr.t
+
+(** Attribute singular_values_: get value as an option. *)
+val singular_values_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -3708,7 +3089,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val dict_learning : ?max_iter:int -> ?tol:float -> ?method_:[`Lars | `Cd] -> ?n_jobs:[`Int of int | `None] -> ?dict_init:Ndarray.t -> ?code_init:Ndarray.t -> ?callback:[`Callable of Py.Object.t | `None] -> ?verbose:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?return_n_iter:bool -> ?positive_dict:bool -> ?positive_code:bool -> ?method_max_iter:int -> x:Ndarray.t -> n_components:int -> alpha:int -> unit -> (Ndarray.t * Ndarray.t * Ndarray.t * int)
+val dict_learning : ?max_iter:int -> ?tol:float -> ?method_:[`Lars | `Cd] -> ?n_jobs:int -> ?dict_init:Arr.t -> ?code_init:Arr.t -> ?callback:Py.Object.t -> ?verbose:int -> ?random_state:int -> ?return_n_iter:bool -> ?positive_dict:bool -> ?positive_code:bool -> ?method_max_iter:int -> x:Arr.t -> n_components:int -> alpha:int -> unit -> (Arr.t * Arr.t * Arr.t * int)
 (**
 Solves a dictionary learning matrix factorization problem.
 
@@ -3813,7 +3194,7 @@ SparsePCA
 MiniBatchSparsePCA
 *)
 
-val dict_learning_online : ?n_components:int -> ?alpha:float -> ?n_iter:int -> ?return_code:bool -> ?dict_init:Ndarray.t -> ?callback:[`Callable of Py.Object.t | `None] -> ?batch_size:int -> ?verbose:bool -> ?shuffle:bool -> ?n_jobs:[`Int of int | `None] -> ?method_:[`Lars | `Cd] -> ?iter_offset:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?return_inner_stats:bool -> ?inner_stats:Py.Object.t -> ?return_n_iter:bool -> ?positive_dict:bool -> ?positive_code:bool -> ?method_max_iter:int -> x:Ndarray.t -> unit -> (Ndarray.t * Ndarray.t * int)
+val dict_learning_online : ?n_components:int -> ?alpha:float -> ?n_iter:int -> ?return_code:bool -> ?dict_init:Arr.t -> ?callback:Py.Object.t -> ?batch_size:int -> ?verbose:int -> ?shuffle:bool -> ?n_jobs:int -> ?method_:[`Lars | `Cd] -> ?iter_offset:int -> ?random_state:int -> ?return_inner_stats:bool -> ?inner_stats:Py.Object.t -> ?return_n_iter:bool -> ?positive_dict:bool -> ?positive_code:bool -> ?method_max_iter:int -> x:Arr.t -> unit -> (Arr.t * Arr.t * int)
 (**
 Solves a dictionary learning matrix factorization problem online.
 
@@ -3937,7 +3318,7 @@ SparsePCA
 MiniBatchSparsePCA
 *)
 
-val fastica : ?n_components:int -> ?algorithm:[`Parallel | `Deflation] -> ?whiten:bool -> ?fun_:[`String of string | `Callable of Py.Object.t] -> ?fun_args:Py.Object.t -> ?max_iter:int -> ?tol:float -> ?w_init:Py.Object.t -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?return_X_mean:bool -> ?compute_sources:bool -> ?return_n_iter:bool -> x:Ndarray.t -> unit -> (Py.Object.t * Ndarray.t * Py.Object.t * Ndarray.t * int)
+val fastica : ?n_components:int -> ?algorithm:[`Parallel | `Deflation] -> ?whiten:bool -> ?fun_:[`S of string | `Callable of Py.Object.t] -> ?fun_args:Dict.t -> ?max_iter:int -> ?tol:float -> ?w_init:Py.Object.t -> ?random_state:int -> ?return_X_mean:bool -> ?compute_sources:bool -> ?return_n_iter:bool -> x:Arr.t -> unit -> (Py.Object.t * Arr.t * Py.Object.t * Arr.t * int)
 (**
 Perform Fast Independent Component Analysis.
 
@@ -4055,7 +3436,7 @@ Algorithms and Applications, Neural Networks, 13(4-5), 2000,
 pp. 411-430*
 *)
 
-val non_negative_factorization : ?w:Ndarray.t -> ?h:Ndarray.t -> ?n_components:int -> ?init:[`Random | `Nndsvd | `Nndsvda | `Nndsvdar | `Custom | `None] -> ?update_H:bool -> ?solver:[`Cd | `Mu] -> ?beta_loss:[`Float of float | `String of string] -> ?tol:float -> ?max_iter:int -> ?alpha:float -> ?l1_ratio:float -> ?regularization:[`Both | `Components | `Transformation | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?verbose:int -> ?shuffle:bool -> x:Ndarray.t -> unit -> (Ndarray.t * Ndarray.t * int)
+val non_negative_factorization : ?w:Arr.t -> ?h:Arr.t -> ?n_components:int -> ?init:[`Random | `Nndsvd | `Nndsvda | `Nndsvdar | `Custom | `None] -> ?update_H:bool -> ?solver:[`Cd | `Mu] -> ?beta_loss:[`F of float | `S of string] -> ?tol:float -> ?max_iter:int -> ?alpha:float -> ?l1_ratio:float -> ?regularization:[`Both | `Components | `Transformation] -> ?random_state:int -> ?verbose:int -> ?shuffle:bool -> x:Arr.t -> unit -> (Arr.t * Arr.t * int)
 (**
 Compute Non-negative Matrix Factorization (NMF)
 
@@ -4215,7 +3596,7 @@ Fevotte, C., & Idier, J. (2011). Algorithms for nonnegative matrix
 factorization with the beta-divergence. Neural Computation, 23(9).
 *)
 
-val randomized_svd : ?n_oversamples:Py.Object.t -> ?n_iter:[`Int of int | `PyObject of Py.Object.t] -> ?power_iteration_normalizer:string -> ?transpose:[`Bool of bool | `Auto] -> ?flip_sign:[`Bool of bool | `PyObject of Py.Object.t] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> m:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> n_components:int -> unit -> Py.Object.t
+val randomized_svd : ?n_oversamples:Py.Object.t -> ?n_iter:[`I of int | `T_auto_ of Py.Object.t] -> ?power_iteration_normalizer:[`Auto | `QR | `LU | `None] -> ?transpose:[`Bool of bool | `Auto] -> ?flip_sign:[`Bool of bool | `T_True_by of Py.Object.t] -> ?random_state:int -> m:Arr.t -> n_components:int -> unit -> Py.Object.t
 (**
 Computes a truncated randomized SVD
 
@@ -4297,7 +3678,7 @@ References
   A. Szlam et al. 2014
 *)
 
-val sparse_encode : ?gram:Ndarray.t -> ?cov:Ndarray.t -> ?algorithm:[`Lasso_lars | `Lasso_cd | `Lars | `Omp | `Threshold] -> ?n_nonzero_coefs:[`Int of int | `PyObject of Py.Object.t] -> ?alpha:float -> ?copy_cov:bool -> ?init:Ndarray.t -> ?max_iter:int -> ?n_jobs:[`Int of int | `None] -> ?check_input:bool -> ?verbose:int -> ?positive:bool -> x:Ndarray.t -> dictionary:Ndarray.t -> unit -> Ndarray.t
+val sparse_encode : ?gram:Arr.t -> ?cov:Arr.t -> ?algorithm:[`Lasso_lars | `Lasso_cd | `Lars | `Omp | `Threshold] -> ?n_nonzero_coefs:[`I of int | `T0_1_ of Py.Object.t] -> ?alpha:float -> ?copy_cov:bool -> ?init:Arr.t -> ?max_iter:int -> ?n_jobs:int -> ?check_input:bool -> ?verbose:int -> ?positive:bool -> x:Arr.t -> dictionary:Arr.t -> unit -> Arr.t
 (**
 Sparse coding
 

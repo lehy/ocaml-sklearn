@@ -1,6 +1,7 @@
 let () = Wrap_utils.init ();;
 let ns = Py.import "sklearn.utils"
 
+let get_py name = Py.Module.get ns name
 module Bunch = struct
 type t = Py.Object.t
 let of_pyobject x = x
@@ -258,15 +259,15 @@ end
                      Py.Module.get_function_with_keywords ns "all_estimators"
                        [||]
                        (Wrap_utils.keyword_args [("include_meta_estimators", Wrap_utils.Option.map include_meta_estimators Py.Bool.of_bool); ("include_other", Wrap_utils.Option.map include_other Py.Bool.of_bool); ("type_filter", Wrap_utils.Option.map type_filter (function
-| `String x -> Py.String.of_string x
+| `S x -> Py.String.of_string x
 | `StringList x -> (Py.List.of_list_map Py.String.of_string) x
-| `None -> Py.String.of_string "None"
 )); ("include_dont_test", Wrap_utils.Option.map include_dont_test Py.Bool.of_bool)])
 
 module Arrayfuncs = struct
 let () = Wrap_utils.init ();;
 let ns = Py.import "sklearn.utils.arrayfuncs"
 
+let get_py name = Py.Module.get ns name
 let cholesky_delete ~l ~go_out () =
    Py.Module.get_function_with_keywords ns "cholesky_delete"
      [||]
@@ -280,86 +281,61 @@ end
                        (Wrap_utils.keyword_args [("copy", Wrap_utils.Option.map copy Py.Bool.of_bool); ("force_all_finite", Wrap_utils.Option.map force_all_finite (function
 | `Bool x -> Py.Bool.of_bool x
 | `Allow_nan -> Py.String.of_string "allow-nan"
-)); ("X", Some(x |> (function
-| `Ndarray x -> Ndarray.to_pyobject x
-| `SparseMatrix x -> Csr_matrix.to_pyobject x
-)))])
+)); ("X", Some(x |> Arr.to_pyobject))])
+                       |> Arr.of_pyobject
+let assert_all_finite ?allow_nan ~x () =
+   Py.Module.get_function_with_keywords ns "assert_all_finite"
+     [||]
+     (Wrap_utils.keyword_args [("allow_nan", Wrap_utils.Option.map allow_nan Py.Bool.of_bool); ("X", Some(x |> Arr.to_pyobject))])
 
-                  let assert_all_finite ?allow_nan ~x () =
-                     Py.Module.get_function_with_keywords ns "assert_all_finite"
-                       [||]
-                       (Wrap_utils.keyword_args [("allow_nan", Wrap_utils.Option.map allow_nan Py.Bool.of_bool); ("X", Some(x |> (function
-| `Ndarray x -> Ndarray.to_pyobject x
-| `SparseMatrix x -> Csr_matrix.to_pyobject x
-)))])
-
-                  let axis0_safe_slice ~x ~mask ~len_mask () =
-                     Py.Module.get_function_with_keywords ns "axis0_safe_slice"
-                       [||]
-                       (Wrap_utils.keyword_args [("X", Some(x |> (function
-| `Ndarray x -> Ndarray.to_pyobject x
-| `SparseMatrix x -> Csr_matrix.to_pyobject x
-))); ("mask", Some(mask |> Ndarray.to_pyobject)); ("len_mask", Some(len_mask |> Py.Int.of_int))])
+let axis0_safe_slice ~x ~mask ~len_mask () =
+   Py.Module.get_function_with_keywords ns "axis0_safe_slice"
+     [||]
+     (Wrap_utils.keyword_args [("X", Some(x |> Arr.to_pyobject)); ("mask", Some(mask |> Arr.to_pyobject)); ("len_mask", Some(len_mask |> Py.Int.of_int))])
 
                   let check_X_y ?accept_sparse ?accept_large_sparse ?dtype ?order ?copy ?force_all_finite ?ensure_2d ?allow_nd ?multi_output ?ensure_min_samples ?ensure_min_features ?y_numeric ?warn_on_dtype ?estimator ~x ~y () =
                      Py.Module.get_function_with_keywords ns "check_X_y"
                        [||]
                        (Wrap_utils.keyword_args [("accept_sparse", Wrap_utils.Option.map accept_sparse (function
-| `String x -> Py.String.of_string x
+| `S x -> Py.String.of_string x
 | `Bool x -> Py.Bool.of_bool x
 | `StringList x -> (Py.List.of_list_map Py.String.of_string) x
 )); ("accept_large_sparse", Wrap_utils.Option.map accept_large_sparse Py.Bool.of_bool); ("dtype", Wrap_utils.Option.map dtype (function
-| `String x -> Py.String.of_string x
+| `S x -> Py.String.of_string x
 | `Dtype x -> Wrap_utils.id x
 | `TypeList x -> Wrap_utils.id x
-| `None -> Py.String.of_string "None"
+| `None -> Py.none
 )); ("order", Wrap_utils.Option.map order (function
 | `F -> Py.String.of_string "F"
 | `C -> Py.String.of_string "C"
-| `None -> Py.String.of_string "None"
 )); ("copy", Wrap_utils.Option.map copy Py.Bool.of_bool); ("force_all_finite", Wrap_utils.Option.map force_all_finite (function
 | `Bool x -> Py.Bool.of_bool x
 | `Allow_nan -> Py.String.of_string "allow-nan"
-)); ("ensure_2d", Wrap_utils.Option.map ensure_2d Py.Bool.of_bool); ("allow_nd", Wrap_utils.Option.map allow_nd Py.Bool.of_bool); ("multi_output", Wrap_utils.Option.map multi_output Py.Bool.of_bool); ("ensure_min_samples", Wrap_utils.Option.map ensure_min_samples Py.Int.of_int); ("ensure_min_features", Wrap_utils.Option.map ensure_min_features Py.Int.of_int); ("y_numeric", Wrap_utils.Option.map y_numeric Py.Bool.of_bool); ("warn_on_dtype", Wrap_utils.Option.map warn_on_dtype (function
-| `Bool x -> Py.Bool.of_bool x
-| `None -> Py.String.of_string "None"
-)); ("estimator", Wrap_utils.Option.map estimator (function
-| `String x -> Py.String.of_string x
+)); ("ensure_2d", Wrap_utils.Option.map ensure_2d Py.Bool.of_bool); ("allow_nd", Wrap_utils.Option.map allow_nd Py.Bool.of_bool); ("multi_output", Wrap_utils.Option.map multi_output Py.Bool.of_bool); ("ensure_min_samples", Wrap_utils.Option.map ensure_min_samples Py.Int.of_int); ("ensure_min_features", Wrap_utils.Option.map ensure_min_features Py.Int.of_int); ("y_numeric", Wrap_utils.Option.map y_numeric Py.Bool.of_bool); ("warn_on_dtype", Wrap_utils.Option.map warn_on_dtype Py.Bool.of_bool); ("estimator", Wrap_utils.Option.map estimator (function
+| `S x -> Py.String.of_string x
 | `Estimator x -> Wrap_utils.id x
-)); ("X", Some(x |> (function
-| `Ndarray x -> Ndarray.to_pyobject x
-| `ArrayLike x -> Wrap_utils.id x
-| `SparseMatrix x -> Csr_matrix.to_pyobject x
-))); ("y", Some(y |> (function
-| `Ndarray x -> Ndarray.to_pyobject x
-| `ArrayLike x -> Wrap_utils.id x
-| `SparseMatrix x -> Csr_matrix.to_pyobject x
-)))])
+)); ("X", Some(x |> Arr.to_pyobject)); ("y", Some(y |> Arr.to_pyobject))])
                        |> (fun x -> ((Wrap_utils.id (Py.Tuple.get x 0)), (Wrap_utils.id (Py.Tuple.get x 1))))
                   let check_array ?accept_sparse ?accept_large_sparse ?dtype ?order ?copy ?force_all_finite ?ensure_2d ?allow_nd ?ensure_min_samples ?ensure_min_features ?warn_on_dtype ?estimator ~array () =
                      Py.Module.get_function_with_keywords ns "check_array"
                        [||]
                        (Wrap_utils.keyword_args [("accept_sparse", Wrap_utils.Option.map accept_sparse (function
-| `String x -> Py.String.of_string x
+| `S x -> Py.String.of_string x
 | `Bool x -> Py.Bool.of_bool x
 | `StringList x -> (Py.List.of_list_map Py.String.of_string) x
 )); ("accept_large_sparse", Wrap_utils.Option.map accept_large_sparse Py.Bool.of_bool); ("dtype", Wrap_utils.Option.map dtype (function
-| `String x -> Py.String.of_string x
+| `S x -> Py.String.of_string x
 | `Dtype x -> Wrap_utils.id x
 | `TypeList x -> Wrap_utils.id x
-| `None -> Py.String.of_string "None"
+| `None -> Py.none
 )); ("order", Wrap_utils.Option.map order (function
 | `F -> Py.String.of_string "F"
 | `C -> Py.String.of_string "C"
-| `None -> Py.String.of_string "None"
 )); ("copy", Wrap_utils.Option.map copy Py.Bool.of_bool); ("force_all_finite", Wrap_utils.Option.map force_all_finite (function
 | `Bool x -> Py.Bool.of_bool x
 | `Allow_nan -> Py.String.of_string "allow-nan"
-)); ("ensure_2d", Wrap_utils.Option.map ensure_2d Py.Bool.of_bool); ("allow_nd", Wrap_utils.Option.map allow_nd Py.Bool.of_bool); ("ensure_min_samples", Wrap_utils.Option.map ensure_min_samples Py.Int.of_int); ("ensure_min_features", Wrap_utils.Option.map ensure_min_features Py.Int.of_int); ("warn_on_dtype", Wrap_utils.Option.map warn_on_dtype (function
-| `Bool x -> Py.Bool.of_bool x
-| `None -> Py.String.of_string "None"
-)); ("estimator", Wrap_utils.Option.map estimator (function
-| `String x -> Py.String.of_string x
+)); ("ensure_2d", Wrap_utils.Option.map ensure_2d Py.Bool.of_bool); ("allow_nd", Wrap_utils.Option.map allow_nd Py.Bool.of_bool); ("ensure_min_samples", Wrap_utils.Option.map ensure_min_samples Py.Int.of_int); ("ensure_min_features", Wrap_utils.Option.map ensure_min_features Py.Int.of_int); ("warn_on_dtype", Wrap_utils.Option.map warn_on_dtype Py.Bool.of_bool); ("estimator", Wrap_utils.Option.map estimator (function
+| `S x -> Py.String.of_string x
 | `Estimator x -> Wrap_utils.id x
 )); ("array", Some(array ))])
 
@@ -382,88 +358,80 @@ let check_pandas_support ~caller_name () =
                      Py.Module.get_function_with_keywords ns "check_random_state"
                        [||]
                        (Wrap_utils.keyword_args [("seed", Some(seed |> (function
-| `Int x -> Py.Int.of_int x
+| `I x -> Py.Int.of_int x
 | `RandomState x -> Wrap_utils.id x
-| `None -> Py.String.of_string "None"
+| `None -> Py.none
 )))])
 
                   let check_scalar ?min_val ?max_val ~x ~name ~target_type () =
                      Py.Module.get_function_with_keywords ns "check_scalar"
                        [||]
                        (Wrap_utils.keyword_args [("min_val", Wrap_utils.Option.map min_val (function
-| `Float x -> Py.Float.of_float x
-| `Int x -> Py.Int.of_int x
+| `F x -> Py.Float.of_float x
+| `I x -> Py.Int.of_int x
 )); ("max_val", Wrap_utils.Option.map max_val (function
-| `Float x -> Py.Float.of_float x
-| `Int x -> Py.Int.of_int x
+| `F x -> Py.Float.of_float x
+| `I x -> Py.Int.of_int x
 )); ("x", Some(x )); ("name", Some(name |> Py.String.of_string)); ("target_type", Some(target_type |> (function
 | `Dtype x -> Wrap_utils.id x
-| `PyObject x -> Wrap_utils.id x
+| `Tuple x -> Wrap_utils.id x
 )))])
 
-                  let check_symmetric ?tol ?raise_warning ?raise_exception ~array () =
-                     Py.Module.get_function_with_keywords ns "check_symmetric"
-                       [||]
-                       (Wrap_utils.keyword_args [("tol", tol); ("raise_warning", raise_warning); ("raise_exception", raise_exception); ("array", Some(array |> (function
-| `Ndarray x -> Ndarray.to_pyobject x
-| `SparseMatrix x -> Csr_matrix.to_pyobject x
-)))])
-
+let check_symmetric ?tol ?raise_warning ?raise_exception ~array () =
+   Py.Module.get_function_with_keywords ns "check_symmetric"
+     [||]
+     (Wrap_utils.keyword_args [("tol", tol); ("raise_warning", raise_warning); ("raise_exception", raise_exception); ("array", Some(array |> Arr.to_pyobject))])
+     |> Arr.of_pyobject
 module Class_weight = struct
 let () = Wrap_utils.init ();;
 let ns = Py.import "sklearn.utils.class_weight"
 
+let get_py name = Py.Module.get ns name
                   let compute_class_weight ~class_weight ~classes ~y () =
                      Py.Module.get_function_with_keywords ns "compute_class_weight"
                        [||]
                        (Wrap_utils.keyword_args [("class_weight", Some(class_weight |> (function
 | `DictIntToFloat x -> (Py.Dict.of_bindings_map Py.Int.of_int Py.Float.of_float) x
 | `Balanced -> Py.String.of_string "balanced"
-| `None -> Py.String.of_string "None"
-))); ("classes", Some(classes |> Ndarray.to_pyobject)); ("y", Some(y |> Ndarray.to_pyobject))])
-                       |> Ndarray.of_pyobject
+| `None -> Py.none
+))); ("classes", Some(classes |> Arr.to_pyobject)); ("y", Some(y |> Arr.to_pyobject))])
+                       |> Arr.of_pyobject
                   let compute_sample_weight ?indices ~class_weight ~y () =
                      Py.Module.get_function_with_keywords ns "compute_sample_weight"
                        [||]
-                       (Wrap_utils.keyword_args [("indices", Wrap_utils.Option.map indices (function
-| `Ndarray x -> Ndarray.to_pyobject x
-| `None -> Py.String.of_string "None"
-)); ("class_weight", Some(class_weight |> (function
+                       (Wrap_utils.keyword_args [("indices", Wrap_utils.Option.map indices Arr.to_pyobject); ("class_weight", Some(class_weight |> (function
 | `DictIntToFloat x -> (Py.Dict.of_bindings_map Py.Int.of_int Py.Float.of_float) x
+| `List_of_dicts x -> Wrap_utils.id x
 | `Balanced -> Py.String.of_string "balanced"
-| `None -> Py.String.of_string "None"
-| `PyObject x -> Wrap_utils.id x
-))); ("y", Some(y |> Ndarray.to_pyobject))])
-                       |> Ndarray.of_pyobject
+| `None -> Py.none
+))); ("y", Some(y |> Arr.to_pyobject))])
+                       |> Arr.of_pyobject
 
 end
 let column_or_1d ?warn ~y () =
    Py.Module.get_function_with_keywords ns "column_or_1d"
      [||]
-     (Wrap_utils.keyword_args [("warn", Wrap_utils.Option.map warn Py.Bool.of_bool); ("y", Some(y |> Ndarray.to_pyobject))])
-     |> Ndarray.of_pyobject
+     (Wrap_utils.keyword_args [("warn", Wrap_utils.Option.map warn Py.Bool.of_bool); ("y", Some(y |> Arr.to_pyobject))])
+     |> Arr.of_pyobject
                   let compute_class_weight ~class_weight ~classes ~y () =
                      Py.Module.get_function_with_keywords ns "compute_class_weight"
                        [||]
                        (Wrap_utils.keyword_args [("class_weight", Some(class_weight |> (function
 | `DictIntToFloat x -> (Py.Dict.of_bindings_map Py.Int.of_int Py.Float.of_float) x
 | `Balanced -> Py.String.of_string "balanced"
-| `None -> Py.String.of_string "None"
-))); ("classes", Some(classes |> Ndarray.to_pyobject)); ("y", Some(y |> Ndarray.to_pyobject))])
-                       |> Ndarray.of_pyobject
+| `None -> Py.none
+))); ("classes", Some(classes |> Arr.to_pyobject)); ("y", Some(y |> Arr.to_pyobject))])
+                       |> Arr.of_pyobject
                   let compute_sample_weight ?indices ~class_weight ~y () =
                      Py.Module.get_function_with_keywords ns "compute_sample_weight"
                        [||]
-                       (Wrap_utils.keyword_args [("indices", Wrap_utils.Option.map indices (function
-| `Ndarray x -> Ndarray.to_pyobject x
-| `None -> Py.String.of_string "None"
-)); ("class_weight", Some(class_weight |> (function
+                       (Wrap_utils.keyword_args [("indices", Wrap_utils.Option.map indices Arr.to_pyobject); ("class_weight", Some(class_weight |> (function
 | `DictIntToFloat x -> (Py.Dict.of_bindings_map Py.Int.of_int Py.Float.of_float) x
+| `List_of_dicts x -> Wrap_utils.id x
 | `Balanced -> Py.String.of_string "balanced"
-| `None -> Py.String.of_string "None"
-| `PyObject x -> Wrap_utils.id x
-))); ("y", Some(y |> Ndarray.to_pyobject))])
-                       |> Ndarray.of_pyobject
+| `None -> Py.none
+))); ("y", Some(y |> Arr.to_pyobject))])
+                       |> Arr.of_pyobject
 let contextmanager ~func () =
    Py.Module.get_function_with_keywords ns "contextmanager"
      [||]
@@ -502,6 +470,7 @@ module Deprecation = struct
 let () = Wrap_utils.init ();;
 let ns = Py.import "sklearn.utils.deprecation"
 
+let get_py name = Py.Module.get ns name
 module Deprecated = struct
 type t = Py.Object.t
 let of_pyobject x = x
@@ -527,35 +496,32 @@ module Extmath = struct
 let () = Wrap_utils.init ();;
 let ns = Py.import "sklearn.utils.extmath"
 
+let get_py name = Py.Module.get ns name
 let cartesian ?out ~arrays () =
    Py.Module.get_function_with_keywords ns "cartesian"
      [||]
      (Wrap_utils.keyword_args [("out", out); ("arrays", Some(arrays ))])
-     |> Ndarray.of_pyobject
+     |> Arr.of_pyobject
                   let check_array ?accept_sparse ?accept_large_sparse ?dtype ?order ?copy ?force_all_finite ?ensure_2d ?allow_nd ?ensure_min_samples ?ensure_min_features ?warn_on_dtype ?estimator ~array () =
                      Py.Module.get_function_with_keywords ns "check_array"
                        [||]
                        (Wrap_utils.keyword_args [("accept_sparse", Wrap_utils.Option.map accept_sparse (function
-| `String x -> Py.String.of_string x
+| `S x -> Py.String.of_string x
 | `Bool x -> Py.Bool.of_bool x
 | `StringList x -> (Py.List.of_list_map Py.String.of_string) x
 )); ("accept_large_sparse", Wrap_utils.Option.map accept_large_sparse Py.Bool.of_bool); ("dtype", Wrap_utils.Option.map dtype (function
-| `String x -> Py.String.of_string x
+| `S x -> Py.String.of_string x
 | `Dtype x -> Wrap_utils.id x
 | `TypeList x -> Wrap_utils.id x
-| `None -> Py.String.of_string "None"
+| `None -> Py.none
 )); ("order", Wrap_utils.Option.map order (function
 | `F -> Py.String.of_string "F"
 | `C -> Py.String.of_string "C"
-| `None -> Py.String.of_string "None"
 )); ("copy", Wrap_utils.Option.map copy Py.Bool.of_bool); ("force_all_finite", Wrap_utils.Option.map force_all_finite (function
 | `Bool x -> Py.Bool.of_bool x
 | `Allow_nan -> Py.String.of_string "allow-nan"
-)); ("ensure_2d", Wrap_utils.Option.map ensure_2d Py.Bool.of_bool); ("allow_nd", Wrap_utils.Option.map allow_nd Py.Bool.of_bool); ("ensure_min_samples", Wrap_utils.Option.map ensure_min_samples Py.Int.of_int); ("ensure_min_features", Wrap_utils.Option.map ensure_min_features Py.Int.of_int); ("warn_on_dtype", Wrap_utils.Option.map warn_on_dtype (function
-| `Bool x -> Py.Bool.of_bool x
-| `None -> Py.String.of_string "None"
-)); ("estimator", Wrap_utils.Option.map estimator (function
-| `String x -> Py.String.of_string x
+)); ("ensure_2d", Wrap_utils.Option.map ensure_2d Py.Bool.of_bool); ("allow_nd", Wrap_utils.Option.map allow_nd Py.Bool.of_bool); ("ensure_min_samples", Wrap_utils.Option.map ensure_min_samples Py.Int.of_int); ("ensure_min_features", Wrap_utils.Option.map ensure_min_features Py.Int.of_int); ("warn_on_dtype", Wrap_utils.Option.map warn_on_dtype Py.Bool.of_bool); ("estimator", Wrap_utils.Option.map estimator (function
+| `S x -> Py.String.of_string x
 | `Estimator x -> Wrap_utils.id x
 )); ("array", Some(array ))])
 
@@ -563,15 +529,15 @@ let cartesian ?out ~arrays () =
                      Py.Module.get_function_with_keywords ns "check_random_state"
                        [||]
                        (Wrap_utils.keyword_args [("seed", Some(seed |> (function
-| `Int x -> Py.Int.of_int x
+| `I x -> Py.Int.of_int x
 | `RandomState x -> Wrap_utils.id x
-| `None -> Py.String.of_string "None"
+| `None -> Py.none
 )))])
 
 let density ?kwargs ~w () =
    Py.Module.get_function_with_keywords ns "density"
      [||]
-     (List.rev_append (Wrap_utils.keyword_args [("w", Some(w |> Ndarray.to_pyobject))]) (match kwargs with None -> [] | Some x -> x))
+     (List.rev_append (Wrap_utils.keyword_args [("w", Some(w |> Arr.to_pyobject))]) (match kwargs with None -> [] | Some x -> x))
 
 module Deprecated = struct
 type t = Py.Object.t
@@ -590,100 +556,97 @@ end
 let fast_logdet ~a () =
    Py.Module.get_function_with_keywords ns "fast_logdet"
      [||]
-     (Wrap_utils.keyword_args [("A", Some(a |> Ndarray.to_pyobject))])
+     (Wrap_utils.keyword_args [("A", Some(a |> Arr.to_pyobject))])
 
                   let log_logistic ?out ~x () =
                      Py.Module.get_function_with_keywords ns "log_logistic"
                        [||]
                        (Wrap_utils.keyword_args [("out", Wrap_utils.Option.map out (function
-| `Ndarray x -> Ndarray.to_pyobject x
-| `PyObject x -> Wrap_utils.id x
-)); ("X", Some(x |> Ndarray.to_pyobject))])
-                       |> Ndarray.of_pyobject
+| `Arr x -> Arr.to_pyobject x
+| `T_ x -> Wrap_utils.id x
+)); ("X", Some(x |> Arr.to_pyobject))])
+                       |> Arr.of_pyobject
 let make_nonnegative ?min_value ~x () =
    Py.Module.get_function_with_keywords ns "make_nonnegative"
      [||]
-     (Wrap_utils.keyword_args [("min_value", min_value); ("X", Some(x |> Ndarray.to_pyobject))])
+     (Wrap_utils.keyword_args [("min_value", min_value); ("X", Some(x |> Arr.to_pyobject))])
 
                   let randomized_range_finder ?power_iteration_normalizer ?random_state ~a ~size ~n_iter () =
                      Py.Module.get_function_with_keywords ns "randomized_range_finder"
                        [||]
-                       (Wrap_utils.keyword_args [("power_iteration_normalizer", Wrap_utils.Option.map power_iteration_normalizer Py.String.of_string); ("random_state", Wrap_utils.Option.map random_state (function
-| `Int x -> Py.Int.of_int x
-| `RandomState x -> Wrap_utils.id x
-| `None -> Py.String.of_string "None"
-)); ("A", Some(a )); ("size", Some(size |> Py.Int.of_int)); ("n_iter", Some(n_iter |> Py.Int.of_int))])
+                       (Wrap_utils.keyword_args [("power_iteration_normalizer", Wrap_utils.Option.map power_iteration_normalizer (function
+| `Auto -> Py.String.of_string "auto"
+| `QR -> Py.String.of_string "QR"
+| `LU -> Py.String.of_string "LU"
+| `None -> Py.String.of_string "none"
+)); ("random_state", Wrap_utils.Option.map random_state Py.Int.of_int); ("A", Some(a )); ("size", Some(size |> Py.Int.of_int)); ("n_iter", Some(n_iter |> Py.Int.of_int))])
 
                   let randomized_svd ?n_oversamples ?n_iter ?power_iteration_normalizer ?transpose ?flip_sign ?random_state ~m ~n_components () =
                      Py.Module.get_function_with_keywords ns "randomized_svd"
                        [||]
                        (Wrap_utils.keyword_args [("n_oversamples", n_oversamples); ("n_iter", Wrap_utils.Option.map n_iter (function
-| `Int x -> Py.Int.of_int x
-| `PyObject x -> Wrap_utils.id x
-)); ("power_iteration_normalizer", Wrap_utils.Option.map power_iteration_normalizer Py.String.of_string); ("transpose", Wrap_utils.Option.map transpose (function
+| `I x -> Py.Int.of_int x
+| `T_auto_ x -> Wrap_utils.id x
+)); ("power_iteration_normalizer", Wrap_utils.Option.map power_iteration_normalizer (function
+| `Auto -> Py.String.of_string "auto"
+| `QR -> Py.String.of_string "QR"
+| `LU -> Py.String.of_string "LU"
+| `None -> Py.String.of_string "none"
+)); ("transpose", Wrap_utils.Option.map transpose (function
 | `Bool x -> Py.Bool.of_bool x
 | `Auto -> Py.String.of_string "auto"
 )); ("flip_sign", Wrap_utils.Option.map flip_sign (function
 | `Bool x -> Py.Bool.of_bool x
-| `PyObject x -> Wrap_utils.id x
-)); ("random_state", Wrap_utils.Option.map random_state (function
-| `Int x -> Py.Int.of_int x
-| `RandomState x -> Wrap_utils.id x
-| `None -> Py.String.of_string "None"
-)); ("M", Some(m |> (function
-| `Ndarray x -> Ndarray.to_pyobject x
-| `SparseMatrix x -> Csr_matrix.to_pyobject x
-))); ("n_components", Some(n_components |> Py.Int.of_int))])
+| `T_True_by x -> Wrap_utils.id x
+)); ("random_state", Wrap_utils.Option.map random_state Py.Int.of_int); ("M", Some(m |> Arr.to_pyobject)); ("n_components", Some(n_components |> Py.Int.of_int))])
 
 let row_norms ?squared ~x () =
    Py.Module.get_function_with_keywords ns "row_norms"
      [||]
-     (Wrap_utils.keyword_args [("squared", squared); ("X", Some(x |> Ndarray.to_pyobject))])
+     (Wrap_utils.keyword_args [("squared", squared); ("X", Some(x |> Arr.to_pyobject))])
 
 let safe_min ~x () =
    Py.Module.get_function_with_keywords ns "safe_min"
      [||]
-     (Wrap_utils.keyword_args [("X", Some(x |> Ndarray.to_pyobject))])
+     (Wrap_utils.keyword_args [("X", Some(x |> Arr.to_pyobject))])
 
-                  let safe_sparse_dot ?dense_output ~a ~b () =
-                     Py.Module.get_function_with_keywords ns "safe_sparse_dot"
-                       [||]
-                       (Wrap_utils.keyword_args [("dense_output", dense_output); ("a", Some(a |> (function
-| `Ndarray x -> Ndarray.to_pyobject x
-| `SparseMatrix x -> Csr_matrix.to_pyobject x
-))); ("b", Some(b ))])
-
+let safe_sparse_dot ?dense_output ~a ~b () =
+   Py.Module.get_function_with_keywords ns "safe_sparse_dot"
+     [||]
+     (Wrap_utils.keyword_args [("dense_output", dense_output); ("a", Some(a |> Arr.to_pyobject)); ("b", Some(b ))])
+     |> Arr.of_pyobject
 let softmax ?copy ~x () =
    Py.Module.get_function_with_keywords ns "softmax"
      [||]
      (Wrap_utils.keyword_args [("copy", Wrap_utils.Option.map copy Py.Bool.of_bool); ("X", Some(x ))])
-     |> Ndarray.of_pyobject
+     |> Arr.of_pyobject
 let squared_norm ~x () =
    Py.Module.get_function_with_keywords ns "squared_norm"
      [||]
-     (Wrap_utils.keyword_args [("x", Some(x |> Ndarray.to_pyobject))])
+     (Wrap_utils.keyword_args [("x", Some(x |> Arr.to_pyobject))])
 
 let stable_cumsum ?axis ?rtol ?atol ~arr () =
    Py.Module.get_function_with_keywords ns "stable_cumsum"
      [||]
-     (Wrap_utils.keyword_args [("axis", axis); ("rtol", rtol); ("atol", atol); ("arr", Some(arr |> Ndarray.to_pyobject))])
+     (Wrap_utils.keyword_args [("axis", axis); ("rtol", rtol); ("atol", atol); ("arr", Some(arr |> Arr.to_pyobject))])
 
 let svd_flip ?u_based_decision ~u ~v () =
    Py.Module.get_function_with_keywords ns "svd_flip"
      [||]
-     (Wrap_utils.keyword_args [("u_based_decision", Wrap_utils.Option.map u_based_decision Py.Bool.of_bool); ("u", Some(u |> Ndarray.to_pyobject)); ("v", Some(v |> Ndarray.to_pyobject))])
+     (Wrap_utils.keyword_args [("u_based_decision", Wrap_utils.Option.map u_based_decision Py.Bool.of_bool); ("u", Some(u |> Arr.to_pyobject)); ("v", Some(v |> Arr.to_pyobject))])
 
 let weighted_mode ?axis ~a ~w () =
    Py.Module.get_function_with_keywords ns "weighted_mode"
      [||]
-     (Wrap_utils.keyword_args [("axis", axis); ("a", Some(a |> Ndarray.to_pyobject)); ("w", Some(w ))])
-     |> Ndarray.of_pyobject
+     (Wrap_utils.keyword_args [("axis", axis); ("a", Some(a |> Arr.to_pyobject)); ("w", Some(w ))])
+     |> Arr.of_pyobject
 
 end
 module Fixes = struct
 let () = Wrap_utils.init ();;
 let ns = Py.import "sklearn.utils.fixes"
 
+let get_py name = Py.Module.get ns name
 module LooseVersion = struct
 type t = Py.Object.t
 let of_pyobject x = x
@@ -710,7 +673,7 @@ let to_pyobject x = x
 let create ?data ?mask ?dtype ?copy ?subok ?ndmin ?fill_value ?keep_mask ?hard_mask ?shrink ?order ?options () =
    Py.Module.get_function_with_keywords ns "MaskedArray"
      [||]
-     (List.rev_append (Wrap_utils.keyword_args [("data", Wrap_utils.Option.map data Ndarray.to_pyobject); ("mask", mask); ("dtype", dtype); ("copy", copy); ("subok", subok); ("ndmin", ndmin); ("fill_value", fill_value); ("keep_mask", keep_mask); ("hard_mask", hard_mask); ("shrink", shrink); ("order", order)]) (match options with None -> [] | Some x -> x))
+     (List.rev_append (Wrap_utils.keyword_args [("data", Wrap_utils.Option.map data Arr.to_pyobject); ("mask", mask); ("dtype", dtype); ("copy", copy); ("subok", subok); ("ndmin", ndmin); ("fill_value", fill_value); ("keep_mask", keep_mask); ("hard_mask", hard_mask); ("shrink", shrink); ("order", order)]) (match options with None -> [] | Some x -> x))
 
 let get_item ~indx self =
    Py.Module.get_function_with_keywords self "__getitem__"
@@ -732,21 +695,15 @@ let any ?axis ?out ?keepdims self =
      [||]
      (Wrap_utils.keyword_args [("axis", axis); ("out", out); ("keepdims", keepdims)])
 
-                  let argmax ?axis ?fill_value ?out self =
-                     Py.Module.get_function_with_keywords self "argmax"
-                       [||]
-                       (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-| `Int x -> Py.Int.of_int x
-| `None -> Py.String.of_string "None"
-)); ("fill_value", fill_value); ("out", out)])
+let argmax ?axis ?fill_value ?out self =
+   Py.Module.get_function_with_keywords self "argmax"
+     [||]
+     (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis Py.Int.of_int); ("fill_value", fill_value); ("out", out)])
 
-                  let argmin ?axis ?fill_value ?out self =
-                     Py.Module.get_function_with_keywords self "argmin"
-                       [||]
-                       (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-| `Int x -> Py.Int.of_int x
-| `None -> Py.String.of_string "None"
-)); ("fill_value", fill_value); ("out", out)])
+let argmin ?axis ?fill_value ?out self =
+   Py.Module.get_function_with_keywords self "argmin"
+     [||]
+     (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis Py.Int.of_int); ("fill_value", fill_value); ("out", out)])
 
 let argpartition ?kwargs args self =
    Py.Module.get_function_with_keywords self "argpartition"
@@ -761,8 +718,8 @@ let argpartition ?kwargs args self =
 | `Mergesort -> Py.String.of_string "mergesort"
 | `Heapsort -> Py.String.of_string "heapsort"
 | `Stable -> Py.String.of_string "stable"
-)); ("order", order); ("endwith", Wrap_utils.Option.map endwith Py.Bool.of_bool); ("fill_value", fill_value)])
-
+)); ("order", Wrap_utils.Option.map order Arr.to_pyobject); ("endwith", Wrap_utils.Option.map endwith Py.Bool.of_bool); ("fill_value", fill_value)])
+                       |> (fun x -> if (fun x -> (Wrap_utils.isinstance Wrap_utils.ndarray x) || (Wrap_utils.isinstance Wrap_utils.csr_matrix x)) x then `Arr (Arr.of_pyobject x) else if Py.Int.check x then `I (Py.Int.to_int x) else failwith "could not identify type from Python value")
 let compress ?axis ?out ~condition self =
    Py.Module.get_function_with_keywords self "compress"
      [||]
@@ -772,7 +729,7 @@ let compressed self =
    Py.Module.get_function_with_keywords self "compressed"
      [||]
      []
-     |> Ndarray.of_pyobject
+     |> Arr.of_pyobject
 let copy ?params args self =
    Py.Module.get_function_with_keywords self "copy"
      (Wrap_utils.pos_arg Wrap_utils.id args)
@@ -782,9 +739,8 @@ let copy ?params args self =
                      Py.Module.get_function_with_keywords self "count"
                        [||]
                        (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-| `Int x -> Py.Int.of_int x
-| `None -> Py.String.of_string "None"
-| `PyObject x -> Wrap_utils.id x
+| `I x -> Py.Int.of_int x
+| `Tuple_of_ints x -> Wrap_utils.id x
 )); ("keepdims", Wrap_utils.Option.map keepdims Py.Bool.of_bool)])
 
 let cumprod ?axis ?dtype ?out self =
@@ -810,13 +766,13 @@ let dot ?out ?strict ~b self =
 let filled ?fill_value self =
    Py.Module.get_function_with_keywords self "filled"
      [||]
-     (Wrap_utils.keyword_args [("fill_value", Wrap_utils.Option.map fill_value Ndarray.to_pyobject)])
-     |> Ndarray.of_pyobject
+     (Wrap_utils.keyword_args [("fill_value", Wrap_utils.Option.map fill_value Arr.to_pyobject)])
+     |> Arr.of_pyobject
 let flatten ?params args self =
    Py.Module.get_function_with_keywords self "flatten"
      (Wrap_utils.pos_arg Wrap_utils.id args)
      (match params with None -> [] | Some x -> x)
-     |> Ndarray.of_pyobject
+     |> Arr.of_pyobject
 let get_fill_value self =
    Py.Module.get_function_with_keywords self "get_fill_value"
      [||]
@@ -847,27 +803,21 @@ let iscontiguous self =
      [||]
      []
 
-                  let max ?axis ?out ?fill_value ?keepdims self =
-                     Py.Module.get_function_with_keywords self "max"
-                       [||]
-                       (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-| `Int x -> Py.Int.of_int x
-| `None -> Py.String.of_string "None"
-)); ("out", out); ("fill_value", fill_value); ("keepdims", keepdims)])
-                       |> Ndarray.of_pyobject
+let max ?axis ?out ?fill_value ?keepdims self =
+   Py.Module.get_function_with_keywords self "max"
+     [||]
+     (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis Py.Int.of_int); ("out", out); ("fill_value", fill_value); ("keepdims", keepdims)])
+     |> Arr.of_pyobject
 let mean ?axis ?dtype ?out ?keepdims self =
    Py.Module.get_function_with_keywords self "mean"
      [||]
      (Wrap_utils.keyword_args [("axis", axis); ("dtype", dtype); ("out", out); ("keepdims", keepdims)])
 
-                  let min ?axis ?out ?fill_value ?keepdims self =
-                     Py.Module.get_function_with_keywords self "min"
-                       [||]
-                       (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-| `Int x -> Py.Int.of_int x
-| `None -> Py.String.of_string "None"
-)); ("out", out); ("fill_value", fill_value); ("keepdims", keepdims)])
-                       |> Ndarray.of_pyobject
+let min ?axis ?out ?fill_value ?keepdims self =
+   Py.Module.get_function_with_keywords self "min"
+     [||]
+     (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis Py.Int.of_int); ("out", out); ("fill_value", fill_value); ("keepdims", keepdims)])
+     |> Arr.of_pyobject
 let mini ?axis self =
    Py.Module.get_function_with_keywords self "mini"
      [||]
@@ -893,14 +843,11 @@ let product ?axis ?dtype ?out ?keepdims self =
      [||]
      (Wrap_utils.keyword_args [("axis", axis); ("dtype", dtype); ("out", out); ("keepdims", keepdims)])
 
-                  let ptp ?axis ?out ?fill_value ?keepdims self =
-                     Py.Module.get_function_with_keywords self "ptp"
-                       [||]
-                       (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-| `Int x -> Py.Int.of_int x
-| `None -> Py.String.of_string "None"
-)); ("out", out); ("fill_value", fill_value); ("keepdims", keepdims)])
-                       |> Ndarray.of_pyobject
+let ptp ?axis ?out ?fill_value ?keepdims self =
+   Py.Module.get_function_with_keywords self "ptp"
+     [||]
+     (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis Py.Int.of_int); ("out", out); ("fill_value", fill_value); ("keepdims", keepdims)])
+     |> Arr.of_pyobject
 let put ?mode ~indices ~values self =
    Py.Module.get_function_with_keywords self "put"
      [||]
@@ -925,7 +872,7 @@ let reshape ?kwargs s self =
    Py.Module.get_function_with_keywords self "reshape"
      (Wrap_utils.pos_arg Wrap_utils.id s)
      (match kwargs with None -> [] | Some x -> x)
-     |> Ndarray.of_pyobject
+     |> Arr.of_pyobject
 let resize ?refcheck ?order ~newshape self =
    Py.Module.get_function_with_keywords self "resize"
      [||]
@@ -955,7 +902,7 @@ let sort ?axis ?kind ?order ?endwith ?fill_value self =
    Py.Module.get_function_with_keywords self "sort"
      [||]
      (Wrap_utils.keyword_args [("axis", axis); ("kind", kind); ("order", order); ("endwith", endwith); ("fill_value", fill_value)])
-     |> Ndarray.of_pyobject
+     |> Arr.of_pyobject
 let squeeze ?params args self =
    Py.Module.get_function_with_keywords self "squeeze"
      (Wrap_utils.pos_arg Wrap_utils.id args)
@@ -995,17 +942,17 @@ let toflex self =
    Py.Module.get_function_with_keywords self "toflex"
      [||]
      []
-     |> Ndarray.of_pyobject
+     |> Arr.of_pyobject
 let tolist ?fill_value self =
    Py.Module.get_function_with_keywords self "tolist"
      [||]
      (Wrap_utils.keyword_args [("fill_value", fill_value)])
-
+     |> Arr.of_pyobject
 let torecords self =
    Py.Module.get_function_with_keywords self "torecords"
      [||]
      []
-     |> Ndarray.of_pyobject
+     |> Arr.of_pyobject
 let tostring ?fill_value ?order self =
    Py.Module.get_function_with_keywords self "tostring"
      [||]
@@ -1020,7 +967,7 @@ let transpose ?params args self =
    Py.Module.get_function_with_keywords self "transpose"
      (Wrap_utils.pos_arg Wrap_utils.id args)
      (match params with None -> [] | Some x -> x)
-     |> Ndarray.of_pyobject
+     |> Arr.of_pyobject
 let unshare_mask self =
    Py.Module.get_function_with_keywords self "unshare_mask"
      [||]
@@ -1029,7 +976,7 @@ let unshare_mask self =
 let var ?axis ?dtype ?out ?ddof ?keepdims self =
    Py.Module.get_function_with_keywords self "var"
      [||]
-     (Wrap_utils.keyword_args [("axis", axis); ("dtype", dtype); ("out", Wrap_utils.Option.map out Ndarray.to_pyobject); ("ddof", Wrap_utils.Option.map ddof Py.Int.of_int); ("keepdims", Wrap_utils.Option.map keepdims Py.Bool.of_bool)])
+     (Wrap_utils.keyword_args [("axis", axis); ("dtype", dtype); ("out", Wrap_utils.Option.map out Arr.to_pyobject); ("ddof", Wrap_utils.Option.map ddof Py.Int.of_int); ("keepdims", Wrap_utils.Option.map keepdims Py.Bool.of_bool)])
 
 let view ?dtype ?type_ ?fill_value self =
    Py.Module.get_function_with_keywords self "view"
@@ -1045,24 +992,24 @@ end
                      Py.Module.get_function_with_keywords ns "comb"
                        [||]
                        (Wrap_utils.keyword_args [("exact", exact); ("repetition", repetition); ("N", Some(n |> (function
-| `Int x -> Py.Int.of_int x
-| `Ndarray x -> Ndarray.to_pyobject x
+| `I x -> Py.Int.of_int x
+| `Arr x -> Arr.to_pyobject x
 ))); ("k", Some(k ))])
-
+                       |> (fun x -> if Py.Int.check x then `I (Py.Int.to_int x) else if Py.Float.check x then `F (Py.Float.to_float x) else if (fun x -> (Wrap_utils.isinstance Wrap_utils.ndarray x) || (Wrap_utils.isinstance Wrap_utils.csr_matrix x)) x then `Arr (Arr.of_pyobject x) else failwith "could not identify type from Python value")
                   let lobpcg ?b ?m ?y ?tol ?maxiter ?largest ?verbosityLevel ?retLambdaHistory ?retResidualNormsHistory ~a ~x () =
                      Py.Module.get_function_with_keywords ns "lobpcg"
                        [||]
                        (Wrap_utils.keyword_args [("B", b); ("M", m); ("Y", y); ("tol", tol); ("maxiter", maxiter); ("largest", largest); ("verbosityLevel", verbosityLevel); ("retLambdaHistory", retLambdaHistory); ("retResidualNormsHistory", retResidualNormsHistory); ("A", Some(a |> (function
 | `SparseMatrix x -> Csr_matrix.to_pyobject x
+| `Dense_matrix x -> Wrap_utils.id x
 | `LinearOperator x -> Wrap_utils.id x
-| `PyObject x -> Wrap_utils.id x
 ))); ("X", Some(x ))])
-                       |> Ndarray.of_pyobject
+                       |> Arr.of_pyobject
 let logsumexp ?axis ?b ?keepdims ?return_sign ~a () =
    Py.Module.get_function_with_keywords ns "logsumexp"
      [||]
-     (Wrap_utils.keyword_args [("axis", axis); ("b", Wrap_utils.Option.map b Ndarray.to_pyobject); ("keepdims", Wrap_utils.Option.map keepdims Py.Bool.of_bool); ("return_sign", Wrap_utils.Option.map return_sign Py.Bool.of_bool); ("a", Some(a |> Ndarray.to_pyobject))])
-     |> Ndarray.of_pyobject
+     (Wrap_utils.keyword_args [("axis", axis); ("b", Wrap_utils.Option.map b Arr.to_pyobject); ("keepdims", Wrap_utils.Option.map keepdims Py.Bool.of_bool); ("return_sign", Wrap_utils.Option.map return_sign Py.Bool.of_bool); ("a", Some(a |> Arr.to_pyobject))])
+     |> Arr.of_pyobject
 let loguniform ?kwds args =
    Py.Module.get_function_with_keywords ns "loguniform"
      (Wrap_utils.pos_arg Wrap_utils.id args)
@@ -1077,8 +1024,7 @@ let pinvh ?cond ?rcond ?lower ?return_rank ?check_finite ~a () =
                      Py.Module.get_function_with_keywords ns "sparse_lsqr"
                        [||]
                        (Wrap_utils.keyword_args [("damp", damp); ("atol", atol); ("btol", btol); ("conlim", conlim); ("iter_lim", iter_lim); ("show", show); ("calc_var", calc_var); ("x0", x0); ("A", Some(a |> (function
-| `SparseMatrix x -> Csr_matrix.to_pyobject x
-| `Ndarray x -> Ndarray.to_pyobject x
+| `Arr x -> Arr.to_pyobject x
 | `LinearOperator x -> Wrap_utils.id x
 ))); ("b", Some(b ))])
 
@@ -1103,17 +1049,18 @@ let get_config () =
    Py.Module.get_function_with_keywords ns "get_config"
      [||]
      []
-
+     |> Dict.of_pyobject
 module Graph = struct
 let () = Wrap_utils.init ();;
 let ns = Py.import "sklearn.utils.graph"
 
+let get_py name = Py.Module.get ns name
                   let single_source_shortest_path_length ?cutoff ~graph ~source () =
                      Py.Module.get_function_with_keywords ns "single_source_shortest_path_length"
                        [||]
                        (Wrap_utils.keyword_args [("cutoff", cutoff); ("graph", Some(graph |> (function
 | `SparseMatrix x -> Csr_matrix.to_pyobject x
-| `PyObject x -> Wrap_utils.id x
+| `T2D_array_preferably_LIL_matrix_ x -> Wrap_utils.id x
 ))); ("source", Some(source ))])
 
 
@@ -1122,6 +1069,7 @@ module Graph_shortest_path = struct
 let () = Wrap_utils.init ();;
 let ns = Py.import "sklearn.utils.graph_shortest_path"
 
+let get_py name = Py.Module.get ns name
 module Float64 = struct
 type t = Py.Object.t
 let of_pyobject x = x
@@ -1189,7 +1137,7 @@ let indexable iterables =
 let indices_to_mask ~indices ~mask_length () =
    Py.Module.get_function_with_keywords ns "indices_to_mask"
      [||]
-     (Wrap_utils.keyword_args [("indices", Some(indices )); ("mask_length", Some(mask_length ))])
+     (Wrap_utils.keyword_args [("indices", Some(indices |> Arr.to_pyobject)); ("mask_length", Some(mask_length ))])
 
 let is_scalar_nan ~x () =
    Py.Module.get_function_with_keywords ns "is_scalar_nan"
@@ -1205,6 +1153,7 @@ module Metaestimators = struct
 let () = Wrap_utils.init ();;
 let ns = Py.import "sklearn.utils.metaestimators"
 
+let get_py name = Py.Module.get ns name
 module ABCMeta = struct
 type t = Py.Object.t
 let of_pyobject x = x
@@ -1237,7 +1186,7 @@ let get_params ?deep self =
    Py.Module.get_function_with_keywords self "get_params"
      [||]
      (Wrap_utils.keyword_args [("deep", Wrap_utils.Option.map deep Py.Bool.of_bool)])
-
+     |> Dict.of_pyobject
 let set_params ?params self =
    Py.Module.get_function_with_keywords self "set_params"
      [||]
@@ -1257,9 +1206,9 @@ let abstractmethod ~funcobj () =
                      Py.Module.get_function_with_keywords ns "if_delegate_has_method"
                        [||]
                        (Wrap_utils.keyword_args [("delegate", Some(delegate |> (function
-| `String x -> Py.String.of_string x
+| `S x -> Py.String.of_string x
 | `StringList x -> (Py.List.of_list_map Py.String.of_string) x
-| `PyObject x -> Wrap_utils.id x
+| `Tuple_of_strings x -> Wrap_utils.id x
 )))])
 
 let update_wrapper ?assigned ?updated ~wrapper ~wrapped () =
@@ -1273,43 +1222,43 @@ module Multiclass = struct
 let () = Wrap_utils.init ();;
 let ns = Py.import "sklearn.utils.multiclass"
 
+let get_py name = Py.Module.get ns name
                   let check_array ?accept_sparse ?accept_large_sparse ?dtype ?order ?copy ?force_all_finite ?ensure_2d ?allow_nd ?ensure_min_samples ?ensure_min_features ?warn_on_dtype ?estimator ~array () =
                      Py.Module.get_function_with_keywords ns "check_array"
                        [||]
                        (Wrap_utils.keyword_args [("accept_sparse", Wrap_utils.Option.map accept_sparse (function
-| `String x -> Py.String.of_string x
+| `S x -> Py.String.of_string x
 | `Bool x -> Py.Bool.of_bool x
 | `StringList x -> (Py.List.of_list_map Py.String.of_string) x
 )); ("accept_large_sparse", Wrap_utils.Option.map accept_large_sparse Py.Bool.of_bool); ("dtype", Wrap_utils.Option.map dtype (function
-| `String x -> Py.String.of_string x
+| `S x -> Py.String.of_string x
 | `Dtype x -> Wrap_utils.id x
 | `TypeList x -> Wrap_utils.id x
-| `None -> Py.String.of_string "None"
+| `None -> Py.none
 )); ("order", Wrap_utils.Option.map order (function
 | `F -> Py.String.of_string "F"
 | `C -> Py.String.of_string "C"
-| `None -> Py.String.of_string "None"
 )); ("copy", Wrap_utils.Option.map copy Py.Bool.of_bool); ("force_all_finite", Wrap_utils.Option.map force_all_finite (function
 | `Bool x -> Py.Bool.of_bool x
 | `Allow_nan -> Py.String.of_string "allow-nan"
-)); ("ensure_2d", Wrap_utils.Option.map ensure_2d Py.Bool.of_bool); ("allow_nd", Wrap_utils.Option.map allow_nd Py.Bool.of_bool); ("ensure_min_samples", Wrap_utils.Option.map ensure_min_samples Py.Int.of_int); ("ensure_min_features", Wrap_utils.Option.map ensure_min_features Py.Int.of_int); ("warn_on_dtype", Wrap_utils.Option.map warn_on_dtype (function
-| `Bool x -> Py.Bool.of_bool x
-| `None -> Py.String.of_string "None"
-)); ("estimator", Wrap_utils.Option.map estimator (function
-| `String x -> Py.String.of_string x
+)); ("ensure_2d", Wrap_utils.Option.map ensure_2d Py.Bool.of_bool); ("allow_nd", Wrap_utils.Option.map allow_nd Py.Bool.of_bool); ("ensure_min_samples", Wrap_utils.Option.map ensure_min_samples Py.Int.of_int); ("ensure_min_features", Wrap_utils.Option.map ensure_min_features Py.Int.of_int); ("warn_on_dtype", Wrap_utils.Option.map warn_on_dtype Py.Bool.of_bool); ("estimator", Wrap_utils.Option.map estimator (function
+| `S x -> Py.String.of_string x
 | `Estimator x -> Wrap_utils.id x
 )); ("array", Some(array ))])
 
 let check_classification_targets ~y () =
    Py.Module.get_function_with_keywords ns "check_classification_targets"
      [||]
-     (Wrap_utils.keyword_args [("y", Some(y |> Ndarray.to_pyobject))])
+     (Wrap_utils.keyword_args [("y", Some(y |> Arr.to_pyobject))])
 
-let class_distribution ?sample_weight ~y () =
-   Py.Module.get_function_with_keywords ns "class_distribution"
-     [||]
-     (Wrap_utils.keyword_args [("sample_weight", Wrap_utils.Option.map sample_weight Ndarray.to_pyobject); ("y", Some(y ))])
-     |> (fun x -> ((Wrap_utils.id (Py.Tuple.get x 0)), (Wrap_utils.id (Py.Tuple.get x 1)), (Wrap_utils.id (Py.Tuple.get x 2))))
+                  let class_distribution ?sample_weight ~y () =
+                     Py.Module.get_function_with_keywords ns "class_distribution"
+                       [||]
+                       (Wrap_utils.keyword_args [("sample_weight", Wrap_utils.Option.map sample_weight Arr.to_pyobject); ("y", Some(y |> (function
+| `Arr x -> Arr.to_pyobject x
+| `PyObject x -> Wrap_utils.id x
+)))])
+                       |> (fun x -> ((Wrap_utils.id (Py.Tuple.get x 0)), (Wrap_utils.id (Py.Tuple.get x 1)), (Wrap_utils.id (Py.Tuple.get x 2))))
 module Dok_matrix = struct
 type t = Py.Object.t
 let of_pyobject x = x
@@ -1324,10 +1273,13 @@ let get_item ~key self =
      [||]
      (Wrap_utils.keyword_args [("key", Some(key ))])
 
-let asformat ?copy ~format self =
-   Py.Module.get_function_with_keywords self "asformat"
-     [||]
-     (Wrap_utils.keyword_args [("copy", copy); ("format", Some(format |> Py.String.of_string))])
+                  let asformat ?copy ~format self =
+                     Py.Module.get_function_with_keywords self "asformat"
+                       [||]
+                       (Wrap_utils.keyword_args [("copy", copy); ("format", Some(format |> (function
+| `S x -> Py.String.of_string x
+| `None -> Py.none
+)))])
 
 let asfptype self =
    Py.Module.get_function_with_keywords self "asfptype"
@@ -1338,8 +1290,8 @@ let asfptype self =
                      Py.Module.get_function_with_keywords self "astype"
                        [||]
                        (Wrap_utils.keyword_args [("casting", casting); ("copy", copy); ("dtype", Some(dtype |> (function
-| `String x -> Py.String.of_string x
-| `PyObject x -> Wrap_utils.id x
+| `S x -> Py.String.of_string x
+| `Dtype x -> Wrap_utils.id x
 )))])
 
 let conj ?copy self =
@@ -1416,8 +1368,8 @@ let getmaxprint self =
                      Py.Module.get_function_with_keywords self "getnnz"
                        [||]
                        (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-| `None -> Py.String.of_string "None"
-| `PyObject x -> Wrap_utils.id x
+| `Zero -> Py.Int.of_int 0
+| `One -> Py.Int.of_int 1
 ))])
 
 let getrow ~i self =
@@ -1434,10 +1386,11 @@ let maximum ~other self =
                      Py.Module.get_function_with_keywords self "mean"
                        [||]
                        (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-| `None -> Py.String.of_string "None"
+| `Zero -> Py.Int.of_int 0
+| `One -> Py.Int.of_int 1
 | `PyObject x -> Wrap_utils.id x
-)); ("dtype", dtype); ("out", out)])
-
+)); ("dtype", dtype); ("out", Wrap_utils.Option.map out Arr.to_pyobject)])
+                       |> Arr.of_pyobject
 let minimum ~other self =
    Py.Module.get_function_with_keywords self "minimum"
      [||]
@@ -1481,24 +1434,25 @@ let setdefault ?default ~key self =
 let setdiag ?k ~values self =
    Py.Module.get_function_with_keywords self "setdiag"
      [||]
-     (Wrap_utils.keyword_args [("k", Wrap_utils.Option.map k Py.Int.of_int); ("values", Some(values |> Ndarray.to_pyobject))])
+     (Wrap_utils.keyword_args [("k", Wrap_utils.Option.map k Py.Int.of_int); ("values", Some(values |> Arr.to_pyobject))])
 
                   let sum ?axis ?dtype ?out self =
                      Py.Module.get_function_with_keywords self "sum"
                        [||]
                        (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-| `None -> Py.String.of_string "None"
+| `Zero -> Py.Int.of_int 0
+| `One -> Py.Int.of_int 1
 | `PyObject x -> Wrap_utils.id x
-)); ("dtype", dtype); ("out", out)])
-
+)); ("dtype", dtype); ("out", Wrap_utils.Option.map out Arr.to_pyobject)])
+                       |> Arr.of_pyobject
                   let toarray ?order ?out self =
                      Py.Module.get_function_with_keywords self "toarray"
                        [||]
                        (Wrap_utils.keyword_args [("order", Wrap_utils.Option.map order (function
 | `C -> Py.String.of_string "C"
 | `F -> Py.String.of_string "F"
-)); ("out", Wrap_utils.Option.map out Ndarray.to_pyobject)])
-                       |> Ndarray.of_pyobject
+)); ("out", Wrap_utils.Option.map out Arr.to_pyobject)])
+                       |> Arr.of_pyobject
 let tobsr ?blocksize ?copy self =
    Py.Module.get_function_with_keywords self "tobsr"
      [||]
@@ -1525,8 +1479,8 @@ let tocsr ?copy self =
                        (Wrap_utils.keyword_args [("order", Wrap_utils.Option.map order (function
 | `C -> Py.String.of_string "C"
 | `F -> Py.String.of_string "F"
-)); ("out", Wrap_utils.Option.map out Ndarray.to_pyobject)])
-
+)); ("out", Wrap_utils.Option.map out Arr.to_pyobject)])
+                       |> Arr.of_pyobject
 let todia ?copy self =
    Py.Module.get_function_with_keywords self "todia"
      [||]
@@ -1552,10 +1506,15 @@ let update ~val_ self =
      [||]
      (Wrap_utils.keyword_args [("val", Some(val_ ))])
 
-let dtype self =
+
+let dtype_opt self =
   match Py.Object.get_attr_string self "dtype" with
-| None -> raise (Wrap_utils.Attribute_not_found "dtype")
-| Some x -> Wrap_utils.id x
+  | None -> failwith "attribute dtype not found"
+  | Some x -> if Py.is_none x then None else Some (Wrap_utils.id x)
+
+let dtype self = match dtype_opt self with
+  | None -> raise Not_found
+  | Some x -> x
 let to_string self = Py.Object.to_string self
 let show self = to_string self
 let pp formatter self = Format.fprintf formatter "%s" (show self)
@@ -1564,7 +1523,7 @@ end
 let is_multilabel ~y () =
    Py.Module.get_function_with_keywords ns "is_multilabel"
      [||]
-     (Wrap_utils.keyword_args [("y", Some(y |> Ndarray.to_pyobject))])
+     (Wrap_utils.keyword_args [("y", Some(y |> Arr.to_pyobject))])
      |> Py.Bool.to_bool
 let issparse ~x () =
    Py.Module.get_function_with_keywords ns "issparse"
@@ -1585,10 +1544,13 @@ let get_item ~key self =
      [||]
      (Wrap_utils.keyword_args [("key", Some(key ))])
 
-let asformat ?copy ~format self =
-   Py.Module.get_function_with_keywords self "asformat"
-     [||]
-     (Wrap_utils.keyword_args [("copy", copy); ("format", Some(format |> Py.String.of_string))])
+                  let asformat ?copy ~format self =
+                     Py.Module.get_function_with_keywords self "asformat"
+                       [||]
+                       (Wrap_utils.keyword_args [("copy", copy); ("format", Some(format |> (function
+| `S x -> Py.String.of_string x
+| `None -> Py.none
+)))])
 
 let asfptype self =
    Py.Module.get_function_with_keywords self "asfptype"
@@ -1599,8 +1561,8 @@ let asfptype self =
                      Py.Module.get_function_with_keywords self "astype"
                        [||]
                        (Wrap_utils.keyword_args [("casting", casting); ("copy", copy); ("dtype", Some(dtype |> (function
-| `String x -> Py.String.of_string x
-| `PyObject x -> Wrap_utils.id x
+| `S x -> Py.String.of_string x
+| `Dtype x -> Wrap_utils.id x
 )))])
 
 let conj ?copy self =
@@ -1662,8 +1624,8 @@ let getmaxprint self =
                      Py.Module.get_function_with_keywords self "getnnz"
                        [||]
                        (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-| `None -> Py.String.of_string "None"
-| `PyObject x -> Wrap_utils.id x
+| `Zero -> Py.Int.of_int 0
+| `One -> Py.Int.of_int 1
 ))])
 
 let getrow ~i self =
@@ -1685,10 +1647,11 @@ let maximum ~other self =
                      Py.Module.get_function_with_keywords self "mean"
                        [||]
                        (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-| `None -> Py.String.of_string "None"
+| `Zero -> Py.Int.of_int 0
+| `One -> Py.Int.of_int 1
 | `PyObject x -> Wrap_utils.id x
-)); ("dtype", dtype); ("out", out)])
-
+)); ("dtype", dtype); ("out", Wrap_utils.Option.map out Arr.to_pyobject)])
+                       |> Arr.of_pyobject
 let minimum ~other self =
    Py.Module.get_function_with_keywords self "minimum"
      [||]
@@ -1727,24 +1690,25 @@ let set_shape ~shape self =
 let setdiag ?k ~values self =
    Py.Module.get_function_with_keywords self "setdiag"
      [||]
-     (Wrap_utils.keyword_args [("k", Wrap_utils.Option.map k Py.Int.of_int); ("values", Some(values |> Ndarray.to_pyobject))])
+     (Wrap_utils.keyword_args [("k", Wrap_utils.Option.map k Py.Int.of_int); ("values", Some(values |> Arr.to_pyobject))])
 
                   let sum ?axis ?dtype ?out self =
                      Py.Module.get_function_with_keywords self "sum"
                        [||]
                        (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-| `None -> Py.String.of_string "None"
+| `Zero -> Py.Int.of_int 0
+| `One -> Py.Int.of_int 1
 | `PyObject x -> Wrap_utils.id x
-)); ("dtype", dtype); ("out", out)])
-
+)); ("dtype", dtype); ("out", Wrap_utils.Option.map out Arr.to_pyobject)])
+                       |> Arr.of_pyobject
                   let toarray ?order ?out self =
                      Py.Module.get_function_with_keywords self "toarray"
                        [||]
                        (Wrap_utils.keyword_args [("order", Wrap_utils.Option.map order (function
 | `C -> Py.String.of_string "C"
 | `F -> Py.String.of_string "F"
-)); ("out", Wrap_utils.Option.map out Ndarray.to_pyobject)])
-                       |> Ndarray.of_pyobject
+)); ("out", Wrap_utils.Option.map out Arr.to_pyobject)])
+                       |> Arr.of_pyobject
 let tobsr ?blocksize ?copy self =
    Py.Module.get_function_with_keywords self "tobsr"
      [||]
@@ -1771,8 +1735,8 @@ let tocsr ?copy self =
                        (Wrap_utils.keyword_args [("order", Wrap_utils.Option.map order (function
 | `C -> Py.String.of_string "C"
 | `F -> Py.String.of_string "F"
-)); ("out", Wrap_utils.Option.map out Ndarray.to_pyobject)])
-
+)); ("out", Wrap_utils.Option.map out Arr.to_pyobject)])
+                       |> Arr.of_pyobject
 let todia ?copy self =
    Py.Module.get_function_with_keywords self "todia"
      [||]
@@ -1793,10 +1757,15 @@ let transpose ?axes ?copy self =
      [||]
      (Wrap_utils.keyword_args [("axes", axes); ("copy", copy)])
 
-let dtype self =
+
+let dtype_opt self =
   match Py.Object.get_attr_string self "dtype" with
-| None -> raise (Wrap_utils.Attribute_not_found "dtype")
-| Some x -> Wrap_utils.id x
+  | None -> failwith "attribute dtype not found"
+  | Some x -> if Py.is_none x then None else Some (Wrap_utils.id x)
+
+let dtype self = match dtype_opt self with
+  | None -> raise Not_found
+  | Some x -> x
 let to_string self = Py.Object.to_string self
 let show self = to_string self
 let pp formatter self = Format.fprintf formatter "%s" (show self)
@@ -1811,10 +1780,13 @@ let create ?maxprint () =
      [||]
      (Wrap_utils.keyword_args [("maxprint", maxprint)])
 
-let asformat ?copy ~format self =
-   Py.Module.get_function_with_keywords self "asformat"
-     [||]
-     (Wrap_utils.keyword_args [("copy", copy); ("format", Some(format |> Py.String.of_string))])
+                  let asformat ?copy ~format self =
+                     Py.Module.get_function_with_keywords self "asformat"
+                       [||]
+                       (Wrap_utils.keyword_args [("copy", copy); ("format", Some(format |> (function
+| `S x -> Py.String.of_string x
+| `None -> Py.none
+)))])
 
 let asfptype self =
    Py.Module.get_function_with_keywords self "asfptype"
@@ -1825,8 +1797,8 @@ let asfptype self =
                      Py.Module.get_function_with_keywords self "astype"
                        [||]
                        (Wrap_utils.keyword_args [("casting", casting); ("copy", copy); ("dtype", Some(dtype |> (function
-| `String x -> Py.String.of_string x
-| `PyObject x -> Wrap_utils.id x
+| `S x -> Py.String.of_string x
+| `Dtype x -> Wrap_utils.id x
 )))])
 
 let conj ?copy self =
@@ -1888,8 +1860,8 @@ let getmaxprint self =
                      Py.Module.get_function_with_keywords self "getnnz"
                        [||]
                        (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-| `None -> Py.String.of_string "None"
-| `PyObject x -> Wrap_utils.id x
+| `Zero -> Py.Int.of_int 0
+| `One -> Py.Int.of_int 1
 ))])
 
 let getrow ~i self =
@@ -1906,10 +1878,11 @@ let maximum ~other self =
                      Py.Module.get_function_with_keywords self "mean"
                        [||]
                        (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-| `None -> Py.String.of_string "None"
+| `Zero -> Py.Int.of_int 0
+| `One -> Py.Int.of_int 1
 | `PyObject x -> Wrap_utils.id x
-)); ("dtype", dtype); ("out", out)])
-
+)); ("dtype", dtype); ("out", Wrap_utils.Option.map out Arr.to_pyobject)])
+                       |> Arr.of_pyobject
 let minimum ~other self =
    Py.Module.get_function_with_keywords self "minimum"
      [||]
@@ -1948,24 +1921,25 @@ let set_shape ~shape self =
 let setdiag ?k ~values self =
    Py.Module.get_function_with_keywords self "setdiag"
      [||]
-     (Wrap_utils.keyword_args [("k", Wrap_utils.Option.map k Py.Int.of_int); ("values", Some(values |> Ndarray.to_pyobject))])
+     (Wrap_utils.keyword_args [("k", Wrap_utils.Option.map k Py.Int.of_int); ("values", Some(values |> Arr.to_pyobject))])
 
                   let sum ?axis ?dtype ?out self =
                      Py.Module.get_function_with_keywords self "sum"
                        [||]
                        (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-| `None -> Py.String.of_string "None"
+| `Zero -> Py.Int.of_int 0
+| `One -> Py.Int.of_int 1
 | `PyObject x -> Wrap_utils.id x
-)); ("dtype", dtype); ("out", out)])
-
+)); ("dtype", dtype); ("out", Wrap_utils.Option.map out Arr.to_pyobject)])
+                       |> Arr.of_pyobject
                   let toarray ?order ?out self =
                      Py.Module.get_function_with_keywords self "toarray"
                        [||]
                        (Wrap_utils.keyword_args [("order", Wrap_utils.Option.map order (function
 | `C -> Py.String.of_string "C"
 | `F -> Py.String.of_string "F"
-)); ("out", Wrap_utils.Option.map out Ndarray.to_pyobject)])
-                       |> Ndarray.of_pyobject
+)); ("out", Wrap_utils.Option.map out Arr.to_pyobject)])
+                       |> Arr.of_pyobject
 let tobsr ?blocksize ?copy self =
    Py.Module.get_function_with_keywords self "tobsr"
      [||]
@@ -1992,8 +1966,8 @@ let tocsr ?copy self =
                        (Wrap_utils.keyword_args [("order", Wrap_utils.Option.map order (function
 | `C -> Py.String.of_string "C"
 | `F -> Py.String.of_string "F"
-)); ("out", Wrap_utils.Option.map out Ndarray.to_pyobject)])
-
+)); ("out", Wrap_utils.Option.map out Arr.to_pyobject)])
+                       |> Arr.of_pyobject
 let todia ?copy self =
    Py.Module.get_function_with_keywords self "todia"
      [||]
@@ -2022,23 +1996,27 @@ end
 let type_of_target ~y () =
    Py.Module.get_function_with_keywords ns "type_of_target"
      [||]
-     (Wrap_utils.keyword_args [("y", Some(y |> Ndarray.to_pyobject))])
+     (Wrap_utils.keyword_args [("y", Some(y |> Arr.to_pyobject))])
      |> Py.String.to_string
 let unique_labels ys =
    Py.Module.get_function_with_keywords ns "unique_labels"
      (Wrap_utils.pos_arg Wrap_utils.id ys)
      []
-     |> Ndarray.of_pyobject
+     |> Arr.of_pyobject
 
 end
 module Murmurhash = struct
-(* this module has no callables, skipping init and ns *)
+let () = Wrap_utils.init ();;
+let ns = Py.import "sklearn.utils.murmurhash"
+
+let get_py name = Py.Module.get ns name
 
 end
 module Optimize = struct
 let () = Wrap_utils.init ();;
 let ns = Py.import "sklearn.utils.optimize"
 
+let get_py name = Py.Module.get ns name
 module Deprecated = struct
 type t = Py.Object.t
 let of_pyobject x = x
@@ -2056,7 +2034,7 @@ end
 let line_search_wolfe1 ?gfk ?old_fval ?old_old_fval ?args ?c1 ?c2 ?amax ?amin ?xtol ~f ~fprime ~xk ~pk () =
    Py.Module.get_function_with_keywords ns "line_search_wolfe1"
      [||]
-     (Wrap_utils.keyword_args [("gfk", Wrap_utils.Option.map gfk Ndarray.to_pyobject); ("old_fval", old_fval); ("old_old_fval", old_old_fval); ("args", args); ("c1", c1); ("c2", c2); ("amax", amax); ("amin", amin); ("xtol", xtol); ("f", Some(f )); ("fprime", Some(fprime )); ("xk", Some(xk )); ("pk", Some(pk ))])
+     (Wrap_utils.keyword_args [("gfk", Wrap_utils.Option.map gfk Arr.to_pyobject); ("old_fval", old_fval); ("old_old_fval", old_old_fval); ("args", args); ("c1", c1); ("c2", c2); ("amax", amax); ("amin", amin); ("xtol", xtol); ("f", Some(f )); ("fprime", Some(fprime )); ("xk", Some(xk )); ("pk", Some(pk ))])
 
 let line_search_wolfe2 ?gfk ?old_fval ?old_old_fval ?args ?c1 ?c2 ?amax ?extra_condition ?maxiter ~f ~myfprime ~xk ~pk () =
    Py.Module.get_function_with_keywords ns "line_search_wolfe2"
@@ -2093,13 +2071,14 @@ module Random = struct
 let () = Wrap_utils.init ();;
 let ns = Py.import "sklearn.utils.random"
 
+let get_py name = Py.Module.get ns name
                   let check_random_state ~seed () =
                      Py.Module.get_function_with_keywords ns "check_random_state"
                        [||]
                        (Wrap_utils.keyword_args [("seed", Some(seed |> (function
-| `Int x -> Py.Int.of_int x
+| `I x -> Py.Int.of_int x
 | `RandomState x -> Wrap_utils.id x
-| `None -> Py.String.of_string "None"
+| `None -> Py.none
 )))])
 
 module Deprecated = struct
@@ -2119,7 +2098,7 @@ end
 let random_choice_csc ?class_probability ?random_state ~n_samples ~classes () =
    Py.Module.get_function_with_keywords ns "random_choice_csc"
      [||]
-     (Wrap_utils.keyword_args [("class_probability", class_probability); ("random_state", random_state); ("n_samples", Some(n_samples )); ("classes", Some(classes ))])
+     (Wrap_utils.keyword_args [("class_probability", class_probability); ("random_state", Wrap_utils.Option.map random_state Py.Int.of_int); ("n_samples", Some(n_samples )); ("classes", Some(classes ))])
 
 
 end
@@ -2137,90 +2116,98 @@ let resample ?options arrays =
                      Py.Module.get_function_with_keywords ns "safe_indexing"
                        [||]
                        (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis Py.Int.of_int); ("X", Some(x |> (function
-| `Ndarray x -> Ndarray.to_pyobject x
-| `SparseMatrix x -> Csr_matrix.to_pyobject x
-| `ArrayLike x -> Wrap_utils.id x
+| `Arr x -> Arr.to_pyobject x
 | `PyObject x -> Wrap_utils.id x
 ))); ("indices", Some(indices |> (function
 | `Bool x -> Py.Bool.of_bool x
-| `Int x -> Py.Int.of_int x
-| `String x -> Py.String.of_string x
-| `Ndarray x -> Ndarray.to_pyobject x
-| `PyObject x -> Wrap_utils.id x
+| `I x -> Py.Int.of_int x
+| `S x -> Py.String.of_string x
+| `Slice x -> Wrap_utils.id x
+| `Arr x -> Arr.to_pyobject x
 )))])
 
-                  let safe_mask ~x ~mask () =
-                     Py.Module.get_function_with_keywords ns "safe_mask"
-                       [||]
-                       (Wrap_utils.keyword_args [("X", Some(x |> (function
-| `Ndarray x -> Ndarray.to_pyobject x
-| `SparseMatrix x -> Csr_matrix.to_pyobject x
-))); ("mask", Some(mask |> Ndarray.to_pyobject))])
+let safe_mask ~x ~mask () =
+   Py.Module.get_function_with_keywords ns "safe_mask"
+     [||]
+     (Wrap_utils.keyword_args [("X", Some(x |> Arr.to_pyobject)); ("mask", Some(mask |> Arr.to_pyobject))])
 
-                  let safe_sqr ?copy ~x () =
-                     Py.Module.get_function_with_keywords ns "safe_sqr"
-                       [||]
-                       (Wrap_utils.keyword_args [("copy", Wrap_utils.Option.map copy Py.Bool.of_bool); ("X", Some(x |> (function
-| `SparseMatrix x -> Csr_matrix.to_pyobject x
-| `PyObject x -> Wrap_utils.id x
-)))])
+let safe_sqr ?copy ~x () =
+   Py.Module.get_function_with_keywords ns "safe_sqr"
+     [||]
+     (Wrap_utils.keyword_args [("copy", Wrap_utils.Option.map copy Py.Bool.of_bool); ("X", Some(x |> Arr.to_pyobject))])
 
-let shuffle ?options arrays =
+let shuffle ?random_state ?n_samples arrays =
    Py.Module.get_function_with_keywords ns "shuffle"
-     (Wrap_utils.pos_arg Wrap_utils.id arrays)
-     (match options with None -> [] | Some x -> x)
-
+     (Wrap_utils.pos_arg Arr.to_pyobject arrays)
+     (Wrap_utils.keyword_args [("random_state", Wrap_utils.Option.map random_state Py.Int.of_int); ("n_samples", Wrap_utils.Option.map n_samples Py.Int.of_int)])
+     |> (fun py -> Py.List.to_list_map (Arr.of_pyobject) py)
 module Sparsefuncs = struct
 let () = Wrap_utils.init ();;
 let ns = Py.import "sklearn.utils.sparsefuncs"
 
+let get_py name = Py.Module.get ns name
                   let count_nonzero ?axis ?sample_weight ~x () =
                      Py.Module.get_function_with_keywords ns "count_nonzero"
                        [||]
                        (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-| `None -> Py.String.of_string "None"
-| `PyObject x -> Wrap_utils.id x
-)); ("sample_weight", Wrap_utils.Option.map sample_weight Ndarray.to_pyobject); ("X", Some(x ))])
+| `Zero -> Py.Int.of_int 0
+| `One -> Py.Int.of_int 1
+)); ("sample_weight", Wrap_utils.Option.map sample_weight Arr.to_pyobject); ("X", Some(x |> Csr_matrix.to_pyobject))])
 
 let csc_median_axis_0 ~x () =
    Py.Module.get_function_with_keywords ns "csc_median_axis_0"
      [||]
      (Wrap_utils.keyword_args [("X", Some(x ))])
-     |> Ndarray.of_pyobject
-let incr_mean_variance_axis ~x ~axis ~last_mean ~last_var ~last_n () =
-   Py.Module.get_function_with_keywords ns "incr_mean_variance_axis"
-     [||]
-     (Wrap_utils.keyword_args [("X", Some(x )); ("axis", Some(axis )); ("last_mean", Some(last_mean )); ("last_var", Some(last_var )); ("last_n", Some(last_n ))])
-     |> (fun x -> ((Wrap_utils.id (Py.Tuple.get x 0)), (Wrap_utils.id (Py.Tuple.get x 1)), (Wrap_utils.id (Py.Tuple.get x 2))))
-let inplace_column_scale ~x ~scale () =
-   Py.Module.get_function_with_keywords ns "inplace_column_scale"
-     [||]
-     (Wrap_utils.keyword_args [("X", Some(x )); ("scale", Some(scale ))])
+     |> Arr.of_pyobject
+                  let incr_mean_variance_axis ~x ~axis ~last_mean ~last_var ~last_n () =
+                     Py.Module.get_function_with_keywords ns "incr_mean_variance_axis"
+                       [||]
+                       (Wrap_utils.keyword_args [("X", Some(x |> (function
+| `SparseMatrix x -> Csr_matrix.to_pyobject x
+| `CSC_sparse_matrix x -> Wrap_utils.id x
+))); ("axis", Some(axis )); ("last_mean", Some(last_mean |> Arr.to_pyobject)); ("last_var", Some(last_var |> Arr.to_pyobject)); ("last_n", Some(last_n |> Py.Int.of_int))])
+                       |> (fun x -> ((Arr.of_pyobject (Py.Tuple.get x 0)), (Arr.of_pyobject (Py.Tuple.get x 1)), (Py.Int.to_int (Py.Tuple.get x 2))))
+                  let inplace_column_scale ~x ~scale () =
+                     Py.Module.get_function_with_keywords ns "inplace_column_scale"
+                       [||]
+                       (Wrap_utils.keyword_args [("X", Some(x |> (function
+| `CSC x -> Wrap_utils.id x
+| `SparseMatrix x -> Csr_matrix.to_pyobject x
+))); ("scale", Some(scale |> Arr.to_pyobject))])
 
 let inplace_csr_column_scale ~x ~scale () =
    Py.Module.get_function_with_keywords ns "inplace_csr_column_scale"
      [||]
-     (Wrap_utils.keyword_args [("X", Some(x )); ("scale", Some(scale ))])
+     (Wrap_utils.keyword_args [("X", Some(x |> Csr_matrix.to_pyobject)); ("scale", Some(scale |> Arr.to_pyobject))])
 
 let inplace_csr_row_scale ~x ~scale () =
    Py.Module.get_function_with_keywords ns "inplace_csr_row_scale"
      [||]
-     (Wrap_utils.keyword_args [("X", Some(x )); ("scale", Some(scale ))])
+     (Wrap_utils.keyword_args [("X", Some(x |> Csr_matrix.to_pyobject)); ("scale", Some(scale |> Arr.to_pyobject))])
 
-let inplace_row_scale ~x ~scale () =
-   Py.Module.get_function_with_keywords ns "inplace_row_scale"
-     [||]
-     (Wrap_utils.keyword_args [("X", Some(x )); ("scale", Some(scale ))])
+                  let inplace_row_scale ~x ~scale () =
+                     Py.Module.get_function_with_keywords ns "inplace_row_scale"
+                       [||]
+                       (Wrap_utils.keyword_args [("X", Some(x |> (function
+| `SparseMatrix x -> Csr_matrix.to_pyobject x
+| `CSC_sparse_matrix x -> Wrap_utils.id x
+))); ("scale", Some(scale |> Arr.to_pyobject))])
 
-let inplace_swap_column ~x ~m ~n () =
-   Py.Module.get_function_with_keywords ns "inplace_swap_column"
-     [||]
-     (Wrap_utils.keyword_args [("X", Some(x )); ("m", Some(m |> Py.Int.of_int)); ("n", Some(n |> Py.Int.of_int))])
+                  let inplace_swap_column ~x ~m ~n () =
+                     Py.Module.get_function_with_keywords ns "inplace_swap_column"
+                       [||]
+                       (Wrap_utils.keyword_args [("X", Some(x |> (function
+| `SparseMatrix x -> Csr_matrix.to_pyobject x
+| `CSC_sparse_matrix x -> Wrap_utils.id x
+))); ("m", Some(m |> Py.Int.of_int)); ("n", Some(n |> Py.Int.of_int))])
 
-let inplace_swap_row ~x ~m ~n () =
-   Py.Module.get_function_with_keywords ns "inplace_swap_row"
-     [||]
-     (Wrap_utils.keyword_args [("X", Some(x )); ("m", Some(m |> Py.Int.of_int)); ("n", Some(n |> Py.Int.of_int))])
+                  let inplace_swap_row ~x ~m ~n () =
+                     Py.Module.get_function_with_keywords ns "inplace_swap_row"
+                       [||]
+                       (Wrap_utils.keyword_args [("X", Some(x |> (function
+| `SparseMatrix x -> Csr_matrix.to_pyobject x
+| `CSC_sparse_matrix x -> Wrap_utils.id x
+))); ("m", Some(m |> Py.Int.of_int)); ("n", Some(n |> Py.Int.of_int))])
 
 let inplace_swap_row_csc ~x ~m ~n () =
    Py.Module.get_function_with_keywords ns "inplace_swap_row_csc"
@@ -2230,28 +2217,35 @@ let inplace_swap_row_csc ~x ~m ~n () =
 let inplace_swap_row_csr ~x ~m ~n () =
    Py.Module.get_function_with_keywords ns "inplace_swap_row_csr"
      [||]
-     (Wrap_utils.keyword_args [("X", Some(x )); ("m", Some(m |> Py.Int.of_int)); ("n", Some(n |> Py.Int.of_int))])
+     (Wrap_utils.keyword_args [("X", Some(x |> Csr_matrix.to_pyobject)); ("m", Some(m |> Py.Int.of_int)); ("n", Some(n |> Py.Int.of_int))])
 
-let mean_variance_axis ~x ~axis () =
-   Py.Module.get_function_with_keywords ns "mean_variance_axis"
-     [||]
-     (Wrap_utils.keyword_args [("X", Some(x )); ("axis", Some(axis ))])
-     |> (fun x -> ((Wrap_utils.id (Py.Tuple.get x 0)), (Wrap_utils.id (Py.Tuple.get x 1))))
-let min_max_axis ?ignore_nan ~x ~axis () =
-   Py.Module.get_function_with_keywords ns "min_max_axis"
-     [||]
-     (Wrap_utils.keyword_args [("ignore_nan", Wrap_utils.Option.map ignore_nan Py.Bool.of_bool); ("X", Some(x )); ("axis", Some(axis ))])
-     |> (fun x -> ((Wrap_utils.id (Py.Tuple.get x 0)), (Wrap_utils.id (Py.Tuple.get x 1))))
+                  let mean_variance_axis ~x ~axis () =
+                     Py.Module.get_function_with_keywords ns "mean_variance_axis"
+                       [||]
+                       (Wrap_utils.keyword_args [("X", Some(x |> (function
+| `SparseMatrix x -> Csr_matrix.to_pyobject x
+| `CSC_sparse_matrix x -> Wrap_utils.id x
+))); ("axis", Some(axis ))])
+                       |> (fun x -> ((Arr.of_pyobject (Py.Tuple.get x 0)), (Arr.of_pyobject (Py.Tuple.get x 1))))
+                  let min_max_axis ?ignore_nan ~x ~axis () =
+                     Py.Module.get_function_with_keywords ns "min_max_axis"
+                       [||]
+                       (Wrap_utils.keyword_args [("ignore_nan", Wrap_utils.Option.map ignore_nan Py.Bool.of_bool); ("X", Some(x |> (function
+| `SparseMatrix x -> Csr_matrix.to_pyobject x
+| `CSC_sparse_matrix x -> Wrap_utils.id x
+))); ("axis", Some(axis ))])
+                       |> (fun x -> ((Arr.of_pyobject (Py.Tuple.get x 0)), (Arr.of_pyobject (Py.Tuple.get x 1))))
 
 end
 module Sparsefuncs_fast = struct
 let () = Wrap_utils.init ();;
 let ns = Py.import "sklearn.utils.sparsefuncs_fast"
 
+let get_py name = Py.Module.get ns name
 let assign_rows_csr ~x ~x_rows ~out_rows ~out () =
    Py.Module.get_function_with_keywords ns "assign_rows_csr"
      [||]
-     (Wrap_utils.keyword_args [("X", Some(x )); ("X_rows", Some(x_rows )); ("out_rows", Some(out_rows )); ("out", Some(out ))])
+     (Wrap_utils.keyword_args [("X", Some(x |> Csr_matrix.to_pyobject)); ("X_rows", Some(x_rows )); ("out_rows", Some(out_rows )); ("out", Some(out ))])
 
 
 end
@@ -2259,22 +2253,24 @@ module Stats = struct
 let () = Wrap_utils.init ();;
 let ns = Py.import "sklearn.utils.stats"
 
+let get_py name = Py.Module.get ns name
 let stable_cumsum ?axis ?rtol ?atol ~arr () =
    Py.Module.get_function_with_keywords ns "stable_cumsum"
      [||]
-     (Wrap_utils.keyword_args [("axis", axis); ("rtol", rtol); ("atol", atol); ("arr", Some(arr |> Ndarray.to_pyobject))])
+     (Wrap_utils.keyword_args [("axis", axis); ("rtol", rtol); ("atol", atol); ("arr", Some(arr |> Arr.to_pyobject))])
 
 
 end
 let tosequence ~x () =
    Py.Module.get_function_with_keywords ns "tosequence"
      [||]
-     (Wrap_utils.keyword_args [("x", Some(x |> Ndarray.to_pyobject))])
+     (Wrap_utils.keyword_args [("x", Some(x |> Arr.to_pyobject))])
 
 module Validation = struct
 let () = Wrap_utils.init ();;
 let ns = Py.import "sklearn.utils.validation"
 
+let get_py name = Py.Module.get ns name
 module LooseVersion = struct
 type t = Py.Object.t
 let of_pyobject x = x
@@ -2319,78 +2315,56 @@ end
                        (Wrap_utils.keyword_args [("copy", Wrap_utils.Option.map copy Py.Bool.of_bool); ("force_all_finite", Wrap_utils.Option.map force_all_finite (function
 | `Bool x -> Py.Bool.of_bool x
 | `Allow_nan -> Py.String.of_string "allow-nan"
-)); ("X", Some(x |> (function
-| `Ndarray x -> Ndarray.to_pyobject x
-| `SparseMatrix x -> Csr_matrix.to_pyobject x
-)))])
-
-                  let assert_all_finite ?allow_nan ~x () =
-                     Py.Module.get_function_with_keywords ns "assert_all_finite"
-                       [||]
-                       (Wrap_utils.keyword_args [("allow_nan", Wrap_utils.Option.map allow_nan Py.Bool.of_bool); ("X", Some(x |> (function
-| `Ndarray x -> Ndarray.to_pyobject x
-| `SparseMatrix x -> Csr_matrix.to_pyobject x
-)))])
+)); ("X", Some(x |> Arr.to_pyobject))])
+                       |> Arr.of_pyobject
+let assert_all_finite ?allow_nan ~x () =
+   Py.Module.get_function_with_keywords ns "assert_all_finite"
+     [||]
+     (Wrap_utils.keyword_args [("allow_nan", Wrap_utils.Option.map allow_nan Py.Bool.of_bool); ("X", Some(x |> Arr.to_pyobject))])
 
                   let check_X_y ?accept_sparse ?accept_large_sparse ?dtype ?order ?copy ?force_all_finite ?ensure_2d ?allow_nd ?multi_output ?ensure_min_samples ?ensure_min_features ?y_numeric ?warn_on_dtype ?estimator ~x ~y () =
                      Py.Module.get_function_with_keywords ns "check_X_y"
                        [||]
                        (Wrap_utils.keyword_args [("accept_sparse", Wrap_utils.Option.map accept_sparse (function
-| `String x -> Py.String.of_string x
+| `S x -> Py.String.of_string x
 | `Bool x -> Py.Bool.of_bool x
 | `StringList x -> (Py.List.of_list_map Py.String.of_string) x
 )); ("accept_large_sparse", Wrap_utils.Option.map accept_large_sparse Py.Bool.of_bool); ("dtype", Wrap_utils.Option.map dtype (function
-| `String x -> Py.String.of_string x
+| `S x -> Py.String.of_string x
 | `Dtype x -> Wrap_utils.id x
 | `TypeList x -> Wrap_utils.id x
-| `None -> Py.String.of_string "None"
+| `None -> Py.none
 )); ("order", Wrap_utils.Option.map order (function
 | `F -> Py.String.of_string "F"
 | `C -> Py.String.of_string "C"
-| `None -> Py.String.of_string "None"
 )); ("copy", Wrap_utils.Option.map copy Py.Bool.of_bool); ("force_all_finite", Wrap_utils.Option.map force_all_finite (function
 | `Bool x -> Py.Bool.of_bool x
 | `Allow_nan -> Py.String.of_string "allow-nan"
-)); ("ensure_2d", Wrap_utils.Option.map ensure_2d Py.Bool.of_bool); ("allow_nd", Wrap_utils.Option.map allow_nd Py.Bool.of_bool); ("multi_output", Wrap_utils.Option.map multi_output Py.Bool.of_bool); ("ensure_min_samples", Wrap_utils.Option.map ensure_min_samples Py.Int.of_int); ("ensure_min_features", Wrap_utils.Option.map ensure_min_features Py.Int.of_int); ("y_numeric", Wrap_utils.Option.map y_numeric Py.Bool.of_bool); ("warn_on_dtype", Wrap_utils.Option.map warn_on_dtype (function
-| `Bool x -> Py.Bool.of_bool x
-| `None -> Py.String.of_string "None"
-)); ("estimator", Wrap_utils.Option.map estimator (function
-| `String x -> Py.String.of_string x
+)); ("ensure_2d", Wrap_utils.Option.map ensure_2d Py.Bool.of_bool); ("allow_nd", Wrap_utils.Option.map allow_nd Py.Bool.of_bool); ("multi_output", Wrap_utils.Option.map multi_output Py.Bool.of_bool); ("ensure_min_samples", Wrap_utils.Option.map ensure_min_samples Py.Int.of_int); ("ensure_min_features", Wrap_utils.Option.map ensure_min_features Py.Int.of_int); ("y_numeric", Wrap_utils.Option.map y_numeric Py.Bool.of_bool); ("warn_on_dtype", Wrap_utils.Option.map warn_on_dtype Py.Bool.of_bool); ("estimator", Wrap_utils.Option.map estimator (function
+| `S x -> Py.String.of_string x
 | `Estimator x -> Wrap_utils.id x
-)); ("X", Some(x |> (function
-| `Ndarray x -> Ndarray.to_pyobject x
-| `ArrayLike x -> Wrap_utils.id x
-| `SparseMatrix x -> Csr_matrix.to_pyobject x
-))); ("y", Some(y |> (function
-| `Ndarray x -> Ndarray.to_pyobject x
-| `ArrayLike x -> Wrap_utils.id x
-| `SparseMatrix x -> Csr_matrix.to_pyobject x
-)))])
+)); ("X", Some(x |> Arr.to_pyobject)); ("y", Some(y |> Arr.to_pyobject))])
                        |> (fun x -> ((Wrap_utils.id (Py.Tuple.get x 0)), (Wrap_utils.id (Py.Tuple.get x 1))))
                   let check_array ?accept_sparse ?accept_large_sparse ?dtype ?order ?copy ?force_all_finite ?ensure_2d ?allow_nd ?ensure_min_samples ?ensure_min_features ?warn_on_dtype ?estimator ~array () =
                      Py.Module.get_function_with_keywords ns "check_array"
                        [||]
                        (Wrap_utils.keyword_args [("accept_sparse", Wrap_utils.Option.map accept_sparse (function
-| `String x -> Py.String.of_string x
+| `S x -> Py.String.of_string x
 | `Bool x -> Py.Bool.of_bool x
 | `StringList x -> (Py.List.of_list_map Py.String.of_string) x
 )); ("accept_large_sparse", Wrap_utils.Option.map accept_large_sparse Py.Bool.of_bool); ("dtype", Wrap_utils.Option.map dtype (function
-| `String x -> Py.String.of_string x
+| `S x -> Py.String.of_string x
 | `Dtype x -> Wrap_utils.id x
 | `TypeList x -> Wrap_utils.id x
-| `None -> Py.String.of_string "None"
+| `None -> Py.none
 )); ("order", Wrap_utils.Option.map order (function
 | `F -> Py.String.of_string "F"
 | `C -> Py.String.of_string "C"
-| `None -> Py.String.of_string "None"
 )); ("copy", Wrap_utils.Option.map copy Py.Bool.of_bool); ("force_all_finite", Wrap_utils.Option.map force_all_finite (function
 | `Bool x -> Py.Bool.of_bool x
 | `Allow_nan -> Py.String.of_string "allow-nan"
-)); ("ensure_2d", Wrap_utils.Option.map ensure_2d Py.Bool.of_bool); ("allow_nd", Wrap_utils.Option.map allow_nd Py.Bool.of_bool); ("ensure_min_samples", Wrap_utils.Option.map ensure_min_samples Py.Int.of_int); ("ensure_min_features", Wrap_utils.Option.map ensure_min_features Py.Int.of_int); ("warn_on_dtype", Wrap_utils.Option.map warn_on_dtype (function
-| `Bool x -> Py.Bool.of_bool x
-| `None -> Py.String.of_string "None"
-)); ("estimator", Wrap_utils.Option.map estimator (function
-| `String x -> Py.String.of_string x
+)); ("ensure_2d", Wrap_utils.Option.map ensure_2d Py.Bool.of_bool); ("allow_nd", Wrap_utils.Option.map allow_nd Py.Bool.of_bool); ("ensure_min_samples", Wrap_utils.Option.map ensure_min_samples Py.Int.of_int); ("ensure_min_features", Wrap_utils.Option.map ensure_min_features Py.Int.of_int); ("warn_on_dtype", Wrap_utils.Option.map warn_on_dtype Py.Bool.of_bool); ("estimator", Wrap_utils.Option.map estimator (function
+| `S x -> Py.String.of_string x
 | `Estimator x -> Wrap_utils.id x
 )); ("array", Some(array ))])
 
@@ -2403,8 +2377,8 @@ let check_consistent_length arrays =
                      Py.Module.get_function_with_keywords ns "check_is_fitted"
                        [||]
                        (Wrap_utils.keyword_args [("attributes", Wrap_utils.Option.map attributes (function
-| `String x -> Py.String.of_string x
-| `ArrayLike x -> Wrap_utils.id x
+| `S x -> Py.String.of_string x
+| `Arr x -> Arr.to_pyobject x
 | `StringList x -> (Py.List.of_list_map Py.String.of_string) x
 )); ("msg", Wrap_utils.Option.map msg Py.String.of_string); ("all_or_any", Wrap_utils.Option.map all_or_any (function
 | `Callable x -> Wrap_utils.id x
@@ -2415,55 +2389,49 @@ let check_consistent_length arrays =
                      Py.Module.get_function_with_keywords ns "check_memory"
                        [||]
                        (Wrap_utils.keyword_args [("memory", Some(memory |> (function
-| `String x -> Py.String.of_string x
+| `S x -> Py.String.of_string x
 | `JoblibMemory x -> Wrap_utils.id x
-| `None -> Py.String.of_string "None"
+| `None -> Py.none
 )))])
 
-                  let check_non_negative ~x ~whom () =
-                     Py.Module.get_function_with_keywords ns "check_non_negative"
-                       [||]
-                       (Wrap_utils.keyword_args [("X", Some(x |> (function
-| `Ndarray x -> Ndarray.to_pyobject x
-| `SparseMatrix x -> Csr_matrix.to_pyobject x
-))); ("whom", Some(whom |> Py.String.of_string))])
+let check_non_negative ~x ~whom () =
+   Py.Module.get_function_with_keywords ns "check_non_negative"
+     [||]
+     (Wrap_utils.keyword_args [("X", Some(x |> Arr.to_pyobject)); ("whom", Some(whom |> Py.String.of_string))])
 
                   let check_random_state ~seed () =
                      Py.Module.get_function_with_keywords ns "check_random_state"
                        [||]
                        (Wrap_utils.keyword_args [("seed", Some(seed |> (function
-| `Int x -> Py.Int.of_int x
+| `I x -> Py.Int.of_int x
 | `RandomState x -> Wrap_utils.id x
-| `None -> Py.String.of_string "None"
+| `None -> Py.none
 )))])
 
                   let check_scalar ?min_val ?max_val ~x ~name ~target_type () =
                      Py.Module.get_function_with_keywords ns "check_scalar"
                        [||]
                        (Wrap_utils.keyword_args [("min_val", Wrap_utils.Option.map min_val (function
-| `Float x -> Py.Float.of_float x
-| `Int x -> Py.Int.of_int x
+| `F x -> Py.Float.of_float x
+| `I x -> Py.Int.of_int x
 )); ("max_val", Wrap_utils.Option.map max_val (function
-| `Float x -> Py.Float.of_float x
-| `Int x -> Py.Int.of_int x
+| `F x -> Py.Float.of_float x
+| `I x -> Py.Int.of_int x
 )); ("x", Some(x )); ("name", Some(name |> Py.String.of_string)); ("target_type", Some(target_type |> (function
 | `Dtype x -> Wrap_utils.id x
-| `PyObject x -> Wrap_utils.id x
+| `Tuple x -> Wrap_utils.id x
 )))])
 
-                  let check_symmetric ?tol ?raise_warning ?raise_exception ~array () =
-                     Py.Module.get_function_with_keywords ns "check_symmetric"
-                       [||]
-                       (Wrap_utils.keyword_args [("tol", tol); ("raise_warning", raise_warning); ("raise_exception", raise_exception); ("array", Some(array |> (function
-| `Ndarray x -> Ndarray.to_pyobject x
-| `SparseMatrix x -> Csr_matrix.to_pyobject x
-)))])
-
+let check_symmetric ?tol ?raise_warning ?raise_exception ~array () =
+   Py.Module.get_function_with_keywords ns "check_symmetric"
+     [||]
+     (Wrap_utils.keyword_args [("tol", tol); ("raise_warning", raise_warning); ("raise_exception", raise_exception); ("array", Some(array |> Arr.to_pyobject))])
+     |> Arr.of_pyobject
 let column_or_1d ?warn ~y () =
    Py.Module.get_function_with_keywords ns "column_or_1d"
      [||]
-     (Wrap_utils.keyword_args [("warn", Wrap_utils.Option.map warn Py.Bool.of_bool); ("y", Some(y |> Ndarray.to_pyobject))])
-     |> Ndarray.of_pyobject
+     (Wrap_utils.keyword_args [("warn", Wrap_utils.Option.map warn Py.Bool.of_bool); ("y", Some(y |> Arr.to_pyobject))])
+     |> Arr.of_pyobject
 let has_fit_parameter ~estimator ~parameter () =
    Py.Module.get_function_with_keywords ns "has_fit_parameter"
      [||]

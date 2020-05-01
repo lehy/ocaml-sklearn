@@ -1,9 +1,12 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module GridSearchCV : sig
 type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?scoring:[`String of string | `Callable of Py.Object.t | `Dict of Py.Object.t | `None | `PyObject of Py.Object.t] -> ?n_jobs:[`Int of int | `None] -> ?iid:bool -> ?refit:[`Bool of bool | `String of string | `Callable of Py.Object.t] -> ?cv:[`Int of int | `CrossValGenerator of Py.Object.t | `Ndarray of Ndarray.t] -> ?verbose:int -> ?pre_dispatch:[`Int of int | `String of string] -> ?error_score:[`Raise | `PyObject of Py.Object.t] -> ?return_train_score:bool -> estimator:Py.Object.t -> param_grid:[`Dict of Py.Object.t | `PyObject of Py.Object.t] -> unit -> t
+val create : ?scoring:[`S of string | `Callable of Py.Object.t | `List_tuple of Py.Object.t | `Dict of Dict.t] -> ?n_jobs:int -> ?iid:bool -> ?refit:[`Bool of bool | `S of string | `Callable of Py.Object.t] -> ?cv:[`I of int | `CrossValGenerator of Py.Object.t | `Arr of Arr.t] -> ?verbose:int -> ?pre_dispatch:[`I of int | `S of string] -> ?error_score:[`Raise | `F of float] -> ?return_train_score:bool -> estimator:Py.Object.t -> param_grid:[`Grid of (string * [`Ints of int list | `Floats of float list | `Strings of string list]) list | `List of (string * [`Ints of int list | `Floats of float list | `Strings of string list]) list list] -> unit -> t
 (**
 Exhaustive search over specified parameter values for an estimator.
 
@@ -298,7 +301,7 @@ See Also
     Make a scorer from a performance metric or loss function.
 *)
 
-val decision_function : x:Ndarray.t -> t -> Ndarray.t
+val decision_function : x:Arr.t -> t -> Arr.t
 (**
 Call decision_function on the estimator with the best found parameters.
 
@@ -312,7 +315,7 @@ X : indexable, length n_samples
     underlying estimator.
 *)
 
-val fit : ?y:Ndarray.t -> ?groups:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> t
+val fit : ?y:Arr.t -> ?groups:[`Arr of Arr.t | `With of Py.Object.t] -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> t
 (**
 Run fit with all sets of parameters.
 
@@ -336,7 +339,7 @@ groups : array-like, with shape (n_samples,), optional
     Parameters passed to the ``fit`` method of the estimator
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -352,7 +355,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : xt:Ndarray.t -> t -> Py.Object.t
+val inverse_transform : xt:Arr.t -> t -> Py.Object.t
 (**
 Call inverse_transform on the estimator with the best found params.
 
@@ -366,7 +369,7 @@ Xt : indexable, length n_samples
     underlying estimator.
 *)
 
-val predict : x:Ndarray.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Call predict on the estimator with the best found parameters.
 
@@ -380,7 +383,7 @@ X : indexable, length n_samples
     underlying estimator.
 *)
 
-val predict_log_proba : x:Ndarray.t -> t -> Py.Object.t
+val predict_log_proba : x:Arr.t -> t -> Py.Object.t
 (**
 Call predict_log_proba on the estimator with the best found parameters.
 
@@ -394,7 +397,7 @@ X : indexable, length n_samples
     underlying estimator.
 *)
 
-val predict_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Call predict_proba on the estimator with the best found parameters.
 
@@ -408,7 +411,7 @@ X : indexable, length n_samples
     underlying estimator.
 *)
 
-val score : ?y:Ndarray.t -> x:Ndarray.t -> t -> float
+val score : ?y:Arr.t -> x:Arr.t -> t -> float
 (**
 Returns the score on the given data, if the estimator has been refit.
 
@@ -450,7 +453,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Call transform on the estimator with the best found parameters.
 
@@ -465,146 +468,60 @@ X : indexable, length n_samples
 *)
 
 
-(** Attribute cv_results_: see constructor for documentation *)
-val cv_results_ : t -> Py.Object.t
+(** Attribute cv_results_: get value or raise Not_found if None.*)
+val cv_results_ : t -> Dict.t
 
-(** Attribute best_estimator_: see constructor for documentation *)
+(** Attribute cv_results_: get value as an option. *)
+val cv_results_opt : t -> (Dict.t) option
+
+
+(** Attribute best_estimator_: get value or raise Not_found if None.*)
 val best_estimator_ : t -> Py.Object.t
 
-(** Attribute best_score_: see constructor for documentation *)
+(** Attribute best_estimator_: get value as an option. *)
+val best_estimator_opt : t -> (Py.Object.t) option
+
+
+(** Attribute best_score_: get value or raise Not_found if None.*)
 val best_score_ : t -> float
 
-(** Attribute best_params_: see constructor for documentation *)
-val best_params_ : t -> Py.Object.t
+(** Attribute best_score_: get value as an option. *)
+val best_score_opt : t -> (float) option
 
-(** Attribute best_index_: see constructor for documentation *)
+
+(** Attribute best_params_: get value or raise Not_found if None.*)
+val best_params_ : t -> Dict.t
+
+(** Attribute best_params_: get value as an option. *)
+val best_params_opt : t -> (Dict.t) option
+
+
+(** Attribute best_index_: get value or raise Not_found if None.*)
 val best_index_ : t -> int
 
-(** Attribute scorer_: see constructor for documentation *)
+(** Attribute best_index_: get value as an option. *)
+val best_index_opt : t -> (int) option
+
+
+(** Attribute scorer_: get value or raise Not_found if None.*)
 val scorer_ : t -> Py.Object.t
 
-(** Attribute n_splits_: see constructor for documentation *)
+(** Attribute scorer_: get value as an option. *)
+val scorer_opt : t -> (Py.Object.t) option
+
+
+(** Attribute n_splits_: get value or raise Not_found if None.*)
 val n_splits_ : t -> int
 
-(** Attribute refit_time_: see constructor for documentation *)
+(** Attribute n_splits_: get value as an option. *)
+val n_splits_opt : t -> (int) option
+
+
+(** Attribute refit_time_: get value or raise Not_found if None.*)
 val refit_time_ : t -> float
 
-(** Print the object to a human-readable representation. *)
-val to_string : t -> string
-
-
-(** Print the object to a human-readable representation. *)
-val show : t -> string
-
-(** Pretty-print the object to a formatter. *)
-val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
-
-
-end
-
-module GroupKFold : sig
-type t
-val of_pyobject : Py.Object.t -> t
-val to_pyobject : t -> Py.Object.t
-
-val create : ?n_splits:int -> unit -> t
-(**
-K-fold iterator variant with non-overlapping groups.
-
-The same group will not appear in two different folds (the number of
-distinct groups has to be at least equal to the number of folds).
-
-The folds are approximately balanced in the sense that the number of
-distinct groups is approximately the same in each fold.
-
-Parameters
-----------
-n_splits : int, default=5
-    Number of folds. Must be at least 2.
-
-    .. versionchanged:: 0.22
-        ``n_splits`` default value changed from 3 to 5.
-
-Examples
---------
->>> import numpy as np
->>> from sklearn.model_selection import GroupKFold
->>> X = np.array([[1, 2], [3, 4], [5, 6], [7, 8]])
->>> y = np.array([1, 2, 3, 4])
->>> groups = np.array([0, 0, 2, 2])
->>> group_kfold = GroupKFold(n_splits=2)
->>> group_kfold.get_n_splits(X, y, groups)
-2
->>> print(group_kfold)
-GroupKFold(n_splits=2)
->>> for train_index, test_index in group_kfold.split(X, y, groups):
-...     print("TRAIN:", train_index, "TEST:", test_index)
-...     X_train, X_test = X[train_index], X[test_index]
-...     y_train, y_test = y[train_index], y[test_index]
-...     print(X_train, X_test, y_train, y_test)
-...
-TRAIN: [0 1] TEST: [2 3]
-[[1 2]
- [3 4]] [[5 6]
- [7 8]] [1 2] [3 4]
-TRAIN: [2 3] TEST: [0 1]
-[[5 6]
- [7 8]] [[1 2]
- [3 4]] [3 4] [1 2]
-
-See also
---------
-LeaveOneGroupOut
-    For splitting the data according to explicit domain-specific
-    stratification of the dataset.
-*)
-
-val get_n_splits : ?x:Py.Object.t -> ?y:Py.Object.t -> ?groups:Py.Object.t -> t -> int
-(**
-Returns the number of splitting iterations in the cross-validator
-
-Parameters
-----------
-X : object
-    Always ignored, exists for compatibility.
-
-y : object
-    Always ignored, exists for compatibility.
-
-groups : object
-    Always ignored, exists for compatibility.
-
-Returns
--------
-n_splits : int
-    Returns the number of splitting iterations in the cross-validator.
-*)
-
-val split : ?y:Ndarray.t -> ?groups:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> x:Ndarray.t -> t -> Py.Object.t
-(**
-Generate indices to split data into training and test set.
-
-Parameters
-----------
-X : array-like, shape (n_samples, n_features)
-    Training data, where n_samples is the number of samples
-    and n_features is the number of features.
-
-y : array-like, shape (n_samples,), optional
-    The target variable for supervised learning problems.
-
-groups : array-like, with shape (n_samples,)
-    Group labels for the samples used while splitting the dataset into
-    train/test set.
-
-Yields
-------
-train : ndarray
-    The training set indices for that split.
-
-test : ndarray
-    The testing set indices for that split.
-*)
+(** Attribute refit_time_: get value as an option. *)
+val refit_time_opt : t -> (float) option
 
 
 (** Print the object to a human-readable representation. *)
@@ -625,7 +542,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_splits:int -> ?test_size:[`Float of float | `Int of int | `None] -> ?train_size:[`Float of float | `Int of int | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
+val create : ?n_splits:int -> ?test_size:[`F of float | `I of int] -> ?train_size:[`F of float | `I of int] -> ?random_state:int -> unit -> t
 (**
 Shuffle-Group(s)-Out cross-validation iterator
 
@@ -715,7 +632,7 @@ n_splits : int
     Returns the number of splitting iterations in the cross-validator.
 *)
 
-val split : ?y:Ndarray.t -> ?groups:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> x:Ndarray.t -> t -> Py.Object.t
+val split : ?y:Arr.t -> ?groups:[`Arr of Arr.t | `With of Py.Object.t] -> x:Arr.t -> t -> Py.Object.t
 (**
 Generate indices to split data into training and test set.
 
@@ -745,142 +662,6 @@ Notes
 Randomized CV splitters may return different results for each call of
 split. You can make the results identical by setting ``random_state``
 to an integer.
-*)
-
-
-(** Print the object to a human-readable representation. *)
-val to_string : t -> string
-
-
-(** Print the object to a human-readable representation. *)
-val show : t -> string
-
-(** Pretty-print the object to a formatter. *)
-val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
-
-
-end
-
-module KFold : sig
-type t
-val of_pyobject : Py.Object.t -> t
-val to_pyobject : t -> Py.Object.t
-
-val create : ?n_splits:int -> ?shuffle:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
-(**
-K-Folds cross-validator
-
-Provides train/test indices to split data in train/test sets. Split
-dataset into k consecutive folds (without shuffling by default).
-
-Each fold is then used once as a validation while the k - 1 remaining
-folds form the training set.
-
-Read more in the :ref:`User Guide <cross_validation>`.
-
-Parameters
-----------
-n_splits : int, default=5
-    Number of folds. Must be at least 2.
-
-    .. versionchanged:: 0.22
-        ``n_splits`` default value changed from 3 to 5.
-
-shuffle : boolean, optional
-    Whether to shuffle the data before splitting into batches.
-
-random_state : int, RandomState instance or None, optional, default=None
-    If int, random_state is the seed used by the random number generator;
-    If RandomState instance, random_state is the random number generator;
-    If None, the random number generator is the RandomState instance used
-    by `np.random`. Only used when ``shuffle`` is True. This should be left
-    to None if ``shuffle`` is False.
-
-Examples
---------
->>> import numpy as np
->>> from sklearn.model_selection import KFold
->>> X = np.array([[1, 2], [3, 4], [1, 2], [3, 4]])
->>> y = np.array([1, 2, 3, 4])
->>> kf = KFold(n_splits=2)
->>> kf.get_n_splits(X)
-2
->>> print(kf)
-KFold(n_splits=2, random_state=None, shuffle=False)
->>> for train_index, test_index in kf.split(X):
-...     print("TRAIN:", train_index, "TEST:", test_index)
-...     X_train, X_test = X[train_index], X[test_index]
-...     y_train, y_test = y[train_index], y[test_index]
-TRAIN: [2 3] TEST: [0 1]
-TRAIN: [0 1] TEST: [2 3]
-
-Notes
------
-The first ``n_samples % n_splits`` folds have size
-``n_samples // n_splits + 1``, other folds have size
-``n_samples // n_splits``, where ``n_samples`` is the number of samples.
-
-Randomized CV splitters may return different results for each call of
-split. You can make the results identical by setting ``random_state``
-to an integer.
-
-See also
---------
-StratifiedKFold
-    Takes group information into account to avoid building folds with
-    imbalanced class distributions (for binary or multiclass
-    classification tasks).
-
-GroupKFold: K-fold iterator variant with non-overlapping groups.
-
-RepeatedKFold: Repeats K-Fold n times.
-*)
-
-val get_n_splits : ?x:Py.Object.t -> ?y:Py.Object.t -> ?groups:Py.Object.t -> t -> int
-(**
-Returns the number of splitting iterations in the cross-validator
-
-Parameters
-----------
-X : object
-    Always ignored, exists for compatibility.
-
-y : object
-    Always ignored, exists for compatibility.
-
-groups : object
-    Always ignored, exists for compatibility.
-
-Returns
--------
-n_splits : int
-    Returns the number of splitting iterations in the cross-validator.
-*)
-
-val split : ?y:Ndarray.t -> ?groups:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> x:Ndarray.t -> t -> Py.Object.t
-(**
-Generate indices to split data into training and test set.
-
-Parameters
-----------
-X : array-like, shape (n_samples, n_features)
-    Training data, where n_samples is the number of samples
-    and n_features is the number of features.
-
-y : array-like, shape (n_samples,)
-    The target variable for supervised learning problems.
-
-groups : array-like, with shape (n_samples,), optional
-    Group labels for the samples used while splitting the dataset into
-    train/test set.
-
-Yields
-------
-train : ndarray
-    The training set indices for that split.
-
-test : ndarray
-    The testing set indices for that split.
 *)
 
 
@@ -944,7 +725,7 @@ TRAIN: [0 1] TEST: [2 3]
  [7 8]] [1 2] [1 2]
 *)
 
-val get_n_splits : ?x:Py.Object.t -> ?y:Py.Object.t -> ?groups:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> int
+val get_n_splits : ?x:Py.Object.t -> ?y:Py.Object.t -> ?groups:[`Arr of Arr.t | `With of Py.Object.t] -> t -> int
 (**
 Returns the number of splitting iterations in the cross-validator
 
@@ -968,7 +749,7 @@ n_splits : int
     Returns the number of splitting iterations in the cross-validator.
 *)
 
-val split : ?y:Ndarray.t -> ?groups:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> x:Ndarray.t -> t -> Py.Object.t
+val split : ?y:Arr.t -> ?groups:[`Arr of Arr.t | `With of Py.Object.t] -> x:Arr.t -> t -> Py.Object.t
 (**
 Generate indices to split data into training and test set.
 
@@ -1061,7 +842,7 @@ LeaveOneGroupOut
 GroupKFold: K-fold iterator variant with non-overlapping groups.
 *)
 
-val get_n_splits : ?y:Py.Object.t -> ?groups:Py.Object.t -> x:Ndarray.t -> t -> int
+val get_n_splits : ?y:Py.Object.t -> ?groups:Py.Object.t -> x:Arr.t -> t -> int
 (**
 Returns the number of splitting iterations in the cross-validator
 
@@ -1083,7 +864,7 @@ n_splits : int
     Returns the number of splitting iterations in the cross-validator.
 *)
 
-val split : ?y:Ndarray.t -> ?groups:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> x:Ndarray.t -> t -> Py.Object.t
+val split : ?y:Arr.t -> ?groups:[`Arr of Arr.t | `With of Py.Object.t] -> x:Arr.t -> t -> Py.Object.t
 (**
 Generate indices to split data into training and test set.
 
@@ -1185,7 +966,7 @@ See also
 GroupKFold: K-fold iterator variant with non-overlapping groups.
 *)
 
-val get_n_splits : ?x:Py.Object.t -> ?y:Py.Object.t -> ?groups:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> int
+val get_n_splits : ?x:Py.Object.t -> ?y:Py.Object.t -> ?groups:[`Arr of Arr.t | `With of Py.Object.t] -> t -> int
 (**
 Returns the number of splitting iterations in the cross-validator
 
@@ -1209,7 +990,7 @@ n_splits : int
     Returns the number of splitting iterations in the cross-validator.
 *)
 
-val split : ?y:Ndarray.t -> ?groups:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> x:Ndarray.t -> t -> Py.Object.t
+val split : ?y:Arr.t -> ?groups:[`Arr of Arr.t | `With of Py.Object.t] -> x:Arr.t -> t -> Py.Object.t
 (**
 Generate indices to split data into training and test set.
 
@@ -1301,7 +1082,7 @@ TRAIN: [0 2] TEST: [1 3]
 TRAIN: [0 1] TEST: [2 3]
 *)
 
-val get_n_splits : ?y:Py.Object.t -> ?groups:Py.Object.t -> x:Ndarray.t -> t -> Py.Object.t
+val get_n_splits : ?y:Py.Object.t -> ?groups:Py.Object.t -> x:Arr.t -> t -> Py.Object.t
 (**
 Returns the number of splitting iterations in the cross-validator
 
@@ -1318,7 +1099,7 @@ groups : object
     Always ignored, exists for compatibility.
 *)
 
-val split : ?y:Ndarray.t -> ?groups:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> x:Ndarray.t -> t -> Py.Object.t
+val split : ?y:Arr.t -> ?groups:[`Arr of Arr.t | `With of Py.Object.t] -> x:Arr.t -> t -> Py.Object.t
 (**
 Generate indices to split data into training and test set.
 
@@ -1442,7 +1223,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> param_distributions:Py.Object.t -> n_iter:int -> unit -> t
+val create : ?random_state:int -> param_distributions:Dict.t -> n_iter:int -> unit -> t
 (**
 Generator on parameters sampled from given distributions.
 
@@ -1519,7 +1300,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : test_fold:Ndarray.t -> unit -> t
+val create : test_fold:Arr.t -> unit -> t
 (**
 Predefined split cross-validator
 
@@ -1622,7 +1403,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_iter:int -> ?scoring:[`String of string | `Callable of Py.Object.t | `Dict of Py.Object.t | `None | `PyObject of Py.Object.t] -> ?n_jobs:[`Int of int | `None] -> ?iid:bool -> ?refit:[`Bool of bool | `String of string | `Callable of Py.Object.t] -> ?cv:[`Int of int | `CrossValGenerator of Py.Object.t | `Ndarray of Ndarray.t] -> ?verbose:int -> ?pre_dispatch:[`Int of int | `String of string] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?error_score:[`Raise | `PyObject of Py.Object.t] -> ?return_train_score:bool -> estimator:Py.Object.t -> param_distributions:[`Dict of Py.Object.t | `PyObject of Py.Object.t] -> unit -> t
+val create : ?n_iter:int -> ?scoring:[`S of string | `Callable of Py.Object.t | `List_tuple of Py.Object.t | `Dict of Dict.t] -> ?n_jobs:int -> ?iid:bool -> ?refit:[`Bool of bool | `S of string | `Callable of Py.Object.t] -> ?cv:[`I of int | `CrossValGenerator of Py.Object.t | `Arr of Arr.t] -> ?verbose:int -> ?pre_dispatch:[`I of int | `S of string] -> ?random_state:int -> ?error_score:[`Raise | `F of float] -> ?return_train_score:bool -> estimator:Py.Object.t -> param_distributions:[`Dict of Dict.t | `List_of_dicts of Py.Object.t] -> unit -> t
 (**
 Randomized search on hyper parameters.
 
@@ -1934,7 +1715,7 @@ Examples
 {'C': 2..., 'penalty': 'l1'}
 *)
 
-val decision_function : x:Ndarray.t -> t -> Ndarray.t
+val decision_function : x:Arr.t -> t -> Arr.t
 (**
 Call decision_function on the estimator with the best found parameters.
 
@@ -1948,7 +1729,7 @@ X : indexable, length n_samples
     underlying estimator.
 *)
 
-val fit : ?y:Ndarray.t -> ?groups:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> t
+val fit : ?y:Arr.t -> ?groups:[`Arr of Arr.t | `With of Py.Object.t] -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> t
 (**
 Run fit with all sets of parameters.
 
@@ -1972,7 +1753,7 @@ groups : array-like, with shape (n_samples,), optional
     Parameters passed to the ``fit`` method of the estimator
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1988,7 +1769,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : xt:Ndarray.t -> t -> Py.Object.t
+val inverse_transform : xt:Arr.t -> t -> Py.Object.t
 (**
 Call inverse_transform on the estimator with the best found params.
 
@@ -2002,7 +1783,7 @@ Xt : indexable, length n_samples
     underlying estimator.
 *)
 
-val predict : x:Ndarray.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Call predict on the estimator with the best found parameters.
 
@@ -2016,7 +1797,7 @@ X : indexable, length n_samples
     underlying estimator.
 *)
 
-val predict_log_proba : x:Ndarray.t -> t -> Py.Object.t
+val predict_log_proba : x:Arr.t -> t -> Py.Object.t
 (**
 Call predict_log_proba on the estimator with the best found parameters.
 
@@ -2030,7 +1811,7 @@ X : indexable, length n_samples
     underlying estimator.
 *)
 
-val predict_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Call predict_proba on the estimator with the best found parameters.
 
@@ -2044,7 +1825,7 @@ X : indexable, length n_samples
     underlying estimator.
 *)
 
-val score : ?y:Ndarray.t -> x:Ndarray.t -> t -> float
+val score : ?y:Arr.t -> x:Arr.t -> t -> float
 (**
 Returns the score on the given data, if the estimator has been refit.
 
@@ -2086,7 +1867,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Call transform on the estimator with the best found parameters.
 
@@ -2101,29 +1882,61 @@ X : indexable, length n_samples
 *)
 
 
-(** Attribute cv_results_: see constructor for documentation *)
-val cv_results_ : t -> Py.Object.t
+(** Attribute cv_results_: get value or raise Not_found if None.*)
+val cv_results_ : t -> Dict.t
 
-(** Attribute best_estimator_: see constructor for documentation *)
+(** Attribute cv_results_: get value as an option. *)
+val cv_results_opt : t -> (Dict.t) option
+
+
+(** Attribute best_estimator_: get value or raise Not_found if None.*)
 val best_estimator_ : t -> Py.Object.t
 
-(** Attribute best_score_: see constructor for documentation *)
+(** Attribute best_estimator_: get value as an option. *)
+val best_estimator_opt : t -> (Py.Object.t) option
+
+
+(** Attribute best_score_: get value or raise Not_found if None.*)
 val best_score_ : t -> float
 
-(** Attribute best_params_: see constructor for documentation *)
-val best_params_ : t -> Py.Object.t
+(** Attribute best_score_: get value as an option. *)
+val best_score_opt : t -> (float) option
 
-(** Attribute best_index_: see constructor for documentation *)
+
+(** Attribute best_params_: get value or raise Not_found if None.*)
+val best_params_ : t -> Dict.t
+
+(** Attribute best_params_: get value as an option. *)
+val best_params_opt : t -> (Dict.t) option
+
+
+(** Attribute best_index_: get value or raise Not_found if None.*)
 val best_index_ : t -> int
 
-(** Attribute scorer_: see constructor for documentation *)
+(** Attribute best_index_: get value as an option. *)
+val best_index_opt : t -> (int) option
+
+
+(** Attribute scorer_: get value or raise Not_found if None.*)
 val scorer_ : t -> Py.Object.t
 
-(** Attribute n_splits_: see constructor for documentation *)
+(** Attribute scorer_: get value as an option. *)
+val scorer_opt : t -> (Py.Object.t) option
+
+
+(** Attribute n_splits_: get value or raise Not_found if None.*)
 val n_splits_ : t -> int
 
-(** Attribute refit_time_: see constructor for documentation *)
+(** Attribute n_splits_: get value as an option. *)
+val n_splits_opt : t -> (int) option
+
+
+(** Attribute refit_time_: get value or raise Not_found if None.*)
 val refit_time_ : t -> float
+
+(** Attribute refit_time_: get value as an option. *)
+val refit_time_opt : t -> (float) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2143,7 +1956,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_splits:int -> ?n_repeats:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
+val create : ?n_splits:int -> ?n_repeats:int -> ?random_state:int -> unit -> t
 (**
 Repeated K-Fold cross validator.
 
@@ -2193,7 +2006,7 @@ See also
 RepeatedStratifiedKFold: Repeats Stratified K-Fold n times.
 *)
 
-val get_n_splits : ?x:Py.Object.t -> ?y:Py.Object.t -> ?groups:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> int
+val get_n_splits : ?x:Py.Object.t -> ?y:Py.Object.t -> ?groups:[`Arr of Arr.t | `With of Py.Object.t] -> t -> int
 (**
 Returns the number of splitting iterations in the cross-validator
 
@@ -2217,7 +2030,7 @@ n_splits : int
     Returns the number of splitting iterations in the cross-validator.
 *)
 
-val split : ?y:Ndarray.t -> ?groups:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> x:Ndarray.t -> t -> Py.Object.t
+val split : ?y:Arr.t -> ?groups:[`Arr of Arr.t | `With of Py.Object.t] -> x:Arr.t -> t -> Py.Object.t
 (**
 Generates indices to split data into training and test set.
 
@@ -2262,7 +2075,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_splits:int -> ?n_repeats:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
+val create : ?n_splits:int -> ?n_repeats:int -> ?random_state:int -> unit -> t
 (**
 Repeated Stratified K-Fold cross validator.
 
@@ -2312,7 +2125,7 @@ See also
 RepeatedKFold: Repeats K-Fold n times.
 *)
 
-val get_n_splits : ?x:Py.Object.t -> ?y:Py.Object.t -> ?groups:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> int
+val get_n_splits : ?x:Py.Object.t -> ?y:Py.Object.t -> ?groups:[`Arr of Arr.t | `With of Py.Object.t] -> t -> int
 (**
 Returns the number of splitting iterations in the cross-validator
 
@@ -2336,7 +2149,7 @@ n_splits : int
     Returns the number of splitting iterations in the cross-validator.
 *)
 
-val split : ?y:Ndarray.t -> ?groups:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> x:Ndarray.t -> t -> Py.Object.t
+val split : ?y:Arr.t -> ?groups:[`Arr of Arr.t | `With of Py.Object.t] -> x:Arr.t -> t -> Py.Object.t
 (**
 Generates indices to split data into training and test set.
 
@@ -2381,7 +2194,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_splits:int -> ?test_size:[`Float of float | `Int of int | `None] -> ?train_size:[`Float of float | `Int of int | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
+val create : ?n_splits:int -> ?test_size:[`F of float | `I of int] -> ?train_size:[`F of float | `I of int] -> ?random_state:int -> unit -> t
 (**
 Random permutation cross-validator
 
@@ -2467,7 +2280,7 @@ n_splits : int
     Returns the number of splitting iterations in the cross-validator.
 *)
 
-val split : ?y:Ndarray.t -> ?groups:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> x:Ndarray.t -> t -> Py.Object.t
+val split : ?y:Arr.t -> ?groups:[`Arr of Arr.t | `With of Py.Object.t] -> x:Arr.t -> t -> Py.Object.t
 (**
 Generate indices to split data into training and test set.
 
@@ -2513,158 +2326,12 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-module StratifiedKFold : sig
-type t
-val of_pyobject : Py.Object.t -> t
-val to_pyobject : t -> Py.Object.t
-
-val create : ?n_splits:int -> ?shuffle:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
-(**
-Stratified K-Folds cross-validator
-
-Provides train/test indices to split data in train/test sets.
-
-This cross-validation object is a variation of KFold that returns
-stratified folds. The folds are made by preserving the percentage of
-samples for each class.
-
-Read more in the :ref:`User Guide <cross_validation>`.
-
-Parameters
-----------
-n_splits : int, default=5
-    Number of folds. Must be at least 2.
-
-    .. versionchanged:: 0.22
-        ``n_splits`` default value changed from 3 to 5.
-
-shuffle : boolean, optional
-    Whether to shuffle each class's samples before splitting into batches.
-
-random_state : int, RandomState instance or None, optional, default=None
-    If int, random_state is the seed used by the random number generator;
-    If RandomState instance, random_state is the random number generator;
-    If None, the random number generator is the RandomState instance used
-    by `np.random`. Only used when ``shuffle`` is True. This should be left
-    to None if ``shuffle`` is False.
-
-Examples
---------
->>> import numpy as np
->>> from sklearn.model_selection import StratifiedKFold
->>> X = np.array([[1, 2], [3, 4], [1, 2], [3, 4]])
->>> y = np.array([0, 0, 1, 1])
->>> skf = StratifiedKFold(n_splits=2)
->>> skf.get_n_splits(X, y)
-2
->>> print(skf)
-StratifiedKFold(n_splits=2, random_state=None, shuffle=False)
->>> for train_index, test_index in skf.split(X, y):
-...     print("TRAIN:", train_index, "TEST:", test_index)
-...     X_train, X_test = X[train_index], X[test_index]
-...     y_train, y_test = y[train_index], y[test_index]
-TRAIN: [1 3] TEST: [0 2]
-TRAIN: [0 2] TEST: [1 3]
-
-Notes
------
-The implementation is designed to:
-
-* Generate test sets such that all contain the same distribution of
-  classes, or as close as possible.
-* Be invariant to class label: relabelling ``y = ["Happy", "Sad"]`` to
-  ``y = [1, 0]`` should not change the indices generated.
-* Preserve order dependencies in the dataset ordering, when
-  ``shuffle=False``: all samples from class k in some test set were
-  contiguous in y, or separated in y by samples from classes other than k.
-* Generate test sets where the smallest and largest differ by at most one
-  sample.
-
-.. versionchanged:: 0.22
-    The previous implementation did not follow the last constraint.
-
-See also
---------
-RepeatedStratifiedKFold: Repeats Stratified K-Fold n times.
-*)
-
-val get_n_splits : ?x:Py.Object.t -> ?y:Py.Object.t -> ?groups:Py.Object.t -> t -> int
-(**
-Returns the number of splitting iterations in the cross-validator
-
-Parameters
-----------
-X : object
-    Always ignored, exists for compatibility.
-
-y : object
-    Always ignored, exists for compatibility.
-
-groups : object
-    Always ignored, exists for compatibility.
-
-Returns
--------
-n_splits : int
-    Returns the number of splitting iterations in the cross-validator.
-*)
-
-val split : ?groups:Py.Object.t -> x:Ndarray.t -> y:Ndarray.t -> t -> Py.Object.t
-(**
-Generate indices to split data into training and test set.
-
-Parameters
-----------
-X : array-like, shape (n_samples, n_features)
-    Training data, where n_samples is the number of samples
-    and n_features is the number of features.
-
-    Note that providing ``y`` is sufficient to generate the splits and
-    hence ``np.zeros(n_samples)`` may be used as a placeholder for
-    ``X`` instead of actual training data.
-
-y : array-like, shape (n_samples,)
-    The target variable for supervised learning problems.
-    Stratification is done based on the y labels.
-
-groups : object
-    Always ignored, exists for compatibility.
-
-Yields
-------
-train : ndarray
-    The training set indices for that split.
-
-test : ndarray
-    The testing set indices for that split.
-
-Notes
------
-Randomized CV splitters may return different results for each call of
-split. You can make the results identical by setting ``random_state``
-to an integer.
-*)
-
-
-(** Print the object to a human-readable representation. *)
-val to_string : t -> string
-
-
-(** Print the object to a human-readable representation. *)
-val show : t -> string
-
-(** Pretty-print the object to a formatter. *)
-val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
-
-
-end
-
 module StratifiedShuffleSplit : sig
 type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_splits:int -> ?test_size:[`Float of float | `Int of int | `None] -> ?train_size:[`Float of float | `Int of int | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
+val create : ?n_splits:int -> ?test_size:[`F of float | `I of int] -> ?train_size:[`F of float | `I of int] -> ?random_state:int -> unit -> t
 (**
 Stratified ShuffleSplit cross-validator
 
@@ -2747,7 +2414,7 @@ n_splits : int
     Returns the number of splitting iterations in the cross-validator.
 *)
 
-val split : ?groups:Py.Object.t -> x:Ndarray.t -> y:Ndarray.t -> t -> Py.Object.t
+val split : ?groups:Py.Object.t -> x:Arr.t -> y:Arr.t -> t -> Py.Object.t
 (**
 Generate indices to split data into training and test set.
 
@@ -2797,128 +2464,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-module TimeSeriesSplit : sig
-type t
-val of_pyobject : Py.Object.t -> t
-val to_pyobject : t -> Py.Object.t
-
-val create : ?n_splits:int -> ?max_train_size:int -> unit -> t
-(**
-Time Series cross-validator
-
-Provides train/test indices to split time series data samples
-that are observed at fixed time intervals, in train/test sets.
-In each split, test indices must be higher than before, and thus shuffling
-in cross validator is inappropriate.
-
-This cross-validation object is a variation of :class:`KFold`.
-In the kth split, it returns first k folds as train set and the
-(k+1)th fold as test set.
-
-Note that unlike standard cross-validation methods, successive
-training sets are supersets of those that come before them.
-
-Read more in the :ref:`User Guide <cross_validation>`.
-
-Parameters
-----------
-n_splits : int, default=5
-    Number of splits. Must be at least 2.
-
-    .. versionchanged:: 0.22
-        ``n_splits`` default value changed from 3 to 5.
-
-max_train_size : int, optional
-    Maximum size for a single training set.
-
-Examples
---------
->>> import numpy as np
->>> from sklearn.model_selection import TimeSeriesSplit
->>> X = np.array([[1, 2], [3, 4], [1, 2], [3, 4], [1, 2], [3, 4]])
->>> y = np.array([1, 2, 3, 4, 5, 6])
->>> tscv = TimeSeriesSplit()
->>> print(tscv)
-TimeSeriesSplit(max_train_size=None, n_splits=5)
->>> for train_index, test_index in tscv.split(X):
-...     print("TRAIN:", train_index, "TEST:", test_index)
-...     X_train, X_test = X[train_index], X[test_index]
-...     y_train, y_test = y[train_index], y[test_index]
-TRAIN: [0] TEST: [1]
-TRAIN: [0 1] TEST: [2]
-TRAIN: [0 1 2] TEST: [3]
-TRAIN: [0 1 2 3] TEST: [4]
-TRAIN: [0 1 2 3 4] TEST: [5]
-
-Notes
------
-The training set has size ``i * n_samples // (n_splits + 1)
-+ n_samples % (n_splits + 1)`` in the ``i``th split,
-with a test set of size ``n_samples//(n_splits + 1)``,
-where ``n_samples`` is the number of samples.
-*)
-
-val get_n_splits : ?x:Py.Object.t -> ?y:Py.Object.t -> ?groups:Py.Object.t -> t -> int
-(**
-Returns the number of splitting iterations in the cross-validator
-
-Parameters
-----------
-X : object
-    Always ignored, exists for compatibility.
-
-y : object
-    Always ignored, exists for compatibility.
-
-groups : object
-    Always ignored, exists for compatibility.
-
-Returns
--------
-n_splits : int
-    Returns the number of splitting iterations in the cross-validator.
-*)
-
-val split : ?y:Ndarray.t -> ?groups:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> x:Ndarray.t -> t -> Py.Object.t
-(**
-Generate indices to split data into training and test set.
-
-Parameters
-----------
-X : array-like, shape (n_samples, n_features)
-    Training data, where n_samples is the number of samples
-    and n_features is the number of features.
-
-y : array-like, shape (n_samples,)
-    Always ignored, exists for compatibility.
-
-groups : array-like, with shape (n_samples,)
-    Always ignored, exists for compatibility.
-
-Yields
-------
-train : ndarray
-    The training set indices for that split.
-
-test : ndarray
-    The testing set indices for that split.
-*)
-
-
-(** Print the object to a human-readable representation. *)
-val to_string : t -> string
-
-
-(** Print the object to a human-readable representation. *)
-val show : t -> string
-
-(** Pretty-print the object to a formatter. *)
-val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
-
-
-end
-
-val check_cv : ?cv:[`Int of int | `CrossValGenerator of Py.Object.t | `Ndarray of Ndarray.t] -> ?y:Ndarray.t -> ?classifier:bool -> unit -> Py.Object.t
+val check_cv : ?cv:[`I of int | `CrossValGenerator of Py.Object.t | `Arr of Arr.t] -> ?y:Arr.t -> ?classifier:bool -> unit -> Py.Object.t
 (**
 Input checker utility for building a cross-validator
 
@@ -2957,7 +2503,7 @@ checked_cv : a cross-validator instance.
     splits via the ``split`` method.
 *)
 
-val cross_val_predict : ?y:Ndarray.t -> ?groups:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> ?cv:[`Int of int | `CrossValGenerator of Py.Object.t | `Ndarray of Ndarray.t] -> ?n_jobs:[`Int of int | `None] -> ?verbose:int -> ?fit_params:Py.Object.t -> ?pre_dispatch:[`Int of int | `String of string] -> ?method_:string -> estimator:Py.Object.t -> x:Ndarray.t -> unit -> Ndarray.t
+val cross_val_predict : ?y:Arr.t -> ?groups:[`Arr of Arr.t | `With of Py.Object.t] -> ?cv:[`I of int | `CrossValGenerator of Py.Object.t | `Arr of Arr.t] -> ?n_jobs:int -> ?verbose:int -> ?fit_params:Dict.t -> ?pre_dispatch:[`I of int | `S of string] -> ?method_:string -> estimator:Py.Object.t -> x:Arr.t -> unit -> Arr.t
 (**
 Generate cross-validated estimates for each input data point
 
@@ -3073,7 +2619,7 @@ Examples
 >>> y_pred = cross_val_predict(lasso, X, y, cv=3)
 *)
 
-val cross_val_score : ?y:Ndarray.t -> ?groups:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> ?scoring:[`String of string | `Callable of Py.Object.t | `None] -> ?cv:[`Int of int | `CrossValGenerator of Py.Object.t | `Ndarray of Ndarray.t] -> ?n_jobs:[`Int of int | `None] -> ?verbose:int -> ?fit_params:Py.Object.t -> ?pre_dispatch:[`Int of int | `String of string] -> ?error_score:[`Raise | `PyObject of Py.Object.t] -> estimator:Py.Object.t -> x:Ndarray.t -> unit -> Py.Object.t
+val cross_val_score : ?y:Arr.t -> ?groups:[`Arr of Arr.t | `With of Py.Object.t] -> ?scoring:[`S of string | `Callable of Py.Object.t] -> ?cv:[`I of int | `CrossValGenerator of Py.Object.t | `Arr of Arr.t] -> ?n_jobs:int -> ?verbose:int -> ?fit_params:Dict.t -> ?pre_dispatch:[`I of int | `S of string] -> ?error_score:[`Raise | `F of float] -> estimator:Py.Object.t -> x:Arr.t -> unit -> Py.Object.t
 (**
 Evaluate a score by cross-validation
 
@@ -3191,7 +2737,7 @@ See Also
     Make a scorer from a performance metric or loss function.
 *)
 
-val cross_validate : ?y:Ndarray.t -> ?groups:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> ?scoring:[`String of string | `Callable of Py.Object.t | `Dict of Py.Object.t | `None | `PyObject of Py.Object.t] -> ?cv:[`Int of int | `CrossValGenerator of Py.Object.t | `Ndarray of Ndarray.t] -> ?n_jobs:[`Int of int | `None] -> ?verbose:int -> ?fit_params:Py.Object.t -> ?pre_dispatch:[`Int of int | `String of string] -> ?return_train_score:bool -> ?return_estimator:bool -> ?error_score:[`Raise | `PyObject of Py.Object.t] -> estimator:Py.Object.t -> x:Ndarray.t -> unit -> Py.Object.t
+val cross_validate : ?y:Arr.t -> ?groups:[`Arr of Arr.t | `With of Py.Object.t] -> ?scoring:[`S of string | `Callable of Py.Object.t | `List_tuple of Py.Object.t | `Dict of Dict.t] -> ?cv:[`I of int | `CrossValGenerator of Py.Object.t | `Arr of Arr.t] -> ?n_jobs:int -> ?verbose:int -> ?fit_params:Dict.t -> ?pre_dispatch:[`I of int | `S of string] -> ?return_train_score:bool -> ?return_estimator:bool -> ?error_score:[`Raise | `F of float] -> estimator:Py.Object.t -> x:Arr.t -> unit -> Py.Object.t
 (**
 Evaluate metric(s) by cross-validation and also record fit/score times.
 
@@ -3370,7 +2916,7 @@ See Also
     Make a scorer from a performance metric or loss function.
 *)
 
-val fit_grid_point : ?error_score:[`Raise | `PyObject of Py.Object.t] -> ?fit_params:(string * Py.Object.t) list -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t | `ArrayLike of Py.Object.t] -> y:[`Ndarray of Ndarray.t | `None] -> estimator:Py.Object.t -> parameters:Py.Object.t -> train:[`Ndarray of Ndarray.t | `Bool of bool | `PyObject of Py.Object.t] -> test:[`Ndarray of Ndarray.t | `Bool of bool | `PyObject of Py.Object.t] -> scorer:[`Callable of Py.Object.t | `None] -> verbose:int -> unit -> (float * Py.Object.t * int)
+val fit_grid_point : ?error_score:[`Raise | `F of float] -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> y:[`Arr of Arr.t | `None] -> estimator:Py.Object.t -> parameters:Dict.t -> train:[`Arr of Arr.t | `Dtype_int of Py.Object.t | `Bool of bool] -> test:[`Arr of Arr.t | `Dtype_int of Py.Object.t | `Bool of bool] -> scorer:[`Callable of Py.Object.t | `None] -> verbose:int -> unit -> (float * Dict.t * int)
 (**
 Run fit on one set of parameters.
 
@@ -3427,7 +2973,7 @@ n_samples_test : int
     Number of test samples in this split.
 *)
 
-val learning_curve : ?groups:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> ?train_sizes:[`Ndarray of Ndarray.t | `Int of int | `PyObject of Py.Object.t] -> ?cv:[`Int of int | `CrossValGenerator of Py.Object.t | `Ndarray of Ndarray.t] -> ?scoring:[`String of string | `Callable of Py.Object.t | `None] -> ?exploit_incremental_learning:bool -> ?n_jobs:[`Int of int | `None] -> ?pre_dispatch:[`Int of int | `String of string] -> ?verbose:int -> ?shuffle:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?error_score:[`Raise | `PyObject of Py.Object.t] -> ?return_times:bool -> estimator:Py.Object.t -> x:Ndarray.t -> y:Ndarray.t -> unit -> (Py.Object.t * Ndarray.t * Ndarray.t * Ndarray.t * Ndarray.t)
+val learning_curve : ?groups:[`Arr of Arr.t | `With of Py.Object.t] -> ?train_sizes:[`Arr of Arr.t | `Dtype_float of Py.Object.t | `I of int] -> ?cv:[`I of int | `CrossValGenerator of Py.Object.t | `Arr of Arr.t] -> ?scoring:[`S of string | `Callable of Py.Object.t] -> ?exploit_incremental_learning:bool -> ?n_jobs:int -> ?pre_dispatch:[`I of int | `S of string] -> ?verbose:int -> ?shuffle:bool -> ?random_state:int -> ?error_score:[`Raise | `F of float] -> ?return_times:bool -> estimator:Py.Object.t -> x:Arr.t -> y:Arr.t -> unit -> (Py.Object.t * Arr.t * Arr.t * Arr.t * Arr.t)
 (**
 Learning curve.
 
@@ -3558,7 +3104,7 @@ See :ref:`examples/model_selection/plot_learning_curve.py
 <sphx_glr_auto_examples_model_selection_plot_learning_curve.py>`
 *)
 
-val permutation_test_score : ?groups:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> ?cv:[`Int of int | `CrossValGenerator of Py.Object.t | `Ndarray of Ndarray.t] -> ?n_permutations:int -> ?n_jobs:[`Int of int | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?verbose:int -> ?scoring:[`String of string | `Callable of Py.Object.t | `None] -> estimator:Py.Object.t -> x:Py.Object.t -> y:Ndarray.t -> unit -> (float * Ndarray.t * float)
+val permutation_test_score : ?groups:[`Arr of Arr.t | `With of Py.Object.t] -> ?cv:[`I of int | `CrossValGenerator of Py.Object.t | `Arr of Arr.t] -> ?n_permutations:int -> ?n_jobs:int -> ?random_state:int -> ?verbose:int -> ?scoring:[`S of string | `Callable of Py.Object.t] -> estimator:Py.Object.t -> x:Py.Object.t -> y:Arr.t -> unit -> (float * Arr.t * float)
 (**
 Evaluate the significance of a cross-validated score with permutations
 
@@ -3656,7 +3202,7 @@ This function implements Test 1 in:
     vol. 11
 *)
 
-val train_test_split : ?test_size:[`Float of float | `Int of int | `None] -> ?train_size:[`Float of float | `Int of int | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?shuffle:bool -> ?stratify:[`Ndarray of Ndarray.t | `None] -> Ndarray.t list -> Ndarray.t array
+val train_test_split : ?test_size:[`F of float | `I of int] -> ?train_size:[`F of float | `I of int] -> ?random_state:int -> ?shuffle:bool -> ?stratify:Arr.t -> Arr.t list -> Arr.t list
 (**
 Split arrays or matrices into random train and test subsets
 
@@ -3743,7 +3289,7 @@ array([[2, 3],
 [[0, 1, 2], [3, 4]]
 *)
 
-val validation_curve : ?groups:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> ?cv:[`Int of int | `CrossValGenerator of Py.Object.t | `Ndarray of Ndarray.t] -> ?scoring:[`String of string | `Callable of Py.Object.t | `None] -> ?n_jobs:[`Int of int | `None] -> ?pre_dispatch:[`Int of int | `String of string] -> ?verbose:int -> ?error_score:[`Raise | `PyObject of Py.Object.t] -> estimator:Py.Object.t -> x:Ndarray.t -> y:Ndarray.t -> param_name:string -> param_range:Ndarray.t -> unit -> (Ndarray.t * Ndarray.t)
+val validation_curve : ?groups:[`Arr of Arr.t | `With of Py.Object.t] -> ?cv:[`I of int | `CrossValGenerator of Py.Object.t | `Arr of Arr.t] -> ?scoring:[`S of string | `Callable of Py.Object.t] -> ?n_jobs:int -> ?pre_dispatch:[`I of int | `S of string] -> ?verbose:int -> ?error_score:[`Raise | `F of float] -> estimator:Py.Object.t -> x:Arr.t -> y:Arr.t -> param_name:string -> param_range:Arr.t -> unit -> (Arr.t * Arr.t)
 (**
 Validation curve.
 

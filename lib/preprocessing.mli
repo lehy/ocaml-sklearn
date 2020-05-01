@@ -1,9 +1,12 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module Binarizer : sig
 type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?threshold:[`Float of float | `PyObject of Py.Object.t] -> ?copy:bool -> unit -> t
+val create : ?threshold:[`F of float | `T_0_0_by of Py.Object.t] -> ?copy:bool -> unit -> t
 (**
 Binarize data (set feature values to 0 or 1) according to a threshold
 
@@ -58,7 +61,7 @@ See also
 binarize: Equivalent function without the estimator API.
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Do nothing and return the estimator unchanged
 
@@ -70,7 +73,7 @@ Parameters
 X : array-like
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -94,7 +97,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -130,7 +133,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : ?copy:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val transform : ?copy:bool -> x:Arr.t -> t -> Arr.t
 (**
 Binarize each element of X
 
@@ -164,7 +167,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?func:Py.Object.t -> ?inverse_func:Py.Object.t -> ?validate:bool -> ?accept_sparse:bool -> ?check_inverse:bool -> ?kw_args:Py.Object.t -> ?inv_kw_args:Py.Object.t -> unit -> t
+val create : ?func:Py.Object.t -> ?inverse_func:Py.Object.t -> ?validate:bool -> ?accept_sparse:bool -> ?check_inverse:bool -> ?kw_args:Dict.t -> ?inv_kw_args:Dict.t -> unit -> t
 (**
 Constructs a transformer from an arbitrary callable.
 
@@ -234,7 +237,7 @@ array([[0.       , 0.6931...],
        [1.0986..., 1.3862...]])
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fit transformer by checking X.
 
@@ -250,7 +253,7 @@ Returns
 self
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -274,7 +277,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -290,7 +293,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : x:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : x:Arr.t -> t -> Arr.t
 (**
 Transform X using the inverse function.
 
@@ -325,7 +328,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Transform X using the forward function.
 
@@ -359,7 +362,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_bins:[`Int of int | `Ndarray of Ndarray.t] -> ?encode:[`Onehot | `Onehot_dense | `Ordinal] -> ?strategy:[`Uniform | `Quantile | `Kmeans] -> unit -> t
+val create : ?n_bins:[`I of int | `Arr of Arr.t] -> ?encode:[`Onehot | `Onehot_dense | `Ordinal] -> ?strategy:[`Uniform | `Quantile | `Kmeans] -> unit -> t
 (**
 Bin continuous data into intervals.
 
@@ -456,7 +459,7 @@ array([[-1.5,  1.5, -3.5, -0.5],
        [ 0.5,  3.5, -1.5,  1.5]])
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fit the estimator.
 
@@ -474,7 +477,7 @@ Returns
 self
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -498,7 +501,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -514,7 +517,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : xt:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : xt:Arr.t -> t -> Arr.t
 (**
 Transform discretized data back to original feature space.
 
@@ -552,7 +555,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Discretize the data.
 
@@ -568,11 +571,19 @@ Xt : numeric array-like or sparse matrix
 *)
 
 
-(** Attribute n_bins_: see constructor for documentation *)
-val n_bins_ : t -> Py.Object.t
+(** Attribute n_bins_: get value or raise Not_found if None.*)
+val n_bins_ : t -> Arr.t
 
-(** Attribute bin_edges_: see constructor for documentation *)
+(** Attribute n_bins_: get value as an option. *)
+val n_bins_opt : t -> (Arr.t) option
+
+
+(** Attribute bin_edges_: get value or raise Not_found if None.*)
 val bin_edges_ : t -> Py.Object.t
+
+(** Attribute bin_edges_: get value as an option. *)
+val bin_edges_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -633,7 +644,7 @@ array([[  5.,   0.,  -5.],
        [ -5., -14.,  19.]])
 *)
 
-val fit : ?y:Py.Object.t -> k:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> k:Arr.t -> t -> t
 (**
 Fit KernelCenterer
 
@@ -647,7 +658,7 @@ Returns
 self : returns an instance of self.
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -671,7 +682,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -707,7 +718,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : ?copy:bool -> k:Ndarray.t -> t -> Ndarray.t
+val transform : ?copy:bool -> k:Arr.t -> t -> Arr.t
 (**
 Center kernel matrix.
 
@@ -725,11 +736,19 @@ K_new : numpy array of shape [n_samples1, n_samples2]
 *)
 
 
-(** Attribute K_fit_rows_: see constructor for documentation *)
-val k_fit_rows_ : t -> Ndarray.t
+(** Attribute K_fit_rows_: get value or raise Not_found if None.*)
+val k_fit_rows_ : t -> Arr.t
 
-(** Attribute K_fit_all_: see constructor for documentation *)
+(** Attribute K_fit_rows_: get value as an option. *)
+val k_fit_rows_opt : t -> (Arr.t) option
+
+
+(** Attribute K_fit_all_: get value or raise Not_found if None.*)
 val k_fit_all_ : t -> float
+
+(** Attribute K_fit_all_: get value as an option. *)
+val k_fit_all_opt : t -> (float) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -841,7 +860,7 @@ sklearn.preprocessing.OneHotEncoder : encode categorical features
     using a one-hot aka one-of-K scheme.
 *)
 
-val fit : y:Ndarray.t -> t -> t
+val fit : y:Arr.t -> t -> t
 (**
 Fit label binarizer
 
@@ -856,7 +875,7 @@ Returns
 self : returns an instance of self.
 *)
 
-val fit_transform : y:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val fit_transform : y:Arr.t -> t -> Arr.t
 (**
 Fit label binarizer and transform multi-class labels to binary
 labels.
@@ -877,7 +896,7 @@ Y : array or CSR matrix of shape [n_samples, n_classes]
     Shape will be [n_samples, 1] for binary problems.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -893,7 +912,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : ?threshold:[`Float of float | `None] -> y:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> Py.Object.t
+val inverse_transform : ?threshold:float -> y:Arr.t -> t -> Py.Object.t
 (**
 Transform binary labels back to multi-class labels
 
@@ -946,7 +965,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : y:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val transform : y:Arr.t -> t -> Arr.t
 (**
 Transform multi-class labels to binary labels
 
@@ -967,14 +986,26 @@ Y : numpy array or CSR matrix of shape [n_samples, n_classes]
 *)
 
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
 
-(** Attribute y_type_: see constructor for documentation *)
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute y_type_: get value or raise Not_found if None.*)
 val y_type_ : t -> string
 
-(** Attribute sparse_input_: see constructor for documentation *)
+(** Attribute y_type_: get value as an option. *)
+val y_type_opt : t -> (string) option
+
+
+(** Attribute sparse_input_: get value or raise Not_found if None.*)
 val sparse_input_ : t -> bool
+
+(** Attribute sparse_input_: get value as an option. *)
+val sparse_input_opt : t -> (bool) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1047,7 +1078,7 @@ sklearn.preprocessing.OneHotEncoder : Encode categorical features
     as a one-hot numeric array.
 *)
 
-val fit : y:Ndarray.t -> t -> t
+val fit : y:Arr.t -> t -> t
 (**
 Fit label encoder
 
@@ -1061,7 +1092,7 @@ Returns
 self : returns an instance of self.
 *)
 
-val fit_transform : y:Ndarray.t -> t -> Ndarray.t
+val fit_transform : y:Arr.t -> t -> Arr.t
 (**
 Fit label encoder and return encoded labels
 
@@ -1075,7 +1106,7 @@ Returns
 y : array-like of shape [n_samples]
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1091,7 +1122,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : y:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : y:Arr.t -> t -> Arr.t
 (**
 Transform labels back to original encoding.
 
@@ -1125,7 +1156,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : y:Ndarray.t -> t -> Ndarray.t
+val transform : y:Arr.t -> t -> Arr.t
 (**
 Transform labels to normalized encoding.
 
@@ -1140,8 +1171,12 @@ y : array-like of shape [n_samples]
 *)
 
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
+
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1223,7 +1258,7 @@ see :ref:`examples/preprocessing/plot_all_scaling.py
 <sphx_glr_auto_examples_preprocessing_plot_all_scaling.py>`.
 *)
 
-val fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Compute the maximum absolute value to be used for later scaling.
 
@@ -1234,7 +1269,7 @@ X : {array-like, sparse matrix}, shape [n_samples, n_features]
     used for later scaling along the features axis.
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -1258,7 +1293,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1274,7 +1309,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Py.Object.t
+val inverse_transform : x:Arr.t -> t -> Py.Object.t
 (**
 Scale back the data to the original representation
 
@@ -1284,7 +1319,7 @@ X : {array-like, sparse matrix}
     The data that should be transformed back.
 *)
 
-val partial_fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val partial_fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Online computation of max absolute value of X for later scaling.
 
@@ -1327,7 +1362,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Scale the data
 
@@ -1338,14 +1373,26 @@ X : {array-like, sparse matrix}
 *)
 
 
-(** Attribute scale_: see constructor for documentation *)
-val scale_ : t -> Ndarray.t
+(** Attribute scale_: get value or raise Not_found if None.*)
+val scale_ : t -> Arr.t
 
-(** Attribute max_abs_: see constructor for documentation *)
-val max_abs_ : t -> Ndarray.t
+(** Attribute scale_: get value as an option. *)
+val scale_opt : t -> (Arr.t) option
 
-(** Attribute n_samples_seen_: see constructor for documentation *)
+
+(** Attribute max_abs_: get value or raise Not_found if None.*)
+val max_abs_ : t -> Arr.t
+
+(** Attribute max_abs_: get value as an option. *)
+val max_abs_opt : t -> (Arr.t) option
+
+
+(** Attribute n_samples_seen_: get value or raise Not_found if None.*)
 val n_samples_seen_ : t -> int
+
+(** Attribute n_samples_seen_: get value as an option. *)
+val n_samples_seen_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1466,7 +1513,7 @@ see :ref:`examples/preprocessing/plot_all_scaling.py
 <sphx_glr_auto_examples_preprocessing_plot_all_scaling.py>`.
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Compute the minimum and maximum to be used for later scaling.
 
@@ -1485,7 +1532,7 @@ self : object
     Fitted scaler.
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -1509,7 +1556,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1525,7 +1572,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : x:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : x:Arr.t -> t -> Arr.t
 (**
 Undo the scaling of X according to feature_range.
 
@@ -1540,7 +1587,7 @@ Xt : array-like of shape (n_samples, n_features)
     Transformed data.
 *)
 
-val partial_fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val partial_fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Online computation of min and max on X for later scaling.
 
@@ -1583,7 +1630,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Scale features of X according to feature_range.
 
@@ -1599,23 +1646,47 @@ Xt : array-like of shape (n_samples, n_features)
 *)
 
 
-(** Attribute min_: see constructor for documentation *)
-val min_ : t -> Ndarray.t
+(** Attribute min_: get value or raise Not_found if None.*)
+val min_ : t -> Arr.t
 
-(** Attribute scale_: see constructor for documentation *)
-val scale_ : t -> Ndarray.t
+(** Attribute min_: get value as an option. *)
+val min_opt : t -> (Arr.t) option
 
-(** Attribute data_min_: see constructor for documentation *)
-val data_min_ : t -> Ndarray.t
 
-(** Attribute data_max_: see constructor for documentation *)
-val data_max_ : t -> Ndarray.t
+(** Attribute scale_: get value or raise Not_found if None.*)
+val scale_ : t -> Arr.t
 
-(** Attribute data_range_: see constructor for documentation *)
-val data_range_ : t -> Ndarray.t
+(** Attribute scale_: get value as an option. *)
+val scale_opt : t -> (Arr.t) option
 
-(** Attribute n_samples_seen_: see constructor for documentation *)
+
+(** Attribute data_min_: get value or raise Not_found if None.*)
+val data_min_ : t -> Arr.t
+
+(** Attribute data_min_: get value as an option. *)
+val data_min_opt : t -> (Arr.t) option
+
+
+(** Attribute data_max_: get value or raise Not_found if None.*)
+val data_max_ : t -> Arr.t
+
+(** Attribute data_max_: get value as an option. *)
+val data_max_opt : t -> (Arr.t) option
+
+
+(** Attribute data_range_: get value or raise Not_found if None.*)
+val data_range_ : t -> Arr.t
+
+(** Attribute data_range_: get value as an option. *)
+val data_range_opt : t -> (Arr.t) option
+
+
+(** Attribute n_samples_seen_: get value or raise Not_found if None.*)
 val n_samples_seen_ : t -> int
+
+(** Attribute n_samples_seen_: get value as an option. *)
+val n_samples_seen_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1635,7 +1706,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?classes:Ndarray.t -> ?sparse_output:bool -> unit -> t
+val create : ?classes:Arr.t -> ?sparse_output:bool -> unit -> t
 (**
 Transform between iterable of iterables and a multilabel format
 
@@ -1698,7 +1769,7 @@ sklearn.preprocessing.OneHotEncoder : encode categorical features
     using a one-hot aka one-of-K scheme.
 *)
 
-val fit : y:Ndarray.List.t -> t -> t
+val fit : y:Arr.List.t -> t -> t
 (**
 Fit the label sets binarizer, storing :term:`classes_`
 
@@ -1714,7 +1785,7 @@ Returns
 self : returns this MultiLabelBinarizer instance
 *)
 
-val fit_transform : y:Ndarray.List.t -> t -> Ndarray.t
+val fit_transform : y:Arr.List.t -> t -> Arr.t
 (**
 Fit the label sets binarizer and transform the given label sets
 
@@ -1732,7 +1803,7 @@ y_indicator : array or CSR matrix, shape (n_samples, n_classes)
     `y[i]`, and 0 otherwise.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1748,7 +1819,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : yt:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Py.Object.t
+val inverse_transform : yt:Arr.t -> t -> Py.Object.t
 (**
 Transform the given indicator matrix into label sets
 
@@ -1784,7 +1855,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : y:Py.Object.t -> t -> Ndarray.t
+val transform : y:Arr.List.t -> t -> Arr.t
 (**
 Transform the given label sets
 
@@ -1803,8 +1874,12 @@ y_indicator : array or CSR matrix, shape (n_samples, n_classes)
 *)
 
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
+
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1824,7 +1899,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?norm:[`L1 | `L2 | `Max | `PyObject of Py.Object.t] -> ?copy:bool -> unit -> t
+val create : ?norm:[`L1 | `L2 | `Max | `T_l2_by of Py.Object.t] -> ?copy:bool -> unit -> t
 (**
 Normalize samples individually to unit norm.
 
@@ -1883,7 +1958,7 @@ See also
 normalize: Equivalent function without the estimator API.
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Do nothing and return the estimator unchanged
 
@@ -1895,7 +1970,7 @@ Parameters
 X : array-like
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -1919,7 +1994,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1955,7 +2030,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : ?copy:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val transform : ?copy:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Scale each non zero row of X to unit norm
 
@@ -1987,7 +2062,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?categories:[`Auto | `PyObject of Py.Object.t] -> ?drop:[`First | `PyObject of Py.Object.t] -> ?sparse:bool -> ?dtype:Py.Object.t -> ?handle_unknown:[`Error | `Ignore] -> unit -> t
+val create : ?categories:[`Auto | `A_list_of_array_like of Py.Object.t] -> ?drop:[`First | `A_array_like of Py.Object.t] -> ?sparse:bool -> ?dtype:Py.Object.t -> ?handle_unknown:[`Error | `Ignore] -> unit -> t
 (**
 Encode categorical features as a one-hot numeric array.
 
@@ -2107,7 +2182,7 @@ array([[0., 0., 0.],
        [1., 1., 0.]])
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fit OneHotEncoder to X.
 
@@ -2125,7 +2200,7 @@ Returns
 self
 *)
 
-val fit_transform : ?y:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Fit OneHotEncoder to X, then transform X.
 
@@ -2146,7 +2221,7 @@ X_out : sparse matrix if sparse=True else a 2-d array
     Transformed input.
 *)
 
-val get_feature_names : ?input_features:string list -> t -> Ndarray.t
+val get_feature_names : ?input_features:string list -> t -> Arr.t
 (**
 Return feature names for output features.
 
@@ -2162,7 +2237,7 @@ output_feature_names : ndarray of shape (n_output_features,)
     Array of feature names.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2178,7 +2253,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val inverse_transform : x:Arr.t -> t -> Arr.t
 (**
 Convert the data back to the original representation.
 
@@ -2216,7 +2291,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Transform X using one-hot encoding.
 
@@ -2232,11 +2307,19 @@ X_out : sparse matrix if sparse=True else a 2-d array
 *)
 
 
-(** Attribute categories_: see constructor for documentation *)
-val categories_ : t -> Py.Object.t
+(** Attribute categories_: get value or raise Not_found if None.*)
+val categories_ : t -> Arr.List.t
 
-(** Attribute drop_idx_: see constructor for documentation *)
-val drop_idx_ : t -> Ndarray.t
+(** Attribute categories_: get value as an option. *)
+val categories_opt : t -> (Arr.List.t) option
+
+
+(** Attribute drop_idx_: get value or raise Not_found if None.*)
+val drop_idx_ : t -> Arr.t
+
+(** Attribute drop_idx_: get value as an option. *)
+val drop_idx_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2256,7 +2339,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?categories:[`Auto | `PyObject of Py.Object.t] -> ?dtype:Py.Object.t -> unit -> t
+val create : ?categories:[`Auto | `A_list_of_array_like of Py.Object.t] -> ?dtype:Py.Object.t -> unit -> t
 (**
 Encode categorical features as an integer array.
 
@@ -2319,7 +2402,7 @@ array([['Male', 1],
        ['Female', 2]], dtype=object)
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Fit the OrdinalEncoder to X.
 
@@ -2337,7 +2420,7 @@ Returns
 self
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -2361,7 +2444,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2377,7 +2460,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val inverse_transform : x:Arr.t -> t -> Arr.t
 (**
 Convert the data back to the original representation.
 
@@ -2412,7 +2495,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Transform X to ordinal codes.
 
@@ -2428,8 +2511,12 @@ X_out : sparse matrix or a 2-d array
 *)
 
 
-(** Attribute categories_: see constructor for documentation *)
-val categories_ : t -> Py.Object.t
+(** Attribute categories_: get value or raise Not_found if None.*)
+val categories_ : t -> Arr.List.t
+
+(** Attribute categories_: get value as an option. *)
+val categories_opt : t -> (Arr.List.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2522,7 +2609,7 @@ See :ref:`examples/linear_model/plot_polynomial_interpolation.py
 <sphx_glr_auto_examples_linear_model_plot_polynomial_interpolation.py>`
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Compute number of output features.
 
@@ -2537,7 +2624,7 @@ Returns
 self : instance
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -2576,7 +2663,7 @@ Returns
 output_feature_names : list of string, length n_output_features
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2612,7 +2699,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Transform data to polynomial features
 
@@ -2642,14 +2729,26 @@ XP : np.ndarray or CSR/CSC sparse matrix, shape [n_samples, NP]
 *)
 
 
-(** Attribute powers_: see constructor for documentation *)
-val powers_ : t -> Ndarray.t
+(** Attribute powers_: get value or raise Not_found if None.*)
+val powers_ : t -> Arr.t
 
-(** Attribute n_input_features_: see constructor for documentation *)
+(** Attribute powers_: get value as an option. *)
+val powers_opt : t -> (Arr.t) option
+
+
+(** Attribute n_input_features_: get value or raise Not_found if None.*)
 val n_input_features_ : t -> int
 
-(** Attribute n_output_features_: see constructor for documentation *)
+(** Attribute n_input_features_: get value as an option. *)
+val n_input_features_opt : t -> (int) option
+
+
+(** Attribute n_output_features_: get value or raise Not_found if None.*)
 val n_output_features_ : t -> int
+
+(** Attribute n_output_features_: get value as an option. *)
+val n_output_features_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2754,7 +2853,7 @@ References
        of the Royal Statistical Society B, 26, 211-252 (1964).
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Estimate the optimal parameter lambda for each feature.
 
@@ -2773,7 +2872,7 @@ Returns
 self : object
 *)
 
-val fit_transform : ?y:Py.Object.t -> x:Py.Object.t -> t -> Ndarray.t
+val fit_transform : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -2797,7 +2896,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2813,7 +2912,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : x:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : x:Arr.t -> t -> Arr.t
 (**
 Apply the inverse power transformation using the fitted lambdas.
 
@@ -2866,7 +2965,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Apply the power transform to each feature using the fitted lambdas.
 
@@ -2882,8 +2981,12 @@ X_trans : array-like, shape (n_samples, n_features)
 *)
 
 
-(** Attribute lambdas_: see constructor for documentation *)
-val lambdas_ : t -> Py.Object.t
+(** Attribute lambdas_: get value or raise Not_found if None.*)
+val lambdas_ : t -> Arr.t
+
+(** Attribute lambdas_: get value as an option. *)
+val lambdas_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2903,7 +3006,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_quantiles:int -> ?output_distribution:string -> ?ignore_implicit_zeros:bool -> ?subsample:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?copy:bool -> unit -> t
+val create : ?n_quantiles:int -> ?output_distribution:string -> ?ignore_implicit_zeros:bool -> ?subsample:int -> ?random_state:int -> ?copy:bool -> unit -> t
 (**
 Transform features using quantiles information.
 
@@ -3003,7 +3106,7 @@ see :ref:`examples/preprocessing/plot_all_scaling.py
 <sphx_glr_auto_examples_preprocessing_plot_all_scaling.py>`.
 *)
 
-val fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Compute the quantiles used for transforming.
 
@@ -3020,7 +3123,7 @@ Returns
 self : object
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -3044,7 +3147,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -3060,7 +3163,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Py.Object.t
+val inverse_transform : x:Arr.t -> t -> Arr.t
 (**
 Back-projection to the original space.
 
@@ -3098,7 +3201,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Feature-wise transformation of the data.
 
@@ -3117,14 +3220,26 @@ Xt : ndarray or sparse matrix, shape (n_samples, n_features)
 *)
 
 
-(** Attribute n_quantiles_: see constructor for documentation *)
+(** Attribute n_quantiles_: get value or raise Not_found if None.*)
 val n_quantiles_ : t -> int
 
-(** Attribute quantiles_: see constructor for documentation *)
-val quantiles_ : t -> Ndarray.t
+(** Attribute n_quantiles_: get value as an option. *)
+val n_quantiles_opt : t -> (int) option
 
-(** Attribute references_: see constructor for documentation *)
-val references_ : t -> Ndarray.t
+
+(** Attribute quantiles_: get value or raise Not_found if None.*)
+val quantiles_ : t -> Arr.t
+
+(** Attribute quantiles_: get value as an option. *)
+val quantiles_opt : t -> (Arr.t) option
+
+
+(** Attribute references_: get value or raise Not_found if None.*)
+val references_ : t -> Arr.t
+
+(** Attribute references_: get value as an option. *)
+val references_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -3235,7 +3350,7 @@ https://en.wikipedia.org/wiki/Median
 https://en.wikipedia.org/wiki/Interquartile_range
 *)
 
-val fit : ?y:Py.Object.t -> x:Ndarray.t -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Compute the median and quantiles to be used for scaling.
 
@@ -3246,7 +3361,7 @@ X : array-like, shape [n_samples, n_features]
     used for later scaling along the features axis.
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -3270,7 +3385,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -3286,7 +3401,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : x:Ndarray.t -> t -> Py.Object.t
+val inverse_transform : x:Arr.t -> t -> Py.Object.t
 (**
 Scale back the data to the original representation
 
@@ -3316,7 +3431,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Center and scale the data.
 
@@ -3327,11 +3442,19 @@ X : {array-like, sparse matrix}
 *)
 
 
-(** Attribute center_: see constructor for documentation *)
-val center_ : t -> Ndarray.t
+(** Attribute center_: get value or raise Not_found if None.*)
+val center_ : t -> Arr.t
 
-(** Attribute scale_: see constructor for documentation *)
-val scale_ : t -> Ndarray.t
+(** Attribute center_: get value as an option. *)
+val center_opt : t -> (Arr.t) option
+
+
+(** Attribute scale_: get value or raise Not_found if None.*)
+val scale_ : t -> Arr.t
+
+(** Attribute scale_: get value as an option. *)
+val scale_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -3467,7 +3590,7 @@ see :ref:`examples/preprocessing/plot_all_scaling.py
 <sphx_glr_auto_examples_preprocessing_plot_all_scaling.py>`.
 *)
 
-val fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Compute the mean and std to be used for later scaling.
 
@@ -3481,7 +3604,7 @@ y
     Ignored
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -3505,7 +3628,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -3521,7 +3644,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : ?copy:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : ?copy:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Scale back the data to the original representation
 
@@ -3538,7 +3661,7 @@ X_tr : array-like, shape [n_samples, n_features]
     Transformed array.
 *)
 
-val partial_fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val partial_fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Online computation of mean and std on X for later scaling.
 
@@ -3586,7 +3709,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : ?copy:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val transform : ?copy:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Perform standardization by centering and scaling
 
@@ -3599,17 +3722,33 @@ copy : bool, optional (default: None)
 *)
 
 
-(** Attribute scale_: see constructor for documentation *)
-val scale_ : t -> Py.Object.t
+(** Attribute scale_: get value or raise Not_found if None.*)
+val scale_ : t -> Arr.t
 
-(** Attribute mean_: see constructor for documentation *)
-val mean_ : t -> Py.Object.t
+(** Attribute scale_: get value as an option. *)
+val scale_opt : t -> (Arr.t) option
 
-(** Attribute var_: see constructor for documentation *)
-val var_ : t -> Py.Object.t
 
-(** Attribute n_samples_seen_: see constructor for documentation *)
-val n_samples_seen_ : t -> Py.Object.t
+(** Attribute mean_: get value or raise Not_found if None.*)
+val mean_ : t -> Arr.t
+
+(** Attribute mean_: get value as an option. *)
+val mean_opt : t -> (Arr.t) option
+
+
+(** Attribute var_: get value or raise Not_found if None.*)
+val var_ : t -> Arr.t
+
+(** Attribute var_: get value as an option. *)
+val var_opt : t -> (Arr.t) option
+
+
+(** Attribute n_samples_seen_: get value or raise Not_found if None.*)
+val n_samples_seen_ : t -> [`I of int | `Arr of Arr.t]
+
+(** Attribute n_samples_seen_: get value as an option. *)
+val n_samples_seen_opt : t -> ([`I of int | `Arr of Arr.t]) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -3624,7 +3763,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val add_dummy_feature : ?value:float -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> Py.Object.t
+val add_dummy_feature : ?value:float -> x:Arr.t -> unit -> Py.Object.t
 (**
 Augment dataset with an additional dummy feature.
 
@@ -3654,7 +3793,7 @@ array([[1., 0., 1.],
        [1., 1., 0.]])
 *)
 
-val binarize : ?threshold:[`Float of float | `PyObject of Py.Object.t] -> ?copy:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> Py.Object.t
+val binarize : ?threshold:[`F of float | `T_0_0_by of Py.Object.t] -> ?copy:bool -> x:Arr.t -> unit -> Py.Object.t
 (**
 Boolean thresholding of array-like or scipy.sparse matrix
 
@@ -3682,7 +3821,7 @@ Binarizer: Performs binarization using the ``Transformer`` API
     (e.g. as part of a preprocessing :class:`sklearn.pipeline.Pipeline`).
 *)
 
-val label_binarize : ?neg_label:int -> ?pos_label:int -> ?sparse_output:bool -> y:Ndarray.t -> classes:Ndarray.t -> unit -> Py.Object.t
+val label_binarize : ?neg_label:int -> ?pos_label:int -> ?sparse_output:bool -> y:Arr.t -> classes:Arr.t -> unit -> Arr.t
 (**
 Binarize labels in a one-vs-all fashion
 
@@ -3743,7 +3882,7 @@ LabelBinarizer : class used to wrap the functionality of label_binarize and
     allow for fitting to classes independently of the transform operation
 *)
 
-val maxabs_scale : ?axis:Py.Object.t -> ?copy:bool -> x:Ndarray.t -> unit -> Py.Object.t
+val maxabs_scale : ?axis:Py.Object.t -> ?copy:bool -> x:Arr.t -> unit -> Py.Object.t
 (**
 Scale each feature to the [-1, 1] range without breaking the sparsity.
 
@@ -3781,7 +3920,7 @@ see :ref:`examples/preprocessing/plot_all_scaling.py
 <sphx_glr_auto_examples_preprocessing_plot_all_scaling.py>`.
 *)
 
-val minmax_scale : ?feature_range:Py.Object.t -> ?axis:int -> ?copy:bool -> x:Ndarray.t -> unit -> Py.Object.t
+val minmax_scale : ?feature_range:Py.Object.t -> ?axis:int -> ?copy:bool -> x:Arr.t -> unit -> Py.Object.t
 (**
 Transform features by scaling each feature to a given range.
 
@@ -3838,7 +3977,7 @@ see :ref:`examples/preprocessing/plot_all_scaling.py
 <sphx_glr_auto_examples_preprocessing_plot_all_scaling.py>`.
 *)
 
-val normalize : ?norm:[`L1 | `L2 | `Max | `PyObject of Py.Object.t] -> ?axis:Py.Object.t -> ?copy:bool -> ?return_norm:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> (Py.Object.t * Py.Object.t)
+val normalize : ?norm:[`L1 | `L2 | `Max | `T_l2_by of Py.Object.t] -> ?axis:[`Zero | `One | `T_1_by of Py.Object.t] -> ?copy:bool -> ?return_norm:bool -> x:Arr.t -> unit -> (Arr.t * Py.Object.t)
 (**
 Scale input vectors individually to unit norm (vector length).
 
@@ -3889,7 +4028,7 @@ see :ref:`examples/preprocessing/plot_all_scaling.py
 <sphx_glr_auto_examples_preprocessing_plot_all_scaling.py>`.
 *)
 
-val power_transform : ?method_:string -> ?standardize:bool -> ?copy:bool -> x:Ndarray.t -> unit -> Ndarray.t
+val power_transform : ?method_:[`Yeo_johnson | `Box_cox] -> ?standardize:bool -> ?copy:bool -> x:Arr.t -> unit -> Arr.t
 (**
 Power transforms are a family of parametric, monotonic transformations
 that are applied to make data more Gaussian-like. This is useful for
@@ -3974,7 +4113,7 @@ References
        of the Royal Statistical Society B, 26, 211-252 (1964).
 *)
 
-val quantile_transform : ?axis:int -> ?n_quantiles:int -> ?output_distribution:string -> ?ignore_implicit_zeros:bool -> ?subsample:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?copy:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> Py.Object.t
+val quantile_transform : ?axis:int -> ?n_quantiles:int -> ?output_distribution:[`Uniform | `Normal] -> ?ignore_implicit_zeros:bool -> ?subsample:int -> ?random_state:int -> ?copy:bool -> x:Arr.t -> unit -> Arr.t
 (**
 Transform features using quantiles information.
 
@@ -4082,7 +4221,7 @@ see :ref:`examples/preprocessing/plot_all_scaling.py
 <sphx_glr_auto_examples_preprocessing_plot_all_scaling.py>`.
 *)
 
-val robust_scale : ?axis:Py.Object.t -> ?with_centering:bool -> ?with_scaling:bool -> ?quantile_range:Py.Object.t -> ?copy:bool -> x:Ndarray.t -> unit -> Py.Object.t
+val robust_scale : ?axis:Py.Object.t -> ?with_centering:bool -> ?with_scaling:bool -> ?quantile_range:Py.Object.t -> ?copy:bool -> x:Arr.t -> unit -> Py.Object.t
 (**
 Standardize a dataset along any axis
 
@@ -4142,7 +4281,7 @@ RobustScaler: Performs centering and scaling using the ``Transformer`` API
     (e.g. as part of a preprocessing :class:`sklearn.pipeline.Pipeline`).
 *)
 
-val scale : ?axis:Py.Object.t -> ?with_mean:bool -> ?with_std:bool -> ?copy:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> unit -> Py.Object.t
+val scale : ?axis:Py.Object.t -> ?with_mean:bool -> ?with_std:bool -> ?copy:bool -> x:Arr.t -> unit -> Py.Object.t
 (**
 Standardize a dataset along any axis
 

@@ -1,9 +1,12 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module ARDRegression : sig
 type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_iter:int -> ?tol:float -> ?alpha_1:float -> ?alpha_2:float -> ?lambda_1:float -> ?lambda_2:float -> ?compute_score:bool -> ?threshold_lambda:float -> ?fit_intercept:bool -> ?normalize:bool -> ?copy_X:bool -> ?verbose:bool -> unit -> t
+val create : ?n_iter:int -> ?tol:float -> ?alpha_1:float -> ?alpha_2:float -> ?lambda_1:float -> ?lambda_2:float -> ?compute_score:bool -> ?threshold_lambda:float -> ?fit_intercept:bool -> ?normalize:bool -> ?copy_X:bool -> ?verbose:int -> unit -> t
 (**
 Bayesian ARD regression.
 
@@ -114,7 +117,7 @@ which ``self.lambda_ < self.threshold_lambda`` are kept and the rest are
 discarded.
 *)
 
-val fit : x:Ndarray.t -> y:Py.Object.t -> t -> t
+val fit : x:Arr.t -> y:Py.Object.t -> t -> t
 (**
 Fit the ARDRegression model according to the given training data
 and parameters.
@@ -134,7 +137,7 @@ Returns
 self : returns an instance of self.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -150,7 +153,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : ?return_std:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : ?return_std:bool -> x:Arr.t -> t -> Arr.t
 (**
 Predict using the linear model.
 
@@ -174,7 +177,7 @@ y_std : array-like of shape (n_samples,)
     Standard deviation of predictive distribution of query points.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -240,23 +243,47 @@ self : object
 *)
 
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
 
-(** Attribute alpha_: see constructor for documentation *)
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
+
+
+(** Attribute alpha_: get value or raise Not_found if None.*)
 val alpha_ : t -> float
 
-(** Attribute lambda_: see constructor for documentation *)
-val lambda_ : t -> Ndarray.t
+(** Attribute alpha_: get value as an option. *)
+val alpha_opt : t -> (float) option
 
-(** Attribute sigma_: see constructor for documentation *)
-val sigma_ : t -> Ndarray.t
 
-(** Attribute scores_: see constructor for documentation *)
+(** Attribute lambda_: get value or raise Not_found if None.*)
+val lambda_ : t -> Arr.t
+
+(** Attribute lambda_: get value as an option. *)
+val lambda_opt : t -> (Arr.t) option
+
+
+(** Attribute sigma_: get value or raise Not_found if None.*)
+val sigma_ : t -> Arr.t
+
+(** Attribute sigma_: get value as an option. *)
+val sigma_opt : t -> (Arr.t) option
+
+
+(** Attribute scores_: get value or raise Not_found if None.*)
 val scores_ : t -> float
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute scores_: get value as an option. *)
+val scores_opt : t -> (float) option
+
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -276,7 +303,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_iter:int -> ?tol:float -> ?alpha_1:float -> ?alpha_2:float -> ?lambda_1:float -> ?lambda_2:float -> ?alpha_init:float -> ?lambda_init:float -> ?compute_score:bool -> ?fit_intercept:bool -> ?normalize:bool -> ?copy_X:bool -> ?verbose:bool -> unit -> t
+val create : ?n_iter:int -> ?tol:float -> ?alpha_1:float -> ?alpha_2:float -> ?lambda_1:float -> ?lambda_2:float -> ?alpha_init:float -> ?lambda_init:float -> ?compute_score:bool -> ?fit_intercept:bool -> ?normalize:bool -> ?copy_X:bool -> ?verbose:int -> unit -> t
 (**
 Bayesian ridge regression.
 
@@ -404,7 +431,7 @@ M. E. Tipping, Sparse Bayesian Learning and the Relevance Vector Machine,
 Journal of Machine Learning Research, Vol. 1, 2001.
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Py.Object.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Py.Object.t -> t -> t
 (**
 Fit the model
 
@@ -426,7 +453,7 @@ Returns
 self : returns an instance of self.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -442,7 +469,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : ?return_std:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : ?return_std:bool -> x:Arr.t -> t -> Arr.t
 (**
 Predict using the linear model.
 
@@ -466,7 +493,7 @@ y_std : array-like of shape (n_samples,)
     Standard deviation of predictive distribution of query points.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -532,26 +559,54 @@ self : object
 *)
 
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
 
-(** Attribute alpha_: see constructor for documentation *)
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute alpha_: get value or raise Not_found if None.*)
 val alpha_ : t -> float
 
-(** Attribute lambda_: see constructor for documentation *)
+(** Attribute alpha_: get value as an option. *)
+val alpha_opt : t -> (float) option
+
+
+(** Attribute lambda_: get value or raise Not_found if None.*)
 val lambda_ : t -> float
 
-(** Attribute sigma_: see constructor for documentation *)
-val sigma_ : t -> Ndarray.t
+(** Attribute lambda_: get value as an option. *)
+val lambda_opt : t -> (float) option
 
-(** Attribute scores_: see constructor for documentation *)
-val scores_ : t -> Ndarray.t
 
-(** Attribute n_iter_: see constructor for documentation *)
+(** Attribute sigma_: get value or raise Not_found if None.*)
+val sigma_ : t -> Arr.t
+
+(** Attribute sigma_: get value as an option. *)
+val sigma_opt : t -> (Arr.t) option
+
+
+(** Attribute scores_: get value or raise Not_found if None.*)
+val scores_ : t -> Arr.t
+
+(** Attribute scores_: get value as an option. *)
+val scores_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -571,7 +626,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?alpha:float -> ?l1_ratio:float -> ?fit_intercept:bool -> ?normalize:bool -> ?precompute:[`Bool of bool | `Ndarray of Ndarray.t] -> ?max_iter:int -> ?copy_X:bool -> ?tol:float -> ?warm_start:bool -> ?positive:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?selection:string -> unit -> t
+val create : ?alpha:float -> ?l1_ratio:float -> ?fit_intercept:bool -> ?normalize:bool -> ?precompute:[`Bool of bool | `Arr of Arr.t] -> ?max_iter:int -> ?copy_X:bool -> ?tol:float -> ?warm_start:bool -> ?positive:bool -> ?random_state:int -> ?selection:string -> unit -> t
 (**
 Linear regression with combined L1 and L2 priors as regularizer.
 
@@ -710,7 +765,7 @@ SGDClassifier: implements logistic regression with elastic net penalty
     (``SGDClassifier(loss="log", penalty="elasticnet")``).
 *)
 
-val fit : ?check_input:bool -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> y:Ndarray.t -> t -> t
+val fit : ?check_input:bool -> x:[`Arr of Arr.t | `PyObject of Py.Object.t] -> y:Arr.t -> t -> t
 (**
 Fit model with coordinate descent.
 
@@ -737,7 +792,7 @@ To avoid memory re-allocation it is advised to allocate the
 initial data in memory directly using that format.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -753,7 +808,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the linear model.
 
@@ -768,7 +823,7 @@ C : array, shape (n_samples,)
     Returns predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -834,17 +889,33 @@ self : object
 *)
 
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
 
-(** Attribute sparse_coef_: see constructor for documentation *)
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
+
+
+(** Attribute sparse_coef_: get value or raise Not_found if None.*)
 val sparse_coef_ : t -> Py.Object.t
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute sparse_coef_: get value as an option. *)
+val sparse_coef_opt : t -> (Py.Object.t) option
 
-(** Attribute n_iter_: see constructor for documentation *)
-val n_iter_ : t -> Ndarray.t
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
+val n_iter_ : t -> Arr.t
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -864,7 +935,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?l1_ratio:[`Float of float | `Ndarray of Ndarray.t] -> ?eps:float -> ?n_alphas:int -> ?alphas:Ndarray.t -> ?fit_intercept:bool -> ?normalize:bool -> ?precompute:[`Bool of bool | `Auto | `Ndarray of Ndarray.t] -> ?max_iter:int -> ?tol:float -> ?cv:[`Int of int | `CrossValGenerator of Py.Object.t | `Ndarray of Ndarray.t] -> ?copy_X:bool -> ?verbose:[`Bool of bool | `Int of int] -> ?n_jobs:[`Int of int | `None] -> ?positive:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?selection:string -> unit -> t
+val create : ?l1_ratio:[`F of float | `Arr of Arr.t] -> ?eps:float -> ?n_alphas:int -> ?alphas:Arr.t -> ?fit_intercept:bool -> ?normalize:bool -> ?precompute:[`Bool of bool | `Auto | `Arr of Arr.t] -> ?max_iter:int -> ?tol:float -> ?cv:[`I of int | `CrossValGenerator of Py.Object.t | `Arr of Arr.t] -> ?copy_X:bool -> ?verbose:int -> ?n_jobs:int -> ?positive:bool -> ?random_state:int -> ?selection:string -> unit -> t
 (**
 Elastic Net model with iterative fitting along a regularization path.
 
@@ -1045,7 +1116,7 @@ enet_path
 ElasticNet
 *)
 
-val fit : x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit linear model with coordinate descent
 
@@ -1062,7 +1133,7 @@ y : array-like, shape (n_samples,) or (n_samples, n_targets)
     Target values
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1078,7 +1149,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the linear model.
 
@@ -1093,7 +1164,7 @@ C : array, shape (n_samples,)
     Returns predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -1159,26 +1230,54 @@ self : object
 *)
 
 
-(** Attribute alpha_: see constructor for documentation *)
+(** Attribute alpha_: get value or raise Not_found if None.*)
 val alpha_ : t -> float
 
-(** Attribute l1_ratio_: see constructor for documentation *)
+(** Attribute alpha_: get value as an option. *)
+val alpha_opt : t -> (float) option
+
+
+(** Attribute l1_ratio_: get value or raise Not_found if None.*)
 val l1_ratio_ : t -> float
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute l1_ratio_: get value as an option. *)
+val l1_ratio_opt : t -> (float) option
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
 
-(** Attribute mse_path_: see constructor for documentation *)
-val mse_path_ : t -> Ndarray.t
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
 
-(** Attribute alphas_: see constructor for documentation *)
-val alphas_ : t -> Ndarray.t
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
 
-(** Attribute n_iter_: see constructor for documentation *)
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute mse_path_: get value or raise Not_found if None.*)
+val mse_path_ : t -> Arr.t
+
+(** Attribute mse_path_: get value as an option. *)
+val mse_path_opt : t -> (Arr.t) option
+
+
+(** Attribute alphas_: get value or raise Not_found if None.*)
+val alphas_ : t -> Arr.t
+
+(** Attribute alphas_: get value as an option. *)
+val alphas_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1301,7 +1400,7 @@ References
        https://statweb.stanford.edu/~owen/reports/hhu.pdf
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the model according to the given training data.
 
@@ -1322,7 +1421,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1338,7 +1437,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the linear model.
 
@@ -1353,7 +1452,7 @@ C : array, shape (n_samples,)
     Returns predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -1419,20 +1518,40 @@ self : object
 *)
 
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
 
-(** Attribute scale_: see constructor for documentation *)
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute scale_: get value or raise Not_found if None.*)
 val scale_ : t -> float
 
-(** Attribute n_iter_: see constructor for documentation *)
+(** Attribute scale_: get value as an option. *)
+val scale_opt : t -> (float) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
 
-(** Attribute outliers_: see constructor for documentation *)
-val outliers_ : t -> Ndarray.t
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
+
+(** Attribute outliers_: get value or raise Not_found if None.*)
+val outliers_ : t -> Arr.t
+
+(** Attribute outliers_: get value as an option. *)
+val outliers_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1452,7 +1571,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?fit_intercept:bool -> ?verbose:[`Bool of bool | `Int of int] -> ?normalize:bool -> ?precompute:[`Bool of bool | `Auto | `Ndarray of Ndarray.t] -> ?n_nonzero_coefs:int -> ?eps:float -> ?copy_X:bool -> ?fit_path:bool -> unit -> t
+val create : ?fit_intercept:bool -> ?verbose:int -> ?normalize:bool -> ?precompute:[`Bool of bool | `Auto | `Arr of Arr.t] -> ?n_nonzero_coefs:int -> ?eps:float -> ?copy_X:bool -> ?fit_path:bool -> unit -> t
 (**
 Least Angle Regression model a.k.a. LAR
 
@@ -1538,7 +1657,7 @@ lars_path, LarsCV
 sklearn.decomposition.sparse_encode
 *)
 
-val fit : ?xy:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : ?xy:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the model using X, y as training data.
 
@@ -1560,7 +1679,7 @@ self : object
     returns an instance of self.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1576,7 +1695,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the linear model.
 
@@ -1591,7 +1710,7 @@ C : array, shape (n_samples,)
     Returns predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -1657,23 +1776,47 @@ self : object
 *)
 
 
-(** Attribute alphas_: see constructor for documentation *)
+(** Attribute alphas_: get value or raise Not_found if None.*)
 val alphas_ : t -> Py.Object.t
 
-(** Attribute active_: see constructor for documentation *)
+(** Attribute alphas_: get value as an option. *)
+val alphas_opt : t -> (Py.Object.t) option
+
+
+(** Attribute active_: get value or raise Not_found if None.*)
 val active_ : t -> Py.Object.t
 
-(** Attribute coef_path_: see constructor for documentation *)
+(** Attribute active_: get value as an option. *)
+val active_opt : t -> (Py.Object.t) option
+
+
+(** Attribute coef_path_: get value or raise Not_found if None.*)
 val coef_path_ : t -> Py.Object.t
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute coef_path_: get value as an option. *)
+val coef_path_opt : t -> (Py.Object.t) option
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
 
-(** Attribute n_iter_: see constructor for documentation *)
-val n_iter_ : t -> Py.Object.t
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
+
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
+
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
+val n_iter_ : t -> [`Arr of Arr.t | `I of int]
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> ([`Arr of Arr.t | `I of int]) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1693,7 +1836,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?fit_intercept:bool -> ?verbose:[`Bool of bool | `Int of int] -> ?max_iter:int -> ?normalize:bool -> ?precompute:[`Bool of bool | `Auto | `Ndarray of Ndarray.t] -> ?cv:[`Int of int | `CrossValGenerator of Py.Object.t | `Ndarray of Ndarray.t] -> ?max_n_alphas:int -> ?n_jobs:[`Int of int | `None] -> ?eps:float -> ?copy_X:bool -> unit -> t
+val create : ?fit_intercept:bool -> ?verbose:int -> ?max_iter:int -> ?normalize:bool -> ?precompute:[`Bool of bool | `Auto | `Arr of Arr.t] -> ?cv:[`I of int | `CrossValGenerator of Py.Object.t | `Arr of Arr.t] -> ?max_n_alphas:int -> ?n_jobs:int -> ?eps:float -> ?copy_X:bool -> unit -> t
 (**
 Cross-validated Least Angle Regression model.
 
@@ -1807,7 +1950,7 @@ See also
 lars_path, LassoLars, LassoLarsCV
 *)
 
-val fit : x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the model using X, y as training data.
 
@@ -1825,7 +1968,7 @@ self : object
     returns an instance of self.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1841,7 +1984,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the linear model.
 
@@ -1856,7 +1999,7 @@ C : array, shape (n_samples,)
     Returns predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -1922,29 +2065,61 @@ self : object
 *)
 
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
 
-(** Attribute coef_path_: see constructor for documentation *)
-val coef_path_ : t -> Ndarray.t
 
-(** Attribute alpha_: see constructor for documentation *)
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute coef_path_: get value or raise Not_found if None.*)
+val coef_path_ : t -> Arr.t
+
+(** Attribute coef_path_: get value as an option. *)
+val coef_path_opt : t -> (Arr.t) option
+
+
+(** Attribute alpha_: get value or raise Not_found if None.*)
 val alpha_ : t -> float
 
-(** Attribute alphas_: see constructor for documentation *)
-val alphas_ : t -> Ndarray.t
+(** Attribute alpha_: get value as an option. *)
+val alpha_opt : t -> (float) option
 
-(** Attribute cv_alphas_: see constructor for documentation *)
-val cv_alphas_ : t -> Ndarray.t
 
-(** Attribute mse_path_: see constructor for documentation *)
-val mse_path_ : t -> Ndarray.t
+(** Attribute alphas_: get value or raise Not_found if None.*)
+val alphas_ : t -> Arr.t
 
-(** Attribute n_iter_: see constructor for documentation *)
-val n_iter_ : t -> Py.Object.t
+(** Attribute alphas_: get value as an option. *)
+val alphas_opt : t -> (Arr.t) option
+
+
+(** Attribute cv_alphas_: get value or raise Not_found if None.*)
+val cv_alphas_ : t -> Arr.t
+
+(** Attribute cv_alphas_: get value as an option. *)
+val cv_alphas_opt : t -> (Arr.t) option
+
+
+(** Attribute mse_path_: get value or raise Not_found if None.*)
+val mse_path_ : t -> Arr.t
+
+(** Attribute mse_path_: get value as an option. *)
+val mse_path_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
+val n_iter_ : t -> [`Arr of Arr.t | `I of int]
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> ([`Arr of Arr.t | `I of int]) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1964,7 +2139,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?alpha:float -> ?fit_intercept:bool -> ?normalize:bool -> ?precompute:[`Bool of bool | `Ndarray of Ndarray.t] -> ?copy_X:bool -> ?max_iter:int -> ?tol:float -> ?warm_start:bool -> ?positive:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?selection:string -> unit -> t
+val create : ?alpha:float -> ?fit_intercept:bool -> ?normalize:bool -> ?precompute:[`Bool of bool | `Arr of Arr.t] -> ?copy_X:bool -> ?max_iter:int -> ?tol:float -> ?warm_start:bool -> ?positive:bool -> ?random_state:int -> ?selection:string -> unit -> t
 (**
 Linear Model trained with L1 prior as regularizer (aka the Lasso)
 
@@ -2082,7 +2257,7 @@ To avoid unnecessary memory duplication the X argument of the fit method
 should be directly passed as a Fortran-contiguous numpy array.
 *)
 
-val fit : ?check_input:bool -> x:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> y:Ndarray.t -> t -> t
+val fit : ?check_input:bool -> x:[`Arr of Arr.t | `PyObject of Py.Object.t] -> y:Arr.t -> t -> t
 (**
 Fit model with coordinate descent.
 
@@ -2109,7 +2284,7 @@ To avoid memory re-allocation it is advised to allocate the
 initial data in memory directly using that format.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2125,7 +2300,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the linear model.
 
@@ -2140,7 +2315,7 @@ C : array, shape (n_samples,)
     Returns predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -2206,17 +2381,33 @@ self : object
 *)
 
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
 
-(** Attribute sparse_coef_: see constructor for documentation *)
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
+
+
+(** Attribute sparse_coef_: get value or raise Not_found if None.*)
 val sparse_coef_ : t -> Py.Object.t
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute sparse_coef_: get value as an option. *)
+val sparse_coef_opt : t -> (Py.Object.t) option
 
-(** Attribute n_iter_: see constructor for documentation *)
-val n_iter_ : t -> Py.Object.t
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
+val n_iter_ : t -> [`I of int | `Arr of Arr.t]
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> ([`I of int | `Arr of Arr.t]) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2236,7 +2427,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?eps:float -> ?n_alphas:int -> ?alphas:Ndarray.t -> ?fit_intercept:bool -> ?normalize:bool -> ?precompute:[`Bool of bool | `Auto | `Ndarray of Ndarray.t] -> ?max_iter:int -> ?tol:float -> ?copy_X:bool -> ?cv:[`Int of int | `CrossValGenerator of Py.Object.t | `Ndarray of Ndarray.t] -> ?verbose:[`Bool of bool | `Int of int] -> ?n_jobs:[`Int of int | `None] -> ?positive:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?selection:string -> unit -> t
+val create : ?eps:float -> ?n_alphas:int -> ?alphas:Arr.t -> ?fit_intercept:bool -> ?normalize:bool -> ?precompute:[`Bool of bool | `Auto | `Arr of Arr.t] -> ?max_iter:int -> ?tol:float -> ?copy_X:bool -> ?cv:[`I of int | `CrossValGenerator of Py.Object.t | `Arr of Arr.t] -> ?verbose:int -> ?n_jobs:int -> ?positive:bool -> ?random_state:int -> ?selection:string -> unit -> t
 (**
 Lasso linear model with iterative fitting along a regularization path.
 
@@ -2390,7 +2581,7 @@ Lasso
 LassoLarsCV
 *)
 
-val fit : x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit linear model with coordinate descent
 
@@ -2407,7 +2598,7 @@ y : array-like, shape (n_samples,) or (n_samples, n_targets)
     Target values
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2423,7 +2614,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the linear model.
 
@@ -2438,7 +2629,7 @@ C : array, shape (n_samples,)
     Returns predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -2504,26 +2695,54 @@ self : object
 *)
 
 
-(** Attribute alpha_: see constructor for documentation *)
+(** Attribute alpha_: get value or raise Not_found if None.*)
 val alpha_ : t -> float
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute alpha_: get value as an option. *)
+val alpha_opt : t -> (float) option
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
 
-(** Attribute mse_path_: see constructor for documentation *)
-val mse_path_ : t -> Ndarray.t
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
 
-(** Attribute alphas_: see constructor for documentation *)
-val alphas_ : t -> Ndarray.t
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
 
-(** Attribute dual_gap_: see constructor for documentation *)
-val dual_gap_ : t -> Ndarray.t
 
-(** Attribute n_iter_: see constructor for documentation *)
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute mse_path_: get value or raise Not_found if None.*)
+val mse_path_ : t -> Arr.t
+
+(** Attribute mse_path_: get value as an option. *)
+val mse_path_opt : t -> (Arr.t) option
+
+
+(** Attribute alphas_: get value or raise Not_found if None.*)
+val alphas_ : t -> Arr.t
+
+(** Attribute alphas_: get value as an option. *)
+val alphas_opt : t -> (Arr.t) option
+
+
+(** Attribute dual_gap_: get value or raise Not_found if None.*)
+val dual_gap_ : t -> Arr.t
+
+(** Attribute dual_gap_: get value as an option. *)
+val dual_gap_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2543,7 +2762,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?alpha:float -> ?fit_intercept:bool -> ?verbose:[`Bool of bool | `Int of int] -> ?normalize:bool -> ?precompute:[`Bool of bool | `Auto | `Ndarray of Ndarray.t] -> ?max_iter:int -> ?eps:float -> ?copy_X:bool -> ?fit_path:bool -> ?positive:bool -> unit -> t
+val create : ?alpha:float -> ?fit_intercept:bool -> ?verbose:int -> ?normalize:bool -> ?precompute:[`Bool of bool | `Auto | `Arr of Arr.t] -> ?max_iter:int -> ?eps:float -> ?copy_X:bool -> ?fit_path:bool -> ?positive:bool -> unit -> t
 (**
 Lasso model fit with Least Angle Regression a.k.a. Lars
 
@@ -2658,7 +2877,7 @@ LassoLarsIC
 sklearn.decomposition.sparse_encode
 *)
 
-val fit : ?xy:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : ?xy:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the model using X, y as training data.
 
@@ -2680,7 +2899,7 @@ self : object
     returns an instance of self.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2696,7 +2915,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the linear model.
 
@@ -2711,7 +2930,7 @@ C : array, shape (n_samples,)
     Returns predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -2777,23 +2996,47 @@ self : object
 *)
 
 
-(** Attribute alphas_: see constructor for documentation *)
+(** Attribute alphas_: get value or raise Not_found if None.*)
 val alphas_ : t -> Py.Object.t
 
-(** Attribute active_: see constructor for documentation *)
+(** Attribute alphas_: get value as an option. *)
+val alphas_opt : t -> (Py.Object.t) option
+
+
+(** Attribute active_: get value or raise Not_found if None.*)
 val active_ : t -> Py.Object.t
 
-(** Attribute coef_path_: see constructor for documentation *)
-val coef_path_ : t -> Py.Object.t
+(** Attribute active_: get value as an option. *)
+val active_opt : t -> (Py.Object.t) option
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute coef_path_: get value or raise Not_found if None.*)
+val coef_path_ : t -> Arr.t
 
-(** Attribute n_iter_: see constructor for documentation *)
-val n_iter_ : t -> Py.Object.t
+(** Attribute coef_path_: get value as an option. *)
+val coef_path_opt : t -> (Arr.t) option
+
+
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
+
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
+
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
+val n_iter_ : t -> [`Arr of Arr.t | `I of int]
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> ([`Arr of Arr.t | `I of int]) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2813,7 +3056,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?fit_intercept:bool -> ?verbose:[`Bool of bool | `Int of int] -> ?max_iter:int -> ?normalize:bool -> ?precompute:[`Bool of bool | `Auto] -> ?cv:[`Int of int | `CrossValGenerator of Py.Object.t | `Ndarray of Ndarray.t] -> ?max_n_alphas:int -> ?n_jobs:[`Int of int | `None] -> ?eps:float -> ?copy_X:bool -> ?positive:bool -> unit -> t
+val create : ?fit_intercept:bool -> ?verbose:int -> ?max_iter:int -> ?normalize:bool -> ?precompute:[`Bool of bool | `Auto] -> ?cv:[`I of int | `CrossValGenerator of Py.Object.t | `Arr of Arr.t] -> ?max_n_alphas:int -> ?n_jobs:int -> ?eps:float -> ?copy_X:bool -> ?positive:bool -> unit -> t
 (**
 Cross-validated Lasso, using the LARS algorithm.
 
@@ -2955,7 +3198,7 @@ See also
 lars_path, LassoLars, LarsCV, LassoCV
 *)
 
-val fit : x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the model using X, y as training data.
 
@@ -2973,7 +3216,7 @@ self : object
     returns an instance of self.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2989,7 +3232,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the linear model.
 
@@ -3004,7 +3247,7 @@ C : array, shape (n_samples,)
     Returns predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -3070,29 +3313,61 @@ self : object
 *)
 
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
 
-(** Attribute coef_path_: see constructor for documentation *)
-val coef_path_ : t -> Ndarray.t
 
-(** Attribute alpha_: see constructor for documentation *)
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute coef_path_: get value or raise Not_found if None.*)
+val coef_path_ : t -> Arr.t
+
+(** Attribute coef_path_: get value as an option. *)
+val coef_path_opt : t -> (Arr.t) option
+
+
+(** Attribute alpha_: get value or raise Not_found if None.*)
 val alpha_ : t -> float
 
-(** Attribute alphas_: see constructor for documentation *)
-val alphas_ : t -> Ndarray.t
+(** Attribute alpha_: get value as an option. *)
+val alpha_opt : t -> (float) option
 
-(** Attribute cv_alphas_: see constructor for documentation *)
-val cv_alphas_ : t -> Ndarray.t
 
-(** Attribute mse_path_: see constructor for documentation *)
-val mse_path_ : t -> Ndarray.t
+(** Attribute alphas_: get value or raise Not_found if None.*)
+val alphas_ : t -> Arr.t
 
-(** Attribute n_iter_: see constructor for documentation *)
-val n_iter_ : t -> Py.Object.t
+(** Attribute alphas_: get value as an option. *)
+val alphas_opt : t -> (Arr.t) option
+
+
+(** Attribute cv_alphas_: get value or raise Not_found if None.*)
+val cv_alphas_ : t -> Arr.t
+
+(** Attribute cv_alphas_: get value as an option. *)
+val cv_alphas_opt : t -> (Arr.t) option
+
+
+(** Attribute mse_path_: get value or raise Not_found if None.*)
+val mse_path_ : t -> Arr.t
+
+(** Attribute mse_path_: get value as an option. *)
+val mse_path_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
+val n_iter_ : t -> [`Arr of Arr.t | `I of int]
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> ([`Arr of Arr.t | `I of int]) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -3112,7 +3387,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?criterion:[`Bic | `Aic] -> ?fit_intercept:bool -> ?verbose:[`Bool of bool | `Int of int] -> ?normalize:bool -> ?precompute:[`Bool of bool | `Auto | `Ndarray of Ndarray.t] -> ?max_iter:int -> ?eps:float -> ?copy_X:bool -> ?positive:bool -> unit -> t
+val create : ?criterion:[`Bic | `Aic] -> ?fit_intercept:bool -> ?verbose:int -> ?normalize:bool -> ?precompute:[`Bool of bool | `Auto | `Arr of Arr.t] -> ?max_iter:int -> ?eps:float -> ?copy_X:bool -> ?positive:bool -> unit -> t
 (**
 Lasso model fit with Lars using BIC or AIC for model selection
 
@@ -3228,7 +3503,7 @@ See also
 lars_path, LassoLars, LassoLarsCV
 *)
 
-val fit : ?copy_X:bool -> x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : ?copy_X:bool -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the model using X, y as training data.
 
@@ -3251,7 +3526,7 @@ self : object
     returns an instance of self.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -3267,7 +3542,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the linear model.
 
@@ -3282,7 +3557,7 @@ C : array, shape (n_samples,)
     Returns predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -3348,20 +3623,40 @@ self : object
 *)
 
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
 
-(** Attribute alpha_: see constructor for documentation *)
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute alpha_: get value or raise Not_found if None.*)
 val alpha_ : t -> float
 
-(** Attribute n_iter_: see constructor for documentation *)
+(** Attribute alpha_: get value as an option. *)
+val alpha_opt : t -> (float) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
 
-(** Attribute criterion_: see constructor for documentation *)
-val criterion_ : t -> Ndarray.t
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
+
+(** Attribute criterion_: get value or raise Not_found if None.*)
+val criterion_ : t -> Arr.t
+
+(** Attribute criterion_: get value as an option. *)
+val criterion_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -3381,7 +3676,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?fit_intercept:bool -> ?normalize:bool -> ?copy_X:bool -> ?n_jobs:[`Int of int | `None] -> unit -> t
+val create : ?fit_intercept:bool -> ?normalize:bool -> ?copy_X:bool -> ?n_jobs:int -> unit -> t
 (**
 Ordinary least squares Linear Regression.
 
@@ -3466,7 +3761,7 @@ array([1., 2.])
 array([16.])
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit linear model.
 
@@ -3489,7 +3784,7 @@ Returns
 self : returns an instance of self.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -3505,7 +3800,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the linear model.
 
@@ -3520,7 +3815,7 @@ C : array, shape (n_samples,)
     Returns predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -3586,17 +3881,33 @@ self : object
 *)
 
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
 
-(** Attribute rank_: see constructor for documentation *)
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
+
+
+(** Attribute rank_: get value or raise Not_found if None.*)
 val rank_ : t -> int
 
-(** Attribute singular_: see constructor for documentation *)
+(** Attribute rank_: get value as an option. *)
+val rank_opt : t -> (int) option
+
+
+(** Attribute singular_: get value or raise Not_found if None.*)
 val singular_ : t -> Py.Object.t
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute singular_: get value as an option. *)
+val singular_opt : t -> (Py.Object.t) option
+
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -3616,7 +3927,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?penalty:[`L1 | `L2 | `Elasticnet | `None] -> ?dual:bool -> ?tol:float -> ?c:float -> ?fit_intercept:bool -> ?intercept_scaling:float -> ?class_weight:[`DictIntToFloat of (int * float) list | `Balanced] -> ?random_state:[`Int of int | `RandomState of Py.Object.t] -> ?solver:[`Newton_cg | `Lbfgs | `Liblinear | `Sag | `Saga] -> ?max_iter:int -> ?multi_class:[`Auto | `Ovr | `Multinomial] -> ?verbose:int -> ?warm_start:bool -> ?n_jobs:int -> ?l1_ratio:float -> unit -> t
+val create : ?penalty:[`L1 | `L2 | `Elasticnet | `None] -> ?dual:bool -> ?tol:float -> ?c:float -> ?fit_intercept:bool -> ?intercept_scaling:float -> ?class_weight:[`DictIntToFloat of (int * float) list | `Balanced] -> ?random_state:int -> ?solver:[`Newton_cg | `Lbfgs | `Liblinear | `Sag | `Saga] -> ?max_iter:int -> ?multi_class:[`Auto | `Ovr | `Multinomial] -> ?verbose:int -> ?warm_start:bool -> ?n_jobs:int -> ?l1_ratio:float -> unit -> t
 (**
 Logistic Regression (aka logit, MaxEnt) classifier.
 
@@ -3860,7 +4171,7 @@ array([[9.8...e-01, 1.8...e-02, 1.4...e-08],
 0.97..."
 *)
 
-val decision_function : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val decision_function : x:Arr.t -> t -> Arr.t
 (**
 Predict confidence scores for samples.
 
@@ -3895,7 +4206,7 @@ self
     Fitted estimator.
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the model according to the given training data.
 
@@ -3925,7 +4236,7 @@ Notes
 The SAGA solver supports both float64 and float32 bit arrays.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -3941,7 +4252,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict class labels for samples in X.
 
@@ -3956,7 +4267,7 @@ C : array, shape [n_samples]
     Predicted class label per sample.
 *)
 
-val predict_log_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_log_proba : x:Arr.t -> t -> Arr.t
 (**
 Predict logarithm of probability estimates.
 
@@ -3976,7 +4287,7 @@ T : array-like of shape (n_samples, n_classes)
     model, where classes are ordered as they are in ``self.classes_``.
 *)
 
-val predict_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Probability estimates.
 
@@ -4003,7 +4314,7 @@ T : array-like of shape (n_samples, n_classes)
     where classes are ordered as they are in ``self.classes_``.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -4076,17 +4387,33 @@ method (if any) will not work until you call densify.
 *)
 
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
 
-(** Attribute n_iter_: see constructor for documentation *)
-val n_iter_ : t -> Ndarray.t
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
+
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
+
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
+val n_iter_ : t -> Arr.t
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -4106,7 +4433,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?cs:[`Int of int | `FloatList of float list] -> ?fit_intercept:bool -> ?cv:[`Int of int | `CrossValGenerator of Py.Object.t] -> ?dual:bool -> ?penalty:[`L1 | `L2 | `Elasticnet] -> ?scoring:[`String of string | `Callable of Py.Object.t] -> ?solver:[`Newton_cg | `Lbfgs | `Liblinear | `Sag | `Saga] -> ?tol:float -> ?max_iter:int -> ?class_weight:[`DictIntToFloat of (int * float) list | `Balanced] -> ?n_jobs:int -> ?verbose:int -> ?refit:bool -> ?intercept_scaling:float -> ?multi_class:[`Ovr | `Multinomial | `PyObject of Py.Object.t] -> ?random_state:[`Int of int | `RandomState of Py.Object.t] -> ?l1_ratios:Py.Object.t -> unit -> t
+val create : ?cs:[`I of int | `FloatList of float list] -> ?fit_intercept:bool -> ?cv:[`I of int | `CrossValGenerator of Py.Object.t] -> ?dual:bool -> ?penalty:[`L1 | `L2 | `Elasticnet] -> ?scoring:[`S of string | `Callable of Py.Object.t] -> ?solver:[`Newton_cg | `Lbfgs | `Liblinear | `Sag | `Saga] -> ?tol:float -> ?max_iter:int -> ?class_weight:[`DictIntToFloat of (int * float) list | `Balanced] -> ?n_jobs:int -> ?verbose:int -> ?refit:bool -> ?intercept_scaling:float -> ?multi_class:[`T_auto of Py.Object.t | `Ovr | `Multinomial] -> ?random_state:int -> ?l1_ratios:Py.Object.t -> unit -> t
 (**
 Logistic Regression CV (aka logit, MaxEnt) classifier.
 
@@ -4349,7 +4676,7 @@ See also
 LogisticRegression
 *)
 
-val decision_function : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val decision_function : x:Arr.t -> t -> Arr.t
 (**
 Predict confidence scores for samples.
 
@@ -4384,7 +4711,7 @@ self
     Fitted estimator.
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the model according to the given training data.
 
@@ -4406,7 +4733,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -4422,7 +4749,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict class labels for samples in X.
 
@@ -4437,7 +4764,7 @@ C : array, shape [n_samples]
     Predicted class label per sample.
 *)
 
-val predict_log_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_log_proba : x:Arr.t -> t -> Arr.t
 (**
 Predict logarithm of probability estimates.
 
@@ -4457,7 +4784,7 @@ T : array-like of shape (n_samples, n_classes)
     model, where classes are ordered as they are in ``self.classes_``.
 *)
 
-val predict_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Probability estimates.
 
@@ -4484,7 +4811,7 @@ T : array-like of shape (n_samples, n_classes)
     where classes are ordered as they are in ``self.classes_``.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Returns the score using the `scoring` option on the given
 test data and labels.
@@ -4554,35 +4881,75 @@ method (if any) will not work until you call densify.
 *)
 
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
 
-(** Attribute Cs_: see constructor for documentation *)
-val cs_ : t -> Ndarray.t
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
 
-(** Attribute l1_ratios_: see constructor for documentation *)
-val l1_ratios_ : t -> Ndarray.t
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
 
-(** Attribute coefs_paths_: see constructor for documentation *)
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute Cs_: get value or raise Not_found if None.*)
+val cs_ : t -> Arr.t
+
+(** Attribute Cs_: get value as an option. *)
+val cs_opt : t -> (Arr.t) option
+
+
+(** Attribute l1_ratios_: get value or raise Not_found if None.*)
+val l1_ratios_ : t -> Arr.t
+
+(** Attribute l1_ratios_: get value as an option. *)
+val l1_ratios_opt : t -> (Arr.t) option
+
+
+(** Attribute coefs_paths_: get value or raise Not_found if None.*)
 val coefs_paths_ : t -> Py.Object.t
 
-(** Attribute scores_: see constructor for documentation *)
-val scores_ : t -> Py.Object.t
+(** Attribute coefs_paths_: get value as an option. *)
+val coefs_paths_opt : t -> (Py.Object.t) option
 
-(** Attribute C_: see constructor for documentation *)
+
+(** Attribute scores_: get value or raise Not_found if None.*)
+val scores_ : t -> Dict.t
+
+(** Attribute scores_: get value as an option. *)
+val scores_opt : t -> (Dict.t) option
+
+
+(** Attribute C_: get value or raise Not_found if None.*)
 val c_ : t -> Py.Object.t
 
-(** Attribute l1_ratio_: see constructor for documentation *)
+(** Attribute C_: get value as an option. *)
+val c_opt : t -> (Py.Object.t) option
+
+
+(** Attribute l1_ratio_: get value or raise Not_found if None.*)
 val l1_ratio_ : t -> Py.Object.t
 
-(** Attribute n_iter_: see constructor for documentation *)
-val n_iter_ : t -> Ndarray.t
+(** Attribute l1_ratio_: get value as an option. *)
+val l1_ratio_opt : t -> (Py.Object.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
+val n_iter_ : t -> Arr.t
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -4602,7 +4969,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?alpha:float -> ?l1_ratio:float -> ?fit_intercept:bool -> ?normalize:bool -> ?copy_X:bool -> ?max_iter:int -> ?tol:float -> ?warm_start:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?selection:string -> unit -> t
+val create : ?alpha:float -> ?l1_ratio:float -> ?fit_intercept:bool -> ?normalize:bool -> ?copy_X:bool -> ?max_iter:int -> ?tol:float -> ?warm_start:bool -> ?random_state:int -> ?selection:string -> unit -> t
 (**
 Multi-task ElasticNet model trained with L1/L2 mixed-norm as regularizer
 
@@ -4716,7 +5083,7 @@ To avoid unnecessary memory duplication the X argument of the fit method
 should be directly passed as a Fortran-contiguous numpy array.
 *)
 
-val fit : x:Ndarray.t -> y:Py.Object.t -> t -> t
+val fit : x:Arr.t -> y:Py.Object.t -> t -> t
 (**
 Fit MultiTaskElasticNet model with coordinate descent
 
@@ -4738,7 +5105,7 @@ To avoid memory re-allocation it is advised to allocate the
 initial data in memory directly using that format.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -4754,7 +5121,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the linear model.
 
@@ -4769,7 +5136,7 @@ C : array, shape (n_samples,)
     Returns predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -4835,14 +5202,26 @@ self : object
 *)
 
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
 
-(** Attribute n_iter_: see constructor for documentation *)
+
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
+
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -4862,7 +5241,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?l1_ratio:[`Float of float | `Ndarray of Ndarray.t] -> ?eps:float -> ?n_alphas:int -> ?alphas:Ndarray.t -> ?fit_intercept:bool -> ?normalize:bool -> ?max_iter:int -> ?tol:float -> ?cv:[`Int of int | `CrossValGenerator of Py.Object.t | `Ndarray of Ndarray.t] -> ?copy_X:bool -> ?verbose:[`Bool of bool | `Int of int] -> ?n_jobs:[`Int of int | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?selection:string -> unit -> t
+val create : ?l1_ratio:[`F of float | `Arr of Arr.t] -> ?eps:float -> ?n_alphas:int -> ?alphas:Arr.t -> ?fit_intercept:bool -> ?normalize:bool -> ?max_iter:int -> ?tol:float -> ?cv:[`I of int | `CrossValGenerator of Py.Object.t | `Arr of Arr.t] -> ?copy_X:bool -> ?verbose:int -> ?n_jobs:int -> ?random_state:int -> ?selection:string -> unit -> t
 (**
 Multi-task L1/L2 ElasticNet with built-in cross-validation.
 
@@ -5027,7 +5406,7 @@ To avoid unnecessary memory duplication the X argument of the fit method
 should be directly passed as a Fortran-contiguous numpy array.
 *)
 
-val fit : x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit linear model with coordinate descent
 
@@ -5044,7 +5423,7 @@ y : array-like, shape (n_samples,) or (n_samples, n_targets)
     Target values
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -5060,7 +5439,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the linear model.
 
@@ -5075,7 +5454,7 @@ C : array, shape (n_samples,)
     Returns predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -5141,26 +5520,54 @@ self : object
 *)
 
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
 
-(** Attribute alpha_: see constructor for documentation *)
+
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
+
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
+
+
+(** Attribute alpha_: get value or raise Not_found if None.*)
 val alpha_ : t -> float
 
-(** Attribute mse_path_: see constructor for documentation *)
-val mse_path_ : t -> Ndarray.t
+(** Attribute alpha_: get value as an option. *)
+val alpha_opt : t -> (float) option
 
-(** Attribute alphas_: see constructor for documentation *)
-val alphas_ : t -> Ndarray.t
 
-(** Attribute l1_ratio_: see constructor for documentation *)
+(** Attribute mse_path_: get value or raise Not_found if None.*)
+val mse_path_ : t -> Arr.t
+
+(** Attribute mse_path_: get value as an option. *)
+val mse_path_opt : t -> (Arr.t) option
+
+
+(** Attribute alphas_: get value or raise Not_found if None.*)
+val alphas_ : t -> Arr.t
+
+(** Attribute alphas_: get value as an option. *)
+val alphas_opt : t -> (Arr.t) option
+
+
+(** Attribute l1_ratio_: get value or raise Not_found if None.*)
 val l1_ratio_ : t -> float
 
-(** Attribute n_iter_: see constructor for documentation *)
+(** Attribute l1_ratio_: get value as an option. *)
+val l1_ratio_opt : t -> (float) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -5180,7 +5587,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?alpha:float -> ?fit_intercept:bool -> ?normalize:bool -> ?copy_X:bool -> ?max_iter:int -> ?tol:float -> ?warm_start:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?selection:string -> unit -> t
+val create : ?alpha:float -> ?fit_intercept:bool -> ?normalize:bool -> ?copy_X:bool -> ?max_iter:int -> ?tol:float -> ?warm_start:bool -> ?random_state:int -> ?selection:string -> unit -> t
 (**
 Multi-task Lasso model trained with L1/L2 mixed-norm as regularizer.
 
@@ -5284,7 +5691,7 @@ To avoid unnecessary memory duplication the X argument of the fit method
 should be directly passed as a Fortran-contiguous numpy array.
 *)
 
-val fit : x:Ndarray.t -> y:Py.Object.t -> t -> t
+val fit : x:Arr.t -> y:Py.Object.t -> t -> t
 (**
 Fit MultiTaskElasticNet model with coordinate descent
 
@@ -5306,7 +5713,7 @@ To avoid memory re-allocation it is advised to allocate the
 initial data in memory directly using that format.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -5322,7 +5729,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the linear model.
 
@@ -5337,7 +5744,7 @@ C : array, shape (n_samples,)
     Returns predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -5403,14 +5810,26 @@ self : object
 *)
 
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
 
-(** Attribute n_iter_: see constructor for documentation *)
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -5430,7 +5849,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?eps:float -> ?n_alphas:int -> ?alphas:Ndarray.t -> ?fit_intercept:bool -> ?normalize:bool -> ?max_iter:int -> ?tol:float -> ?copy_X:bool -> ?cv:[`Int of int | `CrossValGenerator of Py.Object.t | `Ndarray of Ndarray.t] -> ?verbose:[`Bool of bool | `Int of int] -> ?n_jobs:[`Int of int | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?selection:string -> unit -> t
+val create : ?eps:float -> ?n_alphas:int -> ?alphas:Arr.t -> ?fit_intercept:bool -> ?normalize:bool -> ?max_iter:int -> ?tol:float -> ?copy_X:bool -> ?cv:[`I of int | `CrossValGenerator of Py.Object.t | `Arr of Arr.t] -> ?verbose:int -> ?n_jobs:int -> ?random_state:int -> ?selection:string -> unit -> t
 (**
 Multi-task Lasso model trained with L1/L2 mixed-norm as regularizer.
 
@@ -5579,7 +5998,7 @@ To avoid unnecessary memory duplication the X argument of the fit method
 should be directly passed as a Fortran-contiguous numpy array.
 *)
 
-val fit : x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit linear model with coordinate descent
 
@@ -5596,7 +6015,7 @@ y : array-like, shape (n_samples,) or (n_samples, n_targets)
     Target values
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -5612,7 +6031,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the linear model.
 
@@ -5627,7 +6046,7 @@ C : array, shape (n_samples,)
     Returns predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -5693,23 +6112,47 @@ self : object
 *)
 
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
 
-(** Attribute alpha_: see constructor for documentation *)
+
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
+
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
+
+
+(** Attribute alpha_: get value or raise Not_found if None.*)
 val alpha_ : t -> float
 
-(** Attribute mse_path_: see constructor for documentation *)
-val mse_path_ : t -> Ndarray.t
+(** Attribute alpha_: get value as an option. *)
+val alpha_opt : t -> (float) option
 
-(** Attribute alphas_: see constructor for documentation *)
-val alphas_ : t -> Ndarray.t
 
-(** Attribute n_iter_: see constructor for documentation *)
+(** Attribute mse_path_: get value or raise Not_found if None.*)
+val mse_path_ : t -> Arr.t
+
+(** Attribute mse_path_: get value as an option. *)
+val mse_path_opt : t -> (Arr.t) option
+
+
+(** Attribute alphas_: get value or raise Not_found if None.*)
+val alphas_ : t -> Arr.t
+
+(** Attribute alphas_: get value as an option. *)
+val alphas_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -5808,7 +6251,7 @@ decomposition.sparse_encode
 OrthogonalMatchingPursuitCV
 *)
 
-val fit : x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the model using X, y as training data.
 
@@ -5827,7 +6270,7 @@ self : object
     returns an instance of self.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -5843,7 +6286,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the linear model.
 
@@ -5858,7 +6301,7 @@ C : array, shape (n_samples,)
     Returns predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -5924,14 +6367,26 @@ self : object
 *)
 
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
 
-(** Attribute n_iter_: see constructor for documentation *)
-val n_iter_ : t -> Py.Object.t
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
+val n_iter_ : t -> [`I of int | `Arr of Arr.t]
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> ([`I of int | `Arr of Arr.t]) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -5951,7 +6406,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?copy:bool -> ?fit_intercept:bool -> ?normalize:bool -> ?max_iter:int -> ?cv:[`Int of int | `CrossValGenerator of Py.Object.t | `Ndarray of Ndarray.t] -> ?n_jobs:[`Int of int | `None] -> ?verbose:[`Bool of bool | `Int of int] -> unit -> t
+val create : ?copy:bool -> ?fit_intercept:bool -> ?normalize:bool -> ?max_iter:int -> ?cv:[`I of int | `CrossValGenerator of Py.Object.t | `Arr of Arr.t] -> ?n_jobs:int -> ?verbose:int -> unit -> t
 (**
 Cross-validated Orthogonal Matching Pursuit model (OMP).
 
@@ -6052,7 +6507,7 @@ LassoLarsCV
 decomposition.sparse_encode
 *)
 
-val fit : x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the model using X, y as training data.
 
@@ -6070,7 +6525,7 @@ self : object
     returns an instance of self.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -6086,7 +6541,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the linear model.
 
@@ -6101,7 +6556,7 @@ C : array, shape (n_samples,)
     Returns predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -6167,1098 +6622,33 @@ self : object
 *)
 
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
 
-(** Attribute n_nonzero_coefs_: see constructor for documentation *)
+
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
+
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
+
+
+(** Attribute n_nonzero_coefs_: get value or raise Not_found if None.*)
 val n_nonzero_coefs_ : t -> int
 
-(** Attribute n_iter_: see constructor for documentation *)
-val n_iter_ : t -> Py.Object.t
+(** Attribute n_nonzero_coefs_: get value as an option. *)
+val n_nonzero_coefs_opt : t -> (int) option
 
-(** Print the object to a human-readable representation. *)
-val to_string : t -> string
 
+(** Attribute n_iter_: get value or raise Not_found if None.*)
+val n_iter_ : t -> [`I of int | `Arr of Arr.t]
 
-(** Print the object to a human-readable representation. *)
-val show : t -> string
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> ([`I of int | `Arr of Arr.t]) option
 
-(** Pretty-print the object to a formatter. *)
-val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
-
-
-end
-
-module PassiveAggressiveClassifier : sig
-type t
-val of_pyobject : Py.Object.t -> t
-val to_pyobject : t -> Py.Object.t
-
-val create : ?c:float -> ?fit_intercept:bool -> ?max_iter:int -> ?tol:[`Float of float | `None] -> ?early_stopping:bool -> ?validation_fraction:float -> ?n_iter_no_change:int -> ?shuffle:bool -> ?verbose:int -> ?loss:string -> ?n_jobs:[`Int of int | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?warm_start:bool -> ?class_weight:[`DictIntToFloat of (int * float) list | `Balanced | `None | `PyObject of Py.Object.t] -> ?average:[`Bool of bool | `Int of int] -> unit -> t
-(**
-Passive Aggressive Classifier
-
-Read more in the :ref:`User Guide <passive_aggressive>`.
-
-Parameters
-----------
-
-C : float
-    Maximum step size (regularization). Defaults to 1.0.
-
-fit_intercept : bool, default=False
-    Whether the intercept should be estimated or not. If False, the
-    data is assumed to be already centered.
-
-max_iter : int, optional (default=1000)
-    The maximum number of passes over the training data (aka epochs).
-    It only impacts the behavior in the ``fit`` method, and not the
-    :meth:`partial_fit` method.
-
-    .. versionadded:: 0.19
-
-tol : float or None, optional (default=1e-3)
-    The stopping criterion. If it is not None, the iterations will stop
-    when (loss > previous_loss - tol).
-
-    .. versionadded:: 0.19
-
-early_stopping : bool, default=False
-    Whether to use early stopping to terminate training when validation.
-    score is not improving. If set to True, it will automatically set aside
-    a stratified fraction of training data as validation and terminate
-    training when validation score is not improving by at least tol for
-    n_iter_no_change consecutive epochs.
-
-    .. versionadded:: 0.20
-
-validation_fraction : float, default=0.1
-    The proportion of training data to set aside as validation set for
-    early stopping. Must be between 0 and 1.
-    Only used if early_stopping is True.
-
-    .. versionadded:: 0.20
-
-n_iter_no_change : int, default=5
-    Number of iterations with no improvement to wait before early stopping.
-
-    .. versionadded:: 0.20
-
-shuffle : bool, default=True
-    Whether or not the training data should be shuffled after each epoch.
-
-verbose : integer, optional
-    The verbosity level
-
-loss : string, optional
-    The loss function to be used:
-    hinge: equivalent to PA-I in the reference paper.
-    squared_hinge: equivalent to PA-II in the reference paper.
-
-n_jobs : int or None, optional (default=None)
-    The number of CPUs to use to do the OVA (One Versus All, for
-    multi-class problems) computation.
-    ``None`` means 1 unless in a :obj:`joblib.parallel_backend` context.
-    ``-1`` means using all processors. See :term:`Glossary <n_jobs>`
-    for more details.
-
-random_state : int, RandomState instance or None, optional, default=None
-    The seed of the pseudo random number generator to use when shuffling
-    the data.  If int, random_state is the seed used by the random number
-    generator; If RandomState instance, random_state is the random number
-    generator; If None, the random number generator is the RandomState
-    instance used by `np.random`.
-
-warm_start : bool, optional
-    When set to True, reuse the solution of the previous call to fit as
-    initialization, otherwise, just erase the previous solution.
-    See :term:`the Glossary <warm_start>`.
-
-    Repeatedly calling fit or partial_fit when warm_start is True can
-    result in a different solution than when calling fit a single time
-    because of the way the data is shuffled.
-
-class_weight : dict, {class_label: weight} or "balanced" or None, optional
-    Preset for the class_weight fit parameter.
-
-    Weights associated with classes. If not given, all classes
-    are supposed to have weight one.
-
-    The "balanced" mode uses the values of y to automatically adjust
-    weights inversely proportional to class frequencies in the input data
-    as ``n_samples / (n_classes * np.bincount(y))``
-
-    .. versionadded:: 0.17
-       parameter *class_weight* to automatically weight samples.
-
-average : bool or int, optional
-    When set to True, computes the averaged SGD weights and stores the
-    result in the ``coef_`` attribute. If set to an int greater than 1,
-    averaging will begin once the total number of samples seen reaches
-    average. So average=10 will begin averaging after seeing 10 samples.
-
-    .. versionadded:: 0.19
-       parameter *average* to use weights averaging in SGD
-
-Attributes
-----------
-coef_ : array, shape = [1, n_features] if n_classes == 2 else [n_classes,            n_features]
-    Weights assigned to the features.
-
-intercept_ : array, shape = [1] if n_classes == 2 else [n_classes]
-    Constants in decision function.
-
-n_iter_ : int
-    The actual number of iterations to reach the stopping criterion.
-    For multiclass fits, it is the maximum over every binary fit.
-
-classes_ : array of shape (n_classes,)
-    The unique classes labels.
-
-t_ : int
-    Number of weight updates performed during training.
-    Same as ``(n_iter_ * n_samples)``.
-
-Examples
---------
->>> from sklearn.linear_model import PassiveAggressiveClassifier
->>> from sklearn.datasets import make_classification
-
->>> X, y = make_classification(n_features=4, random_state=0)
->>> clf = PassiveAggressiveClassifier(max_iter=1000, random_state=0,
-... tol=1e-3)
->>> clf.fit(X, y)
-PassiveAggressiveClassifier(random_state=0)
->>> print(clf.coef_)
-[[0.26642044 0.45070924 0.67251877 0.64185414]]
->>> print(clf.intercept_)
-[1.84127814]
->>> print(clf.predict([[0, 0, 0, 0]]))
-[1]
-
-See also
---------
-
-SGDClassifier
-Perceptron
-
-References
-----------
-Online Passive-Aggressive Algorithms
-<http://jmlr.csail.mit.edu/papers/volume7/crammer06a/crammer06a.pdf>
-K. Crammer, O. Dekel, J. Keshat, S. Shalev-Shwartz, Y. Singer - JMLR (2006)
-*)
-
-val decision_function : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
-(**
-Predict confidence scores for samples.
-
-The confidence score for a sample is the signed distance of that
-sample to the hyperplane.
-
-Parameters
-----------
-X : array_like or sparse matrix, shape (n_samples, n_features)
-    Samples.
-
-Returns
--------
-array, shape=(n_samples,) if n_classes == 2 else (n_samples, n_classes)
-    Confidence scores per (sample, class) combination. In the binary
-    case, confidence score for self.classes_[1] where >0 means this
-    class would be predicted.
-*)
-
-val densify : t -> t
-(**
-Convert coefficient matrix to dense array format.
-
-Converts the ``coef_`` member (back) to a numpy.ndarray. This is the
-default format of ``coef_`` and is required for fitting, so calling
-this method is only required on models that have previously been
-sparsified; otherwise, it is a no-op.
-
-Returns
--------
-self
-    Fitted estimator.
-*)
-
-val fit : ?coef_init:Ndarray.t -> ?intercept_init:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
-(**
-Fit linear model with Passive Aggressive algorithm.
-
-Parameters
-----------
-X : {array-like, sparse matrix} of shape (n_samples, n_features)
-    Training data
-
-y : numpy array of shape [n_samples]
-    Target values
-
-coef_init : array, shape = [n_classes,n_features]
-    The initial coefficients to warm-start the optimization.
-
-intercept_init : array, shape = [n_classes]
-    The initial intercept to warm-start the optimization.
-
-Returns
--------
-self : returns an instance of self.
-*)
-
-val get_params : ?deep:bool -> t -> Py.Object.t
-(**
-Get parameters for this estimator.
-
-Parameters
-----------
-deep : bool, default=True
-    If True, will return the parameters for this estimator and
-    contained subobjects that are estimators.
-
-Returns
--------
-params : mapping of string to any
-    Parameter names mapped to their values.
-*)
-
-val partial_fit : ?classes:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
-(**
-Fit linear model with Passive Aggressive algorithm.
-
-Parameters
-----------
-X : {array-like, sparse matrix} of shape (n_samples, n_features)
-    Subset of the training data
-
-y : numpy array of shape [n_samples]
-    Subset of the target values
-
-classes : array, shape = [n_classes]
-    Classes across all calls to partial_fit.
-    Can be obtained by via `np.unique(y_all)`, where y_all is the
-    target vector of the entire dataset.
-    This argument is required for the first call to partial_fit
-    and can be omitted in the subsequent calls.
-    Note that y doesn't need to contain all labels in `classes`.
-
-Returns
--------
-self : returns an instance of self.
-*)
-
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
-(**
-Predict class labels for samples in X.
-
-Parameters
-----------
-X : array_like or sparse matrix, shape (n_samples, n_features)
-    Samples.
-
-Returns
--------
-C : array, shape [n_samples]
-    Predicted class label per sample.
-*)
-
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
-(**
-Return the mean accuracy on the given test data and labels.
-
-In multi-label classification, this is the subset accuracy
-which is a harsh metric since you require for each sample that
-each label set be correctly predicted.
-
-Parameters
-----------
-X : array-like of shape (n_samples, n_features)
-    Test samples.
-
-y : array-like of shape (n_samples,) or (n_samples, n_outputs)
-    True labels for X.
-
-sample_weight : array-like of shape (n_samples,), default=None
-    Sample weights.
-
-Returns
--------
-score : float
-    Mean accuracy of self.predict(X) wrt. y.
-*)
-
-val set_params : ?kwargs:(string * Py.Object.t) list -> t -> t
-(**
-Set and validate the parameters of estimator.
-
-Parameters
-----------
-**kwargs : dict
-    Estimator parameters.
-
-Returns
--------
-self : object
-    Estimator instance.
-*)
-
-val sparsify : t -> t
-(**
-Convert coefficient matrix to sparse format.
-
-Converts the ``coef_`` member to a scipy.sparse matrix, which for
-L1-regularized models can be much more memory- and storage-efficient
-than the usual numpy.ndarray representation.
-
-The ``intercept_`` member is not converted.
-
-Returns
--------
-self
-    Fitted estimator.
-
-Notes
------
-For non-sparse models, i.e. when there are not many zeros in ``coef_``,
-this may actually *increase* memory usage, so use this method with
-care. A rule of thumb is that the number of zero elements, which can
-be computed with ``(coef_ == 0).sum()``, must be more than 50% for this
-to provide significant benefits.
-
-After calling this method, further fitting with the partial_fit
-method (if any) will not work until you call densify.
-*)
-
-
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
-
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
-
-(** Attribute n_iter_: see constructor for documentation *)
-val n_iter_ : t -> int
-
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
-
-(** Attribute t_: see constructor for documentation *)
-val t_ : t -> int
-
-(** Print the object to a human-readable representation. *)
-val to_string : t -> string
-
-
-(** Print the object to a human-readable representation. *)
-val show : t -> string
-
-(** Pretty-print the object to a formatter. *)
-val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
-
-
-end
-
-module PassiveAggressiveRegressor : sig
-type t
-val of_pyobject : Py.Object.t -> t
-val to_pyobject : t -> Py.Object.t
-
-val create : ?c:float -> ?fit_intercept:bool -> ?max_iter:int -> ?tol:[`Float of float | `None] -> ?early_stopping:bool -> ?validation_fraction:float -> ?n_iter_no_change:int -> ?shuffle:bool -> ?verbose:int -> ?loss:string -> ?epsilon:float -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?warm_start:bool -> ?average:[`Bool of bool | `Int of int] -> unit -> t
-(**
-Passive Aggressive Regressor
-
-Read more in the :ref:`User Guide <passive_aggressive>`.
-
-Parameters
-----------
-
-C : float
-    Maximum step size (regularization). Defaults to 1.0.
-
-fit_intercept : bool
-    Whether the intercept should be estimated or not. If False, the
-    data is assumed to be already centered. Defaults to True.
-
-max_iter : int, optional (default=1000)
-    The maximum number of passes over the training data (aka epochs).
-    It only impacts the behavior in the ``fit`` method, and not the
-    :meth:`partial_fit` method.
-
-    .. versionadded:: 0.19
-
-tol : float or None, optional (default=1e-3)
-    The stopping criterion. If it is not None, the iterations will stop
-    when (loss > previous_loss - tol).
-
-    .. versionadded:: 0.19
-
-early_stopping : bool, default=False
-    Whether to use early stopping to terminate training when validation.
-    score is not improving. If set to True, it will automatically set aside
-    a fraction of training data as validation and terminate
-    training when validation score is not improving by at least tol for
-    n_iter_no_change consecutive epochs.
-
-    .. versionadded:: 0.20
-
-validation_fraction : float, default=0.1
-    The proportion of training data to set aside as validation set for
-    early stopping. Must be between 0 and 1.
-    Only used if early_stopping is True.
-
-    .. versionadded:: 0.20
-
-n_iter_no_change : int, default=5
-    Number of iterations with no improvement to wait before early stopping.
-
-    .. versionadded:: 0.20
-
-shuffle : bool, default=True
-    Whether or not the training data should be shuffled after each epoch.
-
-verbose : integer, optional
-    The verbosity level
-
-loss : string, optional
-    The loss function to be used:
-    epsilon_insensitive: equivalent to PA-I in the reference paper.
-    squared_epsilon_insensitive: equivalent to PA-II in the reference
-    paper.
-
-epsilon : float
-    If the difference between the current prediction and the correct label
-    is below this threshold, the model is not updated.
-
-random_state : int, RandomState instance or None, optional, default=None
-    The seed of the pseudo random number generator to use when shuffling
-    the data.  If int, random_state is the seed used by the random number
-    generator; If RandomState instance, random_state is the random number
-    generator; If None, the random number generator is the RandomState
-    instance used by `np.random`.
-
-warm_start : bool, optional
-    When set to True, reuse the solution of the previous call to fit as
-    initialization, otherwise, just erase the previous solution.
-    See :term:`the Glossary <warm_start>`.
-
-    Repeatedly calling fit or partial_fit when warm_start is True can
-    result in a different solution than when calling fit a single time
-    because of the way the data is shuffled.
-
-average : bool or int, optional
-    When set to True, computes the averaged SGD weights and stores the
-    result in the ``coef_`` attribute. If set to an int greater than 1,
-    averaging will begin once the total number of samples seen reaches
-    average. So average=10 will begin averaging after seeing 10 samples.
-
-    .. versionadded:: 0.19
-       parameter *average* to use weights averaging in SGD
-
-Attributes
-----------
-coef_ : array, shape = [1, n_features] if n_classes == 2 else [n_classes,            n_features]
-    Weights assigned to the features.
-
-intercept_ : array, shape = [1] if n_classes == 2 else [n_classes]
-    Constants in decision function.
-
-n_iter_ : int
-    The actual number of iterations to reach the stopping criterion.
-
-t_ : int
-    Number of weight updates performed during training.
-    Same as ``(n_iter_ * n_samples)``.
-
-Examples
---------
->>> from sklearn.linear_model import PassiveAggressiveRegressor
->>> from sklearn.datasets import make_regression
-
->>> X, y = make_regression(n_features=4, random_state=0)
->>> regr = PassiveAggressiveRegressor(max_iter=100, random_state=0,
-... tol=1e-3)
->>> regr.fit(X, y)
-PassiveAggressiveRegressor(max_iter=100, random_state=0)
->>> print(regr.coef_)
-[20.48736655 34.18818427 67.59122734 87.94731329]
->>> print(regr.intercept_)
-[-0.02306214]
->>> print(regr.predict([[0, 0, 0, 0]]))
-[-0.02306214]
-
-See also
---------
-
-SGDRegressor
-
-References
-----------
-Online Passive-Aggressive Algorithms
-<http://jmlr.csail.mit.edu/papers/volume7/crammer06a/crammer06a.pdf>
-K. Crammer, O. Dekel, J. Keshat, S. Shalev-Shwartz, Y. Singer - JMLR (2006)
-*)
-
-val densify : t -> t
-(**
-Convert coefficient matrix to dense array format.
-
-Converts the ``coef_`` member (back) to a numpy.ndarray. This is the
-default format of ``coef_`` and is required for fitting, so calling
-this method is only required on models that have previously been
-sparsified; otherwise, it is a no-op.
-
-Returns
--------
-self
-    Fitted estimator.
-*)
-
-val fit : ?coef_init:Ndarray.t -> ?intercept_init:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
-(**
-Fit linear model with Passive Aggressive algorithm.
-
-Parameters
-----------
-X : {array-like, sparse matrix} of shape (n_samples, n_features)
-    Training data
-
-y : numpy array of shape [n_samples]
-    Target values
-
-coef_init : array, shape = [n_features]
-    The initial coefficients to warm-start the optimization.
-
-intercept_init : array, shape = [1]
-    The initial intercept to warm-start the optimization.
-
-Returns
--------
-self : returns an instance of self.
-*)
-
-val get_params : ?deep:bool -> t -> Py.Object.t
-(**
-Get parameters for this estimator.
-
-Parameters
-----------
-deep : bool, default=True
-    If True, will return the parameters for this estimator and
-    contained subobjects that are estimators.
-
-Returns
--------
-params : mapping of string to any
-    Parameter names mapped to their values.
-*)
-
-val partial_fit : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
-(**
-Fit linear model with Passive Aggressive algorithm.
-
-Parameters
-----------
-X : {array-like, sparse matrix} of shape (n_samples, n_features)
-    Subset of training data
-
-y : numpy array of shape [n_samples]
-    Subset of target values
-
-Returns
--------
-self : returns an instance of self.
-*)
-
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
-(**
-Predict using the linear model
-
-Parameters
-----------
-X : {array-like, sparse matrix}, shape (n_samples, n_features)
-
-Returns
--------
-ndarray of shape (n_samples,)
-   Predicted target values per element in X.
-*)
-
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
-(**
-Return the coefficient of determination R^2 of the prediction.
-
-The coefficient R^2 is defined as (1 - u/v), where u is the residual
-sum of squares ((y_true - y_pred) ** 2).sum() and v is the total
-sum of squares ((y_true - y_true.mean()) ** 2).sum().
-The best possible score is 1.0 and it can be negative (because the
-model can be arbitrarily worse). A constant model that always
-predicts the expected value of y, disregarding the input features,
-would get a R^2 score of 0.0.
-
-Parameters
-----------
-X : array-like of shape (n_samples, n_features)
-    Test samples. For some estimators this may be a
-    precomputed kernel matrix or a list of generic objects instead,
-    shape = (n_samples, n_samples_fitted),
-    where n_samples_fitted is the number of
-    samples used in the fitting for the estimator.
-
-y : array-like of shape (n_samples,) or (n_samples, n_outputs)
-    True values for X.
-
-sample_weight : array-like of shape (n_samples,), default=None
-    Sample weights.
-
-Returns
--------
-score : float
-    R^2 of self.predict(X) wrt. y.
-
-Notes
------
-The R2 score used when calling ``score`` on a regressor will use
-``multioutput='uniform_average'`` from version 0.23 to keep consistent
-with :func:`~sklearn.metrics.r2_score`. This will influence the
-``score`` method of all the multioutput regressors (except for
-:class:`~sklearn.multioutput.MultiOutputRegressor`). To specify the
-default value manually and avoid the warning, please either call
-:func:`~sklearn.metrics.r2_score` directly or make a custom scorer with
-:func:`~sklearn.metrics.make_scorer` (the built-in scorer ``'r2'`` uses
-``multioutput='uniform_average'``).
-*)
-
-val set_params : ?kwargs:(string * Py.Object.t) list -> t -> t
-(**
-Set and validate the parameters of estimator.
-
-Parameters
-----------
-**kwargs : dict
-    Estimator parameters.
-
-Returns
--------
-self : object
-    Estimator instance.
-*)
-
-val sparsify : t -> t
-(**
-Convert coefficient matrix to sparse format.
-
-Converts the ``coef_`` member to a scipy.sparse matrix, which for
-L1-regularized models can be much more memory- and storage-efficient
-than the usual numpy.ndarray representation.
-
-The ``intercept_`` member is not converted.
-
-Returns
--------
-self
-    Fitted estimator.
-
-Notes
------
-For non-sparse models, i.e. when there are not many zeros in ``coef_``,
-this may actually *increase* memory usage, so use this method with
-care. A rule of thumb is that the number of zero elements, which can
-be computed with ``(coef_ == 0).sum()``, must be more than 50% for this
-to provide significant benefits.
-
-After calling this method, further fitting with the partial_fit
-method (if any) will not work until you call densify.
-*)
-
-
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
-
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
-
-(** Attribute n_iter_: see constructor for documentation *)
-val n_iter_ : t -> int
-
-(** Attribute t_: see constructor for documentation *)
-val t_ : t -> int
-
-(** Print the object to a human-readable representation. *)
-val to_string : t -> string
-
-
-(** Print the object to a human-readable representation. *)
-val show : t -> string
-
-(** Pretty-print the object to a formatter. *)
-val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
-
-
-end
-
-module Perceptron : sig
-type t
-val of_pyobject : Py.Object.t -> t
-val to_pyobject : t -> Py.Object.t
-
-val create : ?penalty:[`L2 | `L1 | `Elasticnet] -> ?alpha:float -> ?fit_intercept:bool -> ?max_iter:int -> ?tol:float -> ?shuffle:bool -> ?verbose:int -> ?eta0:float -> ?n_jobs:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t] -> ?early_stopping:bool -> ?validation_fraction:float -> ?n_iter_no_change:int -> ?class_weight:[`DictIntToFloat of (int * float) list | `Balanced | `PyObject of Py.Object.t] -> ?warm_start:bool -> unit -> t
-(**
-Perceptron
-
-Read more in the :ref:`User Guide <perceptron>`.
-
-Parameters
-----------
-
-penalty : {'l2','l1','elasticnet'}, default=None
-    The penalty (aka regularization term) to be used.
-
-alpha : float, default=0.0001
-    Constant that multiplies the regularization term if regularization is
-    used.
-
-fit_intercept : bool, default=True
-    Whether the intercept should be estimated or not. If False, the
-    data is assumed to be already centered.
-
-max_iter : int, default=1000
-    The maximum number of passes over the training data (aka epochs).
-    It only impacts the behavior in the ``fit`` method, and not the
-    :meth:`partial_fit` method.
-
-    .. versionadded:: 0.19
-
-tol : float, default=1e-3
-    The stopping criterion. If it is not None, the iterations will stop
-    when (loss > previous_loss - tol).
-
-    .. versionadded:: 0.19
-
-shuffle : bool, default=True
-    Whether or not the training data should be shuffled after each epoch.
-
-verbose : int, default=0
-    The verbosity level
-
-eta0 : double, default=1
-    Constant by which the updates are multiplied.
-
-n_jobs : int, default=None
-    The number of CPUs to use to do the OVA (One Versus All, for
-    multi-class problems) computation.
-    ``None`` means 1 unless in a :obj:`joblib.parallel_backend` context.
-    ``-1`` means using all processors. See :term:`Glossary <n_jobs>`
-    for more details.
-
-random_state : int, RandomState instance, default=None
-    The seed of the pseudo random number generator to use when shuffling
-    the data.  If int, random_state is the seed used by the random number
-    generator; If RandomState instance, random_state is the random number
-    generator; If None, the random number generator is the RandomState
-    instance used by `np.random`.
-
-early_stopping : bool, default=False
-    Whether to use early stopping to terminate training when validation.
-    score is not improving. If set to True, it will automatically set aside
-    a stratified fraction of training data as validation and terminate
-    training when validation score is not improving by at least tol for
-    n_iter_no_change consecutive epochs.
-
-    .. versionadded:: 0.20
-
-validation_fraction : float, default=0.1
-    The proportion of training data to set aside as validation set for
-    early stopping. Must be between 0 and 1.
-    Only used if early_stopping is True.
-
-    .. versionadded:: 0.20
-
-n_iter_no_change : int, default=5
-    Number of iterations with no improvement to wait before early stopping.
-
-    .. versionadded:: 0.20
-
-class_weight : dict, {class_label: weight} or "balanced", default=None
-    Preset for the class_weight fit parameter.
-
-    Weights associated with classes. If not given, all classes
-    are supposed to have weight one.
-
-    The "balanced" mode uses the values of y to automatically adjust
-    weights inversely proportional to class frequencies in the input data
-    as ``n_samples / (n_classes * np.bincount(y))``
-
-warm_start : bool, default=False
-    When set to True, reuse the solution of the previous call to fit as
-    initialization, otherwise, just erase the previous solution. See
-    :term:`the Glossary <warm_start>`.
-
-Attributes
-----------
-coef_ : ndarray of shape = [1, n_features] if n_classes == 2 else         [n_classes, n_features]
-    Weights assigned to the features.
-
-intercept_ : ndarray of shape = [1] if n_classes == 2 else [n_classes]
-    Constants in decision function.
-
-n_iter_ : int
-    The actual number of iterations to reach the stopping criterion.
-    For multiclass fits, it is the maximum over every binary fit.
-
-classes_ : ndarray of shape (n_classes,)
-    The unique classes labels.
-
-t_ : int
-    Number of weight updates performed during training.
-    Same as ``(n_iter_ * n_samples)``.
-
-Notes
------
-
-``Perceptron`` is a classification algorithm which shares the same
-underlying implementation with ``SGDClassifier``. In fact,
-``Perceptron()`` is equivalent to `SGDClassifier(loss="perceptron",
-eta0=1, learning_rate="constant", penalty=None)`.
-
-Examples
---------
->>> from sklearn.datasets import load_digits
->>> from sklearn.linear_model import Perceptron
->>> X, y = load_digits(return_X_y=True)
->>> clf = Perceptron(tol=1e-3, random_state=0)
->>> clf.fit(X, y)
-Perceptron()
->>> clf.score(X, y)
-0.939...
-
-See also
---------
-
-SGDClassifier
-
-References
-----------
-
-https://en.wikipedia.org/wiki/Perceptron and references therein.
-*)
-
-val decision_function : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
-(**
-Predict confidence scores for samples.
-
-The confidence score for a sample is the signed distance of that
-sample to the hyperplane.
-
-Parameters
-----------
-X : array_like or sparse matrix, shape (n_samples, n_features)
-    Samples.
-
-Returns
--------
-array, shape=(n_samples,) if n_classes == 2 else (n_samples, n_classes)
-    Confidence scores per (sample, class) combination. In the binary
-    case, confidence score for self.classes_[1] where >0 means this
-    class would be predicted.
-*)
-
-val densify : t -> t
-(**
-Convert coefficient matrix to dense array format.
-
-Converts the ``coef_`` member (back) to a numpy.ndarray. This is the
-default format of ``coef_`` and is required for fitting, so calling
-this method is only required on models that have previously been
-sparsified; otherwise, it is a no-op.
-
-Returns
--------
-self
-    Fitted estimator.
-*)
-
-val fit : ?coef_init:Ndarray.t -> ?intercept_init:Ndarray.t -> ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
-(**
-Fit linear model with Stochastic Gradient Descent.
-
-Parameters
-----------
-X : {array-like, sparse matrix}, shape (n_samples, n_features)
-    Training data.
-
-y : ndarray of shape (n_samples,)
-    Target values.
-
-coef_init : ndarray of shape (n_classes, n_features), default=None
-    The initial coefficients to warm-start the optimization.
-
-intercept_init : ndarray of shape (n_classes,), default=None
-    The initial intercept to warm-start the optimization.
-
-sample_weight : array-like, shape (n_samples,), default=None
-    Weights applied to individual samples.
-    If not provided, uniform weights are assumed. These weights will
-    be multiplied with class_weight (passed through the
-    constructor) if class_weight is specified.
-
-Returns
--------
-self :
-    Returns an instance of self.
-*)
-
-val get_params : ?deep:bool -> t -> Py.Object.t
-(**
-Get parameters for this estimator.
-
-Parameters
-----------
-deep : bool, default=True
-    If True, will return the parameters for this estimator and
-    contained subobjects that are estimators.
-
-Returns
--------
-params : mapping of string to any
-    Parameter names mapped to their values.
-*)
-
-val partial_fit : ?classes:Ndarray.t -> ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
-(**
-Perform one epoch of stochastic gradient descent on given samples.
-
-Internally, this method uses ``max_iter = 1``. Therefore, it is not
-guaranteed that a minimum of the cost function is reached after calling
-it once. Matters such as objective convergence and early stopping
-should be handled by the user.
-
-Parameters
-----------
-X : {array-like, sparse matrix}, shape (n_samples, n_features)
-    Subset of the training data.
-
-y : ndarray of shape (n_samples,)
-    Subset of the target values.
-
-classes : ndarray of shape (n_classes,), default=None
-    Classes across all calls to partial_fit.
-    Can be obtained by via `np.unique(y_all)`, where y_all is the
-    target vector of the entire dataset.
-    This argument is required for the first call to partial_fit
-    and can be omitted in the subsequent calls.
-    Note that y doesn't need to contain all labels in `classes`.
-
-sample_weight : array-like, shape (n_samples,), default=None
-    Weights applied to individual samples.
-    If not provided, uniform weights are assumed.
-
-Returns
--------
-self :
-    Returns an instance of self.
-*)
-
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
-(**
-Predict class labels for samples in X.
-
-Parameters
-----------
-X : array_like or sparse matrix, shape (n_samples, n_features)
-    Samples.
-
-Returns
--------
-C : array, shape [n_samples]
-    Predicted class label per sample.
-*)
-
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
-(**
-Return the mean accuracy on the given test data and labels.
-
-In multi-label classification, this is the subset accuracy
-which is a harsh metric since you require for each sample that
-each label set be correctly predicted.
-
-Parameters
-----------
-X : array-like of shape (n_samples, n_features)
-    Test samples.
-
-y : array-like of shape (n_samples,) or (n_samples, n_outputs)
-    True labels for X.
-
-sample_weight : array-like of shape (n_samples,), default=None
-    Sample weights.
-
-Returns
--------
-score : float
-    Mean accuracy of self.predict(X) wrt. y.
-*)
-
-val set_params : ?kwargs:(string * Py.Object.t) list -> t -> t
-(**
-Set and validate the parameters of estimator.
-
-Parameters
-----------
-**kwargs : dict
-    Estimator parameters.
-
-Returns
--------
-self : object
-    Estimator instance.
-*)
-
-val sparsify : t -> t
-(**
-Convert coefficient matrix to sparse format.
-
-Converts the ``coef_`` member to a scipy.sparse matrix, which for
-L1-regularized models can be much more memory- and storage-efficient
-than the usual numpy.ndarray representation.
-
-The ``intercept_`` member is not converted.
-
-Returns
--------
-self
-    Fitted estimator.
-
-Notes
------
-For non-sparse models, i.e. when there are not many zeros in ``coef_``,
-this may actually *increase* memory usage, so use this method with
-care. A rule of thumb is that the number of zero elements, which can
-be computed with ``(coef_ == 0).sum()``, must be more than 50% for this
-to provide significant benefits.
-
-After calling this method, further fitting with the partial_fit
-method (if any) will not work until you call densify.
-*)
-
-
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
-
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
-
-(** Attribute n_iter_: see constructor for documentation *)
-val n_iter_ : t -> int
-
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
-
-(** Attribute t_: see constructor for documentation *)
-val t_ : t -> int
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -7278,7 +6668,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?base_estimator:Py.Object.t -> ?min_samples:[`Int of int | `Float of float] -> ?residual_threshold:float -> ?is_data_valid:Py.Object.t -> ?is_model_valid:Py.Object.t -> ?max_trials:int -> ?max_skips:int -> ?stop_n_inliers:int -> ?stop_score:float -> ?stop_probability:Py.Object.t -> ?loss:[`String of string | `Callable of Py.Object.t] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
+val create : ?base_estimator:Py.Object.t -> ?min_samples:[`I of int | `F of float] -> ?residual_threshold:float -> ?is_data_valid:Py.Object.t -> ?is_model_valid:Py.Object.t -> ?max_trials:int -> ?max_skips:int -> ?stop_n_inliers:int -> ?stop_score:float -> ?stop_probability:float -> ?loss:[`S of string | `Callable of Py.Object.t] -> ?random_state:int -> unit -> t
 (**
 RANSAC (RANdom SAmple Consensus) algorithm.
 
@@ -7428,7 +6818,7 @@ References
 .. [3] http://www.bmva.org/bmvc/2009/Papers/Paper355/Paper355.pdf
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit estimator using RANSAC algorithm.
 
@@ -7453,7 +6843,7 @@ ValueError
     `max_trials` randomly chosen sub-samples.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -7469,7 +6859,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:Ndarray.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the estimated model.
 
@@ -7485,7 +6875,7 @@ y : array, shape = [n_samples] or [n_samples, n_targets]
     Returns predicted values.
 *)
 
-val score : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> float
+val score : x:Arr.t -> y:Arr.t -> t -> float
 (**
 Returns the score of the prediction.
 
@@ -7526,23 +6916,47 @@ self : object
 *)
 
 
-(** Attribute estimator_: see constructor for documentation *)
+(** Attribute estimator_: get value or raise Not_found if None.*)
 val estimator_ : t -> Py.Object.t
 
-(** Attribute n_trials_: see constructor for documentation *)
+(** Attribute estimator_: get value as an option. *)
+val estimator_opt : t -> (Py.Object.t) option
+
+
+(** Attribute n_trials_: get value or raise Not_found if None.*)
 val n_trials_ : t -> int
 
-(** Attribute inlier_mask_: see constructor for documentation *)
-val inlier_mask_ : t -> Py.Object.t
+(** Attribute n_trials_: get value as an option. *)
+val n_trials_opt : t -> (int) option
 
-(** Attribute n_skips_no_inliers_: see constructor for documentation *)
+
+(** Attribute inlier_mask_: get value or raise Not_found if None.*)
+val inlier_mask_ : t -> Arr.t
+
+(** Attribute inlier_mask_: get value as an option. *)
+val inlier_mask_opt : t -> (Arr.t) option
+
+
+(** Attribute n_skips_no_inliers_: get value or raise Not_found if None.*)
 val n_skips_no_inliers_ : t -> int
 
-(** Attribute n_skips_invalid_data_: see constructor for documentation *)
+(** Attribute n_skips_no_inliers_: get value as an option. *)
+val n_skips_no_inliers_opt : t -> (int) option
+
+
+(** Attribute n_skips_invalid_data_: get value or raise Not_found if None.*)
 val n_skips_invalid_data_ : t -> int
 
-(** Attribute n_skips_invalid_model_: see constructor for documentation *)
+(** Attribute n_skips_invalid_data_: get value as an option. *)
+val n_skips_invalid_data_opt : t -> (int) option
+
+
+(** Attribute n_skips_invalid_model_: get value or raise Not_found if None.*)
 val n_skips_invalid_model_ : t -> int
+
+(** Attribute n_skips_invalid_model_: get value as an option. *)
+val n_skips_invalid_model_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -7562,7 +6976,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?alpha:[`Float of float | `Ndarray of Ndarray.t] -> ?fit_intercept:bool -> ?normalize:bool -> ?copy_X:bool -> ?max_iter:int -> ?tol:float -> ?solver:[`Auto | `Svd | `Cholesky | `Lsqr | `Sparse_cg | `Sag | `Saga] -> ?random_state:[`Int of int | `RandomState of Py.Object.t] -> unit -> t
+val create : ?alpha:[`F of float | `Arr of Arr.t] -> ?fit_intercept:bool -> ?normalize:bool -> ?copy_X:bool -> ?max_iter:int -> ?tol:float -> ?solver:[`Auto | `Svd | `Cholesky | `Lsqr | `Sparse_cg | `Sag | `Saga] -> ?random_state:int -> unit -> t
 (**
 Linear least squares with l2 regularization.
 
@@ -7695,7 +7109,7 @@ Examples
 Ridge()
 *)
 
-val fit : ?sample_weight:[`Float of float | `Ndarray of Ndarray.t] -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:[`F of float | `Arr of Arr.t] -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit Ridge regression model.
 
@@ -7716,7 +7130,7 @@ Returns
 self : returns an instance of self.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -7732,7 +7146,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the linear model.
 
@@ -7747,7 +7161,7 @@ C : array, shape (n_samples,)
     Returns predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -7813,14 +7227,26 @@ self : object
 *)
 
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
 
-(** Attribute n_iter_: see constructor for documentation *)
-val n_iter_ : t -> Py.Object.t
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
+val n_iter_ : t -> Arr.t
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -7840,7 +7266,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?alphas:Ndarray.t -> ?fit_intercept:bool -> ?normalize:bool -> ?scoring:[`String of string | `Callable of Py.Object.t] -> ?cv:[`Int of int | `CrossValGenerator of Py.Object.t | `Ndarray of Ndarray.t] -> ?gcv_mode:[`Auto | `Svd | `Eigen] -> ?store_cv_values:bool -> unit -> t
+val create : ?alphas:Arr.t -> ?fit_intercept:bool -> ?normalize:bool -> ?scoring:[`S of string | `Callable of Py.Object.t] -> ?cv:[`I of int | `CrossValGenerator of Py.Object.t | `Arr of Arr.t] -> ?gcv_mode:[`Auto | `Svd | `Eigen] -> ?store_cv_values:bool -> unit -> t
 (**
 Ridge regression with built-in cross-validation.
 
@@ -7948,7 +7374,7 @@ RidgeClassifier : Ridge classifier
 RidgeClassifierCV : Ridge classifier with built-in cross validation
 *)
 
-val fit : ?sample_weight:[`Float of float | `Ndarray of Ndarray.t] -> x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:[`F of float | `Arr of Arr.t] -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit Ridge regression model with cv.
 
@@ -7978,7 +7404,7 @@ cross-validation takes the sample weights into account when computing
 the validation score.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -7994,7 +7420,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the linear model.
 
@@ -8009,7 +7435,7 @@ C : array, shape (n_samples,)
     Returns predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -8075,17 +7501,33 @@ self : object
 *)
 
 
-(** Attribute cv_values_: see constructor for documentation *)
+(** Attribute cv_values_: get value or raise Not_found if None.*)
 val cv_values_ : t -> Py.Object.t
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute cv_values_: get value as an option. *)
+val cv_values_opt : t -> (Py.Object.t) option
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
 
-(** Attribute alpha_: see constructor for documentation *)
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
+
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
+
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute alpha_: get value or raise Not_found if None.*)
 val alpha_ : t -> float
+
+(** Attribute alpha_: get value as an option. *)
+val alpha_opt : t -> (float) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -8105,7 +7547,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?alpha:float -> ?fit_intercept:bool -> ?normalize:bool -> ?copy_X:bool -> ?max_iter:int -> ?tol:float -> ?class_weight:[`DictIntToFloat of (int * float) list | `Balanced] -> ?solver:[`Auto | `Svd | `Cholesky | `Lsqr | `Sparse_cg | `Sag | `Saga] -> ?random_state:[`Int of int | `RandomState of Py.Object.t] -> unit -> t
+val create : ?alpha:float -> ?fit_intercept:bool -> ?normalize:bool -> ?copy_X:bool -> ?max_iter:int -> ?tol:float -> ?class_weight:[`DictIntToFloat of (int * float) list | `Balanced] -> ?solver:[`Auto | `Svd | `Cholesky | `Lsqr | `Sparse_cg | `Sag | `Saga] -> ?random_state:int -> unit -> t
 (**
 Classifier using Ridge regression.
 
@@ -8235,7 +7677,7 @@ Examples
 0.9595...
 *)
 
-val decision_function : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val decision_function : x:Arr.t -> t -> Arr.t
 (**
 Predict confidence scores for samples.
 
@@ -8255,7 +7697,7 @@ array, shape=(n_samples,) if n_classes == 2 else (n_samples, n_classes)
     class would be predicted.
 *)
 
-val fit : ?sample_weight:[`Float of float | `Ndarray of Ndarray.t] -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:[`F of float | `Arr of Arr.t] -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit Ridge classifier model.
 
@@ -8280,7 +7722,7 @@ self : object
     Instance of the estimator.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -8296,7 +7738,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict class labels for samples in X.
 
@@ -8311,7 +7753,7 @@ C : array, shape [n_samples]
     Predicted class label per sample.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -8357,17 +7799,33 @@ self : object
 *)
 
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
 
-(** Attribute n_iter_: see constructor for documentation *)
-val n_iter_ : t -> Py.Object.t
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
+val n_iter_ : t -> Arr.t
+
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (Arr.t) option
+
+
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
+
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -8387,7 +7845,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?alphas:Ndarray.t -> ?fit_intercept:bool -> ?normalize:bool -> ?scoring:[`String of string | `Callable of Py.Object.t] -> ?cv:[`Int of int | `CrossValGenerator of Py.Object.t | `Ndarray of Ndarray.t] -> ?class_weight:[`DictIntToFloat of (int * float) list | `Balanced] -> ?store_cv_values:bool -> unit -> t
+val create : ?alphas:Arr.t -> ?fit_intercept:bool -> ?normalize:bool -> ?scoring:[`S of string | `Callable of Py.Object.t] -> ?cv:[`I of int | `CrossValGenerator of Py.Object.t | `Arr of Arr.t] -> ?class_weight:[`DictIntToFloat of (int * float) list | `Balanced] -> ?store_cv_values:bool -> unit -> t
 (**
 Ridge classifier with built-in cross-validation.
 
@@ -8499,7 +7957,7 @@ a one-versus-all approach. Concretely, this is implemented by taking
 advantage of the multi-variate response support in Ridge.
 *)
 
-val decision_function : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val decision_function : x:Arr.t -> t -> Arr.t
 (**
 Predict confidence scores for samples.
 
@@ -8519,7 +7977,7 @@ array, shape=(n_samples,) if n_classes == 2 else (n_samples, n_classes)
     class would be predicted.
 *)
 
-val fit : ?sample_weight:[`Float of float | `Ndarray of Ndarray.t] -> x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:[`F of float | `Arr of Arr.t] -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit Ridge classifier with cv.
 
@@ -8542,7 +8000,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -8558,7 +8016,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict class labels for samples in X.
 
@@ -8573,7 +8031,7 @@ C : array, shape [n_samples]
     Predicted class label per sample.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -8619,887 +8077,40 @@ self : object
 *)
 
 
-(** Attribute cv_values_: see constructor for documentation *)
-val cv_values_ : t -> Ndarray.t
+(** Attribute cv_values_: get value or raise Not_found if None.*)
+val cv_values_ : t -> Arr.t
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute cv_values_: get value as an option. *)
+val cv_values_opt : t -> (Arr.t) option
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
 
-(** Attribute alpha_: see constructor for documentation *)
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
+
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
+
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute alpha_: get value or raise Not_found if None.*)
 val alpha_ : t -> float
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute alpha_: get value as an option. *)
+val alpha_opt : t -> (float) option
 
-(** Print the object to a human-readable representation. *)
-val to_string : t -> string
 
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
 
-(** Print the object to a human-readable representation. *)
-val show : t -> string
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
 
-(** Pretty-print the object to a formatter. *)
-val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
-
-
-end
-
-module SGDClassifier : sig
-type t
-val of_pyobject : Py.Object.t -> t
-val to_pyobject : t -> Py.Object.t
-
-val create : ?loss:string -> ?penalty:[`L2 | `L1 | `Elasticnet] -> ?alpha:float -> ?l1_ratio:float -> ?fit_intercept:bool -> ?max_iter:int -> ?tol:float -> ?shuffle:bool -> ?verbose:int -> ?epsilon:float -> ?n_jobs:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t] -> ?learning_rate:string -> ?eta0:float -> ?power_t:float -> ?early_stopping:bool -> ?validation_fraction:float -> ?n_iter_no_change:int -> ?class_weight:[`DictIntToFloat of (int * float) list | `Balanced | `PyObject of Py.Object.t] -> ?warm_start:bool -> ?average:[`Bool of bool | `Int of int] -> unit -> t
-(**
-Linear classifiers (SVM, logistic regression, a.o.) with SGD training.
-
-This estimator implements regularized linear models with stochastic
-gradient descent (SGD) learning: the gradient of the loss is estimated
-each sample at a time and the model is updated along the way with a
-decreasing strength schedule (aka learning rate). SGD allows minibatch
-(online/out-of-core) learning, see the partial_fit method.
-For best results using the default learning rate schedule, the data should
-have zero mean and unit variance.
-
-This implementation works with data represented as dense or sparse arrays
-of floating point values for the features. The model it fits can be
-controlled with the loss parameter; by default, it fits a linear support
-vector machine (SVM).
-
-The regularizer is a penalty added to the loss function that shrinks model
-parameters towards the zero vector using either the squared euclidean norm
-L2 or the absolute norm L1 or a combination of both (Elastic Net). If the
-parameter update crosses the 0.0 value because of the regularizer, the
-update is truncated to 0.0 to allow for learning sparse models and achieve
-online feature selection.
-
-Read more in the :ref:`User Guide <sgd>`.
-
-Parameters
-----------
-loss : str, default='hinge'
-    The loss function to be used. Defaults to 'hinge', which gives a
-    linear SVM.
-
-    The possible options are 'hinge', 'log', 'modified_huber',
-    'squared_hinge', 'perceptron', or a regression loss: 'squared_loss',
-    'huber', 'epsilon_insensitive', or 'squared_epsilon_insensitive'.
-
-    The 'log' loss gives logistic regression, a probabilistic classifier.
-    'modified_huber' is another smooth loss that brings tolerance to
-    outliers as well as probability estimates.
-    'squared_hinge' is like hinge but is quadratically penalized.
-    'perceptron' is the linear loss used by the perceptron algorithm.
-    The other losses are designed for regression but can be useful in
-    classification as well; see SGDRegressor for a description.
-
-penalty : {'l2', 'l1', 'elasticnet'}, default='l2'
-    The penalty (aka regularization term) to be used. Defaults to 'l2'
-    which is the standard regularizer for linear SVM models. 'l1' and
-    'elasticnet' might bring sparsity to the model (feature selection)
-    not achievable with 'l2'.
-
-alpha : float, default=0.0001
-    Constant that multiplies the regularization term. Defaults to 0.0001.
-    Also used to compute learning_rate when set to 'optimal'.
-
-l1_ratio : float, default=0.15
-    The Elastic Net mixing parameter, with 0 <= l1_ratio <= 1.
-    l1_ratio=0 corresponds to L2 penalty, l1_ratio=1 to L1.
-    Defaults to 0.15.
-
-fit_intercept : bool, default=True
-    Whether the intercept should be estimated or not. If False, the
-    data is assumed to be already centered. Defaults to True.
-
-max_iter : int, default=1000
-    The maximum number of passes over the training data (aka epochs).
-    It only impacts the behavior in the ``fit`` method, and not the
-    :meth:`partial_fit` method.
-
-    .. versionadded:: 0.19
-
-tol : float, default=1e-3
-    The stopping criterion. If it is not None, the iterations will stop
-    when (loss > best_loss - tol) for ``n_iter_no_change`` consecutive
-    epochs.
-
-    .. versionadded:: 0.19
-
-shuffle : bool, default=True
-    Whether or not the training data should be shuffled after each epoch.
-
-verbose : int, default=0
-    The verbosity level.
-
-epsilon : float, default=0.1
-    Epsilon in the epsilon-insensitive loss functions; only if `loss` is
-    'huber', 'epsilon_insensitive', or 'squared_epsilon_insensitive'.
-    For 'huber', determines the threshold at which it becomes less
-    important to get the prediction exactly right.
-    For epsilon-insensitive, any differences between the current prediction
-    and the correct label are ignored if they are less than this threshold.
-
-n_jobs : int, default=None
-    The number of CPUs to use to do the OVA (One Versus All, for
-    multi-class problems) computation.
-    ``None`` means 1 unless in a :obj:`joblib.parallel_backend` context.
-    ``-1`` means using all processors. See :term:`Glossary <n_jobs>`
-    for more details.
-
-random_state : int, RandomState instance, default=None
-    The seed of the pseudo random number generator to use when shuffling
-    the data.  If int, random_state is the seed used by the random number
-    generator; If RandomState instance, random_state is the random number
-    generator; If None, the random number generator is the RandomState
-    instance used by `np.random`.
-
-learning_rate : str, default='optimal'
-    The learning rate schedule:
-
-    'constant':
-        eta = eta0
-    'optimal': [default]
-        eta = 1.0 / (alpha * (t + t0))
-        where t0 is chosen by a heuristic proposed by Leon Bottou.
-    'invscaling':
-        eta = eta0 / pow(t, power_t)
-    'adaptive':
-        eta = eta0, as long as the training keeps decreasing.
-        Each time n_iter_no_change consecutive epochs fail to decrease the
-        training loss by tol or fail to increase validation score by tol if
-        early_stopping is True, the current learning rate is divided by 5.
-
-eta0 : double, default=0.0
-    The initial learning rate for the 'constant', 'invscaling' or
-    'adaptive' schedules. The default value is 0.0 as eta0 is not used by
-    the default schedule 'optimal'.
-
-power_t : double, default=0.5
-    The exponent for inverse scaling learning rate [default 0.5].
-
-early_stopping : bool, default=False
-    Whether to use early stopping to terminate training when validation
-    score is not improving. If set to True, it will automatically set aside
-    a stratified fraction of training data as validation and terminate
-    training when validation score is not improving by at least tol for
-    n_iter_no_change consecutive epochs.
-
-    .. versionadded:: 0.20
-
-validation_fraction : float, default=0.1
-    The proportion of training data to set aside as validation set for
-    early stopping. Must be between 0 and 1.
-    Only used if early_stopping is True.
-
-    .. versionadded:: 0.20
-
-n_iter_no_change : int, default=5
-    Number of iterations with no improvement to wait before early stopping.
-
-    .. versionadded:: 0.20
-
-class_weight : dict, {class_label: weight} or "balanced", default=None
-    Preset for the class_weight fit parameter.
-
-    Weights associated with classes. If not given, all classes
-    are supposed to have weight one.
-
-    The "balanced" mode uses the values of y to automatically adjust
-    weights inversely proportional to class frequencies in the input data
-    as ``n_samples / (n_classes * np.bincount(y))``.
-
-warm_start : bool, default=False
-    When set to True, reuse the solution of the previous call to fit as
-    initialization, otherwise, just erase the previous solution.
-    See :term:`the Glossary <warm_start>`.
-
-    Repeatedly calling fit or partial_fit when warm_start is True can
-    result in a different solution than when calling fit a single time
-    because of the way the data is shuffled.
-    If a dynamic learning rate is used, the learning rate is adapted
-    depending on the number of samples already seen. Calling ``fit`` resets
-    this counter, while ``partial_fit`` will result in increasing the
-    existing counter.
-
-average : bool or int, default=False
-    When set to True, computes the averaged SGD weights and stores the
-    result in the ``coef_`` attribute. If set to an int greater than 1,
-    averaging will begin once the total number of samples seen reaches
-    average. So ``average=10`` will begin averaging after seeing 10
-    samples.
-
-Attributes
-----------
-coef_ : ndarray of shape (1, n_features) if n_classes == 2 else             (n_classes, n_features)
-    Weights assigned to the features.
-
-intercept_ : ndarray of shape (1,) if n_classes == 2 else (n_classes,)
-    Constants in decision function.
-
-n_iter_ : int
-    The actual number of iterations to reach the stopping criterion.
-    For multiclass fits, it is the maximum over every binary fit.
-
-loss_function_ : concrete ``LossFunction``
-
-classes_ : array of shape (n_classes,)
-
-t_ : int
-    Number of weight updates performed during training.
-    Same as ``(n_iter_ * n_samples)``.
-
-See Also
---------
-sklearn.svm.LinearSVC: Linear support vector classification.
-LogisticRegression: Logistic regression.
-Perceptron: Inherits from SGDClassifier. ``Perceptron()`` is equivalent to
-    ``SGDClassifier(loss="perceptron", eta0=1, learning_rate="constant",
-    penalty=None)``.
-
-Examples
---------
->>> import numpy as np
->>> from sklearn import linear_model
->>> X = np.array([[-1, -1], [-2, -1], [1, 1], [2, 1]])
->>> Y = np.array([1, 1, 2, 2])
->>> clf = linear_model.SGDClassifier(max_iter=1000, tol=1e-3)
->>> clf.fit(X, Y)
-SGDClassifier()
-
->>> print(clf.predict([[-0.8, -1]]))
-[1]
-*)
-
-val decision_function : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
-(**
-Predict confidence scores for samples.
-
-The confidence score for a sample is the signed distance of that
-sample to the hyperplane.
-
-Parameters
-----------
-X : array_like or sparse matrix, shape (n_samples, n_features)
-    Samples.
-
-Returns
--------
-array, shape=(n_samples,) if n_classes == 2 else (n_samples, n_classes)
-    Confidence scores per (sample, class) combination. In the binary
-    case, confidence score for self.classes_[1] where >0 means this
-    class would be predicted.
-*)
-
-val densify : t -> t
-(**
-Convert coefficient matrix to dense array format.
-
-Converts the ``coef_`` member (back) to a numpy.ndarray. This is the
-default format of ``coef_`` and is required for fitting, so calling
-this method is only required on models that have previously been
-sparsified; otherwise, it is a no-op.
-
-Returns
--------
-self
-    Fitted estimator.
-*)
-
-val fit : ?coef_init:Ndarray.t -> ?intercept_init:Ndarray.t -> ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
-(**
-Fit linear model with Stochastic Gradient Descent.
-
-Parameters
-----------
-X : {array-like, sparse matrix}, shape (n_samples, n_features)
-    Training data.
-
-y : ndarray of shape (n_samples,)
-    Target values.
-
-coef_init : ndarray of shape (n_classes, n_features), default=None
-    The initial coefficients to warm-start the optimization.
-
-intercept_init : ndarray of shape (n_classes,), default=None
-    The initial intercept to warm-start the optimization.
-
-sample_weight : array-like, shape (n_samples,), default=None
-    Weights applied to individual samples.
-    If not provided, uniform weights are assumed. These weights will
-    be multiplied with class_weight (passed through the
-    constructor) if class_weight is specified.
-
-Returns
--------
-self :
-    Returns an instance of self.
-*)
-
-val get_params : ?deep:bool -> t -> Py.Object.t
-(**
-Get parameters for this estimator.
-
-Parameters
-----------
-deep : bool, default=True
-    If True, will return the parameters for this estimator and
-    contained subobjects that are estimators.
-
-Returns
--------
-params : mapping of string to any
-    Parameter names mapped to their values.
-*)
-
-val partial_fit : ?classes:Ndarray.t -> ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
-(**
-Perform one epoch of stochastic gradient descent on given samples.
-
-Internally, this method uses ``max_iter = 1``. Therefore, it is not
-guaranteed that a minimum of the cost function is reached after calling
-it once. Matters such as objective convergence and early stopping
-should be handled by the user.
-
-Parameters
-----------
-X : {array-like, sparse matrix}, shape (n_samples, n_features)
-    Subset of the training data.
-
-y : ndarray of shape (n_samples,)
-    Subset of the target values.
-
-classes : ndarray of shape (n_classes,), default=None
-    Classes across all calls to partial_fit.
-    Can be obtained by via `np.unique(y_all)`, where y_all is the
-    target vector of the entire dataset.
-    This argument is required for the first call to partial_fit
-    and can be omitted in the subsequent calls.
-    Note that y doesn't need to contain all labels in `classes`.
-
-sample_weight : array-like, shape (n_samples,), default=None
-    Weights applied to individual samples.
-    If not provided, uniform weights are assumed.
-
-Returns
--------
-self :
-    Returns an instance of self.
-*)
-
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
-(**
-Predict class labels for samples in X.
-
-Parameters
-----------
-X : array_like or sparse matrix, shape (n_samples, n_features)
-    Samples.
-
-Returns
--------
-C : array, shape [n_samples]
-    Predicted class label per sample.
-*)
-
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
-(**
-Return the mean accuracy on the given test data and labels.
-
-In multi-label classification, this is the subset accuracy
-which is a harsh metric since you require for each sample that
-each label set be correctly predicted.
-
-Parameters
-----------
-X : array-like of shape (n_samples, n_features)
-    Test samples.
-
-y : array-like of shape (n_samples,) or (n_samples, n_outputs)
-    True labels for X.
-
-sample_weight : array-like of shape (n_samples,), default=None
-    Sample weights.
-
-Returns
--------
-score : float
-    Mean accuracy of self.predict(X) wrt. y.
-*)
-
-val set_params : ?kwargs:(string * Py.Object.t) list -> t -> t
-(**
-Set and validate the parameters of estimator.
-
-Parameters
-----------
-**kwargs : dict
-    Estimator parameters.
-
-Returns
--------
-self : object
-    Estimator instance.
-*)
-
-val sparsify : t -> t
-(**
-Convert coefficient matrix to sparse format.
-
-Converts the ``coef_`` member to a scipy.sparse matrix, which for
-L1-regularized models can be much more memory- and storage-efficient
-than the usual numpy.ndarray representation.
-
-The ``intercept_`` member is not converted.
-
-Returns
--------
-self
-    Fitted estimator.
-
-Notes
------
-For non-sparse models, i.e. when there are not many zeros in ``coef_``,
-this may actually *increase* memory usage, so use this method with
-care. A rule of thumb is that the number of zero elements, which can
-be computed with ``(coef_ == 0).sum()``, must be more than 50% for this
-to provide significant benefits.
-
-After calling this method, further fitting with the partial_fit
-method (if any) will not work until you call densify.
-*)
-
-
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
-
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
-
-(** Attribute n_iter_: see constructor for documentation *)
-val n_iter_ : t -> int
-
-(** Attribute loss_function_: see constructor for documentation *)
-val loss_function_ : t -> Py.Object.t
-
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
-
-(** Attribute t_: see constructor for documentation *)
-val t_ : t -> int
-
-(** Print the object to a human-readable representation. *)
-val to_string : t -> string
-
-
-(** Print the object to a human-readable representation. *)
-val show : t -> string
-
-(** Pretty-print the object to a formatter. *)
-val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
-
-
-end
-
-module SGDRegressor : sig
-type t
-val of_pyobject : Py.Object.t -> t
-val to_pyobject : t -> Py.Object.t
-
-val create : ?loss:string -> ?penalty:[`L2 | `L1 | `Elasticnet] -> ?alpha:float -> ?l1_ratio:float -> ?fit_intercept:bool -> ?max_iter:int -> ?tol:float -> ?shuffle:bool -> ?verbose:int -> ?epsilon:float -> ?random_state:[`Int of int | `RandomState of Py.Object.t] -> ?learning_rate:string -> ?eta0:float -> ?power_t:float -> ?early_stopping:bool -> ?validation_fraction:float -> ?n_iter_no_change:int -> ?warm_start:bool -> ?average:[`Bool of bool | `Int of int] -> unit -> t
-(**
-Linear model fitted by minimizing a regularized empirical loss with SGD
-
-SGD stands for Stochastic Gradient Descent: the gradient of the loss is
-estimated each sample at a time and the model is updated along the way with
-a decreasing strength schedule (aka learning rate).
-
-The regularizer is a penalty added to the loss function that shrinks model
-parameters towards the zero vector using either the squared euclidean norm
-L2 or the absolute norm L1 or a combination of both (Elastic Net). If the
-parameter update crosses the 0.0 value because of the regularizer, the
-update is truncated to 0.0 to allow for learning sparse models and achieve
-online feature selection.
-
-This implementation works with data represented as dense numpy arrays of
-floating point values for the features.
-
-Read more in the :ref:`User Guide <sgd>`.
-
-Parameters
-----------
-loss : str, default='squared_loss'
-    The loss function to be used. The possible values are 'squared_loss',
-    'huber', 'epsilon_insensitive', or 'squared_epsilon_insensitive'
-
-    The 'squared_loss' refers to the ordinary least squares fit.
-    'huber' modifies 'squared_loss' to focus less on getting outliers
-    correct by switching from squared to linear loss past a distance of
-    epsilon. 'epsilon_insensitive' ignores errors less than epsilon and is
-    linear past that; this is the loss function used in SVR.
-    'squared_epsilon_insensitive' is the same but becomes squared loss past
-    a tolerance of epsilon.
-
-penalty : {'l2', 'l1', 'elasticnet'}, default='l2'
-    The penalty (aka regularization term) to be used. Defaults to 'l2'
-    which is the standard regularizer for linear SVM models. 'l1' and
-    'elasticnet' might bring sparsity to the model (feature selection)
-    not achievable with 'l2'.
-
-alpha : float, default=0.0001
-    Constant that multiplies the regularization term.
-    Also used to compute learning_rate when set to 'optimal'.
-
-l1_ratio : float, default=0.15
-    The Elastic Net mixing parameter, with 0 <= l1_ratio <= 1.
-    l1_ratio=0 corresponds to L2 penalty, l1_ratio=1 to L1.
-
-fit_intercept : bool, default=True
-    Whether the intercept should be estimated or not. If False, the
-    data is assumed to be already centered.
-
-max_iter : int, default=1000
-    The maximum number of passes over the training data (aka epochs).
-    It only impacts the behavior in the ``fit`` method, and not the
-    :meth:`partial_fit` method.
-
-    .. versionadded:: 0.19
-
-tol : float, default=1e-3
-    The stopping criterion. If it is not None, the iterations will stop
-    when (loss > best_loss - tol) for ``n_iter_no_change`` consecutive
-    epochs.
-
-    .. versionadded:: 0.19
-
-shuffle : bool, default=True
-    Whether or not the training data should be shuffled after each epoch.
-
-verbose : int, default=0
-    The verbosity level.
-
-epsilon : float, default=0.1
-    Epsilon in the epsilon-insensitive loss functions; only if `loss` is
-    'huber', 'epsilon_insensitive', or 'squared_epsilon_insensitive'.
-    For 'huber', determines the threshold at which it becomes less
-    important to get the prediction exactly right.
-    For epsilon-insensitive, any differences between the current prediction
-    and the correct label are ignored if they are less than this threshold.
-
-random_state : int, RandomState instance, default=None
-    The seed of the pseudo random number generator to use when shuffling
-    the data.  If int, random_state is the seed used by the random number
-    generator; If RandomState instance, random_state is the random number
-    generator; If None, the random number generator is the RandomState
-    instance used by `np.random`.
-
-learning_rate : string, default='invscaling'
-    The learning rate schedule:
-
-    'constant':
-        eta = eta0
-    'optimal':
-        eta = 1.0 / (alpha * (t + t0))
-        where t0 is chosen by a heuristic proposed by Leon Bottou.
-    'invscaling': [default]
-        eta = eta0 / pow(t, power_t)
-    'adaptive':
-        eta = eta0, as long as the training keeps decreasing.
-        Each time n_iter_no_change consecutive epochs fail to decrease the
-        training loss by tol or fail to increase validation score by tol if
-        early_stopping is True, the current learning rate is divided by 5.
-
-eta0 : double, default=0.01
-    The initial learning rate for the 'constant', 'invscaling' or
-    'adaptive' schedules. The default value is 0.01.
-
-power_t : double, default=0.25
-    The exponent for inverse scaling learning rate.
-
-early_stopping : bool, default=False
-    Whether to use early stopping to terminate training when validation
-    score is not improving. If set to True, it will automatically set aside
-    a fraction of training data as validation and terminate
-    training when validation score is not improving by at least tol for
-    n_iter_no_change consecutive epochs.
-
-    .. versionadded:: 0.20
-
-validation_fraction : float, default=0.1
-    The proportion of training data to set aside as validation set for
-    early stopping. Must be between 0 and 1.
-    Only used if early_stopping is True.
-
-    .. versionadded:: 0.20
-
-n_iter_no_change : int, default=5
-    Number of iterations with no improvement to wait before early stopping.
-
-    .. versionadded:: 0.20
-
-warm_start : bool, default=False
-    When set to True, reuse the solution of the previous call to fit as
-    initialization, otherwise, just erase the previous solution.
-    See :term:`the Glossary <warm_start>`.
-
-    Repeatedly calling fit or partial_fit when warm_start is True can
-    result in a different solution than when calling fit a single time
-    because of the way the data is shuffled.
-    If a dynamic learning rate is used, the learning rate is adapted
-    depending on the number of samples already seen. Calling ``fit`` resets
-    this counter, while ``partial_fit``  will result in increasing the
-    existing counter.
-
-average : bool or int, default=False
-    When set to True, computes the averaged SGD weights and stores the
-    result in the ``coef_`` attribute. If set to an int greater than 1,
-    averaging will begin once the total number of samples seen reaches
-    average. So ``average=10`` will begin averaging after seeing 10
-    samples.
-
-Attributes
-----------
-coef_ : ndarray of shape (n_features,)
-    Weights assigned to the features.
-
-intercept_ : ndarray of shape (1,)
-    The intercept term.
-
-average_coef_ : ndarray of shape (n_features,)
-    Averaged weights assigned to the features.
-
-average_intercept_ : ndarray of shape (1,)
-    The averaged intercept term.
-
-n_iter_ : int
-    The actual number of iterations to reach the stopping criterion.
-
-t_ : int
-    Number of weight updates performed during training.
-    Same as ``(n_iter_ * n_samples)``.
-
-Examples
---------
->>> import numpy as np
->>> from sklearn import linear_model
->>> n_samples, n_features = 10, 5
->>> rng = np.random.RandomState(0)
->>> y = rng.randn(n_samples)
->>> X = rng.randn(n_samples, n_features)
->>> clf = linear_model.SGDRegressor(max_iter=1000, tol=1e-3)
->>> clf.fit(X, y)
-SGDRegressor()
-
-See also
---------
-Ridge, ElasticNet, Lasso, sklearn.svm.SVR
-*)
-
-val densify : t -> t
-(**
-Convert coefficient matrix to dense array format.
-
-Converts the ``coef_`` member (back) to a numpy.ndarray. This is the
-default format of ``coef_`` and is required for fitting, so calling
-this method is only required on models that have previously been
-sparsified; otherwise, it is a no-op.
-
-Returns
--------
-self
-    Fitted estimator.
-*)
-
-val fit : ?coef_init:Ndarray.t -> ?intercept_init:Ndarray.t -> ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
-(**
-Fit linear model with Stochastic Gradient Descent.
-
-Parameters
-----------
-X : {array-like, sparse matrix}, shape (n_samples, n_features)
-    Training data
-
-y : ndarray of shape (n_samples,)
-    Target values
-
-coef_init : ndarray of shape (n_features,), default=None
-    The initial coefficients to warm-start the optimization.
-
-intercept_init : ndarray of shape (1,), default=None
-    The initial intercept to warm-start the optimization.
-
-sample_weight : array-like, shape (n_samples,), default=None
-    Weights applied to individual samples (1. for unweighted).
-
-Returns
--------
-self : returns an instance of self.
-*)
-
-val get_params : ?deep:bool -> t -> Py.Object.t
-(**
-Get parameters for this estimator.
-
-Parameters
-----------
-deep : bool, default=True
-    If True, will return the parameters for this estimator and
-    contained subobjects that are estimators.
-
-Returns
--------
-params : mapping of string to any
-    Parameter names mapped to their values.
-*)
-
-val partial_fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
-(**
-Perform one epoch of stochastic gradient descent on given samples.
-
-Internally, this method uses ``max_iter = 1``. Therefore, it is not
-guaranteed that a minimum of the cost function is reached after calling
-it once. Matters such as objective convergence and early stopping
-should be handled by the user.
-
-Parameters
-----------
-X : {array-like, sparse matrix}, shape (n_samples, n_features)
-    Subset of training data
-
-y : numpy array of shape (n_samples,)
-    Subset of target values
-
-sample_weight : array-like, shape (n_samples,), default=None
-    Weights applied to individual samples.
-    If not provided, uniform weights are assumed.
-
-Returns
--------
-self : returns an instance of self.
-*)
-
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
-(**
-Predict using the linear model
-
-Parameters
-----------
-X : {array-like, sparse matrix}, shape (n_samples, n_features)
-
-Returns
--------
-ndarray of shape (n_samples,)
-   Predicted target values per element in X.
-*)
-
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
-(**
-Return the coefficient of determination R^2 of the prediction.
-
-The coefficient R^2 is defined as (1 - u/v), where u is the residual
-sum of squares ((y_true - y_pred) ** 2).sum() and v is the total
-sum of squares ((y_true - y_true.mean()) ** 2).sum().
-The best possible score is 1.0 and it can be negative (because the
-model can be arbitrarily worse). A constant model that always
-predicts the expected value of y, disregarding the input features,
-would get a R^2 score of 0.0.
-
-Parameters
-----------
-X : array-like of shape (n_samples, n_features)
-    Test samples. For some estimators this may be a
-    precomputed kernel matrix or a list of generic objects instead,
-    shape = (n_samples, n_samples_fitted),
-    where n_samples_fitted is the number of
-    samples used in the fitting for the estimator.
-
-y : array-like of shape (n_samples,) or (n_samples, n_outputs)
-    True values for X.
-
-sample_weight : array-like of shape (n_samples,), default=None
-    Sample weights.
-
-Returns
--------
-score : float
-    R^2 of self.predict(X) wrt. y.
-
-Notes
------
-The R2 score used when calling ``score`` on a regressor will use
-``multioutput='uniform_average'`` from version 0.23 to keep consistent
-with :func:`~sklearn.metrics.r2_score`. This will influence the
-``score`` method of all the multioutput regressors (except for
-:class:`~sklearn.multioutput.MultiOutputRegressor`). To specify the
-default value manually and avoid the warning, please either call
-:func:`~sklearn.metrics.r2_score` directly or make a custom scorer with
-:func:`~sklearn.metrics.make_scorer` (the built-in scorer ``'r2'`` uses
-``multioutput='uniform_average'``).
-*)
-
-val set_params : ?kwargs:(string * Py.Object.t) list -> t -> t
-(**
-Set and validate the parameters of estimator.
-
-Parameters
-----------
-**kwargs : dict
-    Estimator parameters.
-
-Returns
--------
-self : object
-    Estimator instance.
-*)
-
-val sparsify : t -> t
-(**
-Convert coefficient matrix to sparse format.
-
-Converts the ``coef_`` member to a scipy.sparse matrix, which for
-L1-regularized models can be much more memory- and storage-efficient
-than the usual numpy.ndarray representation.
-
-The ``intercept_`` member is not converted.
-
-Returns
--------
-self
-    Fitted estimator.
-
-Notes
------
-For non-sparse models, i.e. when there are not many zeros in ``coef_``,
-this may actually *increase* memory usage, so use this method with
-care. A rule of thumb is that the number of zero elements, which can
-be computed with ``(coef_ == 0).sum()``, must be more than 50% for this
-to provide significant benefits.
-
-After calling this method, further fitting with the partial_fit
-method (if any) will not work until you call densify.
-*)
-
-
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
-
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
-
-(** Attribute average_coef_: see constructor for documentation *)
-val average_coef_ : t -> Ndarray.t
-
-(** Attribute average_intercept_: see constructor for documentation *)
-val average_intercept_ : t -> Ndarray.t
-
-(** Attribute n_iter_: see constructor for documentation *)
-val n_iter_ : t -> int
-
-(** Attribute t_: see constructor for documentation *)
-val t_ : t -> int
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -9519,7 +8130,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?fit_intercept:bool -> ?copy_X:bool -> ?max_subpopulation:int -> ?n_subsamples:int -> ?max_iter:int -> ?tol:float -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?n_jobs:[`Int of int | `None] -> ?verbose:bool -> unit -> t
+val create : ?fit_intercept:bool -> ?copy_X:bool -> ?max_subpopulation:int -> ?n_subsamples:int -> ?max_iter:int -> ?tol:float -> ?random_state:int -> ?n_jobs:int -> ?verbose:int -> unit -> t
 (**
 Theil-Sen Estimator: robust multivariate regression model.
 
@@ -9620,7 +8231,7 @@ References
   http://home.olemiss.edu/~xdang/papers/MTSE.pdf
 *)
 
-val fit : x:Ndarray.t -> y:Py.Object.t -> t -> t
+val fit : x:Arr.t -> y:Py.Object.t -> t -> t
 (**
 Fit linear model.
 
@@ -9636,7 +8247,7 @@ Returns
 self : returns an instance of self.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -9652,7 +8263,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict using the linear model.
 
@@ -9667,7 +8278,7 @@ C : array, shape (n_samples,)
     Returns predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -9733,20 +8344,40 @@ self : object
 *)
 
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
 
-(** Attribute breakdown_: see constructor for documentation *)
+
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
+
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
+
+
+(** Attribute breakdown_: get value or raise Not_found if None.*)
 val breakdown_ : t -> float
 
-(** Attribute n_iter_: see constructor for documentation *)
+(** Attribute breakdown_: get value as an option. *)
+val breakdown_opt : t -> (float) option
+
+
+(** Attribute n_iter_: get value or raise Not_found if None.*)
 val n_iter_ : t -> int
 
-(** Attribute n_subpopulation_: see constructor for documentation *)
+(** Attribute n_iter_: get value as an option. *)
+val n_iter_opt : t -> (int) option
+
+
+(** Attribute n_subpopulation_: get value or raise Not_found if None.*)
 val n_subpopulation_ : t -> int
+
+(** Attribute n_subpopulation_: get value as an option. *)
+val n_subpopulation_opt : t -> (int) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -9761,7 +8392,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val enet_path : ?l1_ratio:float -> ?eps:float -> ?n_alphas:int -> ?alphas:Ndarray.t -> ?precompute:[`Bool of bool | `Auto | `Ndarray of Ndarray.t] -> ?xy:Ndarray.t -> ?copy_X:bool -> ?coef_init:[`Ndarray of Ndarray.t | `None] -> ?verbose:[`Bool of bool | `Int of int] -> ?return_n_iter:bool -> ?positive:bool -> ?check_input:bool -> ?params:(string * Py.Object.t) list -> x:Ndarray.t -> y:Ndarray.t -> unit -> (Ndarray.t * Ndarray.t * Ndarray.t * Ndarray.t)
+val enet_path : ?l1_ratio:float -> ?eps:float -> ?n_alphas:int -> ?alphas:Arr.t -> ?precompute:[`Bool of bool | `Auto | `Arr of Arr.t] -> ?xy:Arr.t -> ?copy_X:bool -> ?coef_init:Arr.t -> ?verbose:int -> ?return_n_iter:bool -> ?positive:bool -> ?check_input:bool -> ?params:(string * Py.Object.t) list -> x:Arr.t -> y:Arr.t -> unit -> (Arr.t * Arr.t * Arr.t * Arr.t)
 (**
 Compute elastic net path with coordinate descent.
 
@@ -9874,7 +8505,7 @@ For an example, see
 <sphx_glr_auto_examples_linear_model_plot_lasso_coordinate_descent_path.py>`.
 *)
 
-val lars_path : ?xy:Ndarray.t -> ?gram:[`Auto | `Ndarray of Ndarray.t | `None] -> ?max_iter:int -> ?alpha_min:float -> ?method_:[`Lar | `Lasso] -> ?copy_X:bool -> ?eps:float -> ?copy_Gram:bool -> ?verbose:int -> ?return_path:bool -> ?return_n_iter:bool -> ?positive:bool -> x:[`Ndarray of Ndarray.t | `None] -> y:[`Ndarray of Ndarray.t | `None] -> unit -> (Ndarray.t * Ndarray.t * Ndarray.t * int)
+val lars_path : ?xy:Arr.t -> ?gram:[`Auto | `Arr of Arr.t] -> ?max_iter:int -> ?alpha_min:float -> ?method_:[`Lar | `Lasso] -> ?copy_X:bool -> ?eps:float -> ?copy_Gram:bool -> ?verbose:int -> ?return_path:bool -> ?return_n_iter:bool -> ?positive:bool -> x:[`Arr of Arr.t | `None] -> y:[`Arr of Arr.t | `None] -> unit -> (Arr.t * Arr.t * Arr.t * int)
 (**
 Compute Least Angle Regression or Lasso path using LARS algorithm [1]
 
@@ -9998,7 +8629,7 @@ References
        <https://en.wikipedia.org/wiki/Lasso_(statistics)>`_
 *)
 
-val lars_path_gram : ?max_iter:int -> ?alpha_min:float -> ?method_:[`Lar | `Lasso] -> ?copy_X:bool -> ?eps:float -> ?copy_Gram:bool -> ?verbose:int -> ?return_path:bool -> ?return_n_iter:bool -> ?positive:bool -> xy:Ndarray.t -> gram:Ndarray.t -> n_samples:[`Int of int | `Float of float] -> unit -> (Ndarray.t * Ndarray.t * Ndarray.t * int)
+val lars_path_gram : ?max_iter:int -> ?alpha_min:float -> ?method_:[`Lar | `Lasso] -> ?copy_X:bool -> ?eps:float -> ?copy_Gram:bool -> ?verbose:int -> ?return_path:bool -> ?return_n_iter:bool -> ?positive:bool -> xy:Arr.t -> gram:Arr.t -> n_samples:[`I of int | `F of float] -> unit -> (Arr.t * Arr.t * Arr.t * int)
 (**
 lars_path in the sufficient stats mode [1]
 
@@ -10104,7 +8735,7 @@ References
        <https://en.wikipedia.org/wiki/Lasso_(statistics)>`_
 *)
 
-val lasso_path : ?eps:float -> ?n_alphas:int -> ?alphas:Ndarray.t -> ?precompute:[`Bool of bool | `Auto | `Ndarray of Ndarray.t] -> ?xy:Ndarray.t -> ?copy_X:bool -> ?coef_init:[`Ndarray of Ndarray.t | `None] -> ?verbose:[`Bool of bool | `Int of int] -> ?return_n_iter:bool -> ?positive:bool -> ?params:(string * Py.Object.t) list -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> unit -> (Ndarray.t * Ndarray.t * Ndarray.t * Ndarray.t)
+val lasso_path : ?eps:float -> ?n_alphas:int -> ?alphas:Arr.t -> ?precompute:[`Bool of bool | `Auto | `Arr of Arr.t] -> ?xy:Arr.t -> ?copy_X:bool -> ?coef_init:Arr.t -> ?verbose:int -> ?return_n_iter:bool -> ?positive:bool -> ?params:(string * Py.Object.t) list -> x:Arr.t -> y:Arr.t -> unit -> (Arr.t * Arr.t * Arr.t * Arr.t)
 (**
 Compute Lasso path with coordinate descent
 
@@ -10239,7 +8870,7 @@ LassoLarsCV
 sklearn.decomposition.sparse_encode
 *)
 
-val logistic_regression_path : ?pos_class:[`Int of int | `None] -> ?cs:[`Int of int | `Ndarray of Ndarray.t] -> ?fit_intercept:bool -> ?max_iter:int -> ?tol:float -> ?verbose:int -> ?solver:[`Lbfgs | `Newton_cg | `Liblinear | `Sag | `Saga] -> ?coef:Ndarray.t -> ?class_weight:[`DictIntToFloat of (int * float) list | `Balanced] -> ?dual:bool -> ?penalty:[`L1 | `L2 | `Elasticnet] -> ?intercept_scaling:float -> ?multi_class:[`Ovr | `Multinomial | `Auto] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?check_input:bool -> ?max_squared_sum:float -> ?sample_weight:Ndarray.t -> ?l1_ratio:[`Float of float | `None] -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> unit -> (Py.Object.t * Ndarray.t * Ndarray.t)
+val logistic_regression_path : ?pos_class:int -> ?cs:[`I of int | `Arr of Arr.t] -> ?fit_intercept:bool -> ?max_iter:int -> ?tol:float -> ?verbose:int -> ?solver:[`Lbfgs | `Newton_cg | `Liblinear | `Sag | `Saga] -> ?coef:Arr.t -> ?class_weight:[`DictIntToFloat of (int * float) list | `Balanced] -> ?dual:bool -> ?penalty:[`L1 | `L2 | `Elasticnet] -> ?intercept_scaling:float -> ?multi_class:[`Ovr | `Multinomial | `Auto] -> ?random_state:int -> ?check_input:bool -> ?max_squared_sum:float -> ?sample_weight:Arr.t -> ?l1_ratio:float -> x:Arr.t -> y:Arr.t -> unit -> (Py.Object.t * Arr.t * Arr.t)
 (**
 DEPRECATED: logistic_regression_path was deprecated in version 0.21 and will be removed in version 0.23.0
 
@@ -10398,7 +9029,7 @@ Compute a Logistic Regression model for a list of regularization
     
 *)
 
-val orthogonal_mp : ?n_nonzero_coefs:int -> ?tol:float -> ?precompute:[`Bool of bool | `Auto] -> ?copy_X:bool -> ?return_path:bool -> ?return_n_iter:bool -> x:Ndarray.t -> y:Ndarray.t -> unit -> (Ndarray.t * Py.Object.t)
+val orthogonal_mp : ?n_nonzero_coefs:int -> ?tol:float -> ?precompute:[`Bool of bool | `Auto] -> ?copy_X:bool -> ?return_path:bool -> ?return_n_iter:bool -> x:Arr.t -> y:Arr.t -> unit -> (Arr.t * [`Arr of Arr.t | `I of int])
 (**
 Orthogonal Matching Pursuit (OMP)
 
@@ -10478,7 +9109,7 @@ Matching Pursuit Technical Report - CS Technion, April 2008.
 https://www.cs.technion.ac.il/~ronrubin/Publications/KSVD-OMP-v2.pdf
 *)
 
-val orthogonal_mp_gram : ?n_nonzero_coefs:int -> ?tol:float -> ?norms_squared:Ndarray.t -> ?copy_Gram:bool -> ?copy_Xy:bool -> ?return_path:bool -> ?return_n_iter:bool -> gram:Ndarray.t -> xy:Ndarray.t -> unit -> (Ndarray.t * Py.Object.t)
+val orthogonal_mp_gram : ?n_nonzero_coefs:int -> ?tol:float -> ?norms_squared:Arr.t -> ?copy_Gram:bool -> ?copy_Xy:bool -> ?return_path:bool -> ?return_n_iter:bool -> gram:Arr.t -> xy:Arr.t -> unit -> (Arr.t * [`Arr of Arr.t | `I of int])
 (**
 Gram Orthogonal Matching Pursuit (OMP)
 
@@ -10554,7 +9185,7 @@ Matching Pursuit Technical Report - CS Technion, April 2008.
 https://www.cs.technion.ac.il/~ronrubin/Publications/KSVD-OMP-v2.pdf
 *)
 
-val ridge_regression : ?sample_weight:[`Float of float | `Ndarray of Ndarray.t] -> ?solver:[`Auto | `Svd | `Cholesky | `Lsqr | `Sparse_cg | `Sag | `Saga] -> ?max_iter:int -> ?tol:float -> ?verbose:int -> ?random_state:[`Int of int | `RandomState of Py.Object.t] -> ?return_n_iter:bool -> ?return_intercept:bool -> ?check_input:bool -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t | `LinearOperator of Py.Object.t] -> y:Ndarray.t -> alpha:[`Float of float | `Ndarray of Ndarray.t] -> unit -> (Ndarray.t * int * Py.Object.t)
+val ridge_regression : ?sample_weight:[`F of float | `Arr of Arr.t] -> ?solver:[`Auto | `Svd | `Cholesky | `Lsqr | `Sparse_cg | `Sag | `Saga] -> ?max_iter:int -> ?tol:float -> ?verbose:int -> ?random_state:int -> ?return_n_iter:bool -> ?return_intercept:bool -> ?check_input:bool -> x:[`Arr of Arr.t | `LinearOperator of Py.Object.t] -> y:Arr.t -> alpha:[`F of float | `Arr of Arr.t] -> unit -> (Arr.t * int * [`F of float | `Arr of Arr.t])
 (**
 Solve the ridge equation by the method of normal equations.
 

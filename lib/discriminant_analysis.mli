@@ -1,3 +1,6 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module BaseEstimator : sig
 type t
 val of_pyobject : Py.Object.t -> t
@@ -14,7 +17,7 @@ at the class level in their ``__init__`` as explicit keyword
 arguments (no ``*args`` or ``**kwargs``).
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -74,7 +77,7 @@ val create : unit -> t
 Mixin class for all classifiers in scikit-learn.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -125,7 +128,7 @@ Mixin for linear classifiers.
 Handles prediction for sparse and dense X.
 *)
 
-val decision_function : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val decision_function : x:Arr.t -> t -> Arr.t
 (**
 Predict confidence scores for samples.
 
@@ -145,7 +148,7 @@ array, shape=(n_samples,) if n_classes == 2 else (n_samples, n_classes)
     class would be predicted.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict class labels for samples in X.
 
@@ -160,7 +163,7 @@ C : array, shape [n_samples]
     Predicted class label per sample.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -204,7 +207,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?solver:string -> ?shrinkage:[`String of string | `Float of float] -> ?priors:Ndarray.t -> ?n_components:int -> ?store_covariance:bool -> ?tol:float -> unit -> t
+val create : ?solver:string -> ?shrinkage:[`S of string | `F of float] -> ?priors:Arr.t -> ?n_components:int -> ?store_covariance:bool -> ?tol:float -> unit -> t
 (**
 Linear Discriminant Analysis
 
@@ -325,7 +328,7 @@ LinearDiscriminantAnalysis()
 [1]
 *)
 
-val decision_function : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val decision_function : x:Arr.t -> t -> Arr.t
 (**
 Predict confidence scores for samples.
 
@@ -345,7 +348,7 @@ array, shape=(n_samples,) if n_classes == 2 else (n_samples, n_classes)
     class would be predicted.
 *)
 
-val fit : x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit LinearDiscriminantAnalysis model according to the given
    training data and parameters.
@@ -365,7 +368,7 @@ y : array, shape (n_samples,)
     Target values.
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -389,7 +392,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -405,7 +408,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict class labels for samples in X.
 
@@ -420,7 +423,7 @@ C : array, shape [n_samples]
     Predicted class label per sample.
 *)
 
-val predict_log_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_log_proba : x:Arr.t -> t -> Arr.t
 (**
 Estimate log probability.
 
@@ -435,7 +438,7 @@ C : array, shape (n_samples, n_classes)
     Estimated log probabilities.
 *)
 
-val predict_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Estimate probability.
 
@@ -450,7 +453,7 @@ C : array, shape (n_samples, n_classes)
     Estimated probabilities.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -495,7 +498,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Project data to maximize class separation.
 
@@ -511,32 +514,68 @@ X_new : array, shape (n_samples, n_components)
 *)
 
 
-(** Attribute coef_: see constructor for documentation *)
-val coef_ : t -> Ndarray.t
+(** Attribute coef_: get value or raise Not_found if None.*)
+val coef_ : t -> Arr.t
 
-(** Attribute intercept_: see constructor for documentation *)
-val intercept_ : t -> Ndarray.t
+(** Attribute coef_: get value as an option. *)
+val coef_opt : t -> (Arr.t) option
 
-(** Attribute covariance_: see constructor for documentation *)
-val covariance_ : t -> Ndarray.t
 
-(** Attribute explained_variance_ratio_: see constructor for documentation *)
-val explained_variance_ratio_ : t -> Ndarray.t
+(** Attribute intercept_: get value or raise Not_found if None.*)
+val intercept_ : t -> Arr.t
 
-(** Attribute means_: see constructor for documentation *)
-val means_ : t -> Ndarray.t
+(** Attribute intercept_: get value as an option. *)
+val intercept_opt : t -> (Arr.t) option
 
-(** Attribute priors_: see constructor for documentation *)
-val priors_ : t -> Ndarray.t
 
-(** Attribute scalings_: see constructor for documentation *)
-val scalings_ : t -> Ndarray.t
+(** Attribute covariance_: get value or raise Not_found if None.*)
+val covariance_ : t -> Arr.t
 
-(** Attribute xbar_: see constructor for documentation *)
-val xbar_ : t -> Ndarray.t
+(** Attribute covariance_: get value as an option. *)
+val covariance_opt : t -> (Arr.t) option
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+
+(** Attribute explained_variance_ratio_: get value or raise Not_found if None.*)
+val explained_variance_ratio_ : t -> Arr.t
+
+(** Attribute explained_variance_ratio_: get value as an option. *)
+val explained_variance_ratio_opt : t -> (Arr.t) option
+
+
+(** Attribute means_: get value or raise Not_found if None.*)
+val means_ : t -> Arr.t
+
+(** Attribute means_: get value as an option. *)
+val means_opt : t -> (Arr.t) option
+
+
+(** Attribute priors_: get value or raise Not_found if None.*)
+val priors_ : t -> Arr.t
+
+(** Attribute priors_: get value as an option. *)
+val priors_opt : t -> (Arr.t) option
+
+
+(** Attribute scalings_: get value or raise Not_found if None.*)
+val scalings_ : t -> Arr.t
+
+(** Attribute scalings_: get value as an option. *)
+val scalings_opt : t -> (Arr.t) option
+
+
+(** Attribute xbar_: get value or raise Not_found if None.*)
+val xbar_ : t -> Arr.t
+
+(** Attribute xbar_: get value as an option. *)
+val xbar_opt : t -> (Arr.t) option
+
+
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
+
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -556,7 +595,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?priors:Ndarray.t -> ?reg_param:float -> ?store_covariance:bool -> ?tol:float -> unit -> t
+val create : ?priors:Arr.t -> ?reg_param:float -> ?store_covariance:bool -> ?tol:float -> unit -> t
 (**
 Quadratic Discriminant Analysis
 
@@ -634,7 +673,7 @@ sklearn.discriminant_analysis.LinearDiscriminantAnalysis: Linear
     Discriminant Analysis
 *)
 
-val decision_function : x:Ndarray.t -> t -> Ndarray.t
+val decision_function : x:Arr.t -> t -> Arr.t
 (**
 Apply decision function to an array of samples.
 
@@ -651,7 +690,7 @@ C : ndarray of shape (n_samples,) or (n_samples, n_classes)
     log likelihood ratio of the positive class.
 *)
 
-val fit : x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the model according to the given training data and parameters.
 
@@ -672,7 +711,7 @@ y : array, shape = [n_samples]
     Target values (integers)
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -688,7 +727,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:Ndarray.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Perform classification on an array of test vectors X.
 
@@ -703,7 +742,7 @@ Returns
 C : ndarray of shape (n_samples,)
 *)
 
-val predict_log_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_log_proba : x:Arr.t -> t -> Arr.t
 (**
 Return posterior probabilities of classification.
 
@@ -718,7 +757,7 @@ C : ndarray of shape (n_samples, n_classes)
     Posterior log-probabilities of classification per class.
 *)
 
-val predict_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Return posterior probabilities of classification.
 
@@ -733,7 +772,7 @@ C : ndarray of shape (n_samples, n_classes)
     Posterior probabilities of classification per class.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -779,23 +818,47 @@ self : object
 *)
 
 
-(** Attribute covariance_: see constructor for documentation *)
+(** Attribute covariance_: get value or raise Not_found if None.*)
 val covariance_ : t -> Py.Object.t
 
-(** Attribute means_: see constructor for documentation *)
-val means_ : t -> Ndarray.t
+(** Attribute covariance_: get value as an option. *)
+val covariance_opt : t -> (Py.Object.t) option
 
-(** Attribute priors_: see constructor for documentation *)
-val priors_ : t -> Ndarray.t
 
-(** Attribute rotations_: see constructor for documentation *)
-val rotations_ : t -> Py.Object.t
+(** Attribute means_: get value or raise Not_found if None.*)
+val means_ : t -> Arr.t
 
-(** Attribute scalings_: see constructor for documentation *)
-val scalings_ : t -> Py.Object.t
+(** Attribute means_: get value as an option. *)
+val means_opt : t -> (Arr.t) option
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+
+(** Attribute priors_: get value or raise Not_found if None.*)
+val priors_ : t -> Arr.t
+
+(** Attribute priors_: get value as an option. *)
+val priors_opt : t -> (Arr.t) option
+
+
+(** Attribute rotations_: get value or raise Not_found if None.*)
+val rotations_ : t -> Arr.List.t
+
+(** Attribute rotations_: get value as an option. *)
+val rotations_opt : t -> (Arr.List.t) option
+
+
+(** Attribute scalings_: get value or raise Not_found if None.*)
+val scalings_ : t -> Arr.List.t
+
+(** Attribute scalings_: get value as an option. *)
+val scalings_opt : t -> (Arr.List.t) option
+
+
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
+
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -931,7 +994,7 @@ see :ref:`examples/preprocessing/plot_all_scaling.py
 <sphx_glr_auto_examples_preprocessing_plot_all_scaling.py>`.
 *)
 
-val fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Compute the mean and std to be used for later scaling.
 
@@ -945,7 +1008,7 @@ y
     Ignored
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -969,7 +1032,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -985,7 +1048,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val inverse_transform : ?copy:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : ?copy:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Scale back the data to the original representation
 
@@ -1002,7 +1065,7 @@ X_tr : array-like, shape [n_samples, n_features]
     Transformed array.
 *)
 
-val partial_fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val partial_fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Online computation of mean and std on X for later scaling.
 
@@ -1050,7 +1113,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : ?copy:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val transform : ?copy:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Perform standardization by centering and scaling
 
@@ -1063,17 +1126,33 @@ copy : bool, optional (default: None)
 *)
 
 
-(** Attribute scale_: see constructor for documentation *)
-val scale_ : t -> Py.Object.t
+(** Attribute scale_: get value or raise Not_found if None.*)
+val scale_ : t -> Arr.t
 
-(** Attribute mean_: see constructor for documentation *)
-val mean_ : t -> Py.Object.t
+(** Attribute scale_: get value as an option. *)
+val scale_opt : t -> (Arr.t) option
 
-(** Attribute var_: see constructor for documentation *)
-val var_ : t -> Py.Object.t
 
-(** Attribute n_samples_seen_: see constructor for documentation *)
-val n_samples_seen_ : t -> Py.Object.t
+(** Attribute mean_: get value or raise Not_found if None.*)
+val mean_ : t -> Arr.t
+
+(** Attribute mean_: get value as an option. *)
+val mean_opt : t -> (Arr.t) option
+
+
+(** Attribute var_: get value or raise Not_found if None.*)
+val var_ : t -> Arr.t
+
+(** Attribute var_: get value as an option. *)
+val var_opt : t -> (Arr.t) option
+
+
+(** Attribute n_samples_seen_: get value or raise Not_found if None.*)
+val n_samples_seen_ : t -> [`I of int | `Arr of Arr.t]
+
+(** Attribute n_samples_seen_: get value as an option. *)
+val n_samples_seen_opt : t -> ([`I of int | `Arr of Arr.t]) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1098,7 +1177,7 @@ val create : unit -> t
 Mixin class for all transformers in scikit-learn.
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -1136,7 +1215,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val check_X_y : ?accept_sparse:[`String of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`String of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C | `None] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?multi_output:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?y_numeric:bool -> ?warn_on_dtype:[`Bool of bool | `None] -> ?estimator:[`String of string | `Estimator of Py.Object.t] -> x:[`Ndarray of Ndarray.t | `ArrayLike of Py.Object.t | `SparseMatrix of Csr_matrix.t] -> y:[`Ndarray of Ndarray.t | `ArrayLike of Py.Object.t | `SparseMatrix of Csr_matrix.t] -> unit -> (Py.Object.t * Py.Object.t)
+val check_X_y : ?accept_sparse:[`S of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`S of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?multi_output:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?y_numeric:bool -> ?warn_on_dtype:bool -> ?estimator:[`S of string | `Estimator of Py.Object.t] -> x:Arr.t -> y:Arr.t -> unit -> (Py.Object.t * Py.Object.t)
 (**
 Input validation for standard estimators.
 
@@ -1242,7 +1321,7 @@ y_converted : object
     The converted and validated y.
 *)
 
-val check_array : ?accept_sparse:[`String of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`String of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C | `None] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:[`Bool of bool | `None] -> ?estimator:[`String of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
+val check_array : ?accept_sparse:[`S of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`S of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:bool -> ?estimator:[`S of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
 (**
 Input validation on an array, list, sparse matrix or similar.
 
@@ -1334,7 +1413,7 @@ array_converted : object
     The converted and validated array.
 *)
 
-val check_classification_targets : y:Ndarray.t -> unit -> Py.Object.t
+val check_classification_targets : y:Arr.t -> unit -> Py.Object.t
 (**
 Ensure that target y is of a non-regression type.
 
@@ -1347,7 +1426,7 @@ Parameters
 y : array-like
 *)
 
-val check_is_fitted : ?attributes:[`String of string | `ArrayLike of Py.Object.t | `StringList of string list] -> ?msg:string -> ?all_or_any:[`Callable of Py.Object.t | `PyObject of Py.Object.t] -> estimator:Py.Object.t -> unit -> Py.Object.t
+val check_is_fitted : ?attributes:[`S of string | `Arr of Arr.t | `StringList of string list] -> ?msg:string -> ?all_or_any:[`Callable of Py.Object.t | `PyObject of Py.Object.t] -> estimator:Py.Object.t -> unit -> Py.Object.t
 (**
 Perform is_fitted validation for estimator.
 
@@ -1394,7 +1473,7 @@ NotFittedError
     If the attributes are not found.
 *)
 
-val empirical_covariance : ?assume_centered:bool -> x:Ndarray.t -> unit -> Py.Object.t
+val empirical_covariance : ?assume_centered:bool -> x:Arr.t -> unit -> Py.Object.t
 (**
 Computes the Maximum likelihood covariance estimator
 
@@ -1416,7 +1495,7 @@ covariance : 2D ndarray, shape (n_features, n_features)
     Empirical covariance (Maximum Likelihood Estimator).
 *)
 
-val ledoit_wolf : ?assume_centered:bool -> ?block_size:int -> x:Ndarray.t -> unit -> (Ndarray.t * float)
+val ledoit_wolf : ?assume_centered:bool -> ?block_size:int -> x:Arr.t -> unit -> (Arr.t * float)
 (**
 Estimates the shrunk Ledoit-Wolf covariance matrix.
 
@@ -1455,7 +1534,7 @@ The regularized (shrunk) covariance is:
 where mu = trace(cov) / n_features
 *)
 
-val shrunk_covariance : ?shrinkage:[`Float of float | `PyObject of Py.Object.t] -> emp_cov:Ndarray.t -> unit -> Ndarray.t
+val shrunk_covariance : ?shrinkage:[`F of float | `T0_shrinkage_1 of Py.Object.t] -> emp_cov:Arr.t -> unit -> Arr.t
 (**
 Calculates a covariance matrix shrunk on the diagonal
 
@@ -1484,7 +1563,7 @@ The regularized (shrunk) covariance is given by:
 where mu = trace(cov) / n_features
 *)
 
-val softmax : ?copy:bool -> x:Py.Object.t -> unit -> Ndarray.t
+val softmax : ?copy:bool -> x:Py.Object.t -> unit -> Arr.t
 (**
 Calculate the softmax function.
 
@@ -1509,7 +1588,7 @@ out : array, shape (M, N)
     Softmax function evaluated at every point in x
 *)
 
-val unique_labels : Py.Object.t list -> Ndarray.t
+val unique_labels : Py.Object.t list -> Arr.t
 (**
 Extract an ordered array of unique labels
 

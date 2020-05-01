@@ -1,9 +1,12 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module AdaBoostClassifier : sig
 type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?base_estimator:Py.Object.t -> ?n_estimators:int -> ?learning_rate:float -> ?algorithm:[`SAMME | `SAMME_R] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
+val create : ?base_estimator:Py.Object.t -> ?n_estimators:int -> ?learning_rate:float -> ?algorithm:[`SAMME | `SAMME_R] -> ?random_state:int -> unit -> t
 (**
 An AdaBoost classifier.
 
@@ -122,7 +125,7 @@ val get_item : index:Py.Object.t -> t -> Py.Object.t
 Return the index'th estimator in the ensemble.
 *)
 
-val decision_function : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val decision_function : x:Arr.t -> t -> Arr.t
 (**
 Compute the decision function of ``X``.
 
@@ -143,7 +146,7 @@ score : array, shape = [n_samples, k]
     class in ``classes_``, respectively.
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Build a boosted classifier from the training set (X, y).
 
@@ -166,7 +169,7 @@ self : object
     Fitted estimator.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -182,7 +185,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict classes for X.
 
@@ -201,7 +204,7 @@ y : ndarray of shape (n_samples,)
     The predicted classes.
 *)
 
-val predict_log_proba : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict_log_proba : x:Arr.t -> t -> Arr.t
 (**
 Predict class log-probabilities for X.
 
@@ -222,7 +225,7 @@ p : array of shape (n_samples, n_classes)
     outputs is the same of that of the :term:`classes_` attribute.
 *)
 
-val predict_proba : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Predict class probabilities for X.
 
@@ -243,7 +246,7 @@ p : array of shape (n_samples, n_classes)
     outputs is the same of that of the :term:`classes_` attribute.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -288,7 +291,7 @@ self : object
     Estimator instance.
 *)
 
-val staged_decision_function : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Py.Object.t
+val staged_decision_function : x:Arr.t -> t -> Py.Object.t
 (**
 Compute decision function of ``X`` for each boosting iteration.
 
@@ -312,7 +315,7 @@ score : generator of array, shape = [n_samples, k]
     class in ``classes_``, respectively.
 *)
 
-val staged_predict : x:Ndarray.t -> t -> Py.Object.t
+val staged_predict : x:Arr.t -> t -> Py.Object.t
 (**
 Return staged predictions for X.
 
@@ -335,7 +338,7 @@ y : generator of array, shape = [n_samples]
     The predicted classes.
 *)
 
-val staged_predict_proba : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Py.Object.t
+val staged_predict_proba : x:Arr.t -> t -> Py.Object.t
 (**
 Predict class probabilities for X.
 
@@ -361,7 +364,7 @@ p : generator of array, shape = [n_samples]
     outputs is the same of that of the :term:`classes_` attribute.
 *)
 
-val staged_score : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> Py.Object.t
+val staged_score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> Py.Object.t
 (**
 Return staged scores for X, y.
 
@@ -387,26 +390,54 @@ z : float
 *)
 
 
-(** Attribute base_estimator_: see constructor for documentation *)
+(** Attribute base_estimator_: get value or raise Not_found if None.*)
 val base_estimator_ : t -> Py.Object.t
 
-(** Attribute estimators_: see constructor for documentation *)
+(** Attribute base_estimator_: get value as an option. *)
+val base_estimator_opt : t -> (Py.Object.t) option
+
+
+(** Attribute estimators_: get value or raise Not_found if None.*)
 val estimators_ : t -> Py.Object.t
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute estimators_: get value as an option. *)
+val estimators_opt : t -> (Py.Object.t) option
 
-(** Attribute n_classes_: see constructor for documentation *)
+
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
+
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute n_classes_: get value or raise Not_found if None.*)
 val n_classes_ : t -> int
 
-(** Attribute estimator_weights_: see constructor for documentation *)
-val estimator_weights_ : t -> Ndarray.t
+(** Attribute n_classes_: get value as an option. *)
+val n_classes_opt : t -> (int) option
 
-(** Attribute estimator_errors_: see constructor for documentation *)
-val estimator_errors_ : t -> Ndarray.t
 
-(** Attribute feature_importances_: see constructor for documentation *)
-val feature_importances_ : t -> Ndarray.t
+(** Attribute estimator_weights_: get value or raise Not_found if None.*)
+val estimator_weights_ : t -> Arr.t
+
+(** Attribute estimator_weights_: get value as an option. *)
+val estimator_weights_opt : t -> (Arr.t) option
+
+
+(** Attribute estimator_errors_: get value or raise Not_found if None.*)
+val estimator_errors_ : t -> Arr.t
+
+(** Attribute estimator_errors_: get value as an option. *)
+val estimator_errors_opt : t -> (Arr.t) option
+
+
+(** Attribute feature_importances_: get value or raise Not_found if None.*)
+val feature_importances_ : t -> Arr.t
+
+(** Attribute feature_importances_: get value as an option. *)
+val feature_importances_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -426,7 +457,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?base_estimator:Py.Object.t -> ?n_estimators:int -> ?learning_rate:float -> ?loss:[`Linear | `Square | `Exponential] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> unit -> t
+val create : ?base_estimator:Py.Object.t -> ?n_estimators:int -> ?learning_rate:float -> ?loss:[`Linear | `Square | `Exponential] -> ?random_state:int -> unit -> t
 (**
 An AdaBoost regressor.
 
@@ -519,7 +550,7 @@ val get_item : index:Py.Object.t -> t -> Py.Object.t
 Return the index'th estimator in the ensemble.
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Build a boosted regressor from the training set (X, y).
 
@@ -541,7 +572,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -557,7 +588,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict regression value for X.
 
@@ -576,7 +607,7 @@ y : ndarray of shape (n_samples,)
     The predicted regression values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -641,7 +672,7 @@ self : object
     Estimator instance.
 *)
 
-val staged_predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Py.Object.t
+val staged_predict : x:Arr.t -> t -> Py.Object.t
 (**
 Return staged predictions for X.
 
@@ -663,7 +694,7 @@ y : generator of array, shape = [n_samples]
     The predicted regression values.
 *)
 
-val staged_score : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> Py.Object.t
+val staged_score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> Py.Object.t
 (**
 Return staged scores for X, y.
 
@@ -689,20 +720,40 @@ z : float
 *)
 
 
-(** Attribute base_estimator_: see constructor for documentation *)
+(** Attribute base_estimator_: get value or raise Not_found if None.*)
 val base_estimator_ : t -> Py.Object.t
 
-(** Attribute estimators_: see constructor for documentation *)
+(** Attribute base_estimator_: get value as an option. *)
+val base_estimator_opt : t -> (Py.Object.t) option
+
+
+(** Attribute estimators_: get value or raise Not_found if None.*)
 val estimators_ : t -> Py.Object.t
 
-(** Attribute estimator_weights_: see constructor for documentation *)
-val estimator_weights_ : t -> Ndarray.t
+(** Attribute estimators_: get value as an option. *)
+val estimators_opt : t -> (Py.Object.t) option
 
-(** Attribute estimator_errors_: see constructor for documentation *)
-val estimator_errors_ : t -> Ndarray.t
 
-(** Attribute feature_importances_: see constructor for documentation *)
-val feature_importances_ : t -> Ndarray.t
+(** Attribute estimator_weights_: get value or raise Not_found if None.*)
+val estimator_weights_ : t -> Arr.t
+
+(** Attribute estimator_weights_: get value as an option. *)
+val estimator_weights_opt : t -> (Arr.t) option
+
+
+(** Attribute estimator_errors_: get value or raise Not_found if None.*)
+val estimator_errors_ : t -> Arr.t
+
+(** Attribute estimator_errors_: get value as an option. *)
+val estimator_errors_opt : t -> (Arr.t) option
+
+
+(** Attribute feature_importances_: get value or raise Not_found if None.*)
+val feature_importances_ : t -> Arr.t
+
+(** Attribute feature_importances_: get value as an option. *)
+val feature_importances_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -722,7 +773,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?base_estimator:[`None | `PyObject of Py.Object.t] -> ?n_estimators:int -> ?max_samples:[`Int of int | `Float of float] -> ?max_features:[`Int of int | `Float of float] -> ?bootstrap:bool -> ?bootstrap_features:bool -> ?oob_score:bool -> ?warm_start:bool -> ?n_jobs:[`Int of int | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?verbose:int -> unit -> t
+val create : ?base_estimator:Py.Object.t -> ?n_estimators:int -> ?max_samples:[`I of int | `F of float] -> ?max_features:[`I of int | `F of float] -> ?bootstrap:bool -> ?bootstrap_features:bool -> ?oob_score:bool -> ?warm_start:bool -> ?n_jobs:int -> ?random_state:int -> ?verbose:int -> unit -> t
 (**
 A Bagging classifier.
 
@@ -872,7 +923,7 @@ val get_item : index:Py.Object.t -> t -> Py.Object.t
 Return the index'th estimator in the ensemble.
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Build a Bagging ensemble of estimators from the training
    set (X, y).
@@ -897,7 +948,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -913,7 +964,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict class for X.
 
@@ -933,7 +984,7 @@ y : ndarray of shape (n_samples,)
     The predicted classes.
 *)
 
-val predict_log_proba : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict_log_proba : x:Arr.t -> t -> Arr.t
 (**
 Predict class log-probabilities for X.
 
@@ -954,7 +1005,7 @@ p : array of shape (n_samples, n_classes)
     classes corresponds to that in the attribute :term:`classes_`.
 *)
 
-val predict_proba : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Predict class probabilities for X.
 
@@ -978,7 +1029,7 @@ p : array of shape (n_samples, n_classes)
     classes corresponds to that in the attribute :term:`classes_`.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -1024,32 +1075,68 @@ self : object
 *)
 
 
-(** Attribute base_estimator_: see constructor for documentation *)
+(** Attribute base_estimator_: get value or raise Not_found if None.*)
 val base_estimator_ : t -> Py.Object.t
 
-(** Attribute n_features_: see constructor for documentation *)
+(** Attribute base_estimator_: get value as an option. *)
+val base_estimator_opt : t -> (Py.Object.t) option
+
+
+(** Attribute n_features_: get value or raise Not_found if None.*)
 val n_features_ : t -> int
 
-(** Attribute estimators_: see constructor for documentation *)
+(** Attribute n_features_: get value as an option. *)
+val n_features_opt : t -> (int) option
+
+
+(** Attribute estimators_: get value or raise Not_found if None.*)
 val estimators_ : t -> Py.Object.t
 
-(** Attribute estimators_samples_: see constructor for documentation *)
-val estimators_samples_ : t -> Py.Object.t
+(** Attribute estimators_: get value as an option. *)
+val estimators_opt : t -> (Py.Object.t) option
 
-(** Attribute estimators_features_: see constructor for documentation *)
-val estimators_features_ : t -> Py.Object.t
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute estimators_samples_: get value or raise Not_found if None.*)
+val estimators_samples_ : t -> Arr.List.t
 
-(** Attribute n_classes_: see constructor for documentation *)
-val n_classes_ : t -> Py.Object.t
+(** Attribute estimators_samples_: get value as an option. *)
+val estimators_samples_opt : t -> (Arr.List.t) option
 
-(** Attribute oob_score_: see constructor for documentation *)
+
+(** Attribute estimators_features_: get value or raise Not_found if None.*)
+val estimators_features_ : t -> Arr.List.t
+
+(** Attribute estimators_features_: get value as an option. *)
+val estimators_features_opt : t -> (Arr.List.t) option
+
+
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
+
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute n_classes_: get value or raise Not_found if None.*)
+val n_classes_ : t -> [`I of int | `Arr of Arr.t]
+
+(** Attribute n_classes_: get value as an option. *)
+val n_classes_opt : t -> ([`I of int | `Arr of Arr.t]) option
+
+
+(** Attribute oob_score_: get value or raise Not_found if None.*)
 val oob_score_ : t -> float
 
-(** Attribute oob_decision_function_: see constructor for documentation *)
-val oob_decision_function_ : t -> Ndarray.t
+(** Attribute oob_score_: get value as an option. *)
+val oob_score_opt : t -> (float) option
+
+
+(** Attribute oob_decision_function_: get value or raise Not_found if None.*)
+val oob_decision_function_ : t -> Arr.t
+
+(** Attribute oob_decision_function_: get value as an option. *)
+val oob_decision_function_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1069,7 +1156,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?base_estimator:[`None | `PyObject of Py.Object.t] -> ?n_estimators:int -> ?max_samples:[`Int of int | `Float of float] -> ?max_features:[`Int of int | `Float of float] -> ?bootstrap:bool -> ?bootstrap_features:bool -> ?oob_score:bool -> ?warm_start:bool -> ?n_jobs:[`Int of int | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?verbose:int -> unit -> t
+val create : ?base_estimator:Py.Object.t -> ?n_estimators:int -> ?max_samples:[`I of int | `F of float] -> ?max_features:[`I of int | `F of float] -> ?bootstrap:bool -> ?bootstrap_features:bool -> ?oob_score:bool -> ?warm_start:bool -> ?n_jobs:int -> ?random_state:int -> ?verbose:int -> unit -> t
 (**
 A Bagging regressor.
 
@@ -1210,7 +1297,7 @@ val get_item : index:Py.Object.t -> t -> Py.Object.t
 Return the index'th estimator in the ensemble.
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Build a Bagging ensemble of estimators from the training
    set (X, y).
@@ -1235,7 +1322,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1251,7 +1338,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict regression target for X.
 
@@ -1270,7 +1357,7 @@ y : ndarray of shape (n_samples,)
     The predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -1336,26 +1423,54 @@ self : object
 *)
 
 
-(** Attribute base_estimator_: see constructor for documentation *)
+(** Attribute base_estimator_: get value or raise Not_found if None.*)
 val base_estimator_ : t -> Py.Object.t
 
-(** Attribute n_features_: see constructor for documentation *)
+(** Attribute base_estimator_: get value as an option. *)
+val base_estimator_opt : t -> (Py.Object.t) option
+
+
+(** Attribute n_features_: get value or raise Not_found if None.*)
 val n_features_ : t -> int
 
-(** Attribute estimators_: see constructor for documentation *)
+(** Attribute n_features_: get value as an option. *)
+val n_features_opt : t -> (int) option
+
+
+(** Attribute estimators_: get value or raise Not_found if None.*)
 val estimators_ : t -> Py.Object.t
 
-(** Attribute estimators_samples_: see constructor for documentation *)
-val estimators_samples_ : t -> Py.Object.t
+(** Attribute estimators_: get value as an option. *)
+val estimators_opt : t -> (Py.Object.t) option
 
-(** Attribute estimators_features_: see constructor for documentation *)
-val estimators_features_ : t -> Py.Object.t
 
-(** Attribute oob_score_: see constructor for documentation *)
+(** Attribute estimators_samples_: get value or raise Not_found if None.*)
+val estimators_samples_ : t -> Arr.List.t
+
+(** Attribute estimators_samples_: get value as an option. *)
+val estimators_samples_opt : t -> (Arr.List.t) option
+
+
+(** Attribute estimators_features_: get value or raise Not_found if None.*)
+val estimators_features_ : t -> Arr.List.t
+
+(** Attribute estimators_features_: get value as an option. *)
+val estimators_features_opt : t -> (Arr.List.t) option
+
+
+(** Attribute oob_score_: get value or raise Not_found if None.*)
 val oob_score_ : t -> float
 
-(** Attribute oob_prediction_: see constructor for documentation *)
-val oob_prediction_ : t -> Ndarray.t
+(** Attribute oob_score_: get value as an option. *)
+val oob_score_opt : t -> (float) option
+
+
+(** Attribute oob_prediction_: get value or raise Not_found if None.*)
+val oob_prediction_ : t -> Arr.t
+
+(** Attribute oob_prediction_: get value as an option. *)
+val oob_prediction_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1375,7 +1490,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_estimators:int -> ?criterion:string -> ?max_depth:[`Int of int | `None] -> ?min_samples_split:[`Int of int | `Float of float] -> ?min_samples_leaf:[`Int of int | `Float of float] -> ?min_weight_fraction_leaf:float -> ?max_features:[`Int of int | `Float of float | `String of string | `None] -> ?max_leaf_nodes:[`Int of int | `None] -> ?min_impurity_decrease:float -> ?min_impurity_split:float -> ?bootstrap:bool -> ?oob_score:bool -> ?n_jobs:[`Int of int | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?verbose:int -> ?warm_start:bool -> ?class_weight:[`DictIntToFloat of (int * float) list | `Balanced | `Balanced_subsample | `None | `PyObject of Py.Object.t] -> ?ccp_alpha:float -> ?max_samples:[`Int of int | `Float of float] -> unit -> t
+val create : ?n_estimators:int -> ?criterion:string -> ?max_depth:int -> ?min_samples_split:[`I of int | `F of float] -> ?min_samples_leaf:[`I of int | `F of float] -> ?min_weight_fraction_leaf:float -> ?max_features:[`I of int | `F of float | `S of string | `None] -> ?max_leaf_nodes:int -> ?min_impurity_decrease:float -> ?min_impurity_split:float -> ?bootstrap:bool -> ?oob_score:bool -> ?n_jobs:int -> ?random_state:int -> ?verbose:int -> ?warm_start:bool -> ?class_weight:[`DictIntToFloat of (int * float) list | `List_of_dicts of Py.Object.t | `Balanced | `Balanced_subsample] -> ?ccp_alpha:float -> ?max_samples:[`I of int | `F of float] -> unit -> t
 (**
 An extra-trees classifier.
 
@@ -1636,7 +1751,7 @@ val get_item : index:Py.Object.t -> t -> Py.Object.t
 Return the index'th estimator in the ensemble.
 *)
 
-val apply : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val apply : x:Arr.t -> t -> Arr.t
 (**
 Apply trees in the forest to X, return leaf indices.
 
@@ -1654,7 +1769,7 @@ X_leaves : array_like, shape = [n_samples, n_estimators]
     return the index of the leaf x ends up in.
 *)
 
-val decision_path : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> (Py.Object.t * Py.Object.t)
+val decision_path : x:Arr.t -> t -> (Py.Object.t * Py.Object.t)
 (**
 Return the decision path in the forest.
 
@@ -1678,7 +1793,7 @@ n_nodes_ptr : array of size (n_estimators + 1, )
     gives the indicator value for the i-th estimator.
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Build a forest of trees from the training set (X, y).
 
@@ -1705,7 +1820,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1721,7 +1836,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict class for X.
 
@@ -1743,7 +1858,7 @@ y : array-like of shape (n_samples,) or (n_samples, n_outputs)
     The predicted classes.
 *)
 
-val predict_log_proba : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Py.Object.t
+val predict_log_proba : x:Arr.t -> t -> Py.Object.t
 (**
 Predict class log-probabilities for X.
 
@@ -1766,7 +1881,7 @@ p : array of shape (n_samples, n_classes), or a list of n_outputs
     classes corresponds to that in the attribute :term:`classes_`.
 *)
 
-val predict_proba : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Predict class probabilities for X.
 
@@ -1790,7 +1905,7 @@ p : array of shape (n_samples, n_classes), or a list of n_outputs
     classes corresponds to that in the attribute :term:`classes_`.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -1836,32 +1951,68 @@ self : object
 *)
 
 
-(** Attribute base_estimator_: see constructor for documentation *)
+(** Attribute base_estimator_: get value or raise Not_found if None.*)
 val base_estimator_ : t -> Py.Object.t
 
-(** Attribute estimators_: see constructor for documentation *)
+(** Attribute base_estimator_: get value as an option. *)
+val base_estimator_opt : t -> (Py.Object.t) option
+
+
+(** Attribute estimators_: get value or raise Not_found if None.*)
 val estimators_ : t -> Py.Object.t
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute estimators_: get value as an option. *)
+val estimators_opt : t -> (Py.Object.t) option
 
-(** Attribute n_classes_: see constructor for documentation *)
-val n_classes_ : t -> Py.Object.t
 
-(** Attribute feature_importances_: see constructor for documentation *)
-val feature_importances_ : t -> Ndarray.t
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
 
-(** Attribute n_features_: see constructor for documentation *)
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute n_classes_: get value or raise Not_found if None.*)
+val n_classes_ : t -> [`I of int | `Arr of Arr.t]
+
+(** Attribute n_classes_: get value as an option. *)
+val n_classes_opt : t -> ([`I of int | `Arr of Arr.t]) option
+
+
+(** Attribute feature_importances_: get value or raise Not_found if None.*)
+val feature_importances_ : t -> Arr.t
+
+(** Attribute feature_importances_: get value as an option. *)
+val feature_importances_opt : t -> (Arr.t) option
+
+
+(** Attribute n_features_: get value or raise Not_found if None.*)
 val n_features_ : t -> int
 
-(** Attribute n_outputs_: see constructor for documentation *)
+(** Attribute n_features_: get value as an option. *)
+val n_features_opt : t -> (int) option
+
+
+(** Attribute n_outputs_: get value or raise Not_found if None.*)
 val n_outputs_ : t -> int
 
-(** Attribute oob_score_: see constructor for documentation *)
+(** Attribute n_outputs_: get value as an option. *)
+val n_outputs_opt : t -> (int) option
+
+
+(** Attribute oob_score_: get value or raise Not_found if None.*)
 val oob_score_ : t -> float
 
-(** Attribute oob_decision_function_: see constructor for documentation *)
-val oob_decision_function_ : t -> Ndarray.t
+(** Attribute oob_score_: get value as an option. *)
+val oob_score_opt : t -> (float) option
+
+
+(** Attribute oob_decision_function_: get value or raise Not_found if None.*)
+val oob_decision_function_ : t -> Arr.t
+
+(** Attribute oob_decision_function_: get value as an option. *)
+val oob_decision_function_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1881,7 +2032,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_estimators:int -> ?criterion:string -> ?max_depth:[`Int of int | `None] -> ?min_samples_split:[`Int of int | `Float of float] -> ?min_samples_leaf:[`Int of int | `Float of float] -> ?min_weight_fraction_leaf:float -> ?max_features:[`Int of int | `Float of float | `String of string | `None] -> ?max_leaf_nodes:[`Int of int | `None] -> ?min_impurity_decrease:float -> ?min_impurity_split:float -> ?bootstrap:bool -> ?oob_score:bool -> ?n_jobs:[`Int of int | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?verbose:int -> ?warm_start:bool -> ?ccp_alpha:float -> ?max_samples:[`Int of int | `Float of float] -> unit -> t
+val create : ?n_estimators:int -> ?criterion:string -> ?max_depth:int -> ?min_samples_split:[`I of int | `F of float] -> ?min_samples_leaf:[`I of int | `F of float] -> ?min_weight_fraction_leaf:float -> ?max_features:[`I of int | `F of float | `S of string | `None] -> ?max_leaf_nodes:int -> ?min_impurity_decrease:float -> ?min_impurity_split:float -> ?bootstrap:bool -> ?oob_score:bool -> ?n_jobs:int -> ?random_state:int -> ?verbose:int -> ?warm_start:bool -> ?ccp_alpha:float -> ?max_samples:[`I of int | `F of float] -> unit -> t
 (**
 An extra-trees regressor.
 
@@ -2098,7 +2249,7 @@ val get_item : index:Py.Object.t -> t -> Py.Object.t
 Return the index'th estimator in the ensemble.
 *)
 
-val apply : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val apply : x:Arr.t -> t -> Arr.t
 (**
 Apply trees in the forest to X, return leaf indices.
 
@@ -2116,7 +2267,7 @@ X_leaves : array_like, shape = [n_samples, n_estimators]
     return the index of the leaf x ends up in.
 *)
 
-val decision_path : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> (Py.Object.t * Py.Object.t)
+val decision_path : x:Arr.t -> t -> (Py.Object.t * Py.Object.t)
 (**
 Return the decision path in the forest.
 
@@ -2140,7 +2291,7 @@ n_nodes_ptr : array of size (n_estimators + 1, )
     gives the indicator value for the i-th estimator.
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Build a forest of trees from the training set (X, y).
 
@@ -2167,7 +2318,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2183,7 +2334,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict regression target for X.
 
@@ -2203,7 +2354,7 @@ y : array-like of shape (n_samples,) or (n_samples, n_outputs)
     The predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -2269,26 +2420,54 @@ self : object
 *)
 
 
-(** Attribute base_estimator_: see constructor for documentation *)
+(** Attribute base_estimator_: get value or raise Not_found if None.*)
 val base_estimator_ : t -> Py.Object.t
 
-(** Attribute estimators_: see constructor for documentation *)
+(** Attribute base_estimator_: get value as an option. *)
+val base_estimator_opt : t -> (Py.Object.t) option
+
+
+(** Attribute estimators_: get value or raise Not_found if None.*)
 val estimators_ : t -> Py.Object.t
 
-(** Attribute feature_importances_: see constructor for documentation *)
-val feature_importances_ : t -> Ndarray.t
+(** Attribute estimators_: get value as an option. *)
+val estimators_opt : t -> (Py.Object.t) option
 
-(** Attribute n_features_: see constructor for documentation *)
+
+(** Attribute feature_importances_: get value or raise Not_found if None.*)
+val feature_importances_ : t -> Arr.t
+
+(** Attribute feature_importances_: get value as an option. *)
+val feature_importances_opt : t -> (Arr.t) option
+
+
+(** Attribute n_features_: get value or raise Not_found if None.*)
 val n_features_ : t -> int
 
-(** Attribute n_outputs_: see constructor for documentation *)
+(** Attribute n_features_: get value as an option. *)
+val n_features_opt : t -> (int) option
+
+
+(** Attribute n_outputs_: get value or raise Not_found if None.*)
 val n_outputs_ : t -> int
 
-(** Attribute oob_score_: see constructor for documentation *)
+(** Attribute n_outputs_: get value as an option. *)
+val n_outputs_opt : t -> (int) option
+
+
+(** Attribute oob_score_: get value or raise Not_found if None.*)
 val oob_score_ : t -> float
 
-(** Attribute oob_prediction_: see constructor for documentation *)
-val oob_prediction_ : t -> Ndarray.t
+(** Attribute oob_score_: get value as an option. *)
+val oob_score_opt : t -> (float) option
+
+
+(** Attribute oob_prediction_: get value or raise Not_found if None.*)
+val oob_prediction_ : t -> Arr.t
+
+(** Attribute oob_prediction_: get value as an option. *)
+val oob_prediction_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2308,7 +2487,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?loss:[`Deviance | `Exponential] -> ?learning_rate:float -> ?n_estimators:int -> ?subsample:float -> ?criterion:string -> ?min_samples_split:[`Int of int | `Float of float] -> ?min_samples_leaf:[`Int of int | `Float of float] -> ?min_weight_fraction_leaf:float -> ?max_depth:int -> ?min_impurity_decrease:float -> ?min_impurity_split:float -> ?init:[`Estimator of Py.Object.t | `Zero] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?max_features:[`Int of int | `Float of float | `String of string | `None] -> ?verbose:int -> ?max_leaf_nodes:[`Int of int | `None] -> ?warm_start:bool -> ?presort:Py.Object.t -> ?validation_fraction:float -> ?n_iter_no_change:int -> ?tol:float -> ?ccp_alpha:float -> unit -> t
+val create : ?loss:[`Deviance | `Exponential] -> ?learning_rate:float -> ?n_estimators:int -> ?subsample:float -> ?criterion:string -> ?min_samples_split:[`I of int | `F of float] -> ?min_samples_leaf:[`I of int | `F of float] -> ?min_weight_fraction_leaf:float -> ?max_depth:int -> ?min_impurity_decrease:float -> ?min_impurity_split:float -> ?init:[`Estimator of Py.Object.t | `Zero] -> ?random_state:int -> ?max_features:[`I of int | `F of float | `S of string] -> ?verbose:int -> ?max_leaf_nodes:int -> ?warm_start:bool -> ?presort:Py.Object.t -> ?validation_fraction:float -> ?n_iter_no_change:int -> ?tol:float -> ?ccp_alpha:float -> unit -> t
 (**
 Gradient Boosting for classification.
 
@@ -2573,7 +2752,7 @@ val get_item : index:Py.Object.t -> t -> Py.Object.t
 Return the index'th estimator in the ensemble.
 *)
 
-val apply : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val apply : x:Arr.t -> t -> Arr.t
 (**
 Apply trees in the ensemble to X, return leaf indices.
 
@@ -2594,7 +2773,7 @@ X_leaves : array-like, shape (n_samples, n_estimators, n_classes)
     In the case of binary classification n_classes is 1.
 *)
 
-val decision_function : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val decision_function : x:Arr.t -> t -> Arr.t
 (**
 Compute the decision function of ``X``.
 
@@ -2615,7 +2794,7 @@ score : array, shape (n_samples, n_classes) or (n_samples,)
     array of shape [n_samples].
 *)
 
-val fit : ?sample_weight:[`Ndarray of Ndarray.t | `None] -> ?monitor:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> ?monitor:Py.Object.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the gradient boosting model.
 
@@ -2652,7 +2831,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2668,7 +2847,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict class for X.
 
@@ -2685,7 +2864,7 @@ y : array, shape (n_samples,)
     The predicted values.
 *)
 
-val predict_log_proba : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict_log_proba : x:Arr.t -> t -> Arr.t
 (**
 Predict class log-probabilities for X.
 
@@ -2708,7 +2887,7 @@ p : array, shape (n_samples, n_classes)
     classes corresponds to that in the attribute :term:`classes_`.
 *)
 
-val predict_proba : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Predict class probabilities for X.
 
@@ -2731,7 +2910,7 @@ p : array, shape (n_samples, n_classes)
     classes corresponds to that in the attribute :term:`classes_`.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -2776,7 +2955,7 @@ self : object
     Estimator instance.
 *)
 
-val staged_decision_function : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Py.Object.t
+val staged_decision_function : x:Arr.t -> t -> Py.Object.t
 (**
 Compute decision function of ``X`` for each iteration.
 
@@ -2800,7 +2979,7 @@ score : generator of array, shape (n_samples, k)
     ``k == 1``, otherwise ``k==n_classes``.
 *)
 
-val staged_predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Py.Object.t
+val staged_predict : x:Arr.t -> t -> Py.Object.t
 (**
 Predict class at each stage for X.
 
@@ -2820,7 +2999,7 @@ y : generator of array of shape (n_samples,)
     The predicted value of the input samples.
 *)
 
-val staged_predict_proba : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Py.Object.t
+val staged_predict_proba : x:Arr.t -> t -> Py.Object.t
 (**
 Predict class probabilities at each stage for X.
 
@@ -2841,29 +3020,61 @@ y : generator of array of shape (n_samples,)
 *)
 
 
-(** Attribute n_estimators_: see constructor for documentation *)
+(** Attribute n_estimators_: get value or raise Not_found if None.*)
 val n_estimators_ : t -> int
 
-(** Attribute feature_importances_: see constructor for documentation *)
-val feature_importances_ : t -> Ndarray.t
+(** Attribute n_estimators_: get value as an option. *)
+val n_estimators_opt : t -> (int) option
 
-(** Attribute oob_improvement_: see constructor for documentation *)
-val oob_improvement_ : t -> Ndarray.t
 
-(** Attribute train_score_: see constructor for documentation *)
-val train_score_ : t -> Ndarray.t
+(** Attribute feature_importances_: get value or raise Not_found if None.*)
+val feature_importances_ : t -> Arr.t
 
-(** Attribute loss_: see constructor for documentation *)
+(** Attribute feature_importances_: get value as an option. *)
+val feature_importances_opt : t -> (Arr.t) option
+
+
+(** Attribute oob_improvement_: get value or raise Not_found if None.*)
+val oob_improvement_ : t -> Arr.t
+
+(** Attribute oob_improvement_: get value as an option. *)
+val oob_improvement_opt : t -> (Arr.t) option
+
+
+(** Attribute train_score_: get value or raise Not_found if None.*)
+val train_score_ : t -> Arr.t
+
+(** Attribute train_score_: get value as an option. *)
+val train_score_opt : t -> (Arr.t) option
+
+
+(** Attribute loss_: get value or raise Not_found if None.*)
 val loss_ : t -> Py.Object.t
 
-(** Attribute init_: see constructor for documentation *)
+(** Attribute loss_: get value as an option. *)
+val loss_opt : t -> (Py.Object.t) option
+
+
+(** Attribute init_: get value or raise Not_found if None.*)
 val init_ : t -> Py.Object.t
 
-(** Attribute estimators_: see constructor for documentation *)
+(** Attribute init_: get value as an option. *)
+val init_opt : t -> (Py.Object.t) option
+
+
+(** Attribute estimators_: get value or raise Not_found if None.*)
 val estimators_ : t -> Py.Object.t
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute estimators_: get value as an option. *)
+val estimators_opt : t -> (Py.Object.t) option
+
+
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
+
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2883,7 +3094,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?loss:[`Ls | `Lad | `Huber | `Quantile] -> ?learning_rate:float -> ?n_estimators:int -> ?subsample:float -> ?criterion:string -> ?min_samples_split:[`Int of int | `Float of float] -> ?min_samples_leaf:[`Int of int | `Float of float] -> ?min_weight_fraction_leaf:float -> ?max_depth:int -> ?min_impurity_decrease:float -> ?min_impurity_split:float -> ?init:[`Estimator of Py.Object.t | `Zero] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?max_features:[`Int of int | `Float of float | `String of string | `None] -> ?alpha:float -> ?verbose:int -> ?max_leaf_nodes:[`Int of int | `None] -> ?warm_start:bool -> ?presort:Py.Object.t -> ?validation_fraction:float -> ?n_iter_no_change:int -> ?tol:float -> ?ccp_alpha:float -> unit -> t
+val create : ?loss:[`Ls | `Lad | `Huber | `Quantile] -> ?learning_rate:float -> ?n_estimators:int -> ?subsample:float -> ?criterion:string -> ?min_samples_split:[`I of int | `F of float] -> ?min_samples_leaf:[`I of int | `F of float] -> ?min_weight_fraction_leaf:float -> ?max_depth:int -> ?min_impurity_decrease:float -> ?min_impurity_split:float -> ?init:[`Estimator of Py.Object.t | `Zero] -> ?random_state:int -> ?max_features:[`I of int | `F of float | `S of string] -> ?alpha:float -> ?verbose:int -> ?max_leaf_nodes:int -> ?warm_start:bool -> ?presort:Py.Object.t -> ?validation_fraction:float -> ?n_iter_no_change:int -> ?tol:float -> ?ccp_alpha:float -> unit -> t
 (**
 Gradient Boosting for regression.
 
@@ -3140,7 +3351,7 @@ val get_item : index:Py.Object.t -> t -> Py.Object.t
 Return the index'th estimator in the ensemble.
 *)
 
-val apply : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val apply : x:Arr.t -> t -> Arr.t
 (**
 Apply trees in the ensemble to X, return leaf indices.
 
@@ -3160,7 +3371,7 @@ X_leaves : array-like, shape (n_samples, n_estimators)
     return the index of the leaf x ends up in each estimator.
 *)
 
-val fit : ?sample_weight:[`Ndarray of Ndarray.t | `None] -> ?monitor:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> ?monitor:Py.Object.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the gradient boosting model.
 
@@ -3197,7 +3408,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -3213,7 +3424,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict regression target for X.
 
@@ -3230,7 +3441,7 @@ y : array, shape (n_samples,)
     The predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -3295,7 +3506,7 @@ self : object
     Estimator instance.
 *)
 
-val staged_predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Py.Object.t
+val staged_predict : x:Arr.t -> t -> Py.Object.t
 (**
 Predict regression target at each stage for X.
 
@@ -3316,23 +3527,47 @@ y : generator of array of shape (n_samples,)
 *)
 
 
-(** Attribute feature_importances_: see constructor for documentation *)
-val feature_importances_ : t -> Ndarray.t
+(** Attribute feature_importances_: get value or raise Not_found if None.*)
+val feature_importances_ : t -> Arr.t
 
-(** Attribute oob_improvement_: see constructor for documentation *)
-val oob_improvement_ : t -> Ndarray.t
+(** Attribute feature_importances_: get value as an option. *)
+val feature_importances_opt : t -> (Arr.t) option
 
-(** Attribute train_score_: see constructor for documentation *)
-val train_score_ : t -> Ndarray.t
 
-(** Attribute loss_: see constructor for documentation *)
+(** Attribute oob_improvement_: get value or raise Not_found if None.*)
+val oob_improvement_ : t -> Arr.t
+
+(** Attribute oob_improvement_: get value as an option. *)
+val oob_improvement_opt : t -> (Arr.t) option
+
+
+(** Attribute train_score_: get value or raise Not_found if None.*)
+val train_score_ : t -> Arr.t
+
+(** Attribute train_score_: get value as an option. *)
+val train_score_opt : t -> (Arr.t) option
+
+
+(** Attribute loss_: get value or raise Not_found if None.*)
 val loss_ : t -> Py.Object.t
 
-(** Attribute init_: see constructor for documentation *)
+(** Attribute loss_: get value as an option. *)
+val loss_opt : t -> (Py.Object.t) option
+
+
+(** Attribute init_: get value or raise Not_found if None.*)
 val init_ : t -> Py.Object.t
 
-(** Attribute estimators_: see constructor for documentation *)
+(** Attribute init_: get value as an option. *)
+val init_opt : t -> (Py.Object.t) option
+
+
+(** Attribute estimators_: get value or raise Not_found if None.*)
 val estimators_ : t -> Py.Object.t
+
+(** Attribute estimators_: get value as an option. *)
+val estimators_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -3352,7 +3587,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_estimators:int -> ?max_samples:[`Int of int | `Float of float] -> ?contamination:[`Auto | `Float of float] -> ?max_features:[`Int of int | `Float of float] -> ?bootstrap:bool -> ?n_jobs:[`Int of int | `None] -> ?behaviour:string -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?verbose:int -> ?warm_start:bool -> unit -> t
+val create : ?n_estimators:int -> ?max_samples:[`I of int | `F of float] -> ?contamination:[`Auto | `F of float] -> ?max_features:[`I of int | `F of float] -> ?bootstrap:bool -> ?n_jobs:int -> ?behaviour:string -> ?random_state:int -> ?verbose:int -> ?warm_start:bool -> unit -> t
 (**
 Isolation Forest Algorithm.
 
@@ -3512,7 +3747,7 @@ val get_item : index:Py.Object.t -> t -> Py.Object.t
 Return the index'th estimator in the ensemble.
 *)
 
-val decision_function : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val decision_function : x:Arr.t -> t -> Arr.t
 (**
 Average anomaly score of X of the base classifiers.
 
@@ -3540,7 +3775,7 @@ scores : array, shape (n_samples,)
     positive scores represent inliers.
 *)
 
-val fit : ?y:Py.Object.t -> ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : ?y:Py.Object.t -> ?sample_weight:Arr.t -> x:Arr.t -> t -> t
 (**
 Fit estimator.
 
@@ -3563,7 +3798,7 @@ self : object
     Fitted estimator.
 *)
 
-val fit_predict : ?y:Py.Object.t -> x:Ndarray.t -> t -> Ndarray.t
+val fit_predict : ?y:Py.Object.t -> x:Arr.t -> t -> Arr.t
 (**
 Perform fit on X and returns labels for X.
 
@@ -3583,7 +3818,7 @@ y : ndarray, shape (n_samples,)
     1 for inliers, -1 for outliers.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -3599,7 +3834,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict if a particular sample is an outlier or not.
 
@@ -3617,7 +3852,7 @@ is_inlier : array, shape (n_samples,)
     be considered as an inlier according to the fitted model.
 *)
 
-val score_samples : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val score_samples : x:Arr.t -> t -> Arr.t
 (**
 Opposite of the anomaly score defined in the original paper.
 
@@ -3663,17 +3898,33 @@ self : object
 *)
 
 
-(** Attribute estimators_: see constructor for documentation *)
+(** Attribute estimators_: get value or raise Not_found if None.*)
 val estimators_ : t -> Py.Object.t
 
-(** Attribute estimators_samples_: see constructor for documentation *)
-val estimators_samples_ : t -> Py.Object.t
+(** Attribute estimators_: get value as an option. *)
+val estimators_opt : t -> (Py.Object.t) option
 
-(** Attribute max_samples_: see constructor for documentation *)
+
+(** Attribute estimators_samples_: get value or raise Not_found if None.*)
+val estimators_samples_ : t -> Arr.List.t
+
+(** Attribute estimators_samples_: get value as an option. *)
+val estimators_samples_opt : t -> (Arr.List.t) option
+
+
+(** Attribute max_samples_: get value or raise Not_found if None.*)
 val max_samples_ : t -> int
 
-(** Attribute offset_: see constructor for documentation *)
+(** Attribute max_samples_: get value as an option. *)
+val max_samples_opt : t -> (int) option
+
+
+(** Attribute offset_: get value or raise Not_found if None.*)
 val offset_ : t -> float
+
+(** Attribute offset_: get value as an option. *)
+val offset_opt : t -> (float) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -3693,7 +3944,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_estimators:int -> ?criterion:string -> ?max_depth:[`Int of int | `None] -> ?min_samples_split:[`Int of int | `Float of float] -> ?min_samples_leaf:[`Int of int | `Float of float] -> ?min_weight_fraction_leaf:float -> ?max_features:[`Int of int | `Float of float | `String of string | `None] -> ?max_leaf_nodes:[`Int of int | `None] -> ?min_impurity_decrease:float -> ?min_impurity_split:float -> ?bootstrap:bool -> ?oob_score:bool -> ?n_jobs:[`Int of int | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?verbose:int -> ?warm_start:bool -> ?class_weight:[`DictIntToFloat of (int * float) list | `Balanced | `Balanced_subsample | `None | `PyObject of Py.Object.t] -> ?ccp_alpha:float -> ?max_samples:[`Int of int | `Float of float] -> unit -> t
+val create : ?n_estimators:int -> ?criterion:string -> ?max_depth:int -> ?min_samples_split:[`I of int | `F of float] -> ?min_samples_leaf:[`I of int | `F of float] -> ?min_weight_fraction_leaf:float -> ?max_features:[`I of int | `F of float | `S of string | `None] -> ?max_leaf_nodes:int -> ?min_impurity_decrease:float -> ?min_impurity_split:float -> ?bootstrap:bool -> ?oob_score:bool -> ?n_jobs:int -> ?random_state:int -> ?verbose:int -> ?warm_start:bool -> ?class_weight:[`DictIntToFloat of (int * float) list | `List_of_dicts of Py.Object.t | `Balanced | `Balanced_subsample] -> ?ccp_alpha:float -> ?max_samples:[`I of int | `F of float] -> unit -> t
 (**
 A random forest classifier.
 
@@ -3963,7 +4214,7 @@ val get_item : index:Py.Object.t -> t -> Py.Object.t
 Return the index'th estimator in the ensemble.
 *)
 
-val apply : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val apply : x:Arr.t -> t -> Arr.t
 (**
 Apply trees in the forest to X, return leaf indices.
 
@@ -3981,7 +4232,7 @@ X_leaves : array_like, shape = [n_samples, n_estimators]
     return the index of the leaf x ends up in.
 *)
 
-val decision_path : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> (Py.Object.t * Py.Object.t)
+val decision_path : x:Arr.t -> t -> (Py.Object.t * Py.Object.t)
 (**
 Return the decision path in the forest.
 
@@ -4005,7 +4256,7 @@ n_nodes_ptr : array of size (n_estimators + 1, )
     gives the indicator value for the i-th estimator.
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Build a forest of trees from the training set (X, y).
 
@@ -4032,7 +4283,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -4048,7 +4299,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict class for X.
 
@@ -4070,7 +4321,7 @@ y : array-like of shape (n_samples,) or (n_samples, n_outputs)
     The predicted classes.
 *)
 
-val predict_log_proba : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Py.Object.t
+val predict_log_proba : x:Arr.t -> t -> Py.Object.t
 (**
 Predict class log-probabilities for X.
 
@@ -4093,7 +4344,7 @@ p : array of shape (n_samples, n_classes), or a list of n_outputs
     classes corresponds to that in the attribute :term:`classes_`.
 *)
 
-val predict_proba : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Predict class probabilities for X.
 
@@ -4117,7 +4368,7 @@ p : array of shape (n_samples, n_classes), or a list of n_outputs
     classes corresponds to that in the attribute :term:`classes_`.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -4163,32 +4414,68 @@ self : object
 *)
 
 
-(** Attribute base_estimator_: see constructor for documentation *)
+(** Attribute base_estimator_: get value or raise Not_found if None.*)
 val base_estimator_ : t -> Py.Object.t
 
-(** Attribute estimators_: see constructor for documentation *)
+(** Attribute base_estimator_: get value as an option. *)
+val base_estimator_opt : t -> (Py.Object.t) option
+
+
+(** Attribute estimators_: get value or raise Not_found if None.*)
 val estimators_ : t -> Py.Object.t
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+(** Attribute estimators_: get value as an option. *)
+val estimators_opt : t -> (Py.Object.t) option
 
-(** Attribute n_classes_: see constructor for documentation *)
-val n_classes_ : t -> Py.Object.t
 
-(** Attribute n_features_: see constructor for documentation *)
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
+
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
+
+(** Attribute n_classes_: get value or raise Not_found if None.*)
+val n_classes_ : t -> [`I of int | `Arr of Arr.t]
+
+(** Attribute n_classes_: get value as an option. *)
+val n_classes_opt : t -> ([`I of int | `Arr of Arr.t]) option
+
+
+(** Attribute n_features_: get value or raise Not_found if None.*)
 val n_features_ : t -> int
 
-(** Attribute n_outputs_: see constructor for documentation *)
+(** Attribute n_features_: get value as an option. *)
+val n_features_opt : t -> (int) option
+
+
+(** Attribute n_outputs_: get value or raise Not_found if None.*)
 val n_outputs_ : t -> int
 
-(** Attribute feature_importances_: see constructor for documentation *)
-val feature_importances_ : t -> Ndarray.t
+(** Attribute n_outputs_: get value as an option. *)
+val n_outputs_opt : t -> (int) option
 
-(** Attribute oob_score_: see constructor for documentation *)
+
+(** Attribute feature_importances_: get value or raise Not_found if None.*)
+val feature_importances_ : t -> Arr.t
+
+(** Attribute feature_importances_: get value as an option. *)
+val feature_importances_opt : t -> (Arr.t) option
+
+
+(** Attribute oob_score_: get value or raise Not_found if None.*)
 val oob_score_ : t -> float
 
-(** Attribute oob_decision_function_: see constructor for documentation *)
-val oob_decision_function_ : t -> Ndarray.t
+(** Attribute oob_score_: get value as an option. *)
+val oob_score_opt : t -> (float) option
+
+
+(** Attribute oob_decision_function_: get value or raise Not_found if None.*)
+val oob_decision_function_ : t -> Arr.t
+
+(** Attribute oob_decision_function_: get value as an option. *)
+val oob_decision_function_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -4208,7 +4495,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_estimators:int -> ?criterion:string -> ?max_depth:[`Int of int | `None] -> ?min_samples_split:[`Int of int | `Float of float] -> ?min_samples_leaf:[`Int of int | `Float of float] -> ?min_weight_fraction_leaf:float -> ?max_features:[`Int of int | `Float of float | `String of string | `None] -> ?max_leaf_nodes:[`Int of int | `None] -> ?min_impurity_decrease:float -> ?min_impurity_split:float -> ?bootstrap:bool -> ?oob_score:bool -> ?n_jobs:[`Int of int | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?verbose:int -> ?warm_start:bool -> ?ccp_alpha:float -> ?max_samples:[`Int of int | `Float of float] -> unit -> t
+val create : ?n_estimators:int -> ?criterion:string -> ?max_depth:int -> ?min_samples_split:[`I of int | `F of float] -> ?min_samples_leaf:[`I of int | `F of float] -> ?min_weight_fraction_leaf:float -> ?max_features:[`I of int | `F of float | `S of string | `None] -> ?max_leaf_nodes:int -> ?min_impurity_decrease:float -> ?min_impurity_split:float -> ?bootstrap:bool -> ?oob_score:bool -> ?n_jobs:int -> ?random_state:int -> ?verbose:int -> ?warm_start:bool -> ?ccp_alpha:float -> ?max_samples:[`I of int | `F of float] -> unit -> t
 (**
 A random forest regressor.
 
@@ -4451,7 +4738,7 @@ val get_item : index:Py.Object.t -> t -> Py.Object.t
 Return the index'th estimator in the ensemble.
 *)
 
-val apply : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val apply : x:Arr.t -> t -> Arr.t
 (**
 Apply trees in the forest to X, return leaf indices.
 
@@ -4469,7 +4756,7 @@ X_leaves : array_like, shape = [n_samples, n_estimators]
     return the index of the leaf x ends up in.
 *)
 
-val decision_path : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> (Py.Object.t * Py.Object.t)
+val decision_path : x:Arr.t -> t -> (Py.Object.t * Py.Object.t)
 (**
 Return the decision path in the forest.
 
@@ -4493,7 +4780,7 @@ n_nodes_ptr : array of size (n_estimators + 1, )
     gives the indicator value for the i-th estimator.
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Build a forest of trees from the training set (X, y).
 
@@ -4520,7 +4807,7 @@ Returns
 self : object
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -4536,7 +4823,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict regression target for X.
 
@@ -4556,7 +4843,7 @@ y : array-like of shape (n_samples,) or (n_samples, n_outputs)
     The predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -4622,26 +4909,54 @@ self : object
 *)
 
 
-(** Attribute base_estimator_: see constructor for documentation *)
+(** Attribute base_estimator_: get value or raise Not_found if None.*)
 val base_estimator_ : t -> Py.Object.t
 
-(** Attribute estimators_: see constructor for documentation *)
+(** Attribute base_estimator_: get value as an option. *)
+val base_estimator_opt : t -> (Py.Object.t) option
+
+
+(** Attribute estimators_: get value or raise Not_found if None.*)
 val estimators_ : t -> Py.Object.t
 
-(** Attribute feature_importances_: see constructor for documentation *)
-val feature_importances_ : t -> Ndarray.t
+(** Attribute estimators_: get value as an option. *)
+val estimators_opt : t -> (Py.Object.t) option
 
-(** Attribute n_features_: see constructor for documentation *)
+
+(** Attribute feature_importances_: get value or raise Not_found if None.*)
+val feature_importances_ : t -> Arr.t
+
+(** Attribute feature_importances_: get value as an option. *)
+val feature_importances_opt : t -> (Arr.t) option
+
+
+(** Attribute n_features_: get value or raise Not_found if None.*)
 val n_features_ : t -> int
 
-(** Attribute n_outputs_: see constructor for documentation *)
+(** Attribute n_features_: get value as an option. *)
+val n_features_opt : t -> (int) option
+
+
+(** Attribute n_outputs_: get value or raise Not_found if None.*)
 val n_outputs_ : t -> int
 
-(** Attribute oob_score_: see constructor for documentation *)
+(** Attribute n_outputs_: get value as an option. *)
+val n_outputs_opt : t -> (int) option
+
+
+(** Attribute oob_score_: get value or raise Not_found if None.*)
 val oob_score_ : t -> float
 
-(** Attribute oob_prediction_: see constructor for documentation *)
-val oob_prediction_ : t -> Ndarray.t
+(** Attribute oob_score_: get value as an option. *)
+val oob_score_opt : t -> (float) option
+
+
+(** Attribute oob_prediction_: get value or raise Not_found if None.*)
+val oob_prediction_ : t -> Arr.t
+
+(** Attribute oob_prediction_: get value as an option. *)
+val oob_prediction_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -4661,7 +4976,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_estimators:int -> ?max_depth:int -> ?min_samples_split:[`Int of int | `Float of float] -> ?min_samples_leaf:[`Int of int | `Float of float] -> ?min_weight_fraction_leaf:float -> ?max_leaf_nodes:[`Int of int | `None] -> ?min_impurity_decrease:float -> ?min_impurity_split:float -> ?sparse_output:bool -> ?n_jobs:[`Int of int | `None] -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> ?verbose:int -> ?warm_start:bool -> unit -> t
+val create : ?n_estimators:int -> ?max_depth:int -> ?min_samples_split:[`I of int | `F of float] -> ?min_samples_leaf:[`I of int | `F of float] -> ?min_weight_fraction_leaf:float -> ?max_leaf_nodes:int -> ?min_impurity_decrease:float -> ?min_impurity_split:float -> ?sparse_output:bool -> ?n_jobs:int -> ?random_state:int -> ?verbose:int -> ?warm_start:bool -> unit -> t
 (**
 An ensemble of totally random trees.
 
@@ -4798,7 +5113,7 @@ val get_item : index:Py.Object.t -> t -> Py.Object.t
 Return the index'th estimator in the ensemble.
 *)
 
-val apply : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val apply : x:Arr.t -> t -> Arr.t
 (**
 Apply trees in the forest to X, return leaf indices.
 
@@ -4816,7 +5131,7 @@ X_leaves : array_like, shape = [n_samples, n_estimators]
     return the index of the leaf x ends up in.
 *)
 
-val decision_path : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> (Py.Object.t * Py.Object.t)
+val decision_path : x:Arr.t -> t -> (Py.Object.t * Py.Object.t)
 (**
 Return the decision path in the forest.
 
@@ -4840,7 +5155,7 @@ n_nodes_ptr : array of size (n_estimators + 1, )
     gives the indicator value for the i-th estimator.
 *)
 
-val fit : ?y:Py.Object.t -> ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : ?y:Py.Object.t -> ?sample_weight:Arr.t -> x:Arr.t -> t -> t
 (**
 Fit estimator.
 
@@ -4863,7 +5178,7 @@ Returns
 self : object
 *)
 
-val fit_transform : ?y:Py.Object.t -> ?sample_weight:Ndarray.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val fit_transform : ?y:Py.Object.t -> ?sample_weight:Arr.t -> x:Arr.t -> t -> Arr.t
 (**
 Fit estimator and transform dataset.
 
@@ -4886,7 +5201,7 @@ X_transformed : sparse matrix, shape=(n_samples, n_out)
     Transformed dataset.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -4922,7 +5237,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Transform dataset.
 
@@ -4940,8 +5255,12 @@ X_transformed : sparse matrix, shape=(n_samples, n_out)
 *)
 
 
-(** Attribute estimators_: see constructor for documentation *)
+(** Attribute estimators_: get value or raise Not_found if None.*)
 val estimators_ : t -> Py.Object.t
+
+(** Attribute estimators_: get value as an option. *)
+val estimators_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -4961,7 +5280,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?final_estimator:Py.Object.t -> ?cv:[`Int of int | `CrossValGenerator of Py.Object.t | `Ndarray of Ndarray.t] -> ?stack_method:[`Auto | `Predict_proba | `Decision_function | `Predict] -> ?n_jobs:int -> ?passthrough:bool -> ?verbose:Py.Object.t -> estimators:Py.Object.t -> unit -> t
+val create : ?final_estimator:Py.Object.t -> ?cv:[`I of int | `CrossValGenerator of Py.Object.t | `Arr of Arr.t] -> ?stack_method:[`Auto | `Predict_proba | `Decision_function | `Predict] -> ?n_jobs:int -> ?passthrough:bool -> ?verbose:int -> estimators:(string * Py.Object.t) list -> unit -> t
 (**
 Stack of estimators with a final classifier.
 
@@ -5088,7 +5407,7 @@ Examples
 0.9...
 *)
 
-val decision_function : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val decision_function : x:Arr.t -> t -> Arr.t
 (**
 Predict decision function for samples in X using
 `final_estimator_.decision_function`.
@@ -5105,7 +5424,7 @@ decisions : ndarray of shape (n_samples,), (n_samples, n_classes),             o
     The decision function computed the final estimator.
 *)
 
-val fit : ?sample_weight:[`Ndarray of Ndarray.t | `None] -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the estimators.
 
@@ -5128,7 +5447,7 @@ Returns
 self : object
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -5163,7 +5482,7 @@ deep : bool
     of the classifiers as well.
 *)
 
-val predict : ?predict_params:(string * Py.Object.t) list -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : ?predict_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Predict target for X.
 
@@ -5185,7 +5504,7 @@ y_pred : ndarray of shape (n_samples,) or (n_samples, n_output)
     Predicted targets.
 *)
 
-val predict_proba : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Predict class probabilities for X using
 `final_estimator_.predict_proba`.
@@ -5202,7 +5521,7 @@ probabilities : ndarray of shape (n_samples, n_classes) or             list of n
     The class probabilities of the input samples.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -5243,7 +5562,7 @@ Parameters
     setting them to 'drop'.
 *)
 
-val transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Return class labels or probabilities for X for each estimator.
 
@@ -5260,17 +5579,33 @@ y_preds : ndarray of shape (n_samples, n_estimators) or                 (n_sampl
 *)
 
 
-(** Attribute estimators_: see constructor for documentation *)
+(** Attribute estimators_: get value or raise Not_found if None.*)
 val estimators_ : t -> Py.Object.t
 
-(** Attribute named_estimators_: see constructor for documentation *)
-val named_estimators_ : t -> Py.Object.t
+(** Attribute estimators_: get value as an option. *)
+val estimators_opt : t -> (Py.Object.t) option
 
-(** Attribute final_estimator_: see constructor for documentation *)
+
+(** Attribute named_estimators_: get value or raise Not_found if None.*)
+val named_estimators_ : t -> Dict.t
+
+(** Attribute named_estimators_: get value as an option. *)
+val named_estimators_opt : t -> (Dict.t) option
+
+
+(** Attribute final_estimator_: get value or raise Not_found if None.*)
 val final_estimator_ : t -> Py.Object.t
 
-(** Attribute stack_method_: see constructor for documentation *)
+(** Attribute final_estimator_: get value as an option. *)
+val final_estimator_opt : t -> (Py.Object.t) option
+
+
+(** Attribute stack_method_: get value or raise Not_found if None.*)
 val stack_method_ : t -> string list
+
+(** Attribute stack_method_: get value as an option. *)
+val stack_method_opt : t -> (string list) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -5290,7 +5625,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?final_estimator:Py.Object.t -> ?cv:[`Int of int | `CrossValGenerator of Py.Object.t | `Ndarray of Ndarray.t] -> ?n_jobs:int -> ?passthrough:bool -> ?verbose:Py.Object.t -> estimators:Py.Object.t -> unit -> t
+val create : ?final_estimator:Py.Object.t -> ?cv:[`I of int | `CrossValGenerator of Py.Object.t | `Arr of Arr.t] -> ?n_jobs:int -> ?passthrough:bool -> ?verbose:int -> estimators:(string * Py.Object.t) list -> unit -> t
 (**
 Stack of estimators with a final regressor.
 
@@ -5395,7 +5730,7 @@ Examples
 0.3...
 *)
 
-val fit : ?sample_weight:[`Ndarray of Ndarray.t | `None] -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the estimators.
 
@@ -5418,7 +5753,7 @@ Returns
 self : object
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -5453,7 +5788,7 @@ deep : bool
     of the classifiers as well.
 *)
 
-val predict : ?predict_params:(string * Py.Object.t) list -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : ?predict_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Predict target for X.
 
@@ -5475,7 +5810,7 @@ y_pred : ndarray of shape (n_samples,) or (n_samples, n_output)
     Predicted targets.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -5536,7 +5871,7 @@ Parameters
     setting them to 'drop'.
 *)
 
-val transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Return the predictions for X for each estimator.
 
@@ -5553,14 +5888,26 @@ y_preds : ndarray of shape (n_samples, n_estimators)
 *)
 
 
-(** Attribute estimators_: see constructor for documentation *)
+(** Attribute estimators_: get value or raise Not_found if None.*)
 val estimators_ : t -> Py.Object.t
 
-(** Attribute named_estimators_: see constructor for documentation *)
-val named_estimators_ : t -> Py.Object.t
+(** Attribute estimators_: get value as an option. *)
+val estimators_opt : t -> (Py.Object.t) option
 
-(** Attribute final_estimator_: see constructor for documentation *)
+
+(** Attribute named_estimators_: get value or raise Not_found if None.*)
+val named_estimators_ : t -> Dict.t
+
+(** Attribute named_estimators_: get value as an option. *)
+val named_estimators_opt : t -> (Dict.t) option
+
+
+(** Attribute final_estimator_: get value or raise Not_found if None.*)
 val final_estimator_ : t -> Py.Object.t
+
+(** Attribute final_estimator_: get value as an option. *)
+val final_estimator_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -5580,7 +5927,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?voting:[`Hard | `Soft] -> ?weights:Ndarray.t -> ?n_jobs:[`Int of int | `None] -> ?flatten_transform:bool -> estimators:Py.Object.t -> unit -> t
+val create : ?voting:[`Hard | `Soft] -> ?weights:Arr.t -> ?n_jobs:int -> ?flatten_transform:bool -> estimators:(string * Py.Object.t) list -> unit -> t
 (**
 Soft Voting/Majority Rule classifier for unfitted estimators.
 
@@ -5678,7 +6025,7 @@ True
 (6, 6)
 *)
 
-val fit : ?sample_weight:[`Ndarray of Ndarray.t | `None] -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the estimators.
 
@@ -5701,7 +6048,7 @@ Returns
 self : object
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -5736,7 +6083,7 @@ deep : bool
     of the classifiers as well.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict class labels for X.
 
@@ -5751,7 +6098,7 @@ maj : array-like, shape (n_samples,)
     Predicted class labels.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the mean accuracy on the given test data and labels.
 
@@ -5792,7 +6139,7 @@ Parameters
     setting them to 'drop'.
 *)
 
-val transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Return class labels or probabilities for X for each estimator.
 
@@ -5817,14 +6164,26 @@ probabilities_or_labels
 *)
 
 
-(** Attribute estimators_: see constructor for documentation *)
+(** Attribute estimators_: get value or raise Not_found if None.*)
 val estimators_ : t -> Py.Object.t
 
-(** Attribute named_estimators_: see constructor for documentation *)
-val named_estimators_ : t -> Py.Object.t
+(** Attribute estimators_: get value as an option. *)
+val estimators_opt : t -> (Py.Object.t) option
 
-(** Attribute classes_: see constructor for documentation *)
-val classes_ : t -> Ndarray.t
+
+(** Attribute named_estimators_: get value or raise Not_found if None.*)
+val named_estimators_ : t -> Dict.t
+
+(** Attribute named_estimators_: get value as an option. *)
+val named_estimators_opt : t -> (Dict.t) option
+
+
+(** Attribute classes_: get value or raise Not_found if None.*)
+val classes_ : t -> Arr.t
+
+(** Attribute classes_: get value as an option. *)
+val classes_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -5844,7 +6203,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?weights:Ndarray.t -> ?n_jobs:[`Int of int | `None] -> estimators:Py.Object.t -> unit -> t
+val create : ?weights:Arr.t -> ?n_jobs:int -> estimators:(string * Py.Object.t) list -> unit -> t
 (**
 Prediction voting regressor for unfitted estimators.
 
@@ -5908,7 +6267,7 @@ Examples
 [ 3.3  5.7 11.8 19.7 28.  40.3]
 *)
 
-val fit : ?sample_weight:[`Ndarray of Ndarray.t | `None] -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the estimators.
 
@@ -5932,7 +6291,7 @@ self : object
     Fitted estimator.
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -5967,7 +6326,7 @@ deep : bool
     of the classifiers as well.
 *)
 
-val predict : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Predict regression target for X.
 
@@ -5985,7 +6344,7 @@ y : array of shape (n_samples,)
     The predicted values.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -6046,7 +6405,7 @@ Parameters
     setting them to 'drop'.
 *)
 
-val transform : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Return predictions for X for each estimator.
 
@@ -6062,11 +6421,19 @@ predictions: array of shape (n_samples, n_classifiers)
 *)
 
 
-(** Attribute estimators_: see constructor for documentation *)
+(** Attribute estimators_: get value or raise Not_found if None.*)
 val estimators_ : t -> Py.Object.t
 
-(** Attribute named_estimators_: see constructor for documentation *)
-val named_estimators_ : t -> Py.Object.t
+(** Attribute estimators_: get value as an option. *)
+val estimators_opt : t -> (Py.Object.t) option
+
+
+(** Attribute named_estimators_: get value or raise Not_found if None.*)
+val named_estimators_ : t -> Dict.t
+
+(** Attribute named_estimators_: get value as an option. *)
+val named_estimators_opt : t -> (Dict.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -6082,12 +6449,15 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 end
 
 module Partial_dependence : sig
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module Parallel : sig
 type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_jobs:int -> ?backend:Py.Object.t -> ?verbose:int -> ?timeout:float -> ?pre_dispatch:[`All | `Int of int | `PyObject of Py.Object.t] -> ?batch_size:[`Int of int | `Auto] -> ?temp_folder:string -> ?max_nbytes:Py.Object.t -> ?mmap_mode:[`R_ | `R | `W_ | `C | `None] -> ?prefer:[`Processes | `Threads | `None] -> ?require:[`Sharedmem | `None] -> unit -> t
+val create : ?n_jobs:int -> ?backend:Py.Object.t -> ?verbose:int -> ?timeout:float -> ?pre_dispatch:[`All | `I of int | `PyObject of Py.Object.t] -> ?batch_size:[`I of int | `Auto] -> ?temp_folder:string -> ?max_nbytes:Py.Object.t -> ?mmap_mode:[`R_ | `R | `W_ | `C | `None] -> ?prefer:[`Processes | `Threads] -> ?require:string -> unit -> t
 (**
 Helper class for readable parallel mapping.
 
@@ -6371,7 +6741,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val cartesian : ?out:Py.Object.t -> arrays:Py.Object.t -> unit -> Ndarray.t
+val cartesian : ?out:Py.Object.t -> arrays:Py.Object.t -> unit -> Arr.t
 (**
 Generate a cartesian product of input arrays.
 
@@ -6405,7 +6775,7 @@ array([[1, 4, 6],
        [3, 5, 7]])
 *)
 
-val check_array : ?accept_sparse:[`String of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`String of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C | `None] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:[`Bool of bool | `None] -> ?estimator:[`String of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
+val check_array : ?accept_sparse:[`S of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`S of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:bool -> ?estimator:[`S of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
 (**
 Input validation on an array, list, sparse matrix or similar.
 
@@ -6497,7 +6867,7 @@ array_converted : object
     The converted and validated array.
 *)
 
-val check_is_fitted : ?attributes:[`String of string | `ArrayLike of Py.Object.t | `StringList of string list] -> ?msg:string -> ?all_or_any:[`Callable of Py.Object.t | `PyObject of Py.Object.t] -> estimator:Py.Object.t -> unit -> Py.Object.t
+val check_is_fitted : ?attributes:[`S of string | `Arr of Arr.t | `StringList of string list] -> ?msg:string -> ?all_or_any:[`Callable of Py.Object.t | `PyObject of Py.Object.t] -> estimator:Py.Object.t -> unit -> Py.Object.t
 (**
 Perform is_fitted validation for estimator.
 
@@ -6592,7 +6962,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val mquantiles : ?prob:Py.Object.t -> ?alphap:Py.Object.t -> ?betap:Py.Object.t -> ?axis:Py.Object.t -> ?limit:Py.Object.t -> a:Ndarray.t -> unit -> Py.Object.t
+val mquantiles : ?prob:Arr.t -> ?alphap:float -> ?betap:float -> ?axis:int -> ?limit:(float * float) -> a:Arr.t -> unit -> Arr.t
 (**
 Computes empirical quantiles for a data array.
 
@@ -6690,7 +7060,7 @@ Using a 2D array, specifying axis and limit.
  [42.800000000000004 40.05 --]]
 *)
 
-val partial_dependence : ?grid:Ndarray.t -> ?x:Ndarray.t -> ?percentiles:Py.Object.t -> ?grid_resolution:int -> gbrt:Py.Object.t -> target_variables:[`Ndarray of Ndarray.t | `PyObject of Py.Object.t] -> unit -> (Ndarray.t * Py.Object.t)
+val partial_dependence : ?grid:Arr.t -> ?x:Arr.t -> ?percentiles:Py.Object.t -> ?grid_resolution:int -> gbrt:Py.Object.t -> target_variables:[`Arr of Arr.t | `Dtype_int of Py.Object.t] -> unit -> (Arr.t * Py.Object.t)
 (**
 DEPRECATED: The function ensemble.partial_dependence has been deprecated in favour of inspection.partial_dependence in 0.21 and will be removed in 0.23.
 
@@ -6756,7 +7126,7 @@ Partial dependence of ``target_variables``.
     
 *)
 
-val plot_partial_dependence : ?feature_names:Py.Object.t -> ?label:Py.Object.t -> ?n_cols:int -> ?grid_resolution:int -> ?percentiles:Py.Object.t -> ?n_jobs:[`Int of int | `None] -> ?verbose:int -> ?ax:Py.Object.t -> ?line_kw:Py.Object.t -> ?contour_kw:Py.Object.t -> ?fig_kw:(string * Py.Object.t) list -> gbrt:Py.Object.t -> x:Ndarray.t -> features:[`StringList of string list | `PyObject of Py.Object.t] -> unit -> (Py.Object.t * Py.Object.t)
+val plot_partial_dependence : ?feature_names:Py.Object.t -> ?label:Py.Object.t -> ?n_cols:int -> ?grid_resolution:int -> ?percentiles:Py.Object.t -> ?n_jobs:int -> ?verbose:int -> ?ax:Py.Object.t -> ?line_kw:Dict.t -> ?contour_kw:Dict.t -> ?fig_kw:(string * Py.Object.t) list -> gbrt:Py.Object.t -> x:Arr.t -> features:[`StringList of string list | `PyObject of Py.Object.t] -> unit -> (Py.Object.t * Py.Object.t)
 (**
 DEPRECATED: The function ensemble.plot_partial_dependence has been deprecated in favour of sklearn.inspection.plot_partial_dependence in  0.21 and will be removed in 0.23.
 

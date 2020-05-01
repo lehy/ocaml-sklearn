@@ -38,22 +38,27 @@ let arctanh self =
                      Py.Module.get_function_with_keywords self "argmax"
                        [||]
                        (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-| `None -> Py.String.of_string "None"
+| `Zero -> Py.Int.of_int 0
+| `One -> Py.Int.of_int 1
 | `PyObject x -> Wrap_utils.id x
 )); ("out", out)])
-
+                       |> (fun x -> if Wrap_utils.isinstance Wrap_utils.ndarray x then `Ndarray (Ndarray.of_pyobject x) else if Py.Int.check x then `I (Py.Int.to_int x) else failwith "could not identify type from Python value")
                   let argmin ?axis ?out self =
                      Py.Module.get_function_with_keywords self "argmin"
                        [||]
                        (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-| `None -> Py.String.of_string "None"
+| `Zero -> Py.Int.of_int 0
+| `One -> Py.Int.of_int 1
 | `PyObject x -> Wrap_utils.id x
 )); ("out", out)])
-
-let asformat ?copy ~format self =
-   Py.Module.get_function_with_keywords self "asformat"
-     [||]
-     (Wrap_utils.keyword_args [("copy", copy); ("format", Some(format |> Py.String.of_string))])
+                       |> (fun x -> if Wrap_utils.isinstance Wrap_utils.ndarray x then `Ndarray (Ndarray.of_pyobject x) else if Py.Int.check x then `I (Py.Int.to_int x) else failwith "could not identify type from Python value")
+                  let asformat ?copy ~format self =
+                     Py.Module.get_function_with_keywords self "asformat"
+                       [||]
+                       (Wrap_utils.keyword_args [("copy", copy); ("format", Some(format |> (function
+| `S x -> Py.String.of_string x
+| `None -> Py.none
+)))])
 
 let asfptype self =
    Py.Module.get_function_with_keywords self "asfptype"
@@ -64,8 +69,8 @@ let asfptype self =
                      Py.Module.get_function_with_keywords self "astype"
                        [||]
                        (Wrap_utils.keyword_args [("casting", casting); ("copy", copy); ("dtype", Some(dtype |> (function
-| `String x -> Py.String.of_string x
-| `PyObject x -> Wrap_utils.id x
+| `S x -> Py.String.of_string x
+| `Dtype x -> Wrap_utils.id x
 )))])
 
 let ceil self =
@@ -157,8 +162,8 @@ let getmaxprint self =
                      Py.Module.get_function_with_keywords self "getnnz"
                        [||]
                        (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-| `None -> Py.String.of_string "None"
-| `PyObject x -> Wrap_utils.id x
+| `Zero -> Py.Int.of_int 0
+| `One -> Py.Int.of_int 1
 ))])
 
 let getrow ~i self =
@@ -175,7 +180,8 @@ let log1p self =
                      Py.Module.get_function_with_keywords self "max"
                        [||]
                        (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-| `None -> Py.String.of_string "None"
+| `Zero -> Py.Int.of_int 0
+| `One -> Py.Int.of_int 1
 | `PyObject x -> Wrap_utils.id x
 )); ("out", out)])
 
@@ -188,15 +194,17 @@ let maximum ~other self =
                      Py.Module.get_function_with_keywords self "mean"
                        [||]
                        (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-| `None -> Py.String.of_string "None"
+| `Zero -> Py.Int.of_int 0
+| `One -> Py.Int.of_int 1
 | `PyObject x -> Wrap_utils.id x
-)); ("dtype", dtype); ("out", out)])
-
+)); ("dtype", dtype); ("out", Wrap_utils.Option.map out Ndarray.to_pyobject)])
+                       |> Ndarray.of_pyobject
                   let min ?axis ?out self =
                      Py.Module.get_function_with_keywords self "min"
                        [||]
                        (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-| `None -> Py.String.of_string "None"
+| `Zero -> Py.Int.of_int 0
+| `One -> Py.Int.of_int 1
 | `PyObject x -> Wrap_utils.id x
 )); ("out", out)])
 
@@ -289,10 +297,11 @@ let sqrt self =
                      Py.Module.get_function_with_keywords self "sum"
                        [||]
                        (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-| `None -> Py.String.of_string "None"
+| `Zero -> Py.Int.of_int 0
+| `One -> Py.Int.of_int 1
 | `PyObject x -> Wrap_utils.id x
-)); ("dtype", dtype); ("out", out)])
-
+)); ("dtype", dtype); ("out", Wrap_utils.Option.map out Ndarray.to_pyobject)])
+                       |> Ndarray.of_pyobject
 let sum_duplicates self =
    Py.Module.get_function_with_keywords self "sum_duplicates"
      [||]
@@ -343,7 +352,7 @@ let tocsr ?copy self =
 | `C -> Py.String.of_string "C"
 | `F -> Py.String.of_string "F"
 )); ("out", Wrap_utils.Option.map out Ndarray.to_pyobject)])
-
+                       |> Ndarray.of_pyobject
 let todia ?copy self =
    Py.Module.get_function_with_keywords self "todia"
      [||]
@@ -369,10 +378,15 @@ let trunc self =
      [||]
      []
 
-let dtype self =
+
+let dtype_opt self =
   match Py.Object.get_attr_string self "dtype" with
-| None -> raise (Wrap_utils.Attribute_not_found "dtype")
-| Some x -> Wrap_utils.id x
+  | None -> failwith "attribute dtype not found"
+  | Some x -> if Py.is_none x then None else Some (Wrap_utils.id x)
+
+let dtype self = match dtype_opt self with
+  | None -> raise Not_found
+  | Some x -> x
 let to_string self = Py.Object.to_string self
 let show self = to_string self
 let pp formatter self = Format.fprintf formatter "%s" (show self)

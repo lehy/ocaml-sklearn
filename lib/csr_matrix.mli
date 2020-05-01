@@ -141,7 +141,7 @@ Element-wise arctanh.
 See numpy.arctanh for more information.
 *)
 
-val argmax : ?axis:[`None | `PyObject of Py.Object.t] -> ?out:Py.Object.t -> t -> Py.Object.t
+val argmax : ?axis:[`Zero | `One | `PyObject of Py.Object.t] -> ?out:Py.Object.t -> t -> [`Ndarray of Ndarray.t | `I of int]
 (**
 Return indices of maximum elements along an axis.
 
@@ -164,7 +164,7 @@ ind : numpy.matrix or int
     Indices of maximum elements. If matrix, its size along `axis` is 1.
 *)
 
-val argmin : ?axis:[`None | `PyObject of Py.Object.t] -> ?out:Py.Object.t -> t -> Py.Object.t
+val argmin : ?axis:[`Zero | `One | `PyObject of Py.Object.t] -> ?out:Py.Object.t -> t -> [`Ndarray of Ndarray.t | `I of int]
 (**
 Return indices of minimum elements along an axis.
 
@@ -187,7 +187,7 @@ Returns
     Indices of minimum elements. If matrix, its size along `axis` is 1.
 *)
 
-val asformat : ?copy:Py.Object.t -> format:string -> t -> Py.Object.t
+val asformat : ?copy:Py.Object.t -> format:[`S of string | `None] -> t -> Py.Object.t
 (**
 Return this matrix in the passed format.
 
@@ -209,7 +209,7 @@ val asfptype : t -> Py.Object.t
 Upcast matrix to a floating point format (if necessary)
 *)
 
-val astype : ?casting:Py.Object.t -> ?copy:Py.Object.t -> dtype:[`String of string | `PyObject of Py.Object.t] -> t -> Py.Object.t
+val astype : ?casting:Py.Object.t -> ?copy:Py.Object.t -> dtype:[`S of string | `Dtype of Py.Object.t] -> t -> Py.Object.t
 (**
 Cast the matrix elements to a specified type.
 
@@ -401,7 +401,7 @@ val getmaxprint : t -> Py.Object.t
 Maximum number of elements to display when printed.
 *)
 
-val getnnz : ?axis:[`None | `PyObject of Py.Object.t] -> t -> Py.Object.t
+val getnnz : ?axis:[`Zero | `One] -> t -> Py.Object.t
 (**
 Number of stored values, including explicit zeros.
 
@@ -429,7 +429,7 @@ Element-wise log1p.
 See numpy.log1p for more information.
 *)
 
-val max : ?axis:[`None | `PyObject of Py.Object.t] -> ?out:Py.Object.t -> t -> Py.Object.t
+val max : ?axis:[`Zero | `One | `PyObject of Py.Object.t] -> ?out:Py.Object.t -> t -> Py.Object.t
 (**
 Return the maximum of the matrix or maximum along an axis.
 This takes all elements into account, not just the non-zero ones.
@@ -464,7 +464,7 @@ val maximum : other:Py.Object.t -> t -> Py.Object.t
 Element-wise maximum between this and another matrix.
 *)
 
-val mean : ?axis:[`None | `PyObject of Py.Object.t] -> ?dtype:Py.Object.t -> ?out:Py.Object.t -> t -> Py.Object.t
+val mean : ?axis:[`Zero | `One | `PyObject of Py.Object.t] -> ?dtype:Py.Object.t -> ?out:Ndarray.t -> t -> Ndarray.t
 (**
 Compute the arithmetic mean along the specified axis.
 
@@ -501,7 +501,7 @@ See Also
 numpy.matrix.mean : NumPy's implementation of 'mean' for matrices
 *)
 
-val min : ?axis:[`None | `PyObject of Py.Object.t] -> ?out:Py.Object.t -> t -> Py.Object.t
+val min : ?axis:[`Zero | `One | `PyObject of Py.Object.t] -> ?out:Py.Object.t -> t -> Py.Object.t
 (**
 Return the minimum of the matrix or maximum along an axis.
 This takes all elements into account, not just the non-zero ones.
@@ -711,7 +711,7 @@ Element-wise sqrt.
 See numpy.sqrt for more information.
 *)
 
-val sum : ?axis:[`None | `PyObject of Py.Object.t] -> ?dtype:Py.Object.t -> ?out:Py.Object.t -> t -> Py.Object.t
+val sum : ?axis:[`Zero | `One | `PyObject of Py.Object.t] -> ?dtype:Py.Object.t -> ?out:Ndarray.t -> t -> Ndarray.t
 (**
 Sum the matrix elements over a given axis.
 
@@ -836,7 +836,7 @@ With copy=False, the data/indices may be shared between this matrix and
 the resultant csr_matrix.
 *)
 
-val todense : ?order:[`C | `F] -> ?out:Ndarray.t -> t -> Py.Object.t
+val todense : ?order:[`C | `F] -> ?out:Ndarray.t -> t -> Ndarray.t
 (**
 Return a dense matrix representation of this matrix.
 
@@ -925,8 +925,12 @@ See numpy.trunc for more information.
 *)
 
 
-(** Attribute dtype: see constructor for documentation *)
+(** Attribute dtype: get value or raise Not_found if None.*)
 val dtype : t -> Py.Object.t
+
+(** Attribute dtype: get value as an option. *)
+val dtype_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string

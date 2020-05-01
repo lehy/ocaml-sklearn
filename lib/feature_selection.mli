@@ -1,9 +1,12 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module GenericUnivariateSelect : sig
 type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?score_func:Py.Object.t -> ?mode:[`Percentile | `K_best | `Fpr | `Fdr | `Fwe] -> ?param:[`Float of float | `PyObject of Py.Object.t] -> unit -> t
+val create : ?score_func:Py.Object.t -> ?mode:[`Percentile | `K_best | `Fpr | `Fdr | `Fwe] -> ?param:[`F of float | `Int_depending_on_the_feature_selection_mode of Py.Object.t] -> unit -> t
 (**
 Univariate feature selector with configurable strategy.
 
@@ -56,7 +59,7 @@ SelectFdr: Select features based on an estimated false discovery rate.
 SelectFwe: Select features based on family-wise error rate.
 *)
 
-val fit : x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Run score function on (X, y) and get the appropriate features.
 
@@ -74,7 +77,7 @@ Returns
 self : object
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -98,7 +101,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -114,7 +117,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val get_support : ?indices:bool -> t -> Ndarray.t
+val get_support : ?indices:bool -> t -> Arr.t
 (**
 Get a mask, or integer index, of the features selected
 
@@ -135,7 +138,7 @@ support : array
     values are indices into the input feature vector.
 *)
 
-val inverse_transform : x:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : x:Arr.t -> t -> Arr.t
 (**
 Reverse the transformation operation
 
@@ -171,7 +174,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Reduce X to the selected features.
 
@@ -187,11 +190,19 @@ X_r : array of shape [n_samples, n_selected_features]
 *)
 
 
-(** Attribute scores_: see constructor for documentation *)
-val scores_ : t -> Ndarray.t
+(** Attribute scores_: get value or raise Not_found if None.*)
+val scores_ : t -> Arr.t
 
-(** Attribute pvalues_: see constructor for documentation *)
-val pvalues_ : t -> Ndarray.t
+(** Attribute scores_: get value as an option. *)
+val scores_opt : t -> (Arr.t) option
+
+
+(** Attribute pvalues_: get value or raise Not_found if None.*)
+val pvalues_ : t -> Arr.t
+
+(** Attribute pvalues_: get value as an option. *)
+val pvalues_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -211,7 +222,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?n_features_to_select:[`Int of int | `None] -> ?step:[`Int of int | `Float of float] -> ?verbose:int -> estimator:Py.Object.t -> unit -> t
+val create : ?n_features_to_select:int -> ?step:[`I of int | `F of float] -> ?verbose:int -> estimator:Py.Object.t -> unit -> t
 (**
 Feature ranking with recursive feature elimination.
 
@@ -298,7 +309,7 @@ References
        Mach. Learn., 46(1-3), 389--422, 2002.
 *)
 
-val decision_function : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val decision_function : x:Arr.t -> t -> Arr.t
 (**
 Compute the decision function of ``X``.
 
@@ -318,7 +329,7 @@ score : array, shape = [n_samples, n_classes] or [n_samples]
     [n_samples].
 *)
 
-val fit : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the RFE model and then the underlying estimator on the selected
    features.
@@ -332,7 +343,7 @@ y : array-like of shape (n_samples,)
     The target values.
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -356,7 +367,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -372,7 +383,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val get_support : ?indices:bool -> t -> Ndarray.t
+val get_support : ?indices:bool -> t -> Arr.t
 (**
 Get a mask, or integer index, of the features selected
 
@@ -393,7 +404,7 @@ support : array
     values are indices into the input feature vector.
 *)
 
-val inverse_transform : x:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : x:Arr.t -> t -> Arr.t
 (**
 Reverse the transformation operation
 
@@ -409,7 +420,7 @@ X_r : array of shape [n_samples, n_original_features]
     been removed by :meth:`transform`.
 *)
 
-val predict : x:Ndarray.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Reduce X to the selected features and then predict using the
    underlying estimator.
@@ -425,7 +436,7 @@ y : array of shape [n_samples]
     The predicted target values.
 *)
 
-val predict_log_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_log_proba : x:Arr.t -> t -> Arr.t
 (**
 Predict class log-probabilities for X.
 
@@ -441,7 +452,7 @@ p : array of shape (n_samples, n_classes)
     classes corresponds to that in the attribute :term:`classes_`.
 *)
 
-val predict_proba : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Predict class probabilities for X.
 
@@ -459,7 +470,7 @@ p : array of shape (n_samples, n_classes)
     classes corresponds to that in the attribute :term:`classes_`.
 *)
 
-val score : x:Ndarray.t -> y:Ndarray.t -> t -> Py.Object.t
+val score : x:Arr.t -> y:Arr.t -> t -> Py.Object.t
 (**
 Reduce X to the selected features and then return the score of the
    underlying estimator.
@@ -493,7 +504,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Reduce X to the selected features.
 
@@ -509,17 +520,33 @@ X_r : array of shape [n_samples, n_selected_features]
 *)
 
 
-(** Attribute n_features_: see constructor for documentation *)
+(** Attribute n_features_: get value or raise Not_found if None.*)
 val n_features_ : t -> int
 
-(** Attribute support_: see constructor for documentation *)
-val support_ : t -> Ndarray.t
+(** Attribute n_features_: get value as an option. *)
+val n_features_opt : t -> (int) option
 
-(** Attribute ranking_: see constructor for documentation *)
-val ranking_ : t -> Ndarray.t
 
-(** Attribute estimator_: see constructor for documentation *)
+(** Attribute support_: get value or raise Not_found if None.*)
+val support_ : t -> Arr.t
+
+(** Attribute support_: get value as an option. *)
+val support_opt : t -> (Arr.t) option
+
+
+(** Attribute ranking_: get value or raise Not_found if None.*)
+val ranking_ : t -> Arr.t
+
+(** Attribute ranking_: get value as an option. *)
+val ranking_opt : t -> (Arr.t) option
+
+
+(** Attribute estimator_: get value or raise Not_found if None.*)
 val estimator_ : t -> Py.Object.t
+
+(** Attribute estimator_: get value as an option. *)
+val estimator_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -539,7 +566,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?step:[`Int of int | `Float of float] -> ?min_features_to_select:int -> ?cv:[`Int of int | `CrossValGenerator of Py.Object.t | `Ndarray of Ndarray.t] -> ?scoring:[`String of string | `Callable of Py.Object.t | `None] -> ?verbose:int -> ?n_jobs:[`Int of int | `None] -> estimator:Py.Object.t -> unit -> t
+val create : ?step:[`I of int | `F of float] -> ?min_features_to_select:int -> ?cv:[`I of int | `CrossValGenerator of Py.Object.t | `Arr of Arr.t] -> ?scoring:[`S of string | `Callable of Py.Object.t] -> ?verbose:int -> ?n_jobs:int -> estimator:Py.Object.t -> unit -> t
 (**
 Feature ranking with recursive feature elimination and cross-validated
 selection of the best number of features.
@@ -664,7 +691,7 @@ References
        Mach. Learn., 46(1-3), 389--422, 2002.
 *)
 
-val decision_function : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val decision_function : x:Arr.t -> t -> Arr.t
 (**
 Compute the decision function of ``X``.
 
@@ -684,7 +711,7 @@ score : array, shape = [n_samples, n_classes] or [n_samples]
     [n_samples].
 *)
 
-val fit : ?groups:[`Ndarray of Ndarray.t | `None] -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> t -> t
+val fit : ?groups:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the RFE model and automatically tune the number of selected
    features.
@@ -705,7 +732,7 @@ groups : array-like of shape (n_samples,) or None
     instance (e.g., :class:`~sklearn.model_selection.GroupKFold`).
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -729,7 +756,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -745,7 +772,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val get_support : ?indices:bool -> t -> Ndarray.t
+val get_support : ?indices:bool -> t -> Arr.t
 (**
 Get a mask, or integer index, of the features selected
 
@@ -766,7 +793,7 @@ support : array
     values are indices into the input feature vector.
 *)
 
-val inverse_transform : x:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : x:Arr.t -> t -> Arr.t
 (**
 Reverse the transformation operation
 
@@ -782,7 +809,7 @@ X_r : array of shape [n_samples, n_original_features]
     been removed by :meth:`transform`.
 *)
 
-val predict : x:Ndarray.t -> t -> Ndarray.t
+val predict : x:Arr.t -> t -> Arr.t
 (**
 Reduce X to the selected features and then predict using the
    underlying estimator.
@@ -798,7 +825,7 @@ y : array of shape [n_samples]
     The predicted target values.
 *)
 
-val predict_log_proba : x:Ndarray.t -> t -> Ndarray.t
+val predict_log_proba : x:Arr.t -> t -> Arr.t
 (**
 Predict class log-probabilities for X.
 
@@ -814,7 +841,7 @@ p : array of shape (n_samples, n_classes)
     classes corresponds to that in the attribute :term:`classes_`.
 *)
 
-val predict_proba : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> Ndarray.t
+val predict_proba : x:Arr.t -> t -> Arr.t
 (**
 Predict class probabilities for X.
 
@@ -832,7 +859,7 @@ p : array of shape (n_samples, n_classes)
     classes corresponds to that in the attribute :term:`classes_`.
 *)
 
-val score : x:Ndarray.t -> y:Ndarray.t -> t -> Py.Object.t
+val score : x:Arr.t -> y:Arr.t -> t -> Py.Object.t
 (**
 Reduce X to the selected features and then return the score of the
    underlying estimator.
@@ -866,7 +893,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Reduce X to the selected features.
 
@@ -882,20 +909,40 @@ X_r : array of shape [n_samples, n_selected_features]
 *)
 
 
-(** Attribute n_features_: see constructor for documentation *)
+(** Attribute n_features_: get value or raise Not_found if None.*)
 val n_features_ : t -> int
 
-(** Attribute support_: see constructor for documentation *)
-val support_ : t -> Ndarray.t
+(** Attribute n_features_: get value as an option. *)
+val n_features_opt : t -> (int) option
 
-(** Attribute ranking_: see constructor for documentation *)
-val ranking_ : t -> Ndarray.t
 
-(** Attribute grid_scores_: see constructor for documentation *)
-val grid_scores_ : t -> Ndarray.t
+(** Attribute support_: get value or raise Not_found if None.*)
+val support_ : t -> Arr.t
 
-(** Attribute estimator_: see constructor for documentation *)
+(** Attribute support_: get value as an option. *)
+val support_opt : t -> (Arr.t) option
+
+
+(** Attribute ranking_: get value or raise Not_found if None.*)
+val ranking_ : t -> Arr.t
+
+(** Attribute ranking_: get value as an option. *)
+val ranking_opt : t -> (Arr.t) option
+
+
+(** Attribute grid_scores_: get value or raise Not_found if None.*)
+val grid_scores_ : t -> Arr.t
+
+(** Attribute grid_scores_: get value as an option. *)
+val grid_scores_opt : t -> (Arr.t) option
+
+
+(** Attribute estimator_: get value or raise Not_found if None.*)
 val estimator_ : t -> Py.Object.t
+
+(** Attribute estimator_: get value as an option. *)
+val estimator_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -972,7 +1019,7 @@ SelectFwe: Select features based on family-wise error rate.
 GenericUnivariateSelect: Univariate feature selector with configurable mode.
 *)
 
-val fit : x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Run score function on (X, y) and get the appropriate features.
 
@@ -990,7 +1037,7 @@ Returns
 self : object
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -1014,7 +1061,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1030,7 +1077,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val get_support : ?indices:bool -> t -> Ndarray.t
+val get_support : ?indices:bool -> t -> Arr.t
 (**
 Get a mask, or integer index, of the features selected
 
@@ -1051,7 +1098,7 @@ support : array
     values are indices into the input feature vector.
 *)
 
-val inverse_transform : x:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : x:Arr.t -> t -> Arr.t
 (**
 Reverse the transformation operation
 
@@ -1087,7 +1134,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Reduce X to the selected features.
 
@@ -1103,11 +1150,19 @@ X_r : array of shape [n_samples, n_selected_features]
 *)
 
 
-(** Attribute scores_: see constructor for documentation *)
-val scores_ : t -> Ndarray.t
+(** Attribute scores_: get value or raise Not_found if None.*)
+val scores_ : t -> Arr.t
 
-(** Attribute pvalues_: see constructor for documentation *)
-val pvalues_ : t -> Ndarray.t
+(** Attribute scores_: get value as an option. *)
+val scores_opt : t -> (Arr.t) option
+
+
+(** Attribute pvalues_: get value or raise Not_found if None.*)
+val pvalues_ : t -> Arr.t
+
+(** Attribute pvalues_: get value as an option. *)
+val pvalues_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1180,7 +1235,7 @@ SelectFwe: Select features based on family-wise error rate.
 GenericUnivariateSelect: Univariate feature selector with configurable mode.
 *)
 
-val fit : x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Run score function on (X, y) and get the appropriate features.
 
@@ -1198,7 +1253,7 @@ Returns
 self : object
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -1222,7 +1277,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1238,7 +1293,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val get_support : ?indices:bool -> t -> Ndarray.t
+val get_support : ?indices:bool -> t -> Arr.t
 (**
 Get a mask, or integer index, of the features selected
 
@@ -1259,7 +1314,7 @@ support : array
     values are indices into the input feature vector.
 *)
 
-val inverse_transform : x:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : x:Arr.t -> t -> Arr.t
 (**
 Reverse the transformation operation
 
@@ -1295,7 +1350,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Reduce X to the selected features.
 
@@ -1311,11 +1366,19 @@ X_r : array of shape [n_samples, n_selected_features]
 *)
 
 
-(** Attribute scores_: see constructor for documentation *)
-val scores_ : t -> Ndarray.t
+(** Attribute scores_: get value or raise Not_found if None.*)
+val scores_ : t -> Arr.t
 
-(** Attribute pvalues_: see constructor for documentation *)
-val pvalues_ : t -> Ndarray.t
+(** Attribute scores_: get value as an option. *)
+val scores_opt : t -> (Arr.t) option
+
+
+(** Attribute pvalues_: get value or raise Not_found if None.*)
+val pvalues_ : t -> Arr.t
+
+(** Attribute pvalues_: get value as an option. *)
+val pvalues_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1335,7 +1398,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?threshold:[`String of string | `Float of float] -> ?prefit:bool -> ?norm_order:Py.Object.t -> ?max_features:[`Int of int | `None] -> estimator:Py.Object.t -> unit -> t
+val create : ?threshold:[`S of string | `F of float] -> ?prefit:bool -> ?norm_order:Py.Object.t -> ?max_features:int -> estimator:Py.Object.t -> unit -> t
 (**
 Meta-transformer for selecting features based on importance weights.
 
@@ -1416,7 +1479,7 @@ array([[-1.34],
        [ 1.48]])
 *)
 
-val fit : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> t
+val fit : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> t
 (**
 Fit the SelectFromModel meta-transformer.
 
@@ -1436,7 +1499,7 @@ Returns
 self : object
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -1460,7 +1523,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1476,7 +1539,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val get_support : ?indices:bool -> t -> Ndarray.t
+val get_support : ?indices:bool -> t -> Arr.t
 (**
 Get a mask, or integer index, of the features selected
 
@@ -1497,7 +1560,7 @@ support : array
     values are indices into the input feature vector.
 *)
 
-val inverse_transform : x:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : x:Arr.t -> t -> Arr.t
 (**
 Reverse the transformation operation
 
@@ -1513,7 +1576,7 @@ X_r : array of shape [n_samples, n_original_features]
     been removed by :meth:`transform`.
 *)
 
-val partial_fit : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> t
+val partial_fit : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> t
 (**
 Fit the SelectFromModel meta-transformer only once.
 
@@ -1553,7 +1616,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Reduce X to the selected features.
 
@@ -1569,11 +1632,19 @@ X_r : array of shape [n_samples, n_selected_features]
 *)
 
 
-(** Attribute estimator_: see constructor for documentation *)
+(** Attribute estimator_: get value or raise Not_found if None.*)
 val estimator_ : t -> Py.Object.t
 
-(** Attribute threshold_: see constructor for documentation *)
+(** Attribute estimator_: get value as an option. *)
+val estimator_opt : t -> (Py.Object.t) option
+
+
+(** Attribute threshold_: get value or raise Not_found if None.*)
 val threshold_ : t -> float
+
+(** Attribute threshold_: get value as an option. *)
+val threshold_opt : t -> (float) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1641,7 +1712,7 @@ SelectFdr: Select features based on an estimated false discovery rate.
 GenericUnivariateSelect: Univariate feature selector with configurable mode.
 *)
 
-val fit : x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Run score function on (X, y) and get the appropriate features.
 
@@ -1659,7 +1730,7 @@ Returns
 self : object
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -1683,7 +1754,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1699,7 +1770,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val get_support : ?indices:bool -> t -> Ndarray.t
+val get_support : ?indices:bool -> t -> Arr.t
 (**
 Get a mask, or integer index, of the features selected
 
@@ -1720,7 +1791,7 @@ support : array
     values are indices into the input feature vector.
 *)
 
-val inverse_transform : x:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : x:Arr.t -> t -> Arr.t
 (**
 Reverse the transformation operation
 
@@ -1756,7 +1827,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Reduce X to the selected features.
 
@@ -1772,11 +1843,19 @@ X_r : array of shape [n_samples, n_selected_features]
 *)
 
 
-(** Attribute scores_: see constructor for documentation *)
-val scores_ : t -> Ndarray.t
+(** Attribute scores_: get value or raise Not_found if None.*)
+val scores_ : t -> Arr.t
 
-(** Attribute pvalues_: see constructor for documentation *)
-val pvalues_ : t -> Ndarray.t
+(** Attribute scores_: get value as an option. *)
+val scores_opt : t -> (Arr.t) option
+
+
+(** Attribute pvalues_: get value or raise Not_found if None.*)
+val pvalues_ : t -> Arr.t
+
+(** Attribute pvalues_: get value as an option. *)
+val pvalues_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -1796,7 +1875,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?score_func:Py.Object.t -> ?k:[`Int of int | `All] -> unit -> t
+val create : ?score_func:Py.Object.t -> ?k:[`I of int | `All] -> unit -> t
 (**
 Select features according to the k highest scores.
 
@@ -1852,7 +1931,7 @@ SelectFwe: Select features based on family-wise error rate.
 GenericUnivariateSelect: Univariate feature selector with configurable mode.
 *)
 
-val fit : x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Run score function on (X, y) and get the appropriate features.
 
@@ -1870,7 +1949,7 @@ Returns
 self : object
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -1894,7 +1973,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -1910,7 +1989,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val get_support : ?indices:bool -> t -> Ndarray.t
+val get_support : ?indices:bool -> t -> Arr.t
 (**
 Get a mask, or integer index, of the features selected
 
@@ -1931,7 +2010,7 @@ support : array
     values are indices into the input feature vector.
 *)
 
-val inverse_transform : x:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : x:Arr.t -> t -> Arr.t
 (**
 Reverse the transformation operation
 
@@ -1967,7 +2046,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Reduce X to the selected features.
 
@@ -1983,11 +2062,19 @@ X_r : array of shape [n_samples, n_selected_features]
 *)
 
 
-(** Attribute scores_: see constructor for documentation *)
-val scores_ : t -> Ndarray.t
+(** Attribute scores_: get value or raise Not_found if None.*)
+val scores_ : t -> Arr.t
 
-(** Attribute pvalues_: see constructor for documentation *)
-val pvalues_ : t -> Ndarray.t
+(** Attribute scores_: get value as an option. *)
+val scores_opt : t -> (Arr.t) option
+
+
+(** Attribute pvalues_: get value or raise Not_found if None.*)
+val pvalues_ : t -> Arr.t
+
+(** Attribute pvalues_: get value as an option. *)
+val pvalues_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2062,7 +2149,7 @@ SelectFwe: Select features based on family-wise error rate.
 GenericUnivariateSelect: Univariate feature selector with configurable mode.
 *)
 
-val fit : x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : x:Arr.t -> y:Arr.t -> t -> t
 (**
 Run score function on (X, y) and get the appropriate features.
 
@@ -2080,7 +2167,7 @@ Returns
 self : object
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -2104,7 +2191,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2120,7 +2207,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val get_support : ?indices:bool -> t -> Ndarray.t
+val get_support : ?indices:bool -> t -> Arr.t
 (**
 Get a mask, or integer index, of the features selected
 
@@ -2141,7 +2228,7 @@ support : array
     values are indices into the input feature vector.
 *)
 
-val inverse_transform : x:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : x:Arr.t -> t -> Arr.t
 (**
 Reverse the transformation operation
 
@@ -2177,7 +2264,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Reduce X to the selected features.
 
@@ -2193,11 +2280,19 @@ X_r : array of shape [n_samples, n_selected_features]
 *)
 
 
-(** Attribute scores_: see constructor for documentation *)
-val scores_ : t -> Ndarray.t
+(** Attribute scores_: get value or raise Not_found if None.*)
+val scores_ : t -> Arr.t
 
-(** Attribute pvalues_: see constructor for documentation *)
-val pvalues_ : t -> Ndarray.t
+(** Attribute scores_: get value as an option. *)
+val scores_opt : t -> (Arr.t) option
+
+
+(** Attribute pvalues_: get value or raise Not_found if None.*)
+val pvalues_ : t -> Arr.t
+
+(** Attribute pvalues_: get value as an option. *)
+val pvalues_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2255,7 +2350,7 @@ in every sample. These are removed with the default setting for threshold::
            [1, 1]])
 *)
 
-val fit : ?y:Py.Object.t -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> t -> t
+val fit : ?y:Py.Object.t -> x:Arr.t -> t -> t
 (**
 Learn empirical variances from X.
 
@@ -2273,7 +2368,7 @@ Returns
 self
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -2297,7 +2392,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -2313,7 +2408,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val get_support : ?indices:bool -> t -> Ndarray.t
+val get_support : ?indices:bool -> t -> Arr.t
 (**
 Get a mask, or integer index, of the features selected
 
@@ -2334,7 +2429,7 @@ support : array
     values are indices into the input feature vector.
 *)
 
-val inverse_transform : x:Ndarray.t -> t -> Ndarray.t
+val inverse_transform : x:Arr.t -> t -> Arr.t
 (**
 Reverse the transformation operation
 
@@ -2370,7 +2465,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : x:Ndarray.t -> t -> Ndarray.t
+val transform : x:Arr.t -> t -> Arr.t
 (**
 Reduce X to the selected features.
 
@@ -2386,8 +2481,12 @@ X_r : array of shape [n_samples, n_selected_features]
 *)
 
 
-(** Attribute variances_: see constructor for documentation *)
-val variances_ : t -> Ndarray.t
+(** Attribute variances_: get value or raise Not_found if None.*)
+val variances_ : t -> Arr.t
+
+(** Attribute variances_: get value as an option. *)
+val variances_opt : t -> (Arr.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -2402,7 +2501,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val chi2 : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> unit -> Ndarray.t
+val chi2 : x:Arr.t -> y:Arr.t -> unit -> Arr.t
 (**
 Compute chi-squared stats between each non-negative feature and class.
 
@@ -2443,7 +2542,7 @@ f_classif: ANOVA F-value between label/feature for classification tasks.
 f_regression: F-value between label/feature for regression tasks.
 *)
 
-val f_classif : x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> unit -> (Ndarray.t * Ndarray.t)
+val f_classif : x:Arr.t -> y:Arr.t -> unit -> (Arr.t * Arr.t)
 (**
 Compute the ANOVA F-value for the provided sample.
 
@@ -2523,7 +2622,7 @@ References
 .. [2] Heiman, G.W.  Research Methods in Statistics. 2002.
 *)
 
-val f_regression : ?center:[`True | `Bool of bool] -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> unit -> (Ndarray.t * Ndarray.t)
+val f_regression : ?center:[`True | `Bool of bool] -> x:Arr.t -> y:Arr.t -> unit -> (Arr.t * Arr.t)
 (**
 Univariate linear regression tests.
 
@@ -2573,7 +2672,7 @@ SelectPercentile: Select features based on percentile of the highest
     scores.
 *)
 
-val mutual_info_classif : ?discrete_features:[`Auto | `Bool of bool | `Ndarray of Ndarray.t] -> ?n_neighbors:int -> ?copy:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> unit -> Ndarray.t
+val mutual_info_classif : ?discrete_features:[`Auto | `Bool of bool | `Arr of Arr.t] -> ?n_neighbors:int -> ?copy:bool -> ?random_state:int -> x:Arr.t -> y:Arr.t -> unit -> Arr.t
 (**
 Estimate mutual information for a discrete target variable.
 
@@ -2649,7 +2748,7 @@ References
        of a Random Vector:, Probl. Peredachi Inf., 23:2 (1987), 9-16"
 *)
 
-val mutual_info_regression : ?discrete_features:[`Auto | `Bool of bool | `Ndarray of Ndarray.t] -> ?n_neighbors:int -> ?copy:bool -> ?random_state:[`Int of int | `RandomState of Py.Object.t | `None] -> x:[`Ndarray of Ndarray.t | `SparseMatrix of Csr_matrix.t] -> y:Ndarray.t -> unit -> Ndarray.t
+val mutual_info_regression : ?discrete_features:[`Auto | `Bool of bool | `Arr of Arr.t] -> ?n_neighbors:int -> ?copy:bool -> ?random_state:int -> x:Arr.t -> y:Arr.t -> unit -> Arr.t
 (**
 Estimate mutual information for a continuous target variable.
 

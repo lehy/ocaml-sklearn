@@ -1,3 +1,6 @@
+(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)
+val get_py : string -> Py.Object.t
+
 module BaseEstimator : sig
 type t
 val of_pyobject : Py.Object.t -> t
@@ -14,7 +17,7 @@ at the class level in their ``__init__`` as explicit keyword
 arguments (no ``*args`` or ``**kwargs``).
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -69,7 +72,7 @@ type t
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 
-val create : ?y_min:Py.Object.t -> ?y_max:Py.Object.t -> ?increasing:[`Bool of bool | `String of string] -> ?out_of_bounds:string -> unit -> t
+val create : ?y_min:Py.Object.t -> ?y_max:Py.Object.t -> ?increasing:[`Bool of bool | `S of string] -> ?out_of_bounds:string -> unit -> t
 (**
 Isotonic regression model.
 
@@ -155,7 +158,7 @@ Examples
 array([1.8628..., 3.7256...])
 *)
 
-val fit : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> t
+val fit : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> t
 (**
 Fit the model using X, y as training data.
 
@@ -182,7 +185,7 @@ X is stored for future use, as :meth:`transform` needs X to interpolate
 new input data.
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -206,7 +209,7 @@ X_new : numpy array of shape [n_samples, n_features_new]
     Transformed array.
 *)
 
-val get_params : ?deep:bool -> t -> Py.Object.t
+val get_params : ?deep:bool -> t -> Dict.t
 (**
 Get parameters for this estimator.
 
@@ -222,7 +225,7 @@ params : mapping of string to any
     Parameter names mapped to their values.
 *)
 
-val predict : t:Ndarray.t -> t -> Ndarray.t
+val predict : t:Arr.t -> t -> Arr.t
 (**
 Predict new data by linear interpolation.
 
@@ -237,7 +240,7 @@ T_ : array, shape=(n_samples,)
     Transformed data.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -302,7 +305,7 @@ self : object
     Estimator instance.
 *)
 
-val transform : t:Ndarray.t -> t -> Ndarray.t
+val transform : t:Arr.t -> t -> Arr.t
 (**
 Transform new data by linear interpolation
 
@@ -318,14 +321,26 @@ T_ : array, shape=(n_samples,)
 *)
 
 
-(** Attribute X_min_: see constructor for documentation *)
+(** Attribute X_min_: get value or raise Not_found if None.*)
 val x_min_ : t -> float
 
-(** Attribute X_max_: see constructor for documentation *)
+(** Attribute X_min_: get value as an option. *)
+val x_min_opt : t -> (float) option
+
+
+(** Attribute X_max_: get value or raise Not_found if None.*)
 val x_max_ : t -> float
 
-(** Attribute f_: see constructor for documentation *)
+(** Attribute X_max_: get value as an option. *)
+val x_max_opt : t -> (float) option
+
+
+(** Attribute f_: get value or raise Not_found if None.*)
 val f_ : t -> Py.Object.t
+
+(** Attribute f_: get value as an option. *)
+val f_opt : t -> (Py.Object.t) option
+
 
 (** Print the object to a human-readable representation. *)
 val to_string : t -> string
@@ -350,7 +365,7 @@ val create : unit -> t
 Mixin class for all regression estimators in scikit-learn.
 *)
 
-val score : ?sample_weight:Ndarray.t -> x:Ndarray.t -> y:Ndarray.t -> t -> float
+val score : ?sample_weight:Arr.t -> x:Arr.t -> y:Arr.t -> t -> float
 (**
 Return the coefficient of determination R^2 of the prediction.
 
@@ -419,7 +434,7 @@ val create : unit -> t
 Mixin class for all transformers in scikit-learn.
 *)
 
-val fit_transform : ?y:Ndarray.t -> ?fit_params:(string * Py.Object.t) list -> x:Ndarray.t -> t -> Ndarray.t
+val fit_transform : ?y:Arr.t -> ?fit_params:(string * Py.Object.t) list -> x:Arr.t -> t -> Arr.t
 (**
 Fit to data, then transform it.
 
@@ -457,7 +472,7 @@ val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
 
 end
 
-val check_array : ?accept_sparse:[`String of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`String of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C | `None] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:[`Bool of bool | `None] -> ?estimator:[`String of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
+val check_array : ?accept_sparse:[`S of string | `Bool of bool | `StringList of string list] -> ?accept_large_sparse:bool -> ?dtype:[`S of string | `Dtype of Py.Object.t | `TypeList of Py.Object.t | `None] -> ?order:[`F | `C] -> ?copy:bool -> ?force_all_finite:[`Bool of bool | `Allow_nan] -> ?ensure_2d:bool -> ?allow_nd:bool -> ?ensure_min_samples:int -> ?ensure_min_features:int -> ?warn_on_dtype:bool -> ?estimator:[`S of string | `Estimator of Py.Object.t] -> array:Py.Object.t -> unit -> Py.Object.t
 (**
 Input validation on an array, list, sparse matrix or similar.
 
@@ -561,7 +576,7 @@ Parameters
     Objects that will be checked for consistent length.
 *)
 
-val check_increasing : x:Ndarray.t -> y:Ndarray.t -> unit -> bool
+val check_increasing : x:Arr.t -> y:Arr.t -> unit -> bool
 (**
 Determine whether y is monotonically correlated with x.
 
