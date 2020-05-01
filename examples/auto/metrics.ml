@@ -175,7 +175,7 @@ let%expect_test "brier_score_loss" =
   [%expect {|
       0.0375
   |}];
-  print_float @@ brier_score_loss ~y_true ~y_prob:Sklearn.Arr.Ops.((int 1)-y_prob) ~pos_label:(`I 0) ();
+  print_float @@ brier_score_loss ~y_true ~y_prob:Sklearn.Arr.((int 1)-y_prob) ~pos_label:(`I 0) ();
   [%expect {|
       0.0375
   |}];
@@ -183,7 +183,7 @@ let%expect_test "brier_score_loss" =
   [%expect {|
       0.0375
   |}];
-  print_float @@ brier_score_loss ~y_true ~y_prob:Sklearn.Arr.Ops.(y_prob > float 0.5) ();
+  print_float @@ brier_score_loss ~y_true ~y_prob:Sklearn.Arr.(y_prob > float 0.5) ();
   [%expect {|
       0
   |}]
@@ -340,7 +340,7 @@ let%expect_test "confusion_matrix" =
   let open Sklearn.Metrics in
   let conf = confusion_matrix ~y_true:(vectori [|0; 1; 0; 1|]) ~y_pred:(vectori [|1; 1; 1; 0|]) () in
   let [@ocaml.warning "-8"] [|tn; fp; fn; tp|] =
-    conf |> Sklearn.Arr.get_ndarray |> Sklearn.Ndarray.to_int_array
+    conf |> Sklearn.Arr.to_int_array
   in
   print_ndarray conf;
   [%expect {|
@@ -595,7 +595,7 @@ let%expect_test "hamming_loss" =
 let%expect_test "hamming_loss" =
   let open Sklearn.Metrics in
   print_float @@ hamming_loss ~y_true:(matrixi [|[|0; 1|]; [|1; 1|]|]) ~y_pred:(Sklearn.Arr.zeros [2; 2]) ();
-  [%expect {| 0.25 |}]
+  [%expect {| 0.75 |}]
 
 
 (* hinge_loss *)
@@ -697,7 +697,7 @@ let%expect_test "jaccard_score" =
   let open Sklearn.Metrics in
   let y_true = matrixi [|[|0; 1; 1|]; [|1; 1; 0|]|] in
   let y_pred = matrixi [|[|1; 1; 1|]; [|1; 0; 0|]|] in
-  print_f @@ jaccard_score ~y_true:(Sklearn.Arr.get_sub [`I 0] y_true) ~y_pred:(Sklearn.Arr.get_sub [`I 0] y_pred) (); 
+  print_f @@ jaccard_score ~y_true:(Sklearn.Arr.get ~i:[`I 0] y_true) ~y_pred:(Sklearn.Arr.get ~i:[`I 0] y_pred) (); 
   [%expect {|
       0.666667
    |}];

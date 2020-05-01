@@ -773,7 +773,7 @@ array([[ 1.,  0.,  1.,  0.],
 
 let%expect_test "PolynomialFeatures" =
   let open Sklearn.Preprocessing in
-  let x =  Sklearn.Ndarray.(arange 6 |> reshape ~shape:[|3; 2|]) |> Sklearn.Arr.of_ndarray in
+  let x =  Sklearn.Arr.(arange 6 |> reshape ~shape:[|3; 2|]) in
   print_ndarray x;
   [%expect {|
             [[0 1]

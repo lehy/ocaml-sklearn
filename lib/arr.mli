@@ -1,3 +1,8 @@
+(**
+   This represents a Numpy array. In most cases it is a dense
+   ndarray. But it max also be a sparse matrix (as built using
+   Csr_matrix, or as returned by scikit-learn).  *)
+
 type t
 
 (** ### show
@@ -9,29 +14,6 @@ val show : t -> string
 
     Pretty-print the Array.  *)
 val pp : Format.formatter -> t -> unit [@@ocaml.toplevel_printer]
-
-(** ### get
-
-    Get the underlying dense Ndarray or sparse Csr_matrix. No data is
-    copied. *)
-val get : t -> [`Ndarray of Ndarray.t | `Csr_matrix of Csr_matrix.t]
-
-(** ### get_ndarray
-
-    Get the underlying dense Ndarray, or raise Invalid_argument if the
-    underlying array is sparse.  *)
-val get_ndarray : t -> Ndarray.t
-
-(** ### get_csr_matrix
-
-    Get the underlying sparse Csr_matrix, or raise Invalid_argument if the
-    underlying array is dense.  *)
-val get_csr_matrix : t -> Csr_matrix.t
-
-(** ### of_ndarray
-
-    Build an Array.t from a dense Ndarray.t. Data is shared. *)
-val of_ndarray : Ndarray.t -> t
 
 (** ### of_csr_matrix
 
@@ -60,6 +42,8 @@ end
 
     Shape (dimensions) of an Arr. *)
 val shape : t -> int array
+
+val reshape : shape:int array -> t -> t
 
 (** ### arange
 
@@ -139,34 +123,28 @@ val argsort : t -> t
 val ones : ?dtype : Dtype.t -> int list -> t
 val zeros : ?dtype : Dtype.t -> int list -> t
 
-val set : [`Colon | `I of int] array -> [`I of int | `F of float | `S of string] -> t -> unit
-val get_int : int list -> t -> int
-val get_float : int list -> t -> float
+val get_int : i:int list -> t -> int
+val get_float : i:int list -> t -> float
 
-(* XXX should we expose this? not sure it's reasonable, because
-   get_sub on a Csr_matrix can return something that is not a
-   Csr_matrix I think; also should it return `Float of f | `Arr of t ?
-   *)
 val slice : ?i : int -> ?j : int -> ?step : int -> unit -> [> `Slice of Wrap_utils.Slice.t]
-val get_sub : [`I of int | `Slice of Wrap_utils.Slice.t | `Arr of t] list -> t -> t
+val get : i:[`I of int | `Slice of Wrap_utils.Slice.t | `Arr of t | `Newaxis | `Ellipsis] list -> t -> t
+val set : i:[`I of int | `Slice of Wrap_utils.Slice.t | `Arr of t | `Newaxis | `Ellipsis] list -> v:t -> t -> unit
 
-module Ops : sig
-  val int : int -> t
-  val float : float -> t
-  val bool : bool -> t
-  val string : string -> t
-  
-  val ( - ) : t -> t -> t
-  val ( + ) : t -> t -> t
-  val ( * ) : t -> t -> t
-  val ( / ) : t -> t -> t
-  val ( > ) : t -> t -> t
-  val ( >= ) : t -> t -> t
-  val ( < ) : t -> t -> t
-  val ( <= ) : t -> t -> t
-  val ( = ) : t -> t -> t
-  val ( != ) : t -> t -> t
-end
+val int : int -> t
+val float : float -> t
+val bool : bool -> t
+val string : string -> t
+
+val ( - ) : t -> t -> t
+val ( + ) : t -> t -> t
+val ( * ) : t -> t -> t
+val ( / ) : t -> t -> t
+val ( > ) : t -> t -> t
+val ( >= ) : t -> t -> t
+val ( < ) : t -> t -> t
+val ( <= ) : t -> t -> t
+val ( = ) : t -> t -> t
+val ( != ) : t -> t -> t
 
 (** ## module Array.Float
 
@@ -189,6 +167,13 @@ module Float : sig
       and is shared between the bigarray and the Pyhon Array. You
       may find Owl useful for building the bigarray. *)
   val of_bigarray : (float, Bigarray.float64_elt, Bigarray.c_layout) Bigarray.Genarray.t -> t
+
+  (** ### to_bigarray
+
+      Build a bigarray that shares the same data as the
+      Arr. Raises an exception if the Arr has the wrong dtype
+      or layout, or if the Arr is not an ndarray. *)
+  val to_bigarray : t -> (float, Bigarray.float64_elt, Bigarray.c_layout) Bigarray.Genarray.t
 
   (** ### matrices
 
@@ -225,6 +210,13 @@ module Int : sig
       and is shared between the bigarray and the Pyhon Array. You
       may find Owl useful for building the bigarray. *)
   val of_bigarray : (nativeint, Bigarray.nativeint_elt, Bigarray.c_layout) Bigarray.Genarray.t -> t
+
+  (** ### to_bigarray
+
+      Build a bigarray that shares the same data as the
+      Ndarray. Raises an exception if the Ndarray has the wrong dtype
+      or layout, or if the Arr is not an ndarray. *)
+  val to_bigarray : t -> (nativeint, Bigarray.nativeint_elt, Bigarray.c_layout) Bigarray.Genarray.t
 
   (** ### matrices
 
@@ -325,3 +317,133 @@ val to_pyobject : t -> Py.Object.t
 
     Build an Array from a Py.Object.t.  *)
 val of_pyobject : Py.Object.t -> t
+
+val argmax : ?axis:[`Zero | `One | `PyObject of Py.Object.t] -> ?out:Py.Object.t -> t -> [`Arr of t | `I of int]
+(**
+   Return indices of maximum elements along an axis.
+
+   Implicit zero elements are also taken into account. If there are
+   several maximum values, the index of the first occurrence is returned.
+
+   Parameters
+   ----------
+   axis : {-2, -1, 0, 1, None}, optional
+    Axis along which the argmax is computed. If None (default), index
+    of the maximum element in the flatten data is returned.
+   out : None, optional
+    This argument is in the signature *solely* for NumPy
+    compatibility reasons. Do not pass in anything except for
+    the default value, as this argument is not used.
+
+   Returns
+   -------
+   ind : numpy.matrix or int
+    Indices of maximum elements. If matrix, its size along `axis` is 1.
+*)
+
+val argmin : ?axis:[`Zero | `One | `PyObject of Py.Object.t] -> ?out:Py.Object.t -> t -> [`Arr of t | `I of int]
+(**
+   Return indices of minimum elements along an axis.
+
+   Implicit zero elements are also taken into account. If there are
+   several minimum values, the index of the first occurrence is returned.
+
+   Parameters
+   ----------
+   axis : {-2, -1, 0, 1, None}, optional
+    Axis along which the argmin is computed. If None (default), index
+    of the minimum element in the flatten data is returned.
+   out : None, optional
+    This argument is in the signature *solely* for NumPy
+    compatibility reasons. Do not pass in anything except for
+    the default value, as this argument is not used.
+
+   Returns
+   -------
+   ind : numpy.matrix or int
+    Indices of minimum elements. If matrix, its size along `axis` is 1.
+*)
+
+val mean : ?axis:[`Zero | `One | `PyObject of Py.Object.t] -> ?dtype:Py.Object.t -> ?out:t -> t -> t
+(**
+   Compute the arithmetic mean along the specified axis.
+
+   Returns the average of the matrix elements. The average is taken
+   over all elements in the matrix by default, otherwise over the
+   specified axis. `float64` intermediate and return values are used
+   for integer inputs.
+
+   Parameters
+   ----------
+   axis : {-2, -1, 0, 1, None} optional
+    Axis along which the mean is computed. The default is to compute
+    the mean of all elements in the matrix (i.e. `axis` = `None`).
+   dtype : data-type, optional
+    Type to use in computing the mean. For integer inputs, the default
+    is `float64`; for floating point inputs, it is the same as the
+    input dtype.
+
+    .. versionadded:: 0.18.0
+
+   out : np.matrix, optional
+    Alternative output matrix in which to place the result. It must
+    have the same shape as the expected output, but the type of the
+    output values will be cast if necessary.
+
+    .. versionadded:: 0.18.0
+
+   Returns
+   -------
+   m : np.matrix
+
+   See Also
+   --------
+   numpy.matrix.mean : NumPy's implementation of 'mean' for matrices
+*)
+
+val sum : ?axis:int -> ?dtype:Py.Object.t -> ?out:t -> t -> t
+(**
+   Sum the matrix elements over a given axis.
+
+   Parameters
+   ----------
+   axis : {-2, -1, 0, 1, None} optional
+    Axis along which the sum is computed. The default is to
+    compute the sum of all the matrix elements, returning a scalar
+    (i.e. `axis` = `None`).
+   dtype : dtype, optional
+    The type of the returned matrix and of the accumulator in which
+    the elements are summed.  The dtype of `a` is used by default
+    unless `a` has an integer dtype of less precision than the default
+    platform integer.  In that case, if `a` is signed then the platform
+    integer is used while if `a` is unsigned then an unsigned integer
+    of the same precision as the platform integer is used.
+
+    .. versionadded:: 0.18.0
+
+   out : np.matrix, optional
+    Alternative output matrix in which to place the result. It must
+    have the same shape as the expected output, but the type of the
+    output values will be cast if necessary.
+
+    .. versionadded:: 0.18.0
+
+   Returns
+   -------
+   sum_along_axis : np.matrix
+    A matrix with the same shape as `self`, with the specified
+    axis removed.
+
+   See Also
+   --------
+   numpy.matrix.sum : NumPy's implementation of 'sum' for matrices
+*)
+
+val asarray : ?dtype:Dtype.t -> t -> t
+val asanyarray : ?dtype:Dtype.t -> t -> t
+val ascontiguousarray : ?dtype:Dtype.t -> t -> t
+val asfarray : ?dtype:Dtype.t -> t -> t
+val asarray_chkfinite : ?dtype:Dtype.t -> t -> t
+
+val toarray : t -> t
+val todense : t -> t

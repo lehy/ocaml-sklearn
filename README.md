@@ -20,8 +20,8 @@ to accomodate more functionality or make things easier to use.**
 ```ocaml
 let n_samples, n_features = 10, 5 in
 Random.init 0;
-let y = Sklearn.Ndarray.of_bigarray @@ Owl.Arr.uniform [|n_samples|] in
-let x = Sklearn.Ndarray.of_bigarray @@ Owl.Dense.Matrix.D.uniform n_samples n_features in
+let y = Sklearn.Arr.of_bigarray @@ Owl.Arr.uniform [|n_samples|] in
+let x = Sklearn.Arr.of_bigarray @@ Owl.Dense.Matrix.D.uniform n_samples n_features in
 let open Sklearn.Svm in
 let clf = SVR.create ~c:1.0 ~epsilon:0.2 () in
 Format.printf "%a\n" SVR.pp @@ SVR.fit clf ~x ~y;
@@ -94,7 +94,8 @@ Python class `sklearn.svm.SVC` can be found in OCaml module
 attributes.
 
 Most data is passed in and out of sklearn through module `Arr`. An
-`Arr.t` is either a dense `Ndarray.t` or a sparse `Csr_matrix.t`.
+`Arr.t` can contain any `Numpy` or `Scipy` array-like, including
+`ndarray` and `csr_matrix`.
 
 You should generally build a dense array using the constructors in `Arr`:
 
@@ -102,12 +103,15 @@ You should generally build a dense array using the constructors in `Arr`:
 let x = Arr.Float.matrix [|[| 1; 2 |]; [| 3; 4 |]|]
 ~~~
 
-One way to build an `Arr.t` is to use `Owl`'s function to construct a
+`Arr` currently covers a subset of `Numpy` functionality (added as
+needed depending on tests and time).
+
+One way to build an `Arr.t` is to use `Owl`'s functions to construct a
 bigarray and then use `Arr.of_bigarray`. Data is shared between the
 bigarray and the `Arr.t`.
 
-To get data out of an `Arr.t`, get the underlying `Ndarray` or
-`Csr_matrix` using `Arr.get`.
+To get data out of an `Arr.t`, use `to_int_array`, `to_float_array` or
+`to_bigarray`.
 
 Attributes are exposed read-only, each with two getters: one that
 raises Not_found if the attribute is None, and the other that returns

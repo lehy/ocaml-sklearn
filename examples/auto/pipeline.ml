@@ -290,10 +290,10 @@ let%expect_test "complex_pipeline" =
   let sub_pipeline = Pipeline.get_item anova_svm ~ind:(`Slice(`None, `I 1, `None)) |> Pipeline.of_pyobject in
   let svc = Pipeline.get_item anova_svm ~ind:(`I (-1)) |> Svm.SVC.of_pyobject in
   let coef = Svm.SVC.coef_ svc in
-  Arr.get_ndarray coef |> Ndarray.shape |> Ndarray.Int.vector |> print Sklearn.Ndarray.pp;
+  Sklearn.Arr.(shape coef |> Int.vector |> print pp);
   [%expect {| [ 1 10] |}];
-  Pipeline.inverse_transform sub_pipeline ~x:coef
-  |> Arr.get_ndarray |> Ndarray.shape |> Ndarray.Int.vector |> print Sklearn.Ndarray.pp;
+  Arr.(Pipeline.inverse_transform sub_pipeline ~x:coef
+       |> shape |> Int.vector |> print pp);
   [%expect {| [ 1 20] |}]
   
 (* >>> from sklearn import svm
