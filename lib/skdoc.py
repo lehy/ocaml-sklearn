@@ -212,7 +212,7 @@ class Float(Type):
         'float', 'floating', 'double', 'positive float',
         'strictly positive float', 'non-negative float', 'numeric',
         'float (upperlimited by 1.0)', 'float in range', 'number',
-        'numerical value', 'scalar'
+        'numerical value', 'scalar', 'float in [0., 1.]', 'float in'
     ]
     ml_type = 'float'
     wrap = 'Py.Float.of_float'

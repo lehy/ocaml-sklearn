@@ -1215,50 +1215,45 @@ let%expect_test "nan_euclidean_distances" =
 
 *)
 
-(* TEST TODO
-   let%expect_test "ndcg_score" =
+let%expect_test "ndcg_score" =
    let open Sklearn.Metrics in
-   print_ndarray @@ # we have groud-truth relevance of some answers to a query:;
-   let true_relevance = .asarray (matrixi [|[|10; 0; 0; 1; 5|]|]) np in
-   print_ndarray @@ # we predict some scores (relevance) for the answers;
-   let scores = .asarray (matrix [|[|.1; .2; .3; 4; 70|]|]) np in
-   print_ndarray @@ ndcg_score ~true_relevance scores () # doctest: +ELLIPSIS;
+   (*  we have groud-truth relevance of some answers to a query:; *)
+   let true_relevance = matrixi [|[|10; 0; 0; 1; 5|]|] in
+   (*  we predict some scores (relevance) for the answers; *)
+   let scores = matrix [|[|0.1; 0.2; 0.3; 4.; 70.|]|] in
+   print_float @@ ndcg_score ~y_true:true_relevance ~y_score:scores ();
    [%expect {|
-      0.69...
-   |}]
-   let scores = .asarray (matrix [|[|.05; 1.1; 1.; .5; .0|]|]) np in
-   print_ndarray @@ ndcg_score ~true_relevance scores () # doctest: +ELLIPSIS;
+      0.695694
+   |}];
+   let scores = matrix [|[|0.05; 1.1; 1.; 0.5; 0.0|]|] in
+   print_float @@ ndcg_score ~y_true:true_relevance ~y_score:scores ();
    [%expect {|
-      0.49...
-   |}]
-   print_ndarray @@ # we can set k to truncate the sum; only top k answers contribute.;
-   print_ndarray @@ ndcg_score ~true_relevance scores ~k:4 () # doctest: +ELLIPSIS;
+      0.49368
+   |}];
+   (*  we can set k to truncate the sum; only top k answers contribute.; *)
+   print_float @@ ndcg_score ~y_true:true_relevance ~y_score:scores ~k:4 ();
    [%expect {|
-      0.35...
-   |}]
-   print_ndarray @@ # the normalization takes k into account so a perfect answer;
-   print_ndarray @@ # would still get 1.0;
-   print_ndarray @@ ndcg_score ~true_relevance true_relevance ~k:4 () # doctest: +ELLIPSIS;
+      0.352024
+   |}];
+   (*  the normalization takes k into account so a perfect answer; *)
+   (*  would still get 1.0; *)
+   print_float @@ ndcg_score ~y_true:true_relevance ~y_score:true_relevance ~k:4 ();
    [%expect {|
-      1.0
-   |}]
-   print_ndarray @@ # now we have some ties in our prediction;
-   let scores = .asarray (matrixi [|[|1; 0; 0; 0; 1|]|]) np in
-   print_ndarray @@ # by default ties are averaged, so here we get the average (normalized);
-   print_ndarray @@ # true relevance of our top predictions: (10 / 10 + 5 / 10) / 2 = .75;
-   print_ndarray @@ ndcg_score ~true_relevance scores ~k:1 () # doctest: +ELLIPSIS;
+      1
+   |}];
+   (*  now we have some ties in our prediction; *)
+   let scores = matrixi [|[|1; 0; 0; 0; 1|]|] in
+   (*  by default ties are averaged, so here we get the average (normalized); *)
+   (*  true relevance of our top predictions: (10 / 10 + 5 / 10) / 2 = .75; *)
+   print_float @@ ndcg_score ~y_true:true_relevance ~y_score:scores ~k:1 ();
    [%expect {|
       0.75
-   |}]
-   print_ndarray @@ # we can choose to ignore ties for faster results, but only;
-   print_ndarray @@ # if we know there aren't ties in our scores, otherwise we get;
-   print_ndarray @@ # wrong results:;
-   print_ndarray @@ ndcg_score ~true_relevance scores ~k:1 ~ignore_ties:true () # doctest: +ELLIPSIS;
-   [%expect {|
-   |}]
-
-*)
-
+   |}];
+   (*  we can choose to ignore ties for faster results, but only; *)
+   (*  if we know there aren't ties in our scores, otherwise we get; *)
+   (*  wrong results:; *)
+   print_float @@ ndcg_score ~y_true:true_relevance ~y_score:scores ~k:1 ~ignore_ties:true ();
+   [%expect {| 0.5 |}]
 
 
 (*--------- Examples for module Sklearn.Metrics.Pairwise ----------*)
