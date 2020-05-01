@@ -184,8 +184,8 @@
 
 
   <li class="md-nav__item">
-    <a href=".." title="scikit-learn for OCaml, version 0.22-0.1.3" class="md-nav__link">
-      scikit-learn for OCaml, version 0.22-0.1.3
+    <a href=".." title="Home" class="md-nav__link">
+      Home
     </a>
   </li>
 
@@ -3281,9 +3281,9 @@ objects) to feature values (strings or convertible to dtype).</p>
 <h3 id="fit_transform">fit_transform<a class="headerlink" href="#fit_transform" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit_transform</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Learn a list of feature name -&gt; indices mappings and transform X.</p>
@@ -3312,7 +3312,7 @@ include the constructed feature names but not the original ones.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters for this estimator.</p>
@@ -3327,7 +3327,7 @@ contained subobjects that are estimators.</p>
 <h3 id="inverse_transform">inverse_transform<a class="headerlink" href="#inverse_transform" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">inverse_transform</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">dict_type</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -3351,7 +3351,7 @@ collections.Mapping API.</p>
 <h3 id="restrict">restrict<a class="headerlink" href="#restrict" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">restrict</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">indices</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">support</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">support</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -3403,9 +3403,9 @@ component of a nested object.</p>
 </details>
 <h3 id="transform">transform<a class="headerlink" href="#transform" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">transform</span> <span class="o">:</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Transform feature-&gt;value dicts to array or sparse matrix.</p>
@@ -3420,16 +3420,20 @@ objects) to feature values (strings or convertible to dtype).</p>
 </details>
 </details>
 <h3 id="vocabulary_">vocabulary_<a class="headerlink" href="#vocabulary_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">vocabulary_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">vocabulary_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">vocabulary_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Dict</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="feature_names_">feature_names_<a class="headerlink" href="#feature_names_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">feature_names_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">feature_names_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">feature_names_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="to_string">to_string<a class="headerlink" href="#to_string" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
@@ -3515,7 +3519,7 @@ small n_features. This approach is similar to sparse random projection.</p>
 </details>
 <h3 id="fit_1">fit<a class="headerlink" href="#fit_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
@@ -3531,11 +3535,11 @@ with the scikit-learn transformer API.</p>
 </details>
 <h3 id="fit_transform_1">fit_transform<a class="headerlink" href="#fit_transform_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit_transform</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">fit_params</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Fit to data, then transform it.</p>
@@ -3556,7 +3560,7 @@ and returns a transformed version of X.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters for this estimator.</p>
@@ -3591,7 +3595,7 @@ component of a nested object.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">transform</span> <span class="o">:</span>
   <span class="n">raw_X</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Transform a sequence of instances to a scipy.sparse matrix.</p>
@@ -3680,7 +3684,7 @@ arguments (no <code>*args</code> or <code>**kwargs</code>).</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters for this estimator.</p>
@@ -3736,8 +3740,8 @@ component of a nested object.</p>
 <h3 id="create_3">create<a class="headerlink" href="#create_3" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">patch_size</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">max_patches</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Float</span> <span class="k">of</span> <span class="kt">float</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">random_state</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">RandomState</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">max_patches</span><span class="o">:[`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">random_state</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
 </code></pre></div>
@@ -3775,7 +3779,7 @@ deterministic.</p>
 <h3 id="fit_2">fit<a class="headerlink" href="#fit_2" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
 </code></pre></div>
@@ -3791,7 +3795,7 @@ work in pipelines.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters for this estimator.</p>
@@ -3824,9 +3828,9 @@ component of a nested object.</p>
 </details>
 <h3 id="transform_2">transform<a class="headerlink" href="#transform_2" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">transform</span> <span class="o">:</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Transforms the image samples in X into a matrix of patch data.</p>
@@ -3867,9 +3871,9 @@ the last dimension specifies the channel: a RGB image would have
   <span class="o">?</span><span class="n">strides</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">subok</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">writeable</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Create a view into the array with the given shape and strides.</p>
@@ -3915,18 +3919,18 @@ possible.</p>
 </details>
 <h3 id="check_array">check_array<a class="headerlink" href="#check_array" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">check_array</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">accept_sparse</span><span class="o">:[`</span><span class="nc">String</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Bool</span> <span class="k">of</span> <span class="kt">bool</span> <span class="o">|</span> <span class="o">`</span><span class="nc">StringList</span> <span class="k">of</span> <span class="kt">string</span> <span class="kt">list</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">accept_sparse</span><span class="o">:[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Bool</span> <span class="k">of</span> <span class="kt">bool</span> <span class="o">|</span> <span class="o">`</span><span class="nc">StringList</span> <span class="k">of</span> <span class="kt">string</span> <span class="kt">list</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">accept_large_sparse</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">dtype</span><span class="o">:[`</span><span class="nc">String</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Dtype</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">TypeList</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">order</span><span class="o">:[`</span><span class="nc">F</span> <span class="o">|</span> <span class="o">`</span><span class="nc">C</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">dtype</span><span class="o">:[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Dtype</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">TypeList</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">order</span><span class="o">:[`</span><span class="nc">F</span> <span class="o">|</span> <span class="o">`</span><span class="nc">C</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">copy</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">force_all_finite</span><span class="o">:[`</span><span class="nc">Bool</span> <span class="k">of</span> <span class="kt">bool</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Allow_nan</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">ensure_2d</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">allow_nd</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">ensure_min_samples</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">ensure_min_features</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">warn_on_dtype</span><span class="o">:[`</span><span class="nc">Bool</span> <span class="k">of</span> <span class="kt">bool</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">estimator</span><span class="o">:[`</span><span class="nc">String</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Estimator</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">warn_on_dtype</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">estimator</span><span class="o">:[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Estimator</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="kt">array</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
@@ -4003,7 +4007,7 @@ does not match the requested dtype, causing a memory copy.</p>
 </details>
 <h3 id="check_random_state">check_random_state<a class="headerlink" href="#check_random_state" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">check_random_state</span> <span class="o">:</span>
-  <span class="n">seed</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">RandomState</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">seed</span><span class="o">:[`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">RandomState</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -4066,9 +4070,9 @@ in an empty of parentheses:</p>
 </details>
 <h3 id="extract_patches">extract_patches<a class="headerlink" href="#extract_patches" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">extract_patches</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">patch_shape</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">extraction_step</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="n">arr</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">patch_shape</span><span class="o">:[`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Tuple</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">extraction_step</span><span class="o">:[`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Tuple</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">arr</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -4119,9 +4123,9 @@ result.reshape([-1] + list(patch_shape))
 </details>
 <h3 id="extract_patches_2d">extract_patches_2d<a class="headerlink" href="#extract_patches_2d" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">extract_patches_2d</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">max_patches</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Float</span> <span class="k">of</span> <span class="kt">float</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">random_state</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">RandomState</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="n">image</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">max_patches</span><span class="o">:[`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">random_state</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
+  <span class="n">image</span><span class="o">:[`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Or</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="n">patch_size</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
@@ -4216,7 +4220,7 @@ calls in <code>np.asarray</code> to avoid type issues.</p>
   <span class="o">?</span><span class="n">mask</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">return_as</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">dtype</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">img</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">img</span><span class="o">:[`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -4244,7 +4248,7 @@ calls in <code>np.asarray</code> to avoid type issues.</p>
 </details>
 <h3 id="reconstruct_from_patches_2d">reconstruct_from_patches_2d<a class="headerlink" href="#reconstruct_from_patches_2d" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">reconstruct_from_patches_2d</span> <span class="o">:</span>
-  <span class="n">patches</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">patches</span><span class="o">:[`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Or</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="n">image_size</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
@@ -4273,7 +4277,7 @@ the size of the image that will be reconstructed</p>
   <span class="o">?</span><span class="n">mask</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">return_as</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">dtype</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">img</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">img</span><span class="o">:[`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -4320,7 +4324,7 @@ arguments (no <code>*args</code> or <code>**kwargs</code>).</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters for this estimator.</p>
@@ -4376,20 +4380,20 @@ component of a nested object.</p>
 <h3 id="create_6">create<a class="headerlink" href="#create_6" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">input</span><span class="o">:[`</span><span class="nc">Filename</span> <span class="o">|</span> <span class="o">`</span><span class="nc">File</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Content</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">encoding</span><span class="o">:[`</span><span class="nc">String</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">encoding</span><span class="o">:[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">T_utf_8_by</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">decode_error</span><span class="o">:[`</span><span class="nc">Strict</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Ignore</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Replace</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">strip_accents</span><span class="o">:[`</span><span class="nc">Ascii</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Unicode</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">strip_accents</span><span class="o">:[`</span><span class="nc">Ascii</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Unicode</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">lowercase</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">preprocessor</span><span class="o">:[`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">tokenizer</span><span class="o">:[`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">stop_words</span><span class="o">:[`</span><span class="nc">English</span> <span class="o">|</span> <span class="o">`</span><span class="nc">ArrayLike</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">preprocessor</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">tokenizer</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">stop_words</span><span class="o">:[`</span><span class="nc">English</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">token_pattern</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">ngram_range</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">analyzer</span><span class="o">:[`</span><span class="nc">String</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Word</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Char</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Char_wb</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">max_df</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">min_df</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">max_features</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">vocabulary</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">analyzer</span><span class="o">:[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Word</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Char</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Char_wb</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">max_df</span><span class="o">:[`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">min_df</span><span class="o">:[`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">max_features</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">vocabulary</span><span class="o">:[`</span><span class="nc">Mapping</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">binary</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">dtype</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
@@ -4607,7 +4611,7 @@ and n-grams generation.</p>
 <h3 id="fit_3">fit<a class="headerlink" href="#fit_3" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">raw_documents</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">raw_documents</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
 </code></pre></div>
@@ -4622,9 +4626,9 @@ and n-grams generation.</p>
 <h3 id="fit_transform_2">fit_transform<a class="headerlink" href="#fit_transform_2" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit_transform</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">raw_documents</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">raw_documents</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Learn the vocabulary dictionary and return term-document matrix.</p>
@@ -4652,7 +4656,7 @@ implemented.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters for this estimator.</p>
@@ -4680,7 +4684,7 @@ contained subobjects that are estimators.</p>
 </details>
 <h3 id="inverse_transform_1">inverse_transform<a class="headerlink" href="#inverse_transform_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">inverse_transform</span> <span class="o">:</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -4714,9 +4718,9 @@ component of a nested object.</p>
 </details>
 <h3 id="transform_3">transform<a class="headerlink" href="#transform_3" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">transform</span> <span class="o">:</span>
-  <span class="n">raw_documents</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">raw_documents</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Transform documents to document-term matrix.</p>
@@ -4730,22 +4734,28 @@ fitted with fit or the one provided to the constructor.</p>
 </details>
 </details>
 <h3 id="vocabulary__1">vocabulary_<a class="headerlink" href="#vocabulary__1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">vocabulary_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">vocabulary_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">vocabulary_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Dict</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="fixed_vocabulary_">fixed_vocabulary_<a class="headerlink" href="#fixed_vocabulary_" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fixed_vocabulary_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
+<span class="k">val</span> <span class="n">fixed_vocabulary_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">bool</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="stop_words_">stop_words_<a class="headerlink" href="#stop_words_" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">stop_words_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">stop_words_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="to_string_6">to_string<a class="headerlink" href="#to_string_6" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
@@ -4831,7 +4841,7 @@ small n_features. This approach is similar to sparse random projection.</p>
 </details>
 <h3 id="fit_4">fit<a class="headerlink" href="#fit_4" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
@@ -4847,11 +4857,11 @@ with the scikit-learn transformer API.</p>
 </details>
 <h3 id="fit_transform_3">fit_transform<a class="headerlink" href="#fit_transform_3" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit_transform</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">fit_params</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Fit to data, then transform it.</p>
@@ -4872,7 +4882,7 @@ and returns a transformed version of X.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters for this estimator.</p>
@@ -4907,7 +4917,7 @@ component of a nested object.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">transform</span> <span class="o">:</span>
   <span class="n">raw_X</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Transform a sequence of instances to a scipy.sparse matrix.</p>
@@ -4949,14 +4959,14 @@ of a generator; n_samples is determined on the fly.</p>
   <span class="o">?</span><span class="n">input</span><span class="o">:[`</span><span class="nc">Filename</span> <span class="o">|</span> <span class="o">`</span><span class="nc">File</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Content</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">encoding</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">decode_error</span><span class="o">:[`</span><span class="nc">Strict</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Ignore</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Replace</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">strip_accents</span><span class="o">:[`</span><span class="nc">Ascii</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Unicode</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">strip_accents</span><span class="o">:[`</span><span class="nc">Ascii</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Unicode</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">lowercase</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">preprocessor</span><span class="o">:[`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">tokenizer</span><span class="o">:[`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">stop_words</span><span class="o">:[`</span><span class="nc">English</span> <span class="o">|</span> <span class="o">`</span><span class="nc">ArrayLike</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">preprocessor</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">tokenizer</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">stop_words</span><span class="o">:[`</span><span class="nc">English</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">token_pattern</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">ngram_range</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">analyzer</span><span class="o">:[`</span><span class="nc">String</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Word</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Char</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Char_wb</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">analyzer</span><span class="o">:[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Word</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Char</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Char_wb</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">n_features</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">binary</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">norm</span><span class="o">:[`</span><span class="nc">L1</span> <span class="o">|</span> <span class="o">`</span><span class="nc">L2</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
@@ -5160,7 +5170,7 @@ and n-grams generation.</p>
 <h3 id="fit_5">fit<a class="headerlink" href="#fit_5" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
 </code></pre></div>
@@ -5173,9 +5183,9 @@ and n-grams generation.</p>
 <h3 id="fit_transform_4">fit_transform<a class="headerlink" href="#fit_transform_4" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit_transform</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Transform a sequence of documents to a document-term matrix.</p>
@@ -5195,7 +5205,7 @@ sklearn.pipeline.Pipeline.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters for this estimator.</p>
@@ -5224,7 +5234,7 @@ contained subobjects that are estimators.</p>
 <h3 id="partial_fit">partial_fit<a class="headerlink" href="#partial_fit" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">partial_fit</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -5257,9 +5267,9 @@ component of a nested object.</p>
 </details>
 <h3 id="transform_5">transform<a class="headerlink" href="#transform_5" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">transform</span> <span class="o">:</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Transform a sequence of documents to a document-term matrix.</p>
@@ -5405,11 +5415,11 @@ if  <code>use_idf</code> is True.</p>
 </details>
 <h3 id="fit_transform_5">fit_transform<a class="headerlink" href="#fit_transform_5" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit_transform</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">fit_params</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Fit to data, then transform it.</p>
@@ -5430,7 +5440,7 @@ and returns a transformed version of X.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters for this estimator.</p>
@@ -5464,9 +5474,9 @@ component of a nested object.</p>
 <h3 id="transform_6">transform<a class="headerlink" href="#transform_6" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">transform</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">copy</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Transform a count matrix to a tf or tf-idf representation</p>
@@ -5480,10 +5490,12 @@ operations.</p>
 <details class="info" open="open"><summary>vectors : sparse matrix, [n_samples, n_features]</summary></details>
 </details>
 <h3 id="idf_">idf_<a class="headerlink" href="#idf_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">idf_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">idf_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">idf_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="to_string_9">to_string<a class="headerlink" href="#to_string_9" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
@@ -5512,18 +5524,18 @@ operations.</p>
   <span class="o">?</span><span class="n">input</span><span class="o">:[`</span><span class="nc">Filename</span> <span class="o">|</span> <span class="o">`</span><span class="nc">File</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Content</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">encoding</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">decode_error</span><span class="o">:[`</span><span class="nc">Strict</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Ignore</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Replace</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">strip_accents</span><span class="o">:[`</span><span class="nc">Ascii</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Unicode</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">strip_accents</span><span class="o">:[`</span><span class="nc">Ascii</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Unicode</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">lowercase</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">preprocessor</span><span class="o">:[`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">tokenizer</span><span class="o">:[`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">analyzer</span><span class="o">:[`</span><span class="nc">String</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Word</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Char</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Char_wb</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">stop_words</span><span class="o">:[`</span><span class="nc">English</span> <span class="o">|</span> <span class="o">`</span><span class="nc">ArrayLike</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">preprocessor</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">tokenizer</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">analyzer</span><span class="o">:[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Word</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Char</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Char_wb</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">stop_words</span><span class="o">:[`</span><span class="nc">English</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">token_pattern</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">ngram_range</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">max_df</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">min_df</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">max_features</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">vocabulary</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">max_df</span><span class="o">:[`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">min_df</span><span class="o">:[`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">max_features</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">vocabulary</span><span class="o">:[`</span><span class="nc">Mapping</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">binary</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">dtype</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">norm</span><span class="o">:[`</span><span class="nc">L1</span> <span class="o">|</span> <span class="o">`</span><span class="nc">L2</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
@@ -5747,7 +5759,7 @@ and n-grams generation.</p>
 <h3 id="fit_7">fit<a class="headerlink" href="#fit_7" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">raw_documents</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">raw_documents</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
 </code></pre></div>
@@ -5765,9 +5777,9 @@ and n-grams generation.</p>
 <h3 id="fit_transform_6">fit_transform<a class="headerlink" href="#fit_transform_6" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit_transform</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">raw_documents</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">raw_documents</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Learn vocabulary and idf, return term-document matrix.</p>
@@ -5797,7 +5809,7 @@ implemented.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters for this estimator.</p>
@@ -5825,7 +5837,7 @@ contained subobjects that are estimators.</p>
 </details>
 <h3 id="inverse_transform_2">inverse_transform<a class="headerlink" href="#inverse_transform_2" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">inverse_transform</span> <span class="o">:</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -5860,9 +5872,9 @@ component of a nested object.</p>
 <h3 id="transform_7">transform<a class="headerlink" href="#transform_7" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">transform</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">copy</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="n">raw_documents</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">raw_documents</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Transform documents to document-term matrix.</p>
@@ -5883,28 +5895,36 @@ operations.</p>
 </details>
 </details>
 <h3 id="vocabulary__2">vocabulary_<a class="headerlink" href="#vocabulary__2" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">vocabulary_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">vocabulary_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">vocabulary_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Dict</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="fixed_vocabulary__1">fixed_vocabulary_<a class="headerlink" href="#fixed_vocabulary__1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fixed_vocabulary_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
+<span class="k">val</span> <span class="n">fixed_vocabulary_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">bool</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="idf__1">idf_<a class="headerlink" href="#idf__1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">idf_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">idf_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">idf_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="stop_words__1">stop_words_<a class="headerlink" href="#stop_words__1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">stop_words_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">stop_words_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="to_string_10">to_string<a class="headerlink" href="#to_string_10" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
@@ -5938,11 +5958,11 @@ operations.</p>
 </details>
 <h3 id="fit_transform_7">fit_transform<a class="headerlink" href="#fit_transform_7" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit_transform</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">fit_params</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Fit to data, then transform it.</p>
@@ -5979,18 +5999,18 @@ and returns a transformed version of X.</p>
 </details>
 <h3 id="check_array_1">check_array<a class="headerlink" href="#check_array_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">check_array</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">accept_sparse</span><span class="o">:[`</span><span class="nc">String</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Bool</span> <span class="k">of</span> <span class="kt">bool</span> <span class="o">|</span> <span class="o">`</span><span class="nc">StringList</span> <span class="k">of</span> <span class="kt">string</span> <span class="kt">list</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">accept_sparse</span><span class="o">:[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Bool</span> <span class="k">of</span> <span class="kt">bool</span> <span class="o">|</span> <span class="o">`</span><span class="nc">StringList</span> <span class="k">of</span> <span class="kt">string</span> <span class="kt">list</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">accept_large_sparse</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">dtype</span><span class="o">:[`</span><span class="nc">String</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Dtype</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">TypeList</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">order</span><span class="o">:[`</span><span class="nc">F</span> <span class="o">|</span> <span class="o">`</span><span class="nc">C</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">dtype</span><span class="o">:[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Dtype</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">TypeList</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">order</span><span class="o">:[`</span><span class="nc">F</span> <span class="o">|</span> <span class="o">`</span><span class="nc">C</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">copy</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">force_all_finite</span><span class="o">:[`</span><span class="nc">Bool</span> <span class="k">of</span> <span class="kt">bool</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Allow_nan</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">ensure_2d</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">allow_nd</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">ensure_min_samples</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">ensure_min_features</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">warn_on_dtype</span><span class="o">:[`</span><span class="nc">Bool</span> <span class="k">of</span> <span class="kt">bool</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">estimator</span><span class="o">:[`</span><span class="nc">String</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Estimator</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">warn_on_dtype</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">estimator</span><span class="o">:[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Estimator</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="kt">array</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
@@ -6067,7 +6087,7 @@ does not match the requested dtype, causing a memory copy.</p>
 </details>
 <h3 id="check_is_fitted">check_is_fitted<a class="headerlink" href="#check_is_fitted" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">check_is_fitted</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">attributes</span><span class="o">:[`</span><span class="nc">String</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">ArrayLike</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">StringList</span> <span class="k">of</span> <span class="kt">string</span> <span class="kt">list</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">attributes</span><span class="o">:[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">StringList</span> <span class="k">of</span> <span class="kt">string</span> <span class="kt">list</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">msg</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">all_or_any</span><span class="o">:[`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="n">estimator</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -6155,13 +6175,13 @@ in an empty of parentheses:</p>
 </details>
 <h3 id="normalize">normalize<a class="headerlink" href="#normalize" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">normalize</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">norm</span><span class="o">:[`</span><span class="nc">L1</span> <span class="o">|</span> <span class="o">`</span><span class="nc">L2</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Max</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">axis</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">norm</span><span class="o">:[`</span><span class="nc">L1</span> <span class="o">|</span> <span class="o">`</span><span class="nc">L2</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Max</span> <span class="o">|</span> <span class="o">`</span><span class="nc">T_l2_by</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">axis</span><span class="o">:[`</span><span class="nc">Zero</span> <span class="o">|</span> <span class="o">`</span><span class="nc">One</span> <span class="o">|</span> <span class="o">`</span><span class="nc">T_1_by</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">copy</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">return_norm</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
-  <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span>
+  <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span>
 </code></pre></div>
 
 <p>Scale input vectors individually to unit norm (vector length).</p>

@@ -184,8 +184,8 @@
 
 
   <li class="md-nav__item">
-    <a href=".." title="scikit-learn for OCaml, version 0.22-0.1.3" class="md-nav__link">
-      scikit-learn for OCaml, version 0.22-0.1.3
+    <a href=".." title="Home" class="md-nav__link">
+      Home
     </a>
   </li>
 
@@ -1564,12 +1564,12 @@
   <span class="o">?</span><span class="n">n_init</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">init_params</span><span class="o">:[`</span><span class="nc">Kmeans</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Random</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">weight_concentration_prior_type</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">weight_concentration_prior</span><span class="o">:[`</span><span class="nc">Float</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">mean_precision_prior</span><span class="o">:[`</span><span class="nc">Float</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">mean_prior</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">degrees_of_freedom_prior</span><span class="o">:[`</span><span class="nc">Float</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">covariance_prior</span><span class="o">:[`</span><span class="nc">Float</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">random_state</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">RandomState</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">weight_concentration_prior</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">mean_precision_prior</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">mean_prior</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">degrees_of_freedom_prior</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">covariance_prior</span><span class="o">:[`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">random_state</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">warm_start</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">verbose</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">verbose_interval</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
@@ -1794,7 +1794,7 @@ float                    if &#39;spherical&#39;
 <h3 id="fit">fit<a class="headerlink" href="#fit" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
 </code></pre></div>
@@ -1818,9 +1818,9 @@ corresponds to a single data point.</p>
 <h3 id="fit_predict">fit_predict<a class="headerlink" href="#fit_predict" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit_predict</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Estimate model parameters using X and predict the labels for X.</p>
@@ -1844,7 +1844,7 @@ corresponds to a single data point.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters for this estimator.</p>
@@ -1858,9 +1858,9 @@ contained subobjects that are estimators.</p>
 </details>
 <h3 id="predict">predict<a class="headerlink" href="#predict" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict</span> <span class="o">:</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Predict the labels for the data samples in X using trained model.</p>
@@ -1874,9 +1874,9 @@ corresponds to a single data point.</p>
 </details>
 <h3 id="predict_proba">predict_proba<a class="headerlink" href="#predict_proba" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict_proba</span> <span class="o">:</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Predict posterior probability of each component given the data.</p>
@@ -1893,7 +1893,7 @@ the model given each sample.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sample</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">n_samples</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="o">(</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span><span class="o">)</span>
+  <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span>
 </code></pre></div>
 
 <p>Generate random samples from the fitted Gaussian distribution.</p>
@@ -1909,7 +1909,7 @@ the model given each sample.</p>
 <h3 id="score">score<a class="headerlink" href="#score" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">float</span>
 </code></pre></div>
@@ -1925,9 +1925,9 @@ corresponds to a single data point.</p>
 </details>
 <h3 id="score_samples">score_samples<a class="headerlink" href="#score_samples" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score_samples</span> <span class="o">:</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Compute the weighted log probabilities for each sample.</p>
@@ -1959,100 +1959,132 @@ component of a nested object.</p>
 </details>
 </details>
 <h3 id="weights_">weights_<a class="headerlink" href="#weights_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">weights_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">weights_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">weights_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="means_">means_<a class="headerlink" href="#means_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">means_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">means_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">means_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="covariances_">covariances_<a class="headerlink" href="#covariances_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">covariances_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">covariances_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">covariances_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="precisions_">precisions_<a class="headerlink" href="#precisions_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">precisions_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">precisions_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">precisions_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="precisions_cholesky_">precisions_cholesky_<a class="headerlink" href="#precisions_cholesky_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">precisions_cholesky_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">precisions_cholesky_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">precisions_cholesky_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="converged_">converged_<a class="headerlink" href="#converged_" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">converged_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
+<span class="k">val</span> <span class="n">converged_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">bool</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="n_iter_">n_iter_<a class="headerlink" href="#n_iter_" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_iter_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+<span class="k">val</span> <span class="n">n_iter_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="lower_bound_">lower_bound_<a class="headerlink" href="#lower_bound_" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">lower_bound_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+<span class="k">val</span> <span class="n">lower_bound_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="weight_concentration_prior_">weight_concentration_prior_<a class="headerlink" href="#weight_concentration_prior_" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">weight_concentration_prior_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">weight_concentration_prior_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="weight_concentration_">weight_concentration_<a class="headerlink" href="#weight_concentration_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">weight_concentration_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">weight_concentration_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">weight_concentration_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="mean_precision_prior_">mean_precision_prior_<a class="headerlink" href="#mean_precision_prior_" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">mean_precision_prior_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+<span class="k">val</span> <span class="n">mean_precision_prior_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="mean_precision_">mean_precision_<a class="headerlink" href="#mean_precision_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">mean_precision_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">mean_precision_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">mean_precision_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="mean_prior_">mean_prior_<a class="headerlink" href="#mean_prior_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">mean_prior_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">mean_prior_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">mean_prior_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="degrees_of_freedom_prior_">degrees_of_freedom_prior_<a class="headerlink" href="#degrees_of_freedom_prior_" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">degrees_of_freedom_prior_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+<span class="k">val</span> <span class="n">degrees_of_freedom_prior_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="degrees_of_freedom_">degrees_of_freedom_<a class="headerlink" href="#degrees_of_freedom_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">degrees_of_freedom_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">degrees_of_freedom_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">degrees_of_freedom_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="covariance_prior_">covariance_prior_<a class="headerlink" href="#covariance_prior_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">covariance_prior_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">covariance_prior_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">]</span>
+<span class="k">val</span> <span class="n">covariance_prior_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">])</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="to_string">to_string<a class="headerlink" href="#to_string" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
@@ -2079,16 +2111,16 @@ component of a nested object.</p>
 <h3 id="create_1">create<a class="headerlink" href="#create_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">n_components</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">covariance_type</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">covariance_type</span><span class="o">:[`</span><span class="nc">Full</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Tied</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Diag</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Spherical</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">tol</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">reg_covar</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">max_iter</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">n_init</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">init_params</span><span class="o">:[`</span><span class="nc">Kmeans</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Random</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">weights_init</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">means_init</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">precisions_init</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">random_state</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">RandomState</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">weights_init</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">means_init</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">precisions_init</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">random_state</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">warm_start</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">verbose</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">verbose_interval</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
@@ -2230,7 +2262,7 @@ respect to the model) of the best fit of EM.</p>
 </details>
 <h3 id="aic">aic<a class="headerlink" href="#aic" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">aic</span> <span class="o">:</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">float</span>
 </code></pre></div>
@@ -2244,7 +2276,7 @@ respect to the model) of the best fit of EM.</p>
 </details>
 <h3 id="bic">bic<a class="headerlink" href="#bic" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">bic</span> <span class="o">:</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">float</span>
 </code></pre></div>
@@ -2259,7 +2291,7 @@ respect to the model) of the best fit of EM.</p>
 <h3 id="fit_1">fit<a class="headerlink" href="#fit_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
 </code></pre></div>
@@ -2283,9 +2315,9 @@ corresponds to a single data point.</p>
 <h3 id="fit_predict_1">fit_predict<a class="headerlink" href="#fit_predict_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit_predict</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Estimate model parameters using X and predict the labels for X.</p>
@@ -2309,7 +2341,7 @@ corresponds to a single data point.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters for this estimator.</p>
@@ -2323,9 +2355,9 @@ contained subobjects that are estimators.</p>
 </details>
 <h3 id="predict_1">predict<a class="headerlink" href="#predict_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict</span> <span class="o">:</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Predict the labels for the data samples in X using trained model.</p>
@@ -2339,9 +2371,9 @@ corresponds to a single data point.</p>
 </details>
 <h3 id="predict_proba_1">predict_proba<a class="headerlink" href="#predict_proba_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict_proba</span> <span class="o">:</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Predict posterior probability of each component given the data.</p>
@@ -2358,7 +2390,7 @@ the model given each sample.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sample</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">n_samples</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="o">(</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span><span class="o">)</span>
+  <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span>
 </code></pre></div>
 
 <p>Generate random samples from the fitted Gaussian distribution.</p>
@@ -2374,7 +2406,7 @@ the model given each sample.</p>
 <h3 id="score_1">score<a class="headerlink" href="#score_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">float</span>
 </code></pre></div>
@@ -2390,9 +2422,9 @@ corresponds to a single data point.</p>
 </details>
 <h3 id="score_samples_1">score_samples<a class="headerlink" href="#score_samples_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score_samples</span> <span class="o">:</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Compute the weighted log probabilities for each sample.</p>
@@ -2424,52 +2456,68 @@ component of a nested object.</p>
 </details>
 </details>
 <h3 id="weights__1">weights_<a class="headerlink" href="#weights__1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">weights_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">weights_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">weights_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="means__1">means_<a class="headerlink" href="#means__1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">means_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">means_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">means_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="covariances__1">covariances_<a class="headerlink" href="#covariances__1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">covariances_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">covariances_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">covariances_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="precisions__1">precisions_<a class="headerlink" href="#precisions__1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">precisions_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">precisions_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">precisions_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="precisions_cholesky__1">precisions_cholesky_<a class="headerlink" href="#precisions_cholesky__1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">precisions_cholesky_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">precisions_cholesky_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">precisions_cholesky_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="converged__1">converged_<a class="headerlink" href="#converged__1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">converged_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
+<span class="k">val</span> <span class="n">converged_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">bool</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="n_iter__1">n_iter_<a class="headerlink" href="#n_iter__1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_iter_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+<span class="k">val</span> <span class="n">n_iter_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="lower_bound__1">lower_bound_<a class="headerlink" href="#lower_bound__1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">lower_bound_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+<span class="k">val</span> <span class="n">lower_bound_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="to_string_1">to_string<a class="headerlink" href="#to_string_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>

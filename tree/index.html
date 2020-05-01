@@ -184,8 +184,8 @@
 
 
   <li class="md-nav__item">
-    <a href=".." title="scikit-learn for OCaml, version 0.22-0.1.3" class="md-nav__link">
-      scikit-learn for OCaml, version 0.22-0.1.3
+    <a href=".." title="Home" class="md-nav__link">
+      Home
     </a>
   </li>
 
@@ -2087,15 +2087,15 @@
   <span class="o">?</span><span class="n">criterion</span><span class="o">:[`</span><span class="nc">Gini</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Entropy</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">splitter</span><span class="o">:[`</span><span class="nc">Best</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Random</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">max_depth</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">min_samples_split</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Float</span> <span class="k">of</span> <span class="kt">float</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">min_samples_leaf</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Float</span> <span class="k">of</span> <span class="kt">float</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">min_samples_split</span><span class="o">:[`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">min_samples_leaf</span><span class="o">:[`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">min_weight_fraction_leaf</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">max_features</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Float</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Auto</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Sqrt</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Log2</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">random_state</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">RandomState</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">max_features</span><span class="o">:[`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Auto</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Sqrt</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Log2</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">random_state</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">max_leaf_nodes</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">min_impurity_decrease</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">min_impurity_split</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">class_weight</span><span class="o">:[`</span><span class="nc">DictIntToFloat</span> <span class="k">of</span> <span class="o">(</span><span class="kt">int</span> <span class="o">*</span> <span class="kt">float</span><span class="o">)</span> <span class="kt">list</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Balanced</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">class_weight</span><span class="o">:[`</span><span class="nc">DictIntToFloat</span> <span class="k">of</span> <span class="o">(</span><span class="kt">int</span> <span class="o">*</span> <span class="kt">float</span><span class="o">)</span> <span class="kt">list</span> <span class="o">|</span> <span class="o">`</span><span class="nc">List_of_dict</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Balanced</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">presort</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">ccp_alpha</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
@@ -2280,9 +2280,9 @@ split. To obtain a deterministic behaviour during fitting,
 <h3 id="apply">apply<a class="headerlink" href="#apply" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">apply</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">check_input</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Return the index of the leaf that each sample is predicted as.</p>
@@ -2304,11 +2304,11 @@ numbering.</p>
 </details>
 <h3 id="cost_complexity_pruning_path">cost_complexity_pruning_path<a class="headerlink" href="#cost_complexity_pruning_path" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">cost_complexity_pruning_path</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">y</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span><span class="o">)</span>
+  <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span>
 </code></pre></div>
 
 <p>Compute the pruning path during Minimal Cost-Complexity Pruning.</p>
@@ -2345,7 +2345,7 @@ corresponding alpha value in ``ccp_alphas``.
 <h3 id="decision_path">decision_path<a class="headerlink" href="#decision_path" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">decision_path</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">check_input</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -2367,11 +2367,11 @@ indicates that the samples goes through the nodes.</p>
 </details>
 <h3 id="fit">fit<a class="headerlink" href="#fit" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">check_input</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">x_idx_sorted</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">x_idx_sorted</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">y</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
 </code></pre></div>
@@ -2430,7 +2430,7 @@ and any leaf.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters for this estimator.</p>
@@ -2445,9 +2445,9 @@ contained subobjects that are estimators.</p>
 <h3 id="predict">predict<a class="headerlink" href="#predict" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">check_input</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Predict class or regression value for X.</p>
@@ -2468,7 +2468,7 @@ Don't use this parameter unless you know what you do.</p>
 </details>
 <h3 id="predict_log_proba">predict_log_proba<a class="headerlink" href="#predict_log_proba" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict_log_proba</span> <span class="o">:</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -2487,9 +2487,9 @@ classes corresponds to that in the attribute :term:<code>classes_</code>.</p>
 <h3 id="predict_proba">predict_proba<a class="headerlink" href="#predict_proba" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict_proba</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">check_input</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Predict class probabilities of the input samples X.</p>
@@ -2510,9 +2510,9 @@ classes corresponds to that in the attribute :term:<code>classes_</code>.</p>
 </details>
 <h3 id="score">score<a class="headerlink" href="#score" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">y</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">float</span>
 </code></pre></div>
@@ -2552,46 +2552,60 @@ component of a nested object.</p>
 </details>
 </details>
 <h3 id="classes_">classes_<a class="headerlink" href="#classes_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">classes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">classes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">classes_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="feature_importances_">feature_importances_<a class="headerlink" href="#feature_importances_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">feature_importances_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">feature_importances_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">feature_importances_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="max_features_">max_features_<a class="headerlink" href="#max_features_" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">max_features_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+<span class="k">val</span> <span class="n">max_features_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="n_classes_">n_classes_<a class="headerlink" href="#n_classes_" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_classes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">n_classes_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="n_features_">n_features_<a class="headerlink" href="#n_features_" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_features_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+<span class="k">val</span> <span class="n">n_features_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="n_outputs_">n_outputs_<a class="headerlink" href="#n_outputs_" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_outputs_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+<span class="k">val</span> <span class="n">n_outputs_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="tree_">tree_<a class="headerlink" href="#tree_" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">tree_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">tree_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="to_string">to_string<a class="headerlink" href="#to_string" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
@@ -2620,11 +2634,11 @@ component of a nested object.</p>
   <span class="o">?</span><span class="n">criterion</span><span class="o">:[`</span><span class="nc">Mse</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Friedman_mse</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Mae</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">splitter</span><span class="o">:[`</span><span class="nc">Best</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Random</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">max_depth</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">min_samples_split</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Float</span> <span class="k">of</span> <span class="kt">float</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">min_samples_leaf</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Float</span> <span class="k">of</span> <span class="kt">float</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">min_samples_split</span><span class="o">:[`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">min_samples_leaf</span><span class="o">:[`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">min_weight_fraction_leaf</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">max_features</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Float</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Auto</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Sqrt</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Log2</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">random_state</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">RandomState</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">max_features</span><span class="o">:[`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Auto</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Sqrt</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Log2</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">random_state</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">max_leaf_nodes</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">min_impurity_decrease</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">min_impurity_split</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
@@ -2796,9 +2810,9 @@ split. To obtain a deterministic behaviour during fitting,
 <h3 id="apply_1">apply<a class="headerlink" href="#apply_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">apply</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">check_input</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Return the index of the leaf that each sample is predicted as.</p>
@@ -2820,11 +2834,11 @@ numbering.</p>
 </details>
 <h3 id="cost_complexity_pruning_path_1">cost_complexity_pruning_path<a class="headerlink" href="#cost_complexity_pruning_path_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">cost_complexity_pruning_path</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">y</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span><span class="o">)</span>
+  <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span>
 </code></pre></div>
 
 <p>Compute the pruning path during Minimal Cost-Complexity Pruning.</p>
@@ -2861,7 +2875,7 @@ corresponding alpha value in ``ccp_alphas``.
 <h3 id="decision_path_1">decision_path<a class="headerlink" href="#decision_path_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">decision_path</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">check_input</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -2883,11 +2897,11 @@ indicates that the samples goes through the nodes.</p>
 </details>
 <h3 id="fit_1">fit<a class="headerlink" href="#fit_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">check_input</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">x_idx_sorted</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">x_idx_sorted</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">y</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
 </code></pre></div>
@@ -2945,7 +2959,7 @@ and any leaf.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters for this estimator.</p>
@@ -2960,9 +2974,9 @@ contained subobjects that are estimators.</p>
 <h3 id="predict_1">predict<a class="headerlink" href="#predict_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">check_input</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Predict class or regression value for X.</p>
@@ -2983,9 +2997,9 @@ Don't use this parameter unless you know what you do.</p>
 </details>
 <h3 id="score_1">score<a class="headerlink" href="#score_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">y</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">float</span>
 </code></pre></div>
@@ -3043,34 +3057,44 @@ component of a nested object.</p>
 </details>
 </details>
 <h3 id="feature_importances__1">feature_importances_<a class="headerlink" href="#feature_importances__1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">feature_importances_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">feature_importances_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">feature_importances_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="max_features__1">max_features_<a class="headerlink" href="#max_features__1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">max_features_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+<span class="k">val</span> <span class="n">max_features_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="n_features__1">n_features_<a class="headerlink" href="#n_features__1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_features_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+<span class="k">val</span> <span class="n">n_features_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="n_outputs__1">n_outputs_<a class="headerlink" href="#n_outputs__1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_outputs_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+<span class="k">val</span> <span class="n">n_outputs_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="tree__1">tree_<a class="headerlink" href="#tree__1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">tree_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">tree_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="to_string_1">to_string<a class="headerlink" href="#to_string_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
@@ -3099,15 +3123,15 @@ component of a nested object.</p>
   <span class="o">?</span><span class="n">criterion</span><span class="o">:[`</span><span class="nc">Gini</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Entropy</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">splitter</span><span class="o">:[`</span><span class="nc">Random</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Best</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">max_depth</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">min_samples_split</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Float</span> <span class="k">of</span> <span class="kt">float</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">min_samples_leaf</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Float</span> <span class="k">of</span> <span class="kt">float</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">min_samples_split</span><span class="o">:[`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">min_samples_leaf</span><span class="o">:[`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">min_weight_fraction_leaf</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">max_features</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Float</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Auto</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Sqrt</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Log2</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">random_state</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">RandomState</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">max_features</span><span class="o">:[`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Auto</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Sqrt</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Log2</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">random_state</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">max_leaf_nodes</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">min_impurity_decrease</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">min_impurity_split</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">class_weight</span><span class="o">:[`</span><span class="nc">DictIntToFloat</span> <span class="k">of</span> <span class="o">(</span><span class="kt">int</span> <span class="o">*</span> <span class="kt">float</span><span class="o">)</span> <span class="kt">list</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Balanced</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">class_weight</span><span class="o">:[`</span><span class="nc">DictIntToFloat</span> <span class="k">of</span> <span class="o">(</span><span class="kt">int</span> <span class="o">*</span> <span class="kt">float</span><span class="o">)</span> <span class="kt">list</span> <span class="o">|</span> <span class="o">`</span><span class="nc">List_of_dict</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Balanced</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">ccp_alpha</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
@@ -3271,9 +3295,9 @@ controlled by setting those parameter values.</p>
 <h3 id="apply_2">apply<a class="headerlink" href="#apply_2" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">apply</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">check_input</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Return the index of the leaf that each sample is predicted as.</p>
@@ -3295,11 +3319,11 @@ numbering.</p>
 </details>
 <h3 id="cost_complexity_pruning_path_2">cost_complexity_pruning_path<a class="headerlink" href="#cost_complexity_pruning_path_2" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">cost_complexity_pruning_path</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">y</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span><span class="o">)</span>
+  <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span>
 </code></pre></div>
 
 <p>Compute the pruning path during Minimal Cost-Complexity Pruning.</p>
@@ -3336,7 +3360,7 @@ corresponding alpha value in ``ccp_alphas``.
 <h3 id="decision_path_2">decision_path<a class="headerlink" href="#decision_path_2" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">decision_path</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">check_input</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -3358,11 +3382,11 @@ indicates that the samples goes through the nodes.</p>
 </details>
 <h3 id="fit_2">fit<a class="headerlink" href="#fit_2" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">check_input</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">x_idx_sorted</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">x_idx_sorted</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">y</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
 </code></pre></div>
@@ -3421,7 +3445,7 @@ and any leaf.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters for this estimator.</p>
@@ -3436,9 +3460,9 @@ contained subobjects that are estimators.</p>
 <h3 id="predict_2">predict<a class="headerlink" href="#predict_2" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">check_input</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Predict class or regression value for X.</p>
@@ -3459,7 +3483,7 @@ Don't use this parameter unless you know what you do.</p>
 </details>
 <h3 id="predict_log_proba_1">predict_log_proba<a class="headerlink" href="#predict_log_proba_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict_log_proba</span> <span class="o">:</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -3478,9 +3502,9 @@ classes corresponds to that in the attribute :term:<code>classes_</code>.</p>
 <h3 id="predict_proba_1">predict_proba<a class="headerlink" href="#predict_proba_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict_proba</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">check_input</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Predict class probabilities of the input samples X.</p>
@@ -3501,9 +3525,9 @@ classes corresponds to that in the attribute :term:<code>classes_</code>.</p>
 </details>
 <h3 id="score_2">score<a class="headerlink" href="#score_2" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">y</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">float</span>
 </code></pre></div>
@@ -3543,46 +3567,60 @@ component of a nested object.</p>
 </details>
 </details>
 <h3 id="classes__1">classes_<a class="headerlink" href="#classes__1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">classes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">classes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">classes_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="max_features__2">max_features_<a class="headerlink" href="#max_features__2" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">max_features_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+<span class="k">val</span> <span class="n">max_features_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="n_classes__1">n_classes_<a class="headerlink" href="#n_classes__1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_classes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">n_classes_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="feature_importances__2">feature_importances_<a class="headerlink" href="#feature_importances__2" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">feature_importances_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">feature_importances_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">feature_importances_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="n_features__2">n_features_<a class="headerlink" href="#n_features__2" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_features_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+<span class="k">val</span> <span class="n">n_features_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="n_outputs__2">n_outputs_<a class="headerlink" href="#n_outputs__2" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_outputs_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+<span class="k">val</span> <span class="n">n_outputs_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="tree__2">tree_<a class="headerlink" href="#tree__2" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">tree_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">tree_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="to_string_2">to_string<a class="headerlink" href="#to_string_2" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
@@ -3611,11 +3649,11 @@ component of a nested object.</p>
   <span class="o">?</span><span class="n">criterion</span><span class="o">:[`</span><span class="nc">Mse</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Friedman_mse</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Mae</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">splitter</span><span class="o">:[`</span><span class="nc">Random</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Best</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">max_depth</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">min_samples_split</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Float</span> <span class="k">of</span> <span class="kt">float</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">min_samples_leaf</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Float</span> <span class="k">of</span> <span class="kt">float</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">min_samples_split</span><span class="o">:[`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">min_samples_leaf</span><span class="o">:[`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">min_weight_fraction_leaf</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">max_features</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Float</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Auto</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Sqrt</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Log2</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">random_state</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">RandomState</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">max_features</span><span class="o">:[`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Auto</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Sqrt</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Log2</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">random_state</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">min_impurity_decrease</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">min_impurity_split</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">max_leaf_nodes</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
@@ -3774,9 +3812,9 @@ controlled by setting those parameter values.</p>
 <h3 id="apply_3">apply<a class="headerlink" href="#apply_3" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">apply</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">check_input</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Return the index of the leaf that each sample is predicted as.</p>
@@ -3798,11 +3836,11 @@ numbering.</p>
 </details>
 <h3 id="cost_complexity_pruning_path_3">cost_complexity_pruning_path<a class="headerlink" href="#cost_complexity_pruning_path_3" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">cost_complexity_pruning_path</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">y</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span><span class="o">)</span>
+  <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span>
 </code></pre></div>
 
 <p>Compute the pruning path during Minimal Cost-Complexity Pruning.</p>
@@ -3839,7 +3877,7 @@ corresponding alpha value in ``ccp_alphas``.
 <h3 id="decision_path_3">decision_path<a class="headerlink" href="#decision_path_3" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">decision_path</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">check_input</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -3861,11 +3899,11 @@ indicates that the samples goes through the nodes.</p>
 </details>
 <h3 id="fit_3">fit<a class="headerlink" href="#fit_3" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">check_input</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">x_idx_sorted</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">x_idx_sorted</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">y</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
 </code></pre></div>
@@ -3923,7 +3961,7 @@ and any leaf.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters for this estimator.</p>
@@ -3938,9 +3976,9 @@ contained subobjects that are estimators.</p>
 <h3 id="predict_3">predict<a class="headerlink" href="#predict_3" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">check_input</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">SparseMatrix</span> <span class="k">of</span> <span class="nn">Csr_matrix</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Predict class or regression value for X.</p>
@@ -3961,9 +3999,9 @@ Don't use this parameter unless you know what you do.</p>
 </details>
 <h3 id="score_3">score<a class="headerlink" href="#score_3" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">y</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">float</span>
 </code></pre></div>
@@ -4022,27 +4060,35 @@ component of a nested object.</p>
 </details>
 <h3 id="max_features__3">max_features_<a class="headerlink" href="#max_features__3" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">max_features_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+<span class="k">val</span> <span class="n">max_features_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="n_features__3">n_features_<a class="headerlink" href="#n_features__3" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_features_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+<span class="k">val</span> <span class="n">n_features_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="n_outputs__3">n_outputs_<a class="headerlink" href="#n_outputs__3" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_outputs_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+<span class="k">val</span> <span class="n">n_outputs_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="tree__3">tree_<a class="headerlink" href="#tree__3" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">tree_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">tree_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="to_string_3">to_string<a class="headerlink" href="#to_string_3" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
@@ -4064,10 +4110,10 @@ component of a nested object.</p>
 </details>
 <h3 id="export_graphviz">export_graphviz<a class="headerlink" href="#export_graphviz" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">export_graphviz</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">out_file</span><span class="o">:[`</span><span class="nc">String</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">out_file</span><span class="o">:[`</span><span class="nc">File_object</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">max_depth</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">feature_names</span><span class="o">:</span><span class="kt">string</span> <span class="kt">list</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">class_names</span><span class="o">:[`</span><span class="nc">StringList</span> <span class="k">of</span> <span class="kt">string</span> <span class="kt">list</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Bool</span> <span class="k">of</span> <span class="kt">bool</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">class_names</span><span class="o">:[`</span><span class="nc">StringList</span> <span class="k">of</span> <span class="kt">string</span> <span class="kt">list</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Bool</span> <span class="k">of</span> <span class="kt">bool</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">label</span><span class="o">:[`</span><span class="nc">All</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Root</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">filled</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">leaves_parallel</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
@@ -4220,7 +4266,7 @@ The classification weights are the number of samples each class.</p>
 <details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">plot_tree</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">max_depth</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">feature_names</span><span class="o">:</span><span class="kt">string</span> <span class="kt">list</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">class_names</span><span class="o">:[`</span><span class="nc">StringList</span> <span class="k">of</span> <span class="kt">string</span> <span class="kt">list</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Bool</span> <span class="k">of</span> <span class="kt">bool</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">class_names</span><span class="o">:[`</span><span class="nc">StringList</span> <span class="k">of</span> <span class="kt">string</span> <span class="kt">list</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Bool</span> <span class="k">of</span> <span class="kt">bool</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">label</span><span class="o">:[`</span><span class="nc">All</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Root</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">filled</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">impurity</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>

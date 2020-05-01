@@ -184,8 +184,8 @@
 
 
   <li class="md-nav__item">
-    <a href=".." title="scikit-learn for OCaml, version 0.22-0.1.3" class="md-nav__link">
-      scikit-learn for OCaml, version 0.22-0.1.3
+    <a href=".." title="Home" class="md-nav__link">
+      Home
     </a>
   </li>
 
@@ -3791,14 +3791,14 @@
 <h3 id="create">create<a class="headerlink" href="#create" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">kernel</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">optimizer</span><span class="o">:[`</span><span class="nc">String</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">optimizer</span><span class="o">:[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">n_restarts_optimizer</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">max_iter_predict</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">warm_start</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">copy_X_train</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">random_state</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">RandomState</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">random_state</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">multi_class</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">n_jobs</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">n_jobs</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
 </code></pre></div>
@@ -3923,7 +3923,7 @@ different kernels used in the one-versus-rest classifiers.</p>
 <h3 id="fit">fit<a class="headerlink" href="#fit" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">y</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
 </code></pre></div>
@@ -3943,7 +3943,7 @@ or a list of objects.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters for this estimator.</p>
@@ -3957,11 +3957,11 @@ contained subobjects that are estimators.</p>
 </details>
 <h3 id="log_marginal_likelihood">log_marginal_likelihood<a class="headerlink" href="#log_marginal_likelihood" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">log_marginal_likelihood</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">theta</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">theta</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">eval_gradient</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">clone_kernel</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="o">(</span><span class="kt">float</span> <span class="o">*</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span><span class="o">)</span>
+  <span class="o">(</span><span class="kt">float</span> <span class="o">*</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span>
 </code></pre></div>
 
 <p>Returns log-marginal likelihood of theta for training data.</p>
@@ -3993,9 +3993,9 @@ Only returned when eval_gradient is True.</p>
 </details>
 <h3 id="predict">predict<a class="headerlink" href="#predict" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict</span> <span class="o">:</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Perform classification on an array of test vectors X.</p>
@@ -4010,9 +4010,9 @@ or a list of objects.</p>
 </details>
 <h3 id="predict_proba">predict_proba<a class="headerlink" href="#predict_proba" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict_proba</span> <span class="o">:</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Return probability estimates for the test vector X.</p>
@@ -4029,9 +4029,9 @@ order, as they appear in the attribute :term:<code>classes_</code>.</p>
 </details>
 <h3 id="score">score<a class="headerlink" href="#score" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">y</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">float</span>
 </code></pre></div>
@@ -4072,27 +4072,35 @@ component of a nested object.</p>
 </details>
 <h3 id="kernel_">kernel_<a class="headerlink" href="#kernel_" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">kernel_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">kernel_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="log_marginal_likelihood_value_">log_marginal_likelihood_value_<a class="headerlink" href="#log_marginal_likelihood_value_" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">log_marginal_likelihood_value_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+<span class="k">val</span> <span class="n">log_marginal_likelihood_value_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="classes_">classes_<a class="headerlink" href="#classes_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">classes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">classes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">classes_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="n_classes_">n_classes_<a class="headerlink" href="#n_classes_" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_classes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+<span class="k">val</span> <span class="n">n_classes_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="to_string">to_string<a class="headerlink" href="#to_string" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
@@ -4119,12 +4127,12 @@ component of a nested object.</p>
 <h3 id="create_1">create<a class="headerlink" href="#create_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">kernel</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">alpha</span><span class="o">:[`</span><span class="nc">Float</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">optimizer</span><span class="o">:[`</span><span class="nc">String</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">alpha</span><span class="o">:[`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">optimizer</span><span class="o">:[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">n_restarts_optimizer</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">normalize_y</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">copy_X_train</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">random_state</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">RandomState</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">random_state</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
 </code></pre></div>
@@ -4245,7 +4253,7 @@ same as the one passed as parameter but with optimized hyperparameters</p>
 <h3 id="fit_1">fit<a class="headerlink" href="#fit_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">y</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
 </code></pre></div>
@@ -4265,7 +4273,7 @@ or a list of objects.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters for this estimator.</p>
@@ -4279,11 +4287,11 @@ contained subobjects that are estimators.</p>
 </details>
 <h3 id="log_marginal_likelihood_1">log_marginal_likelihood<a class="headerlink" href="#log_marginal_likelihood_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">log_marginal_likelihood</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">theta</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">theta</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">eval_gradient</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">clone_kernel</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="o">(</span><span class="kt">float</span> <span class="o">*</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span><span class="o">)</span>
+  <span class="o">(</span><span class="kt">float</span> <span class="o">*</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span>
 </code></pre></div>
 
 <p>Returns log-marginal likelihood of theta for training data.</p>
@@ -4311,9 +4319,9 @@ Only returned when eval_gradient is True.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">return_std</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">return_cov</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Predict using the Gaussian process regression model</p>
@@ -4345,10 +4353,10 @@ Only returned when return_cov is True.</p>
 <h3 id="sample_y">sample_y<a class="headerlink" href="#sample_y" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sample_y</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">n_samples</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">random_state</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">RandomState</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">random_state</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Draw samples from Gaussian process and evaluate at X.</p>
@@ -4371,9 +4379,9 @@ evaluated at query points.</p>
 </details>
 <h3 id="score_1">score<a class="headerlink" href="#score_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">sample_weight</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">y</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">float</span>
 </code></pre></div>
@@ -4432,39 +4440,51 @@ component of a nested object.</p>
 </details>
 <h3 id="x_train_">x_train_<a class="headerlink" href="#x_train_" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">x_train_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">x_train_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="y_train_">y_train_<a class="headerlink" href="#y_train_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">y_train_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">y_train_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">y_train_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="kernel__1">kernel_<a class="headerlink" href="#kernel__1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">kernel_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">kernel_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="l_">l_<a class="headerlink" href="#l_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">l_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">l_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">l_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="alpha_">alpha_<a class="headerlink" href="#alpha_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">alpha_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">alpha_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">alpha_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="log_marginal_likelihood_value__1">log_marginal_likelihood_value_<a class="headerlink" href="#log_marginal_likelihood_value__1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">log_marginal_likelihood_value_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+<span class="k">val</span> <span class="n">log_marginal_likelihood_value_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="to_string_1">to_string<a class="headerlink" href="#to_string_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
@@ -4555,7 +4575,7 @@ even via super()).</p>
 </details>
 <h3 id="clone_with_theta">clone_with_theta<a class="headerlink" href="#clone_with_theta" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">clone_with_theta</span> <span class="o">:</span>
-  <span class="n">theta</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">theta</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -4569,7 +4589,7 @@ even via super()).</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">diag</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Returns the diagonal of the kernel k(X, X).</p>
@@ -4588,7 +4608,7 @@ shape = (n_samples_X, n_features) or a list of objects.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters of this kernel.</p>
@@ -4667,7 +4687,7 @@ k(x_1, x_2) = constant_value</p>
 </details>
 <h3 id="clone_with_theta_1">clone_with_theta<a class="headerlink" href="#clone_with_theta_1" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">clone_with_theta</span> <span class="o">:</span>
-  <span class="n">theta</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">theta</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -4681,7 +4701,7 @@ k(x_1, x_2) = constant_value</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">diag</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Returns the diagonal of the kernel k(X, X).</p>
@@ -4700,7 +4720,7 @@ shape = (n_samples_X, n_features) or a list of objects.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters of this kernel.</p>
@@ -4784,7 +4804,7 @@ the kernel is homogenous.</p>
 </details>
 <h3 id="clone_with_theta_2">clone_with_theta<a class="headerlink" href="#clone_with_theta_2" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">clone_with_theta</span> <span class="o">:</span>
-  <span class="n">theta</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">theta</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -4796,9 +4816,9 @@ the kernel is homogenous.</p>
 </details>
 <h3 id="diag_2">diag<a class="headerlink" href="#diag_2" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">diag</span> <span class="o">:</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Returns the diagonal of the kernel k(X, X).</p>
@@ -4816,7 +4836,7 @@ evaluated.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters of this kernel.</p>
@@ -4902,7 +4922,7 @@ exp(-2 (sin(\pi / periodicity * d(x_i, x_j)) / length_scale) ^ 2)</p>
 </details>
 <h3 id="clone_with_theta_3">clone_with_theta<a class="headerlink" href="#clone_with_theta_3" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">clone_with_theta</span> <span class="o">:</span>
-  <span class="n">theta</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">theta</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -4916,7 +4936,7 @@ exp(-2 (sin(\pi / periodicity * d(x_i, x_j)) / length_scale) ^ 2)</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">diag</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Returns the diagonal of the kernel k(X, X).</p>
@@ -4934,7 +4954,7 @@ evaluated.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters of this kernel.</p>
@@ -5010,7 +5030,7 @@ k_exp(X, Y) = k(X, Y) ** exponent</p>
 </details>
 <h3 id="clone_with_theta_4">clone_with_theta<a class="headerlink" href="#clone_with_theta_4" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">clone_with_theta</span> <span class="o">:</span>
-  <span class="n">theta</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">theta</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -5024,7 +5044,7 @@ k_exp(X, Y) = k(X, Y) ** exponent</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">diag</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Returns the diagonal of the kernel k(X, X).</p>
@@ -5043,7 +5063,7 @@ shape = (n_samples_X, n_features) or a list of objects.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters of this kernel.</p>
@@ -5199,33 +5219,43 @@ derived based on the given bounds.</p>
 </details>
 <h3 id="name">name<a class="headerlink" href="#name" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">name</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<span class="k">val</span> <span class="n">name_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">string</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="value_type">value_type<a class="headerlink" href="#value_type" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">value_type</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<span class="k">val</span> <span class="n">value_type_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">string</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="bounds">bounds<a class="headerlink" href="#bounds" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">bounds</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">bounds_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="n_elements">n_elements<a class="headerlink" href="#n_elements" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_elements</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+<span class="k">val</span> <span class="n">n_elements_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="fixed">fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fixed</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
+<span class="k">val</span> <span class="n">fixed_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">bool</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
-<p>This attribute is documented in <code>create</code> above.</p>
+<p>This attribute is documented in <code>create</code> above. The first version raises Not_found
+if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="to_string_9">to_string<a class="headerlink" href="#to_string_9" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
@@ -5251,7 +5281,7 @@ derived based on the given bounds.</p>
 
 <h3 id="create_10">create<a class="headerlink" href="#create_10" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">length_scale</span><span class="o">:[`</span><span class="nc">Float</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">length_scale</span><span class="o">:[`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Array_with</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">length_scale_bounds</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">nu</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
@@ -5290,7 +5320,7 @@ its initial value and not optimized.</p>
 </details>
 <h3 id="clone_with_theta_5">clone_with_theta<a class="headerlink" href="#clone_with_theta_5" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">clone_with_theta</span> <span class="o">:</span>
-  <span class="n">theta</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">theta</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -5304,7 +5334,7 @@ its initial value and not optimized.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">diag</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Returns the diagonal of the kernel k(X, X).</p>
@@ -5322,7 +5352,7 @@ evaluated.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters of this kernel.</p>
@@ -5391,7 +5421,7 @@ so that it's possible to update each component of a nested object.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">diag</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Returns the diagonal of the kernel k(X, X).</p>
@@ -5431,8 +5461,8 @@ evaluated.</p>
 <details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">gamma</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">gamma_bounds</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">metric</span><span class="o">:[`</span><span class="nc">String</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">pairwise_kernels_kwargs</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">metric</span><span class="o">:[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">pairwise_kernels_kwargs</span><span class="o">:</span><span class="nn">Dict</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
 </code></pre></div>
@@ -5466,7 +5496,7 @@ the pairwise kernel function.</p>
 </details>
 <h3 id="clone_with_theta_6">clone_with_theta<a class="headerlink" href="#clone_with_theta_6" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">clone_with_theta</span> <span class="o">:</span>
-  <span class="n">theta</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">theta</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -5478,9 +5508,9 @@ the pairwise kernel function.</p>
 </details>
 <h3 id="diag_7">diag<a class="headerlink" href="#diag_7" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">diag</span> <span class="o">:</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Returns the diagonal of the kernel k(X, X).</p>
@@ -5498,7 +5528,7 @@ evaluated.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters of this kernel.</p>
@@ -5574,7 +5604,7 @@ k_prod(X, Y) = k1(X, Y) * k2(X, Y)</p>
 </details>
 <h3 id="clone_with_theta_7">clone_with_theta<a class="headerlink" href="#clone_with_theta_7" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">clone_with_theta</span> <span class="o">:</span>
-  <span class="n">theta</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">theta</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -5588,7 +5618,7 @@ k_prod(X, Y) = k1(X, Y) * k2(X, Y)</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">diag</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Returns the diagonal of the kernel k(X, X).</p>
@@ -5607,7 +5637,7 @@ shape = (n_samples_X, n_features) or a list of objects.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters of this kernel.</p>
@@ -5665,7 +5695,7 @@ so that it's possible to update each component of a nested object.</p>
 
 <h3 id="create_14">create<a class="headerlink" href="#create_14" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">length_scale</span><span class="o">:[`</span><span class="nc">Float</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">length_scale</span><span class="o">:[`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Array_with</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">length_scale_bounds</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
@@ -5692,7 +5722,7 @@ of l defines the length-scale of the respective feature dimension.</p>
 </details>
 <h3 id="clone_with_theta_8">clone_with_theta<a class="headerlink" href="#clone_with_theta_8" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">clone_with_theta</span> <span class="o">:</span>
-  <span class="n">theta</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">theta</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -5706,7 +5736,7 @@ of l defines the length-scale of the respective feature dimension.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">diag</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Returns the diagonal of the kernel k(X, X).</p>
@@ -5724,7 +5754,7 @@ evaluated.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters of this kernel.</p>
@@ -5810,7 +5840,7 @@ a scalar is supported at the moment. The kernel given by:</p>
 </details>
 <h3 id="clone_with_theta_9">clone_with_theta<a class="headerlink" href="#clone_with_theta_9" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">clone_with_theta</span> <span class="o">:</span>
-  <span class="n">theta</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">theta</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -5824,7 +5854,7 @@ a scalar is supported at the moment. The kernel given by:</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">diag</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Returns the diagonal of the kernel k(X, X).</p>
@@ -5842,7 +5872,7 @@ evaluated.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters of this kernel.</p>
@@ -5957,7 +5987,7 @@ k_sum(X, Y) = k1(X, Y) + k2(X, Y)</p>
 </details>
 <h3 id="clone_with_theta_10">clone_with_theta<a class="headerlink" href="#clone_with_theta_10" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">clone_with_theta</span> <span class="o">:</span>
-  <span class="n">theta</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">theta</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -5971,7 +6001,7 @@ k_sum(X, Y) = k1(X, Y) + k2(X, Y)</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">diag</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Returns the diagonal of the kernel k(X, X).</p>
@@ -5990,7 +6020,7 @@ shape = (n_samples_X, n_features) or a list of objects.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters of this kernel.</p>
@@ -6069,7 +6099,7 @@ noise.</p>
 </details>
 <h3 id="clone_with_theta_11">clone_with_theta<a class="headerlink" href="#clone_with_theta_11" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">clone_with_theta</span> <span class="o">:</span>
-  <span class="n">theta</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">theta</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -6083,7 +6113,7 @@ noise.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">diag</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Returns the diagonal of the kernel k(X, X).</p>
@@ -6102,7 +6132,7 @@ shape = (n_samples_X, n_features) or a list of objects.</p>
 <details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Get parameters of this kernel.</p>
@@ -6180,10 +6210,10 @@ The abstract methods can be called using any of the normal
 <details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">cdist</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">metric</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">kwargs</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
-  <span class="n">xa</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">xa</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">xb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Compute distance between each pair of the two collections of inputs.</p>
@@ -6463,7 +6493,7 @@ cube:</p>
 <h3 id="clone">clone<a class="headerlink" href="#clone" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">clone</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">safe</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="n">estimator</span><span class="o">:[`</span><span class="nc">Estimator</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">ArrayLike</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">estimator</span><span class="o">:[`</span><span class="nc">Estimator</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -6514,12 +6544,12 @@ that are not estimators.</p>
 </details>
 <h3 id="pairwise_kernels">pairwise_kernels<a class="headerlink" href="#pairwise_kernels" title="Permanent link">&para;</a></h3>
 <details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pairwise_kernels</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">metric</span><span class="o">:[`</span><span class="nc">String</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">metric</span><span class="o">:[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">filter_params</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">n_jobs</span><span class="o">:[`</span><span class="nc">Int</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">n_jobs</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">kwds</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">Ndarray</span> <span class="k">of</span> <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:[`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Otherwise</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -6578,9 +6608,9 @@ from X and the jth array from Y.</p>
 <details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pdist</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">metric</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">kwargs</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Pairwise distances between observations in n-dimensional space.</p>
@@ -6834,9 +6864,9 @@ redundant square matrix.</p>
 <details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">squareform</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">force</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">checks</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:</span><span class="nn">Arr</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
-  <span class="nn">Ndarray</span><span class="p">.</span><span class="n">t</span>
+  <span class="nn">Arr</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Convert a vector-form distance vector to a square-form distance

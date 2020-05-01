@@ -84,7 +84,7 @@
           </span>
           <span class="md-header-nav__topic md-ellipsis">
             
-              scikit-learn for OCaml, version 0.22-0.1.3
+              Home
             
           </span>
         </div>
@@ -191,14 +191,14 @@
     
     
       <label class="md-nav__link md-nav__link--active" for="__toc">
-        scikit-learn for OCaml, version 0.22-0.1.3
+        Home
         <span class="md-nav__icon md-icon">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3,9H17V7H3V9M3,13H17V11H3V13M3,17H17V15H3V17M19,17H21V15H19V17M19,7V9H21V7H19M19,13H21V11H19V13Z" /></svg>
         </span>
       </label>
     
-    <a href="." title="scikit-learn for OCaml, version 0.22-0.1.3" class="md-nav__link md-nav__link--active">
-      scikit-learn for OCaml, version 0.22-0.1.3
+    <a href="." title="Home" class="md-nav__link md-nav__link--active">
+      Home
     </a>
     
       
@@ -906,7 +906,9 @@
                   
                 
                 
-                <h1>scikit-learn for OCaml, version 0.22-0.1.3</h1>
+                  <h1>Home</h1>
+                
+                <p>scikit-learn for OCaml, version 0.22-0.2.0</p>
 <p>ocaml-sklearn allows using Python's
 <a href="https://scikit-learn.org/">scikit-learn</a> machine learning library
 from OCaml.</p>
@@ -915,7 +917,7 @@ here.</a></p>
 <p>If you are not familiar with scikit-learn, consult its Python <a href="https://scikit-learn.org/stable/getting_started.html">getting
 started documentation</a>
 and <a href="https://scikit-learn.org/stable/user_guide.html">user guide</a>.</p>
-<p><strong>The current OCaml API is not complete. Some functions may be hard or
+<p><strong>This is a preview. The current OCaml API is not complete. Some functions may be hard or
 impossible to use. Also, the existing API is not stable, it may change
 to accomodate more functionality or make things easier to use.</strong></p>
 <h2 id="example-support-vector-regression-with-rbf-kernel">Example : support vector regression with RBF kernel<a class="headerlink" href="#example-support-vector-regression-with-rbf-kernel" title="Permanent link">&para;</a></h2>
@@ -925,8 +927,8 @@ to accomodate more functionality or make things easier to use.</strong></p>
 <span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="nn">Sklearn</span><span class="p">.</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">of_bigarray</span> <span class="o">@@</span> <span class="nn">Owl</span><span class="p">.</span><span class="nn">Dense</span><span class="p">.</span><span class="nn">Matrix</span><span class="p">.</span><span class="nn">D</span><span class="p">.</span><span class="n">uniform</span> <span class="n">n_samples</span> <span class="n">n_features</span> <span class="k">in</span>
 <span class="k">let</span> <span class="k">open</span> <span class="nn">Sklearn</span><span class="p">.</span><span class="nc">Svm</span> <span class="k">in</span>
 <span class="k">let</span> <span class="n">clf</span> <span class="o">=</span> <span class="nn">SVR</span><span class="p">.</span><span class="n">create</span> <span class="o">~</span><span class="n">c</span><span class="o">:</span><span class="mi">1</span><span class="o">.</span><span class="mi">0</span> <span class="o">~</span><span class="n">epsilon</span><span class="o">:</span><span class="mi">0</span><span class="o">.</span><span class="mi">2</span> <span class="bp">()</span> <span class="k">in</span>
-<span class="nn">Format</span><span class="p">.</span><span class="n">printf</span> <span class="s2">&quot;%a</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="nn">SVR</span><span class="p">.</span><span class="n">pp</span> <span class="o">@@</span> <span class="nn">SVR</span><span class="p">.</span><span class="n">fit</span> <span class="n">clf</span> <span class="o">~</span><span class="n">x</span><span class="o">:(`</span><span class="nc">Ndarray</span> <span class="n">x</span><span class="o">)</span> <span class="o">~</span><span class="n">y</span><span class="o">;</span>
-<span class="nn">Format</span><span class="p">.</span><span class="n">printf</span> <span class="s2">&quot;%a</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="nn">Sklearn</span><span class="p">.</span><span class="nn">Ndarray</span><span class="p">.</span><span class="n">pp</span> <span class="o">@@</span> <span class="nn">SVR</span><span class="p">.</span><span class="n">support_vectors_</span> <span class="n">clf</span><span class="o">;;</span>
+<span class="nn">Format</span><span class="p">.</span><span class="n">printf</span> <span class="s2">&quot;%a</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="nn">SVR</span><span class="p">.</span><span class="n">pp</span> <span class="o">@@</span> <span class="nn">SVR</span><span class="p">.</span><span class="n">fit</span> <span class="n">clf</span> <span class="o">~</span><span class="n">x</span> <span class="o">~</span><span class="n">y</span><span class="o">;</span>
+<span class="nn">Format</span><span class="p">.</span><span class="n">printf</span> <span class="s2">&quot;%a</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="nn">Sklearn</span><span class="p">.</span><span class="nn">Arr</span><span class="p">.</span><span class="n">pp</span> <span class="o">@@</span> <span class="nn">SVR</span><span class="p">.</span><span class="n">support_vectors_</span> <span class="n">clf</span><span class="o">;;</span>
 </code></pre></div>
 
 <p>This outputs:
@@ -979,13 +981,20 @@ Python class <code>sklearn.svm.SVC</code> can be found in OCaml module
 <code>Sklearn.Svm.SVC</code>. This module has a <code>create</code> function to construct an
 <code>SVC</code> and functions corresponding to the Python methods and
 attributes.</p>
-<p>Most data is passed in and out of sklearn through a binding to Numpy's
-<code>Ndarray</code>. This is a tensor type that can contain integers, floats, or
-strings (as exposed in the current OCaml API). The way to get data
-into or out of an <code>Ndarray.t</code> is to go through OCaml arrays or
-bigarrays. A way to create bigarrays is to use <code>Owl</code>'s facilities. At
-the moment, the <code>Ndarray</code> functions exposed here are extremely minimal
-(no <code>np.zeros</code> or <code>np.ones</code>).</p>
+<p>Most data is passed in and out of sklearn through module <code>Arr</code>. An
+<code>Arr.t</code> is either a dense <code>Ndarray.t</code> or a sparse <code>Csr_matrix.t</code>.</p>
+<p>You should generally build a dense array using the constructors in <code>Arr</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="nn">Arr</span><span class="p">.</span><span class="nn">Float</span><span class="p">.</span><span class="n">matrix</span> <span class="o">[|[|</span> <span class="mi">1</span><span class="o">;</span> <span class="mi">2</span> <span class="o">|];</span> <span class="o">[|</span> <span class="mi">3</span><span class="o">;</span> <span class="mi">4</span> <span class="o">|]|]</span>
+</code></pre></div>
+
+<p>One way to build an <code>Arr.t</code> is to use <code>Owl</code>'s function to construct a
+bigarray and then use <code>Arr.of_bigarray</code>. Data is shared between the
+bigarray and the <code>Arr.t</code>.</p>
+<p>To get data out of an <code>Arr.t</code>, get the underlying <code>Ndarray</code> or
+<code>Csr_matrix</code> using <code>Arr.get</code>.</p>
+<p>Attributes are exposed read-only, each with two getters: one that
+raises Not_found if the attribute is None, and the other that returns
+an option.</p>
 <p>Bunches (as returned from the sklearn.datasets APIs) are exposed as
 objects.</p>
 <p>Arguments taking string values are converted (in most cases) to
@@ -993,6 +1002,7 @@ polymorphic variants.</p>
 <p>Each module has a conversion function to <code>Py.Object.t</code>, so that you
 can always escape and use <code>pyml</code> directly if the API provided here is
 incomplete.</p>
+<p>No attempt is made to expose features marked as deprecated.</p>
 <h2 id="development-notes">Development notes<a class="headerlink" href="#development-notes" title="Permanent link">&para;</a></h2>
 <p>ocaml-sklearn's sources are generated using a Python program (see
 <code>lib/skdoc.py</code>) that loads up sklearn and uses introspection to
@@ -1015,6 +1025,40 @@ from the Python documentation. A good way to develop is to pick one of
 the files and start porting examples. One can refer to
 <code>examples/auto/svm.ml</code> or <code>examples/auto/pipeline.ml</code>, whose examples
 have already been ported (almost) completely.</p>
+<p>The following examples have been ported completely:
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/neighbors.ml">neighbors</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/pipeline.ml">pipeline</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/preprocessing.ml">preprocessing</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/svm.ml">svm</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/ensemble.ml">ensemble</a></p>
+<p>The following examples still need to be ported:
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/calibration.ml">calibration</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/cluster.ml">cluster</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/compose.ml">compose</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/covariance.ml">covariance</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/cross_decomposition.ml">cross_decomposition</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/datasets.ml">datasets</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/decomposition.ml">decomposition</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/discriminant_analysis.ml">discriminant_analysis</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/feature_extraction.ml">feature_extraction</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/feature_selection.ml">feature_selection</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/gaussian_process.ml">gaussian_process</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/impute.ml">impute</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/inspection.ml">inspection</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/isotonic.ml">isotonic</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/kernel_approximation.ml">kernel_approximation</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/linear_model.ml">linear_model</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/manifold.ml">manifold</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/metrics.ml">metrics</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/model_selection.ml">model_selection</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/multiclass.ml">multiclass</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/multioutput.ml">multioutput</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/naive_bayes.ml">naive_bayes</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/neural_network.ml">neural_network</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/random_projection.ml">random_projection</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/semi_supervised.ml">semi_supervised</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/tree.ml">tree</a>
+- <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/utils.ml">utils</a></p>
 <h3 id="generating-documentation">Generating documentation<a class="headerlink" href="#generating-documentation" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>lib/build-doc
 </code></pre></div>
