@@ -11,6 +11,7 @@ module type S = sig
   val of_pyobject : Py.Object.t -> t
   val to_pyobject : t -> Py.Object.t
 
+  val create : unit -> t
   val of_list : elt list -> t
 
   val of_list_map : ('a -> elt) -> 'a list -> t
@@ -26,6 +27,8 @@ module Make(X : ELEMENT) = struct
 
   let of_pyobject x = x
   let to_pyobject x = x
+
+  let create () = Py.List.create 0
   
   let of_list : X.t list -> t = fun l ->
     Py.List.of_list_map X.to_pyobject l

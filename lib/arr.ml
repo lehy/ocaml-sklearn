@@ -1,5 +1,6 @@
 Wrap_utils.init ()
 let numpy = Py.import "numpy"
+let builtins = Py.Module.builtins ()
 
 module M = struct
   type t = Py.Object.t
@@ -178,7 +179,7 @@ let to_float_array x =
 let slice ?i ?j ?step () =
   `Slice (Wrap_utils.Slice.create_options ?i ?j ?step ())
 
-let ellipsis = Wrap_utils.Option.get @@ Py.Object.get_attr_string (Py.Module.builtins ()) "Ellipsis"
+let ellipsis = Wrap_utils.Option.get @@ Py.Object.get_attr_string builtins "Ellipsis"
 
 let get ~i self =
   let index_of_tag = function
@@ -237,14 +238,17 @@ let argmin ?axis ?out self =
        )); ("out", out)])
   |> (fun x -> if (fun x -> (Wrap_utils.isinstance Wrap_utils.ndarray x) || (Wrap_utils.isinstance Wrap_utils.csr_matrix x)) x then `Arr (of_pyobject x) else if Py.Int.check x then `I (Py.Int.to_int x) else failwith "could not identify type from Python value")
 
-let mean ?axis ?dtype ?out self =
+let mean ?axis ?dtype ?out ?keepdims self =
   Py.Module.get_function_with_keywords numpy "mean"
     [|self|]
-    (Wrap_utils.keyword_args [("axis", Wrap_utils.Option.map axis (function
-         | `Zero -> Py.Int.of_int 0
-         | `One -> Py.Int.of_int 1
-         | `PyObject x -> Wrap_utils.id x
-       )); ("dtype", dtype); ("out", Wrap_utils.Option.map out to_pyobject)])
+    (Wrap_utils.keyword_args
+       [("axis", Wrap_utils.Option.map axis (function
+            | [x] -> Py.Int.of_int x
+            | x -> Py.Tuple.of_list_map Py.Int.of_int x));
+        ("dtype", Wrap_utils.Option.map dtype Dtype.to_pyobject);
+        ("out", Wrap_utils.Option.map out to_pyobject);
+        ("keepdims", Wrap_utils.Option.map keepdims Py.Bool.of_bool)
+       ])
   |> of_pyobject
 
 let sum ?axis ?dtype ?out self =
@@ -310,27 +314,11 @@ let full ?dtype ~shape fill_value =
     (Wrap_utils.keyword_args ["dtype", Wrap_utils.Option.map dtype Dtype.to_pyobject])
   |> of_pyobject
 
-module Generator = struct
-  type arr = t
-  type t = Py.Object.t
+let flatnonzero x =
+  Py.Module.get_function numpy "flatnonzero" [|to_pyobject x|] |> of_pyobject
   
-  let to_pyobject x = x
-  let of_pyobject x = x
-
-  let fold ~f ~init self =
-    Py.Iter.fold_left f init self
-
-  let next self =
-    Py.Iter.next self
-
-  let next_exn self = match next self with
-    | Some x -> x
-    | None -> raise Not_found
-  
-  let to_seq self = Py.Iter.to_seq self
-
-  let of_seq seq = Py.Iter.of_seq seq
-end
+let iter x =
+  Py.Module.get_function builtins "iter" [|to_pyobject x|] |> Py.Iter.to_seq |> Seq.map of_pyobject
 
 module Random = struct
   let numpy_random = Py.import "numpy.random"

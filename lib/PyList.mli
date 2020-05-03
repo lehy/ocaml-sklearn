@@ -11,6 +11,7 @@ module type S = sig
   val of_pyobject : Py.Object.t -> t
   val to_pyobject : t -> Py.Object.t
 
+  val create : unit -> t
   val of_list : elt list -> t
 
   val of_list_map : ('a -> elt) -> 'a list -> t

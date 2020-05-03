@@ -1450,11 +1450,17 @@ array([[0.  ..., 0.29..., 0.41..., 0.19..., 0.57...],
 
 *)
 
+let next_exn seq =
+  let open Seq in
+  match seq () with
+  | Nil -> invalid_arg "next_exn: empty Seq.t"
+  | Cons(t, _) -> t
+
 let%expect_test "pairwise_distances_chunked" =
   let open Sklearn.Metrics in
   Sklearn.Arr.Random.seed 0;
   let x = Sklearn.Arr.Random.random_sample [5; 3] in
-  let d_chunk = Sklearn.Arr.Generator.next_exn @@ pairwise_distances_chunked ~x () in
+  let d_chunk = next_exn @@ pairwise_distances_chunked ~x () in
   print_ndarray @@ d_chunk;
   [%expect {|
       [[0.         0.29473397 0.41689499 0.19662693 0.57216693]
@@ -1481,24 +1487,32 @@ array([0.039..., 0.        , 0.        , 0.039..., 0.        ])
 
 *)
 
-(* TEST TODO
-   let%expect_test "pairwise_distances_chunked" =
-   let open Sklearn.Metrics in
-   let r = .2 in
-   print_ndarray @@ def reduce_func ~D_chunk start ():neigh = [.flatnonzero d < r) for d in D_chunk]avg_dist = (D_chunk * (D_chunk < r)).mean( ~axis:1 npreturn neigh, avg_dist;
-   let gen = pairwise_distances_chunked x ~reduce_func:reduce_func () in
-   let neigh, avg_dist = next ~gen () in
-   print_ndarray @@ neigh;
-   [%expect {|
+let%expect_test "pairwise_distances_chunked" =
+  let open Sklearn.Metrics.Pairwise in
+  let module Arr = Sklearn.Arr in
+  let r = 0.2 in
+  let reduce_func d_chunk =
+    let neigh = Arr.iter d_chunk |> Seq.fold_left (fun acc row ->
+        Arr.List.append acc Arr.(flatnonzero (row < (float r)));
+        acc
+      ) (Arr.List.create ())
+    in
+    let avg_dist = Arr.(d_chunk * (d_chunk < (float r)) |> mean ~axis:[1]) in
+    neigh, avg_dist
+  in
+  Sklearn.Arr.Random.seed 0;
+  let x = Sklearn.Arr.Random.random_sample [5; 3] in
+  let gen = pairwise_distances_chunked ~x () in
+  let gen = Seq.map reduce_func gen in
+  let neigh, avg_dist = next_exn gen in
+  print Sklearn.Arr.List.pp neigh;
+  [%expect {|
       [array([0, 3]), array([1]), array([2]), array([0, 3]), array([4])]
+   |}];
+  print_ndarray @@ avg_dist;
+  [%expect {|
+      [0.03932539 0.         0.         0.03932539 0.        ]
    |}]
-   print_ndarray @@ avg_dist;
-   [%expect {|
-      array([0.039..., 0.        , 0.        , 0.039..., 0.        ])
-   |}]
-
-*)
-
 
 
 (* pairwise_distances_chunked *)

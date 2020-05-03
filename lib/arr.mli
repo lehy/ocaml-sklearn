@@ -365,42 +365,7 @@ val argmin : ?axis:[`Zero | `One | `PyObject of Py.Object.t] -> ?out:Py.Object.t
     Indices of minimum elements. If matrix, its size along `axis` is 1.
 *)
 
-val mean : ?axis:[`Zero | `One | `PyObject of Py.Object.t] -> ?dtype:Py.Object.t -> ?out:t -> t -> t
-(**
-   Compute the arithmetic mean along the specified axis.
-
-   Returns the average of the matrix elements. The average is taken
-   over all elements in the matrix by default, otherwise over the
-   specified axis. `float64` intermediate and return values are used
-   for integer inputs.
-
-   Parameters
-   ----------
-   axis : {-2, -1, 0, 1, None} optional
-    Axis along which the mean is computed. The default is to compute
-    the mean of all elements in the matrix (i.e. `axis` = `None`).
-   dtype : data-type, optional
-    Type to use in computing the mean. For integer inputs, the default
-    is `float64`; for floating point inputs, it is the same as the
-    input dtype.
-
-    .. versionadded:: 0.18.0
-
-   out : np.matrix, optional
-    Alternative output matrix in which to place the result. It must
-    have the same shape as the expected output, but the type of the
-    output values will be cast if necessary.
-
-    .. versionadded:: 0.18.0
-
-   Returns
-   -------
-   m : np.matrix
-
-   See Also
-   --------
-   numpy.matrix.mean : NumPy's implementation of 'mean' for matrices
-*)
+val mean : ?axis:int list -> ?dtype:Dtype.t -> ?out:t -> ?keepdims:bool -> t -> t
 
 val sum : ?axis:int -> ?dtype:Py.Object.t -> ?out:t -> t -> t
 (**
@@ -455,18 +420,9 @@ val dstack : t list -> t
 
 val full : ?dtype:Dtype.t -> shape:int list -> Object.elt -> t
 
-module Generator : sig
-  type arr = t
-  type t
-  val to_pyobject : t -> Py.Object.t
-  val of_pyobject : Py.Object.t -> t
-  val of_seq : arr Seq.t -> t
-    
-  val fold : f:('acc -> arr -> 'acc) -> init:'acc -> t -> 'acc
-  val to_seq : t -> arr Seq.t
-  val next : t -> arr option
-  val next_exn : t -> arr
-end
+val flatnonzero : t -> t
+
+val iter : t -> t Seq.t
 
 module Random : sig
   val seed : int -> unit

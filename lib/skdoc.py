@@ -321,14 +321,14 @@ class Arr(Type):
 
 class ArrGenerator(Type):
     names = ["generator of array"]
-    ml_type = 'Sklearn.Arr.Generator.t'
-    wrap = 'Sklearn.Arr.Generator.to_pyobject'
-    ml_type_ret = 'Sklearn.Arr.Generator.t'
-    unwrap = 'Sklearn.Arr.Generator.of_pyobject'
+    ml_type = 'Sklearn.Arr.t Seq.t'
+    wrap = 'Py.Iter.of_seq'
+    ml_type_ret = 'Sklearn.Arr.t Seq.t'
+    unwrap = '(fun py -> Py.Iter.to_seq py |> Seq.map Sklearn.Arr.of_pyobject)'
     is_type = 'Py.Iter.check'
 
     def tag_name(self):
-        return 'Gen'
+        return 'Iter'
 
 
 class LossFunction(Type):
