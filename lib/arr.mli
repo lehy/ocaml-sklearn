@@ -449,6 +449,10 @@ val asarray_chkfinite : ?dtype:Dtype.t -> t -> t
 val toarray : t -> t
 val todense : t -> t
 
+val vstack : t list -> t
+val hstack : t list -> t
+val dstack : t list -> t
+
 module Generator : sig
   type arr = t
   type t

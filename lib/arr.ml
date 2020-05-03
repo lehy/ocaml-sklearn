@@ -295,6 +295,15 @@ let todense self =
   | None -> self
   | Some f -> f [||] |> of_pyobject
 
+let vstack arrs =
+  Py.Module.get_function numpy "vstack" [|Py.Tuple.of_list_map to_pyobject arrs|] |> of_pyobject
+
+let hstack arrs =
+  Py.Module.get_function numpy "hstack" [|Py.Tuple.of_list_map to_pyobject arrs|] |> of_pyobject
+
+let dstack arrs =
+  Py.Module.get_function numpy "dstack" [|Py.Tuple.of_list_map to_pyobject arrs|] |> of_pyobject
+
 module Generator = struct
   type arr = t
   type t = Py.Object.t

@@ -1216,342 +1216,47 @@ let%expect_test "nan_euclidean_distances" =
 *)
 
 let%expect_test "ndcg_score" =
-   let open Sklearn.Metrics in
-   (*  we have groud-truth relevance of some answers to a query:; *)
-   let true_relevance = matrixi [|[|10; 0; 0; 1; 5|]|] in
-   (*  we predict some scores (relevance) for the answers; *)
-   let scores = matrix [|[|0.1; 0.2; 0.3; 4.; 70.|]|] in
-   print_float @@ ndcg_score ~y_true:true_relevance ~y_score:scores ();
-   [%expect {|
+  let open Sklearn.Metrics in
+  (*  we have groud-truth relevance of some answers to a query:; *)
+  let true_relevance = matrixi [|[|10; 0; 0; 1; 5|]|] in
+  (*  we predict some scores (relevance) for the answers; *)
+  let scores = matrix [|[|0.1; 0.2; 0.3; 4.; 70.|]|] in
+  print_float @@ ndcg_score ~y_true:true_relevance ~y_score:scores ();
+  [%expect {|
       0.695694
    |}];
-   let scores = matrix [|[|0.05; 1.1; 1.; 0.5; 0.0|]|] in
-   print_float @@ ndcg_score ~y_true:true_relevance ~y_score:scores ();
-   [%expect {|
+  let scores = matrix [|[|0.05; 1.1; 1.; 0.5; 0.0|]|] in
+  print_float @@ ndcg_score ~y_true:true_relevance ~y_score:scores ();
+  [%expect {|
       0.49368
    |}];
-   (*  we can set k to truncate the sum; only top k answers contribute.; *)
-   print_float @@ ndcg_score ~y_true:true_relevance ~y_score:scores ~k:4 ();
-   [%expect {|
+  (*  we can set k to truncate the sum; only top k answers contribute.; *)
+  print_float @@ ndcg_score ~y_true:true_relevance ~y_score:scores ~k:4 ();
+  [%expect {|
       0.352024
    |}];
-   (*  the normalization takes k into account so a perfect answer; *)
-   (*  would still get 1.0; *)
-   print_float @@ ndcg_score ~y_true:true_relevance ~y_score:true_relevance ~k:4 ();
-   [%expect {|
+  (*  the normalization takes k into account so a perfect answer; *)
+  (*  would still get 1.0; *)
+  print_float @@ ndcg_score ~y_true:true_relevance ~y_score:true_relevance ~k:4 ();
+  [%expect {|
       1
    |}];
-   (*  now we have some ties in our prediction; *)
-   let scores = matrixi [|[|1; 0; 0; 0; 1|]|] in
-   (*  by default ties are averaged, so here we get the average (normalized); *)
-   (*  true relevance of our top predictions: (10 / 10 + 5 / 10) / 2 = .75; *)
-   print_float @@ ndcg_score ~y_true:true_relevance ~y_score:scores ~k:1 ();
-   [%expect {|
+  (*  now we have some ties in our prediction; *)
+  let scores = matrixi [|[|1; 0; 0; 0; 1|]|] in
+  (*  by default ties are averaged, so here we get the average (normalized); *)
+  (*  true relevance of our top predictions: (10 / 10 + 5 / 10) / 2 = .75; *)
+  print_float @@ ndcg_score ~y_true:true_relevance ~y_score:scores ~k:1 ();
+  [%expect {|
       0.75
    |}];
-   (*  we can choose to ignore ties for faster results, but only; *)
-   (*  if we know there aren't ties in our scores, otherwise we get; *)
-   (*  wrong results:; *)
-   print_float @@ ndcg_score ~y_true:true_relevance ~y_score:scores ~k:1 ~ignore_ties:true ();
-   [%expect {| 0.5 |}]
+  (*  we can choose to ignore ties for faster results, but only; *)
+  (*  if we know there aren't ties in our scores, otherwise we get; *)
+  (*  wrong results:; *)
+  print_float @@ ndcg_score ~y_true:true_relevance ~y_score:scores ~k:1 ~ignore_ties:true ();
+  [%expect {| 0.5 |}]
 
 
 (*--------- Examples for module Sklearn.Metrics.Pairwise ----------*)
-(* Parallel *)
-(*
->>> from math import sqrt
->>> from joblib import Parallel, delayed
->>> Parallel(n_jobs=1)(delayed(sqrt)(i**2) for i in range(10))
-[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
-
-*)
-
-(* TEST TODO
-   let%expect_test "Parallel" =
-   let open Sklearn.Metrics in
-   print_ndarray @@ Parallel(n_jobs=1)(delayed ~sqrt ()(i**2) for i in range ~10 ());
-   [%expect {|
-      [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
-   |}]
-
-*)
-
-
-
-(* Parallel *)
-(*
->>> from math import modf
->>> from joblib import Parallel, delayed
->>> r = Parallel(n_jobs=1)(delayed(modf)(i/2.) for i in range(10))
->>> res, i = zip( *r)
->>> res
-(0.0, 0.5, 0.0, 0.5, 0.0, 0.5, 0.0, 0.5, 0.0, 0.5)
->>> i
-(0.0, 0.0, 1.0, 1.0, 2.0, 2.0, 3.0, 3.0, 4.0, 4.0)
-
-*)
-
-(* TEST TODO
-   let%expect_test "Parallel" =
-   let open Sklearn.Metrics in
-   let r = Parallel(n_jobs=1)(delayed ~modf ()(i/2.) for i in range ~10 ()) in
-   let res, i = zip *r () in
-   print_ndarray @@ res;
-   [%expect {|
-      (0.0, 0.5, 0.0, 0.5, 0.0, 0.5, 0.0, 0.5, 0.0, 0.5)
-   |}]
-   print_ndarray @@ i;
-   [%expect {|
-      (0.0, 0.0, 1.0, 1.0, 2.0, 2.0, 3.0, 3.0, 4.0, 4.0)
-   |}]
-
-*)
-
-
-
-(* Parallel *)
-(*
->>> from time import sleep
->>> from joblib import Parallel, delayed
->>> r = Parallel(n_jobs=2, verbose=10)(delayed(sleep)(.2) for _ in range(10)) #doctest: +SKIP
-[Parallel(n_jobs=2)]: Done   1 tasks      | elapsed:    0.6s
-[Parallel(n_jobs=2)]: Done   4 tasks      | elapsed:    0.8s
-[Parallel(n_jobs=2)]: Done  10 out of  10 | elapsed:    1.4s finished
-
-*)
-
-(* TEST TODO
-   let%expect_test "Parallel" =
-   let open Sklearn.Metrics in
-   let r = Parallel(n_jobs=2, verbose=10)(delayed ~sleep ()(.2) for _ in range ~10 ()) #doctest: +SKIP in
-   [%expect {|
-      [Parallel(n_jobs=2)]: Done   1 tasks      | elapsed:    0.6s
-      [Parallel(n_jobs=2)]: Done   4 tasks      | elapsed:    0.8s
-      [Parallel(n_jobs=2)]: Done  10 out of  10 | elapsed:    1.4s finished
-   |}]
-
-*)
-
-
-
-(* Parallel *)
-(*
->>> from heapq import nlargest
->>> from joblib import Parallel, delayed
->>> Parallel(n_jobs=2)(delayed(nlargest)(2, n) for n in (range(4), 'abcde', 3)) #doctest: +SKIP
-#...
----------------------------------------------------------------------------
-Sub-process traceback:
----------------------------------------------------------------------------
-TypeError                                          Mon Nov 12 11:37:46 2012
-PID: 12934                                    Python 2.7.3: /usr/bin/python
-...........................................................................
-/usr/lib/python2.7/heapq.pyc in nlargest(n=2, iterable=3, key=None)
-    419         if n >= size:
-    420             return sorted(iterable, key=key, reverse=True)[:n]
-    421
-    422     # When key is none, use simpler decoration
-    423     if key is None:
---> 424         it = izip(iterable, count(0,-1))                    # decorate
-    425         result = _nlargest(n, it)
-    426         return map(itemgetter(0), result)                   # undecorate
-    427
-    428     # General case, slowest method
- TypeError: izip argument #1 must support iteration
-___________________________________________________________________________
-
-*)
-
-(* TEST TODO
-   let%expect_test "Parallel" =
-   let open Sklearn.Metrics in
-   print_ndarray @@ Parallel(n_jobs=2)(delayed ~nlargest ()(2, n) for n in (range ~4 (), 'abcde', 3)) #doctest: +SKIP;
-   [%expect {|
-      #...
-      ---------------------------------------------------------------------------
-      Sub-process traceback:
-      ---------------------------------------------------------------------------
-      TypeError                                          Mon Nov 12 11:37:46 2012
-      PID: 12934                                    Python 2.7.3: /usr/bin/python
-      ...........................................................................
-      /usr/lib/python2.7/heapq.pyc in nlargest(n=2, iterable=3, key=None)
-          419         if n >= size:
-          420             return sorted(iterable, key=key, reverse=True)[:n]
-          421
-          422     # When key is none, use simpler decoration
-          423     if key is None:
-      --> 424         it = izip(iterable, count(0,-1))                    # decorate
-          425         result = _nlargest(n, it)
-          426         return map(itemgetter(0), result)                   # undecorate
-          427
-          428     # General case, slowest method
-       TypeError: izip argument #1 must support iteration
-      ___________________________________________________________________________
-   |}]
-
-*)
-
-
-
-(* Parallel *)
-(*
->>> from math import sqrt
->>> from joblib import Parallel, delayed
->>> def producer():
-...     for i in range(6):
-...         print('Produced %s' % i)
-...         yield i
->>> out = Parallel(n_jobs=2, verbose=100, pre_dispatch='1.5*n_jobs')(
-...                delayed(sqrt)(i) for i in producer()) #doctest: +SKIP
-Produced 0
-Produced 1
-Produced 2
-[Parallel(n_jobs=2)]: Done 1 jobs     | elapsed:  0.0s
-Produced 3
-[Parallel(n_jobs=2)]: Done 2 jobs     | elapsed:  0.0s
-Produced 4
-[Parallel(n_jobs=2)]: Done 3 jobs     | elapsed:  0.0s
-Produced 5
-[Parallel(n_jobs=2)]: Done 4 jobs     | elapsed:  0.0s
-[Parallel(n_jobs=2)]: Done 6 out of 6 | elapsed:  0.0s remaining: 0.0s
-
-*)
-
-(* TEST TODO
-   let%expect_test "Parallel" =
-   let open Sklearn.Metrics in
-   print_ndarray @@ def producer ():for i in range ~6 ():print 'Produced %s' % i ()yield i;
-   let out = Parallel(n_jobs=2, verbose=100, pre_dispatch='1.5*n_jobs')(delayed ~sqrt ()(i) for i in producer ()) #doctest: +SKIP in
-   [%expect {|
-      Produced 0
-      Produced 1
-      Produced 2
-      [Parallel(n_jobs=2)]: Done 1 jobs     | elapsed:  0.0s
-      Produced 3
-      [Parallel(n_jobs=2)]: Done 2 jobs     | elapsed:  0.0s
-      Produced 4
-      [Parallel(n_jobs=2)]: Done 3 jobs     | elapsed:  0.0s
-      Produced 5
-      [Parallel(n_jobs=2)]: Done 4 jobs     | elapsed:  0.0s
-      [Parallel(n_jobs=2)]: Done 6 out of 6 | elapsed:  0.0s remaining: 0.0s
-   |}]
-
-*)
-
-
-
-(* euclidean_distances *)
-(*
->>> from sklearn.metrics.pairwise import euclidean_distances
->>> X = [[0, 1], [1, 1]]
->>> # distance between rows of X
->>> euclidean_distances(X, X)
-array([[0., 1.],
-       [1., 0.]])
->>> # get distance to origin
->>> euclidean_distances(X, [[0, 0]])
-array([[1.        ],
-       [1.41421356]])
-
-*)
-
-(* TEST TODO
-   let%expect_test "euclidean_distances" =
-   let open Sklearn.Metrics in
-   let x = (matrixi [|[|0; 1|]; [|1; 1|]|]) in
-   print_ndarray @@ # distance between rows of x;
-   print_ndarray @@ euclidean_distances ~x x ();
-   [%expect {|
-      array([[0., 1.],
-             [1., 0.]])
-   |}]
-   # get distance to origin
-   print_ndarray @@ euclidean_distances(x, (matrixi [|[|0; 0|]|]));
-   [%expect {|
-      array([[1.        ],
-             [1.41421356]])
-   |}]
-
-*)
-
-
-
-(* gen_batches *)
-(*
->>> from sklearn.utils import gen_batches
->>> list(gen_batches(7, 3))
-[slice(0, 3, None), slice(3, 6, None), slice(6, 7, None)]
->>> list(gen_batches(6, 3))
-[slice(0, 3, None), slice(3, 6, None)]
->>> list(gen_batches(2, 3))
-[slice(0, 2, None)]
->>> list(gen_batches(7, 3, min_batch_size=0))
-[slice(0, 3, None), slice(3, 6, None), slice(6, 7, None)]
->>> list(gen_batches(7, 3, min_batch_size=2))
-
-*)
-
-(* TEST TODO
-   let%expect_test "gen_batches" =
-   let open Sklearn.Metrics in
-   print_ndarray @@ list(gen_batches ~7 3 ());
-   [%expect {|
-      [slice(0, 3, None), slice(3, 6, None), slice(6, 7, None)]
-   |}]
-   print_ndarray @@ list(gen_batches ~6 3 ());
-   [%expect {|
-      [slice(0, 3, None), slice(3, 6, None)]
-   |}]
-   print_ndarray @@ list(gen_batches ~2 3 ());
-   [%expect {|
-      [slice(0, 2, None)]
-   |}]
-   print_ndarray @@ list(gen_batches ~7 3 ~min_batch_size:0 ());
-   [%expect {|
-      [slice(0, 3, None), slice(3, 6, None), slice(6, 7, None)]
-   |}]
-   print_ndarray @@ list(gen_batches ~7 3 ~min_batch_size:2 ());
-   [%expect {|
-   |}]
-
-*)
-
-
-
-(* gen_even_slices *)
-(*
->>> from sklearn.utils import gen_even_slices
->>> list(gen_even_slices(10, 1))
-[slice(0, 10, None)]
->>> list(gen_even_slices(10, 10))
-[slice(0, 1, None), slice(1, 2, None), ..., slice(9, 10, None)]
->>> list(gen_even_slices(10, 5))
-[slice(0, 2, None), slice(2, 4, None), ..., slice(8, 10, None)]
->>> list(gen_even_slices(10, 3))
-
-*)
-
-(* TEST TODO
-   let%expect_test "gen_even_slices" =
-   let open Sklearn.Metrics in
-   print_ndarray @@ list(gen_even_slices ~10 1 ());
-   [%expect {|
-      [slice(0, 10, None)]
-   |}]
-   print_ndarray @@ list(gen_even_slices ~10 10 ());
-   [%expect {|
-      [slice(0, 1, None), slice(1, 2, None), ..., slice(9, 10, None)]
-   |}]
-   print_ndarray @@ list(gen_even_slices ~10 5 ());
-   [%expect {|
-      [slice(0, 2, None), slice(2, 4, None), ..., slice(8, 10, None)]
-   |}]
-   print_ndarray @@ list(gen_even_slices ~10 3 ());
-   [%expect {|
-   |}]
-
-*)
-
 
 
 (* haversine_distances *)
@@ -1568,21 +1273,19 @@ array([[    0.        , 11099.54035582],
 
 *)
 
-(* TEST TODO
-   let%expect_test "haversine_distances" =
-   let open Sklearn.Metrics in
-   let bsas = [-34.83333, -58.5166646] in
-   let paris = [49.0083899664, 2.53844117956] in
-   let bsas_in_radians = [radians ~_ () for _ in bsas] in
-   let paris_in_radians = [radians ~_ () for _ in paris] in
-   let result = haversine_distances [bsas_in_radians paris_in_radians] () in
-   print_ndarray @@ result * 6371000/1000 # multiply by Earth radius to get kilometers;
-   [%expect {|
-      array([[    0.        , 11099.54035582],
+let%expect_test "haversine_distances" =
+  let open Sklearn.Metrics.Pairwise in
+  let radians deg = Sklearn.Arr.(deg * (float Stdlib.Float.pi) / (float 180.)) in
+  let bsas = vector [|-34.83333; -58.5166646|] in
+  let paris = vector [|49.0083899664; 2.53844117956|] in
+  let bsas_in_radians = radians bsas in
+  let paris_in_radians = radians paris in
+  let result = haversine_distances ~x:(Sklearn.Arr.vstack [bsas_in_radians; paris_in_radians]) () in
+  print_ndarray @@ Sklearn.Arr.(result * (float 6371000.) / (float 1000.)) (* multiply by Earth radius to get kilometers *);
+  [%expect {|
+      [[    0.         11099.54035582]
+       [11099.54035582     0.        ]]
    |}]
-
-*)
-
 
 
 (* is_scalar_nan *)
