@@ -304,6 +304,12 @@ let hstack arrs =
 let dstack arrs =
   Py.Module.get_function numpy "dstack" [|Py.Tuple.of_list_map to_pyobject arrs|] |> of_pyobject
 
+let full ?dtype ~shape fill_value =
+  Py.Module.get_function_with_keywords numpy "full"
+    [|Py.Tuple.of_list_map Py.Int.of_int shape; Object.py_of_elt fill_value|]
+    (Wrap_utils.keyword_args ["dtype", Wrap_utils.Option.map dtype Dtype.to_pyobject])
+  |> of_pyobject
+
 module Generator = struct
   type arr = t
   type t = Py.Object.t

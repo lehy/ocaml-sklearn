@@ -1302,7 +1302,7 @@ False
 
 *)
 
-(* TEST TODO
+(*
    let%expect_test "is_scalar_nan" =
    let open Sklearn.Metrics in
    print_ndarray @@ is_scalar_nan np.nan ();
@@ -1337,7 +1337,7 @@ True
 
 *)
 
-(* TEST TODO
+(*
    let%expect_test "isspmatrix" =
    let open Sklearn.Metrics in
    print_ndarray @@ isspmatrix(csr_matrix((matrixi [|[|5|]|])));
@@ -1356,7 +1356,7 @@ True
 
 *)
 
-(* TEST TODO
+(*
    let%expect_test "isspmatrix" =
    let open Sklearn.Metrics in
    print_ndarray @@ isspmatrix ~5 ();
@@ -1387,35 +1387,32 @@ array([[1., 1.],
 
 *)
 
-(* TEST TODO
-   let%expect_test "manhattan_distances" =
-   let open Sklearn.Metrics in
-   print_ndarray @@ manhattan_distances((matrixi [|[|3|]|]), (matrixi [|[|3|]|]));
+let%expect_test "manhattan_distances" =
+   let open Sklearn.Metrics.Pairwise in
+   print_ndarray @@ manhattan_distances ~x:(matrixi [|[|3|]|]) ~y:(matrixi [|[|3|]|]) ();
    [%expect {|
-      array([[0.]])
-   |}]
-   print_ndarray @@ manhattan_distances((matrixi [|[|3|]|]), (matrixi [|[|2|]|]));
+      [[0.]]
+   |}];
+   print_ndarray @@ manhattan_distances ~x:(matrixi [|[|3|]|]) ~y:(matrixi [|[|2|]|]) ();
    [%expect {|
-      array([[1.]])
-   |}]
-   print_ndarray @@ manhattan_distances((matrixi [|[|2|]|]), (matrixi [|[|3|]|]));
+      [[1.]]
+   |}];
+   print_ndarray @@ manhattan_distances ~x:(matrixi [|[|2|]|]) ~y:(matrixi [|[|3|]|]) ();
    [%expect {|
-      array([[1.]])
-   |}]
-   print_ndarray @@ manhattan_distances((matrixi [|[|1; 2|]; [|3; 4|]|]), (matrixi [|[|1; 2|]; [|0; 3|]|]));
+      [[1.]]
+   |}];
+   print_ndarray @@ manhattan_distances ~x:(matrixi [|[|1; 2|]; [|3; 4|]|]) ~y:(matrixi [|[|1; 2|]; [|0; 3|]|]) ();
    [%expect {|
-      array([[0., 2.],
-             [4., 4.]])
-   |}]
-   let x = .ones (1 2) np in
-   let y = .full (2 2) 2. np in
-   print_ndarray @@ manhattan_distances ~x y ~sum_over_features:false ();
+      [[0. 2.]
+       [4. 4.]]
+   |}];
+   let x = Sklearn.Arr.ones [1; 2] in
+   let y = Sklearn.Arr.full ~shape:[2; 2] (`F 2.) in
+   print_ndarray @@ manhattan_distances ~x ~y ~sum_over_features:false ();
    [%expect {|
-      array([[1., 1.],
+      [[1. 1.]
+       [1. 1.]]
    |}]
-
-*)
-
 
 
 (* nan_euclidean_distances *)

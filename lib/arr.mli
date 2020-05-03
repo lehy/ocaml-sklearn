@@ -453,6 +453,8 @@ val vstack : t list -> t
 val hstack : t list -> t
 val dstack : t list -> t
 
+val full : ?dtype:Dtype.t -> shape:int list -> Object.elt -> t
+
 module Generator : sig
   type arr = t
   type t
