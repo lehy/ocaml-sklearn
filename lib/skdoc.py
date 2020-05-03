@@ -296,6 +296,7 @@ class Arr(Type):
         'list',
         'label indicator array / sparse matrix',
         'label indicator matrix',
+        'array  or',
         # the sparse matrices
         'sparse matrix',
         'sparse-matrix',
@@ -613,8 +614,7 @@ def parse_params(doc, section='Parameters'):
             params.append(elt)
             # if section == 'Returns':
             #     print(f"params for section {section}: {params}")
-    if not params and section == 'Returns':
-        return parse_params(doc, section='Yields')
+
     return params
 
 
@@ -1685,12 +1685,36 @@ def write_examples(f, obj):
 
 
 def make_return_type(type_dict):
+    if '__is_yield' in type_dict:
+        is_yield = True
+        del type_dict['__is_yield']
+    else:
+        is_yield = False
+
     if not type_dict:
         return builtin['object']
+    
     if len(type_dict) == 1:
         if list(type_dict.keys())[0] == 'self':
             return builtin['self']
-        return list(type_dict.values())[0]
+        v = list(type_dict.values())[0]
+        if is_yield:
+            if isinstance(v, Arr):
+                return ArrGenerator()
+            elif not isinstance(v, ArrGenerator) and not isinstance(v, PyObject):
+                print(f"WW yielded value is not a generator ({v}), forcing type to Py.Object.t")
+                return PyObject()
+            else:
+                return v
+        else:
+            return v
+
+    assert len(type_dict) > 1, type_dict
+            
+    if is_yield:
+        print(f"WW unsupported yield of multiple values {type_dict}, falling back to Py.Object.t")
+        return PyObject()
+
     return Tuple(list(type_dict.values()))
 
 
@@ -2091,6 +2115,13 @@ def parse_types_simple(doc, section='Parameters'):
             print(f"!!!!!!!!!!!!! error processing element: {element}")
             print(e)
             raise
+
+    if not ret and section == 'Returns':
+        return parse_types_simple(doc, section='Yields')
+
+    if section == 'Yields':
+        ret['__is_yield'] = True
+        
     return ret
 
 
@@ -2225,6 +2256,7 @@ class Function:
                 ret_type = parse_bunch_simple(doc, section='Returns')
             else:
                 ret_type_elements = parse_types_simple(doc, section='Returns')
+                
                 for k, v in fixed_values.items():
                     if v[1] and k in ret_type_elements:
                         del ret_type_elements[k]
@@ -2639,11 +2671,11 @@ def main():
         remove_me = set()
         for elt in csr_matrix.elements:
             for ty in elt.iter_types():
-                if isinstance(ty, (Arr, Dtype)):
+                if isinstance(ty, (Arr, Dtype, ArrGenerator)):
                     remove_me.add(elt)
                 elif isinstance(ty, Enum):
                     for t in ty.elements:
-                        if isinstance(t, (Arr, Dtype)):
+                        if isinstance(t, (Arr, Dtype, ArrGenerator)):
                             remove_me.add(elt)
         for elt in remove_me:
             # print(f"Csr_matrix: removing {elt}")

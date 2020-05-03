@@ -1388,28 +1388,28 @@ array([[1., 1.],
 *)
 
 let%expect_test "manhattan_distances" =
-   let open Sklearn.Metrics.Pairwise in
-   print_ndarray @@ manhattan_distances ~x:(matrixi [|[|3|]|]) ~y:(matrixi [|[|3|]|]) ();
-   [%expect {|
+  let open Sklearn.Metrics.Pairwise in
+  print_ndarray @@ manhattan_distances ~x:(matrixi [|[|3|]|]) ~y:(matrixi [|[|3|]|]) ();
+  [%expect {|
       [[0.]]
    |}];
-   print_ndarray @@ manhattan_distances ~x:(matrixi [|[|3|]|]) ~y:(matrixi [|[|2|]|]) ();
-   [%expect {|
+  print_ndarray @@ manhattan_distances ~x:(matrixi [|[|3|]|]) ~y:(matrixi [|[|2|]|]) ();
+  [%expect {|
       [[1.]]
    |}];
-   print_ndarray @@ manhattan_distances ~x:(matrixi [|[|2|]|]) ~y:(matrixi [|[|3|]|]) ();
-   [%expect {|
+  print_ndarray @@ manhattan_distances ~x:(matrixi [|[|2|]|]) ~y:(matrixi [|[|3|]|]) ();
+  [%expect {|
       [[1.]]
    |}];
-   print_ndarray @@ manhattan_distances ~x:(matrixi [|[|1; 2|]; [|3; 4|]|]) ~y:(matrixi [|[|1; 2|]; [|0; 3|]|]) ();
-   [%expect {|
+  print_ndarray @@ manhattan_distances ~x:(matrixi [|[|1; 2|]; [|3; 4|]|]) ~y:(matrixi [|[|1; 2|]; [|0; 3|]|]) ();
+  [%expect {|
       [[0. 2.]
        [4. 4.]]
    |}];
-   let x = Sklearn.Arr.ones [1; 2] in
-   let y = Sklearn.Arr.full ~shape:[2; 2] (`F 2.) in
-   print_ndarray @@ manhattan_distances ~x ~y ~sum_over_features:false ();
-   [%expect {|
+  let x = Sklearn.Arr.ones [1; 2] in
+  let y = Sklearn.Arr.full ~shape:[2; 2] (`F 2.) in
+  print_ndarray @@ manhattan_distances ~x ~y ~sum_over_features:false ();
+  [%expect {|
       [[1. 1.]
        [1. 1.]]
    |}]
@@ -1426,11 +1426,11 @@ array([0., 1.])
 *)
 
 let%expect_test "paired_distances" =
-   let open Sklearn.Metrics.Pairwise in
-   let x = matrixi [|[|0; 1|]; [|1; 1|]|] in
-   let y = matrixi [|[|0; 1|]; [|2; 1|]|] in
-   print_ndarray @@ paired_distances ~x ~y ();
-   [%expect {|
+  let open Sklearn.Metrics.Pairwise in
+  let x = matrixi [|[|0; 1|]; [|1; 1|]|] in
+  let y = matrixi [|[|0; 1|]; [|2; 1|]|] in
+  print_ndarray @@ paired_distances ~x ~y ();
+  [%expect {|
       [0. 1.]
    |}]
 
@@ -1450,22 +1450,19 @@ array([[0.  ..., 0.29..., 0.41..., 0.19..., 0.57...],
 
 *)
 
-(* TEST TODO
-   let%expect_test "pairwise_distances_chunked" =
-   let open Sklearn.Metrics in
-   let x = np..randomState 0).rand(5 ~3 random in
-   let D_chunk = next(pairwise_distances_chunked ~x ()) in
-   print_ndarray @@ D_chunk;
-   [%expect {|
-      array([[0.  ..., 0.29..., 0.41..., 0.19..., 0.57...],
-             [0.29..., 0.  ..., 0.57..., 0.41..., 0.76...],
-             [0.41..., 0.57..., 0.  ..., 0.44..., 0.90...],
-             [0.19..., 0.41..., 0.44..., 0.  ..., 0.51...],
-             [0.57..., 0.76..., 0.90..., 0.51..., 0.  ...]])
+let%expect_test "pairwise_distances_chunked" =
+  let open Sklearn.Metrics in
+  Sklearn.Arr.Random.seed 0;
+  let x = Sklearn.Arr.Random.random_sample [5; 3] in
+  let d_chunk = Sklearn.Arr.Generator.next_exn @@ pairwise_distances_chunked ~x () in
+  print_ndarray @@ d_chunk;
+  [%expect {|
+      [[0.         0.29473397 0.41689499 0.19662693 0.57216693]
+       [0.29473397 0.         0.57586803 0.41860234 0.76350759]
+       [0.41689499 0.57586803 0.         0.44940452 0.90274337]
+       [0.19662693 0.41860234 0.44940452 0.         0.51150232]
+       [0.57216693 0.76350759 0.90274337 0.51150232 0.        ]]
    |}]
-
-*)
-
 
 
 (* pairwise_distances_chunked *)

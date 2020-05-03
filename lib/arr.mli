@@ -465,4 +465,10 @@ module Generator : sig
   val fold : f:('acc -> arr -> 'acc) -> init:'acc -> t -> 'acc
   val to_seq : t -> arr Seq.t
   val next : t -> arr option
+  val next_exn : t -> arr
+end
+
+module Random : sig
+  val seed : int -> unit
+  val random_sample : int list -> t
 end

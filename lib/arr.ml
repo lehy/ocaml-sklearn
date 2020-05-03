@@ -323,7 +323,20 @@ module Generator = struct
   let next self =
     Py.Iter.next self
 
+  let next_exn self = match next self with
+    | Some x -> x
+    | None -> raise Not_found
+  
   let to_seq self = Py.Iter.to_seq self
 
   let of_seq seq = Py.Iter.of_seq seq
+end
+
+module Random = struct
+  let numpy_random = Py.import "numpy.random"
+  let seed i =
+    let _ = Py.Module.get_function numpy_random "seed" [|Py.Int.of_int i|] |> of_pyobject in ()
+
+  let random_sample shape =
+    Py.Module.get_function numpy_random "random_sample" [|Py.Tuple.of_list_map Py.Int.of_int shape|] |> of_pyobject
 end
