@@ -642,6 +642,7 @@ def remove_shape(text):
     text = re.sub(r"""(,\s*)?\[[^'"[\]()]+,[^'"[\]()]+\]""", '', text)
     text = re.sub(r'if\s+\S+\s*=+\s*\S+\s*', '', text)
     text = re.sub(r'(,\s*)?\s*\d-dimensional\s*', '', text)
+    text = re.sub(r"""\(\s*(n_\w+,\s*)*n_\w+,?\s*\)""", '', text)
     return text
 
 

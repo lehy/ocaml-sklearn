@@ -1415,55 +1415,6 @@ let%expect_test "manhattan_distances" =
    |}]
 
 
-(* nan_euclidean_distances *)
-(*
->>> from sklearn.metrics.pairwise import nan_euclidean_distances
->>> nan = float("NaN")
->>> X = [[0, 1], [1, nan]]
->>> nan_euclidean_distances(X, X) # distance between rows of X
-array([[0.        , 1.41421356],
-       [1.41421356, 0.        ]])
-
-*)
-
-(* TEST TODO
-   let%expect_test "nan_euclidean_distances" =
-   let open Sklearn.Metrics in
-   let nan = float "NaN" () in
-   let x = (matrixi [|[|0; 1|]; [|1; nan|]|]) in
-   print_ndarray @@ nan_euclidean_distances ~x x () # distance between rows of x;
-   [%expect {|
-      array([[0.        , 1.41421356],
-             [1.41421356, 0.        ]])
-   |}]
-
-*)
-
-
-
-(* nan_euclidean_distances *)
-(*
->>> # get distance to origin
->>> nan_euclidean_distances(X, [[0, 0]])
-array([[1.        ],
-       [1.41421356]])
-
-*)
-
-(* TEST TODO
-   let%expect_test "nan_euclidean_distances" =
-   let open Sklearn.Metrics in
-   # get distance to origin
-   print_ndarray @@ nan_euclidean_distances(x, (matrixi [|[|0; 0|]|]));
-   [%expect {|
-      array([[1.        ],
-             [1.41421356]])
-   |}]
-
-*)
-
-
-
 (* paired_distances *)
 (*
 >>> from sklearn.metrics.pairwise import paired_distances
@@ -1474,18 +1425,14 @@ array([0., 1.])
 
 *)
 
-(* TEST TODO
-   let%expect_test "paired_distances" =
-   let open Sklearn.Metrics in
-   let x = (matrixi [|[|0; 1|]; [|1; 1|]|]) in
-   let Y = (matrixi [|[|0; 1|]; [|2; 1|]|]) in
-   print_ndarray @@ paired_distances ~x Y ();
+let%expect_test "paired_distances" =
+   let open Sklearn.Metrics.Pairwise in
+   let x = matrixi [|[|0; 1|]; [|1; 1|]|] in
+   let y = matrixi [|[|0; 1|]; [|2; 1|]|] in
+   print_ndarray @@ paired_distances ~x ~y ();
    [%expect {|
-      array([0., 1.])
+      [0. 1.]
    |}]
-
-*)
-
 
 
 (* pairwise_distances_chunked *)

@@ -240,7 +240,7 @@ let%expect_test "RadiusNeighborsMixin.radius_neighbors" =
                              metric_params=None, n_jobs=None, n_neighbors=5, p=2,
                              radius=1.6)
     |}];
-    let dist, ind = NearestNeighbors.radius_neighbors neigh ~x:(`Arr (matrix [|[|1.; 1.; 1.|]|])) in
+    let dist, ind = NearestNeighbors.radius_neighbors neigh ~x:(matrix [|[|1.; 1.; 1.|]|]) in
     print Sklearn.Arr.List.pp @@ dist;
     [%expect {|
             [array([1.5, 0.5])]
