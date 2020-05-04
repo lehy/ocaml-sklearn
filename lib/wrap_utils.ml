@@ -1,5 +1,6 @@
 let id x = x
 
+
 exception Attribute_not_found of string
 
 let keyword_args : (string * 'a option) list -> (string * Py.Object.t) list = fun l ->
@@ -53,8 +54,11 @@ let init () =
   if not @@ Py.is_initialized () then begin
     Py.initialize ();
   end;
-  check_version ();
+  check_version ();;
 
+let () = init ()
+let builtins = Py.Module.builtins()
+  
 module Slice = struct
   type t = Py.Object.t
 
@@ -62,7 +66,7 @@ module Slice = struct
   let of_pyobject x = x
   
   let create_py i j step =
-    Py.Module.get_function (Py.Module.builtins ()) "slice" [|i; j; step|]
+    Py.Module.get_function builtins "slice" [|i; j; step|]
 
   let py_of_tag = function
     | `None -> Py.none
@@ -103,14 +107,46 @@ let print_python_traceback =
       let exc_string_list = Py.List.to_list_map Py.String.to_string exc_string_list in
       List.iter (Format.printf "%s") exc_string_list
 
+let type_ x =
+  Py.Module.get_function builtins "type" [|x|]
+
+let type_string x =
+  Py.Object.to_string @@ type_ x
+
 let isinstance =
-  let builtins = Py.Module.builtins() in
-  fun klass x ->
-    Py.Bool.to_bool @@ Py.Module.get_function builtins "isinstance" [|x; klass|]
+  fun klasses x ->
+    Py.Bool.to_bool @@ Py.Module.get_function builtins "isinstance" [|x; Py.Tuple.of_list klasses|]
 
-let numpy = Py.import "numpy"
-let string = Py.Module.get (Py.Module.builtins ()) "str"
-let dict = Py.Module.get (Py.Module.builtins ()) "dict"
-let ndarray = Py.Module.get numpy "ndarray"
-let csr_matrix = Py.Module.get (Py.import "sklearn.metrics.pairwise") "csr_matrix"
+module Types = struct
+  let numpy = Py.import "numpy"
+  let string = Py.Module.get builtins "str"
+  let dict = Py.Module.get builtins "dict"
+  let ndarray = Py.Module.get numpy "ndarray"
+  let np_floating = Py.Module.get numpy "floating"
+  let float = Py.Module.get builtins "float"
+  let np_integer = Py.Module.get numpy "integer"
+  let int = Py.Module.get builtins "int"
+  let np_bool = Py.Module.get numpy "bool_"
+  let bool = Py.Module.get builtins "bool"
+  let np_object = Py.Module.get numpy "object_"
+  let csr_matrix = Py.Module.get (Py.import "sklearn.metrics.pairwise") "csr_matrix"
+  let spmatrix = Py.Module.get (Py.import "scipy.sparse.base") "spmatrix"
+end
 
+let check_int x =
+  isinstance Types.[np_integer; int] x
+
+let check_float x =
+  isinstance Types.[np_floating; float] x
+
+let check_bool x =
+  isinstance Types.[np_bool; bool] x
+
+let check_array x =
+  isinstance Types.[ndarray] x
+
+let check_csr_matrix x =
+  isinstance Types.[csr_matrix] x
+
+let check_arr x =
+  isinstance Types.[ndarray; spmatrix; np_integer; np_floating; np_bool; np_object] x

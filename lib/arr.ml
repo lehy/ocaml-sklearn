@@ -2,6 +2,9 @@ Wrap_utils.init ()
 let numpy = Py.import "numpy"
 let builtins = Py.Module.builtins ()
 
+let check o =
+  Wrap_utils.check_arr o
+
 module M = struct
   type t = Py.Object.t
   let show x = Py.Object.to_string x
@@ -87,6 +90,8 @@ let numpy_array ?dtype a =
 module String = struct
   let py_of_array a = Py.List.of_array_map Py.String.of_string a
 
+  let of_list x = numpy_array @@ Py.List.of_list_map Py.String.of_string x
+  
   let vector ia =
     (* XXX TODO figure out a way to do this with one copy less *)
     numpy_array @@ py_of_array ia
@@ -212,8 +217,11 @@ let max x =
 let argsort x =
   Py.Module.get_function numpy "argsort" [|x|] |> of_pyobject
 
+let sort x =
+  Py.Module.get_function numpy "sort" [|x|] |> of_pyobject
+
 let of_pyobject x =
-  (* assert (Wrap_utils.isinstance Wrap_utils.csr_matrix x || Wrap_utils.isinstance Wrap_utils.ndarray x); *)
+  assert (check x);
   x
 
 let of_csr_matrix x = of_pyobject @@ Csr_matrix.to_pyobject x
@@ -226,7 +234,7 @@ let argmax ?axis ?out self =
          | `One -> Py.Int.of_int 1
          | `PyObject x -> Wrap_utils.id x
        )); ("out", out)])
-  |> (fun x -> if (fun x -> (Wrap_utils.isinstance Wrap_utils.ndarray x) || (Wrap_utils.isinstance Wrap_utils.csr_matrix x)) x then `Arr (of_pyobject x) else if Py.Int.check x then `I (Py.Int.to_int x) else failwith "could not identify type from Python value")
+  |> (fun x -> if check x then `Arr (of_pyobject x) else if Py.Int.check x then `I (Py.Int.to_int x) else failwith "could not identify type from Python value")
 
 let argmin ?axis ?out self =
   Py.Module.get_function_with_keywords numpy "argmin"
@@ -236,7 +244,7 @@ let argmin ?axis ?out self =
          | `One -> Py.Int.of_int 1
          | `PyObject x -> Wrap_utils.id x
        )); ("out", out)])
-  |> (fun x -> if (fun x -> (Wrap_utils.isinstance Wrap_utils.ndarray x) || (Wrap_utils.isinstance Wrap_utils.csr_matrix x)) x then `Arr (of_pyobject x) else if Py.Int.check x then `I (Py.Int.to_int x) else failwith "could not identify type from Python value")
+  |> (fun x -> if check x then `Arr (of_pyobject x) else if Py.Int.check x then `I (Py.Int.to_int x) else failwith "could not identify type from Python value")
 
 let mean ?axis ?dtype ?out ?keepdims self =
   Py.Module.get_function_with_keywords numpy "mean"
@@ -323,8 +331,9 @@ let iter x =
 module Random = struct
   let numpy_random = Py.import "numpy.random"
   let seed i =
-    let _ = Py.Module.get_function numpy_random "seed" [|Py.Int.of_int i|] |> of_pyobject in ()
+    let _ = Py.Module.get_function numpy_random "seed" [|Py.Int.of_int i|] in ()
 
   let random_sample shape =
     Py.Module.get_function numpy_random "random_sample" [|Py.Tuple.of_list_map Py.Int.of_int shape|] |> of_pyobject
 end
+

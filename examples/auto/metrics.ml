@@ -2,12 +2,15 @@ let print f x = Format.printf "%a" f x
 let print_py x = Format.printf "%s" (Py.Object.to_string x)
 let print_ndarray = print Sklearn.Arr.pp
 let print_float = Format.printf "%g\n"
+let print_string = Format.printf "%s\n"
 
 let matrix = Sklearn.Arr.Float.matrix
 let vector = Sklearn.Arr.Float.vector
 let matrixi = Sklearn.Arr.Int.matrix
 let vectori = Sklearn.Arr.Int.vector
 let vectors = Sklearn.Arr.String.vector
+
+let option_get = function Some x -> x | None -> invalid_arg "option_get: None"
 
 (* RocCurveDisplay *)
 (*
@@ -1454,13 +1457,13 @@ let next_exn seq =
   let open Seq in
   match seq () with
   | Nil -> invalid_arg "next_exn: empty Seq.t"
-  | Cons(t, _) -> t
+  | Cons(t, qseq) -> t, qseq
 
 let%expect_test "pairwise_distances_chunked" =
   let open Sklearn.Metrics in
   Sklearn.Arr.Random.seed 0;
   let x = Sklearn.Arr.Random.random_sample [5; 3] in
-  let d_chunk = next_exn @@ pairwise_distances_chunked ~x () in
+  let d_chunk, _ = next_exn @@ pairwise_distances_chunked ~x () in
   print_ndarray @@ d_chunk;
   [%expect {|
       [[0.         0.29473397 0.41689499 0.19662693 0.57216693]
@@ -1504,7 +1507,7 @@ let%expect_test "pairwise_distances_chunked" =
   let x = Sklearn.Arr.Random.random_sample [5; 3] in
   let gen = pairwise_distances_chunked ~x () in
   let gen = Seq.map reduce_func gen in
-  let neigh, avg_dist = next_exn gen in
+  let (neigh, avg_dist), _ = next_exn gen in
   print Sklearn.Arr.List.pp neigh;
   [%expect {|
       [array([0, 3]), array([1]), array([2]), array([0, 3]), array([4])]
@@ -1525,26 +1528,6 @@ let%expect_test "pairwise_distances_chunked" =
 >>> neigh = next(pairwise_distances_chunked(X, reduce_func=reduce_func))
 >>> neigh
 [array([0, 3]), array([0, 1]), array([2]), array([0, 3]), array([4])]
-
-*)
-
-(* TEST TODO
-   let%expect_test "pairwise_distances_chunked" =
-   let open Sklearn.Metrics in
-   let r = [.2, .4, .4, .3, .1] in
-   print_ndarray @@ def reduce_func ~D_chunk start ():neigh = [.flatnonzero d < r(vectori [|i|]))for i d in enumerate(D_chunk ~start np]return neigh;
-   let neigh = next(pairwise_distances_chunked x ~reduce_func:reduce_func ()) in
-   print_ndarray @@ neigh;
-   [%expect {|
-      [array([0, 3]), array([0, 1]), array([2]), array([0, 3]), array([4])]
-   |}]
-
-*)
-
-
-
-(* pairwise_distances_chunked *)
-(*
 >>> gen = pairwise_distances_chunked(X, reduce_func=reduce_func,
 ...                                  working_memory=0)
 >>> next(gen)
@@ -1553,144 +1536,45 @@ let%expect_test "pairwise_distances_chunked" =
 
 *)
 
-(* TEST TODO
-   let%expect_test "pairwise_distances_chunked" =
-   let open Sklearn.Metrics in
-   let gen = pairwise_distances_chunked x ~reduce_func:reduce_func ~working_memory:0 () in
-   print_ndarray @@ next ~gen ();
-   [%expect {|
-      [array([0, 3])]
-   |}]
-   print_ndarray @@ next ~gen ();
-   [%expect {|
-   |}]
+let chunk_mapi ~f seq =
+  let i = ref 0 in
+  Seq.map (fun x -> let ret = f x !i in i := !i + (Sklearn.Arr.shape x).(0); ret) seq
 
-*)
+let%expect_test "pairwise_distances_chunked" =
+  let open Sklearn.Metrics in
+  let module Arr = Sklearn.Arr in
+  let r = vector [|0.2; 0.4; 0.4; 0.3; 0.1|] in
+  let reduce_func d_chunk i =
+    let neigh, _ = Arr.iter d_chunk |> Seq.fold_left (fun (acc, i) row ->
+        Arr.List.append acc Arr.(flatnonzero (row < (get ~i:[`I i] r)));
+        acc, succ i
+      ) (Arr.List.create (), i)
+    in
+    neigh
+  in
+  Sklearn.Arr.Random.seed 0;
+  let x = Sklearn.Arr.Random.random_sample [5; 3] in
 
+  let gen = pairwise_distances_chunked ~x () in
+  let gen = chunk_mapi ~f:reduce_func gen in
 
-
-(* pairwise_distances_chunked *)
-(*
->>> import numpy as np
->>> from sklearn.metrics import pairwise_distances_chunked
->>> X = np.random.RandomState(0).rand(5, 3)
->>> D_chunk = next(pairwise_distances_chunked(X))
->>> D_chunk
-array([[0.  ..., 0.29..., 0.41..., 0.19..., 0.57...],
-       [0.29..., 0.  ..., 0.57..., 0.41..., 0.76...],
-       [0.41..., 0.57..., 0.  ..., 0.44..., 0.90...],
-       [0.19..., 0.41..., 0.44..., 0.  ..., 0.51...],
-       [0.57..., 0.76..., 0.90..., 0.51..., 0.  ...]])
-
-*)
-
-(* TEST TODO
-   let%expect_test "pairwise_distances_chunked" =
-   let open Sklearn.Metrics in
-   let x = np..randomState 0).rand(5 ~3 random in
-   let D_chunk = next(pairwise_distances_chunked ~x ()) in
-   print_ndarray @@ D_chunk;
-   [%expect {|
-      array([[0.  ..., 0.29..., 0.41..., 0.19..., 0.57...],
-             [0.29..., 0.  ..., 0.57..., 0.41..., 0.76...],
-             [0.41..., 0.57..., 0.  ..., 0.44..., 0.90...],
-             [0.19..., 0.41..., 0.44..., 0.  ..., 0.51...],
-             [0.57..., 0.76..., 0.90..., 0.51..., 0.  ...]])
-   |}]
-
-*)
-
-
-
-(* pairwise_distances_chunked *)
-(*
->>> r = .2
->>> def reduce_func(D_chunk, start):
-...     neigh = [np.flatnonzero(d < r) for d in D_chunk]
-...     avg_dist = (D_chunk * (D_chunk < r)).mean(axis=1)
-...     return neigh, avg_dist
->>> gen = pairwise_distances_chunked(X, reduce_func=reduce_func)
->>> neigh, avg_dist = next(gen)
->>> neigh
-[array([0, 3]), array([1]), array([2]), array([0, 3]), array([4])]
->>> avg_dist
-array([0.039..., 0.        , 0.        , 0.039..., 0.        ])
-
-*)
-
-(* TEST TODO
-   let%expect_test "pairwise_distances_chunked" =
-   let open Sklearn.Metrics in
-   let r = .2 in
-   print_ndarray @@ def reduce_func ~D_chunk start ():neigh = [.flatnonzero d < r) for d in D_chunk]avg_dist = (D_chunk * (D_chunk < r)).mean( ~axis:1 npreturn neigh, avg_dist;
-   let gen = pairwise_distances_chunked x ~reduce_func:reduce_func () in
-   let neigh, avg_dist = next ~gen () in
-   print_ndarray @@ neigh;
-   [%expect {|
-      [array([0, 3]), array([1]), array([2]), array([0, 3]), array([4])]
-   |}]
-   print_ndarray @@ avg_dist;
-   [%expect {|
-      array([0.039..., 0.        , 0.        , 0.039..., 0.        ])
-   |}]
-
-*)
-
-
-
-(* pairwise_distances_chunked *)
-(*
->>> r = [.2, .4, .4, .3, .1]
->>> def reduce_func(D_chunk, start):
-...     neigh = [np.flatnonzero(d < r[i])
-...              for i, d in enumerate(D_chunk, start)]
-...     return neigh
->>> neigh = next(pairwise_distances_chunked(X, reduce_func=reduce_func))
->>> neigh
-[array([0, 3]), array([0, 1]), array([2]), array([0, 3]), array([4])]
-
-*)
-
-(* TEST TODO
-   let%expect_test "pairwise_distances_chunked" =
-   let open Sklearn.Metrics in
-   let r = [.2, .4, .4, .3, .1] in
-   print_ndarray @@ def reduce_func ~D_chunk start ():neigh = [.flatnonzero d < r(vectori [|i|]))for i d in enumerate(D_chunk ~start np]return neigh;
-   let neigh = next(pairwise_distances_chunked x ~reduce_func:reduce_func ()) in
-   print_ndarray @@ neigh;
-   [%expect {|
+  print Sklearn.Arr.List.pp (fst @@ next_exn gen);
+  [%expect {|
       [array([0, 3]), array([0, 1]), array([2]), array([0, 3]), array([4])]
-   |}]
+   |}];
 
-*)
-
-
-
-(* pairwise_distances_chunked *)
-(*
->>> gen = pairwise_distances_chunked(X, reduce_func=reduce_func,
-...                                  working_memory=0)
->>> next(gen)
-[array([0, 3])]
->>> next(gen)
-
-*)
-
-(* TEST TODO
-   let%expect_test "pairwise_distances_chunked" =
-   let open Sklearn.Metrics in
-   let gen = pairwise_distances_chunked x ~reduce_func:reduce_func ~working_memory:0 () in
-   print_ndarray @@ next ~gen ();
-   [%expect {|
+  let gen = pairwise_distances_chunked ~x ~working_memory:0 () in
+  let gen = chunk_mapi ~f:reduce_func gen in
+  let neigh, gen = next_exn gen in
+  print Sklearn.Arr.List.pp neigh;
+  [%expect {|
       [array([0, 3])]
+   |}];
+  let neigh, _gen = next_exn gen in
+  print Sklearn.Arr.List.pp neigh;
+  [%expect {|
+      [array([0, 1])]
    |}]
-   print_ndarray @@ next ~gen ();
-   [%expect {|
-   |}]
-
-*)
-
-
 
 (* plot_roc_curve *)
 (*
@@ -1705,22 +1589,25 @@ SVC(random_state=0)
 
 *)
 
-(* TEST TODO
-   let%expect_test "plot_roc_curve" =
-   let open Sklearn.Metrics in
-   let x, y = .make_classification ~random_state:0 datasets in
-   let X_train, X_test, y_train, y_test = .train_test_split x y ~random_state:0 model_selection in
-   let clf = .svc ~random_state:0 svm in
-   print_ndarray @@ .fit ~X_train y_train clf;
-   [%expect {|
-      SVC(random_state=0)
-   |}]
-   print_ndarray @@ .plot_roc_curve ~clf X_test ~y_test metrics # doctest: +SKIP;
-   [%expect {|
-   |}]
-
-*)
-
+let%expect_test "plot_roc_curve" =
+  let x, y = Sklearn.Datasets.make_classification ~random_state:0 () in
+  let [@ocaml.warning "-8"] [x_train; x_test; y_train; y_test] =
+    Sklearn.Model_selection.train_test_split [x; y] ~random_state:0
+  in
+  let module SVC = Sklearn.Svm.SVC in
+  let clf = SVC.create ~random_state:0 () in
+  print SVC.pp @@ SVC.fit ~x:x_train ~y:y_train clf;
+  [%expect {|
+      SVC(C=1.0, break_ties=False, cache_size=200, class_weight=None, coef0=0.0,
+          decision_function_shape='ovr', degree=3, gamma='scale', kernel='rbf',
+          max_iter=-1, probability=False, random_state=0, shrinking=True, tol=0.001,
+          verbose=False)
+   |}];
+  print_py @@ Sklearn.Metrics.plot_roc_curve ~estimator:(SVC.to_pyobject clf) ~x:x_test ~y:y_test ();
+  let output = Re.replace_string (Re.Perl.compile_pat {|0x[a-f0-9]+|}) ~by:"0x..." [%expect.output]
+  in
+  print_string output;
+  [%expect {| <sklearn.metrics._plot.roc_curve.RocCurveDisplay object at 0x...> |}]
 
 
 (* precision_recall_curve *)
@@ -1739,26 +1626,21 @@ array([1. , 0.5, 0.5, 0. ])
 
 *)
 
-(* TEST TODO
-   let%expect_test "precision_recall_curve" =
-   let open Sklearn.Metrics in
-   let y_true = .array (vectori [|0; 0; 1; 1|]) np in
-   let y_scores = .array [0.1 0.4 0.35 0.8] np in
-   let precision, recall, thresholds = precision_recall_curve ~y_true y_scores () in
-   print_ndarray @@ precision;
-   [%expect {|
-      array([0.66666667, 0.5       , 1.        , 1.        ])
-   |}]
-   print_ndarray @@ recall;
-   [%expect {|
-      array([1. , 0.5, 0.5, 0. ])
-   |}]
-   print_ndarray @@ thresholds;
-   [%expect {|
-   |}]
-
-*)
-
+let%expect_test "precision_recall_curve" =
+  let open Sklearn.Metrics in
+  let y_true = vectori [|0; 0; 1; 1|] in
+  let y_scores = vector [|0.1; 0.4; 0.35; 0.8|] in
+  let precision, recall, thresholds = precision_recall_curve ~y_true ~probas_pred:y_scores () in
+  print_ndarray precision;
+  [%expect {|
+      [0.66666667 0.5        1.         1.        ]
+   |}];
+  print_ndarray recall;
+  [%expect {|
+      [1.  0.5 0.5 0. ]
+   |}];
+  print_ndarray thresholds;
+  [%expect {| [0.35 0.4  0.8 ] |}]
 
 
 (* precision_recall_fscore_support *)
@@ -1776,26 +1658,30 @@ array([1. , 0.5, 0.5, 0. ])
 
 *)
 
-(* TEST TODO
-   let%expect_test "precision_recall_fscore_support" =
-   let open Sklearn.Metrics in
-   let y_true = .array ['cat' 'dog' 'pig' 'cat' 'dog' 'pig'] np in
-   let y_pred = .array ['cat' 'pig' 'dog' 'cat' 'cat' 'dog'] np in
-   print_ndarray @@ precision_recall_fscore_support ~y_true y_pred ~average:'macro' ();
-   [%expect {|
-      (0.22..., 0.33..., 0.26..., None)
-   |}]
-   print_ndarray @@ precision_recall_fscore_support ~y_true y_pred ~average:'micro' ();
-   [%expect {|
-      (0.33..., 0.33..., 0.33..., None)
-   |}]
-   print_ndarray @@ precision_recall_fscore_support ~y_true y_pred ~average:'weighted' ();
-   [%expect {|
-      (0.22..., 0.33..., 0.26..., None)
-   |}]
+let print_tuple4 x =
+  let module Arr = Sklearn.Arr in
+  match x with
+  | (a, b, c, None) ->
+    Format.printf "(%a, %a, %a, None)" Arr.pp a Arr.pp b Arr.pp c
+  | (a, b, c, Some d) ->
+    Format.printf "(%a, %a, %a, %a)" Arr.pp a Arr.pp b Arr.pp c Arr.pp d
 
-*)
-
+let%expect_test "precision_recall_fscore_support" =
+  let open Sklearn.Metrics in
+  let y_true = vectors [|"cat"; "dog"; "pig"; "cat"; "dog"; "pig"|] in
+  let y_pred = vectors [|"cat"; "pig"; "dog"; "cat"; "cat"; "dog"|] in
+  print_tuple4 @@ precision_recall_fscore_support ~y_true ~y_pred ~average:`Macro ();
+  [%expect {|
+      (0.2222222222222222, 0.3333333333333333, 0.26666666666666666, None)
+   |}];
+  print_tuple4 @@ precision_recall_fscore_support ~y_true ~y_pred ~average:`Micro ();
+  [%expect {|
+      (0.3333333333333333, 0.3333333333333333, 0.3333333333333333, None)
+   |}];
+  print_tuple4 @@ precision_recall_fscore_support ~y_true ~y_pred ~average:`Weighted ();
+  [%expect {|
+      (0.2222222222222222, 0.3333333333333333, 0.26666666666666666, None)
+   |}]
 
 
 (* precision_recall_fscore_support *)
@@ -1808,18 +1694,14 @@ array([1. , 0.5, 0.5, 0. ])
 
 *)
 
-(* TEST TODO
-   let%expect_test "precision_recall_fscore_support" =
-   let open Sklearn.Metrics in
-   print_ndarray @@ precision_recall_fscore_support ~y_true y_pred ~average:None ~labels:['pig' 'dog' 'cat'] ();
-   [%expect {|
-      (array([0.        , 0.        , 0.66...]),
-       array([0., 0., 1.]), array([0. , 0. , 0.8]),
-       array([2, 2, 2]))
+let%expect_test "precision_recall_fscore_support" =
+  let open Sklearn.Metrics in
+  let y_true = vectors [|"cat"; "dog"; "pig"; "cat"; "dog"; "pig"|] in
+  let y_pred = vectors [|"cat"; "pig"; "dog"; "cat"; "cat"; "dog"|] in
+  print_tuple4 @@ precision_recall_fscore_support ~y_true ~y_pred ~labels:(vectors [|"pig"; "dog"; "cat"|]) ();
+  [%expect {|
+      ([0.         0.         0.66666667], [0. 0. 1.], [0.  0.  0.8], [2 2 2])
    |}]
-
-*)
-
 
 
 (* precision_score *)
@@ -1843,39 +1725,35 @@ array([0.33..., 1.        , 1.        ])
 
 *)
 
-(* TEST TODO
-   let%expect_test "precision_score" =
-   let open Sklearn.Metrics in
-   let y_true = (vectori [|0; 1; 2; 0; 1; 2|]) in
-   let y_pred = (vectori [|0; 2; 1; 0; 0; 1|]) in
-   print_ndarray @@ precision_score ~y_true y_pred ~average:'macro' ();
-   [%expect {|
-      0.22...
+let%expect_test "precision_score" =
+  let open Sklearn.Metrics in
+  let y_true = vectori [|0; 1; 2; 0; 1; 2|] in
+  let y_pred = vectori [|0; 2; 1; 0; 0; 1|] in
+  print_ndarray @@ precision_score ~y_true ~y_pred ~average:`Macro ();
+  [%expect {|
+      0.2222222222222222
+   |}];
+  print_ndarray @@ precision_score ~y_true ~y_pred ~average:`Micro ();
+  [%expect {|
+      0.3333333333333333
+   |}];
+  print_ndarray @@ precision_score ~y_true ~y_pred ~average:`Weighted ();
+  [%expect {|
+      0.2222222222222222
+   |}];
+  print_ndarray @@ precision_score ~y_true ~y_pred ~average:`None ();
+  [%expect {|
+      [0.66666667 0.         0.        ]
+   |}];
+  let y_pred = vectori [|0; 0; 0; 0; 0; 0|] in
+  print_ndarray @@ precision_score ~y_true ~y_pred ~average:`None ();
+  [%expect {|
+      [0.33333333 0.         0.        ]
+   |}];
+  print_ndarray @@ precision_score ~y_true ~y_pred ~average:`None ~zero_division:`One ();
+  [%expect {|
+      [0.33333333 1.         1.        ]
    |}]
-   print_ndarray @@ precision_score ~y_true y_pred ~average:'micro' ();
-   [%expect {|
-      0.33...
-   |}]
-   print_ndarray @@ precision_score ~y_true y_pred ~average:'weighted' ();
-   [%expect {|
-      0.22...
-   |}]
-   print_ndarray @@ precision_score ~y_true y_pred ~average:None ();
-   [%expect {|
-      array([0.66..., 0.        , 0.        ])
-   |}]
-   let y_pred = (vectori [|0; 0; 0; 0; 0; 0|]) in
-   print_ndarray @@ precision_score ~y_true y_pred ~average:None ();
-   [%expect {|
-      array([0.33..., 0.        , 0.        ])
-   |}]
-   print_ndarray @@ precision_score ~y_true y_pred ~average:None ~zero_division:1 ();
-   [%expect {|
-      array([0.33..., 1.        , 1.        ])
-   |}]
-
-*)
-
 
 
 (* r2_score *)
@@ -1904,41 +1782,36 @@ array([0.33..., 1.        , 1.        ])
 
 *)
 
-(* TEST TODO
-   let%expect_test "r2_score" =
-   let open Sklearn.Metrics in
-   let y_true = [3, -0.5, 2, 7] in
-   let y_pred = [2.5, 0.0, 2, 8] in
-   print_ndarray @@ r2_score(y_true, y_pred);
-   [%expect {|
-      0.948...
-   |}]
-   let y_true = (matrix [|[|0.5; 1|]; [|-1; 1|]; [|7; -6|]|]) in
-   let y_pred = (matrixi [|[|0; 2|]; [|-1; 2|]; [|8; -5|]|]) in
-   print_ndarray @@ r2_score(y_true, y_pred,multioutput='variance_weighted');
-   [%expect {|
-      0.938...
-   |}]
-   let y_true = (vectori [|1; 2; 3|]) in
-   let y_pred = (vectori [|1; 2; 3|]) in
-   print_ndarray @@ r2_score(y_true, y_pred);
-   [%expect {|
+let%expect_test "r2_score" =
+  let open Sklearn.Metrics in
+  let y_true = vector [|3.; -0.5; 2.; 7.|] in
+  let y_pred = vector [|2.5; 0.0; 2.; 8.|] in
+  print_ndarray @@ r2_score ~y_true ~y_pred ();
+  [%expect {|
+      0.9486081370449679
+   |}];
+  let y_true = (matrix [|[|0.5; 1.|]; [|-1.; 1.|]; [|7.; -6.|]|]) in
+  let y_pred = (matrixi [|[|0; 2|]; [|-1; 2|]; [|8; -5|]|]) in
+  print_ndarray @@ r2_score ~y_true ~y_pred ~multioutput:`Variance_weighted ();
+  [%expect {|
+      0.9382566585956417
+   |}];
+  let y_true = vectori [|1; 2; 3|] in
+  let y_pred = vectori [|1; 2; 3|] in
+  print_ndarray @@ r2_score ~y_true ~y_pred ();
+  [%expect {|
       1.0
-   |}]
-   let y_true = (vectori [|1; 2; 3|]) in
-   let y_pred = (vectori [|2; 2; 2|]) in
-   print_ndarray @@ r2_score(y_true, y_pred);
-   [%expect {|
+   |}];
+  let y_true = vectori [|1; 2; 3|] in
+  let y_pred = vectori [|2; 2; 2|] in
+  print_ndarray @@ r2_score ~y_true ~y_pred ();
+  [%expect {|
       0.0
-   |}]
-   let y_true = (vectori [|1; 2; 3|]) in
-   let y_pred = (vectori [|3; 2; 1|]) in
-   print_ndarray @@ r2_score(y_true, y_pred);
-   [%expect {|
-   |}]
-
-*)
-
+   |}];
+  let y_true = vectori [|1; 2; 3|] in
+  let y_pred = vectori [|3; 2; 1|] in
+  print_ndarray @@ r2_score ~y_true ~y_pred ();
+  [%expect {| -3.0 |}]
 
 
 (* recall_score *)
@@ -1962,40 +1835,35 @@ array([0.5, 1. , 1. ])
 
 *)
 
-(* TEST TODO
-   let%expect_test "recall_score" =
-   let open Sklearn.Metrics in
-   let y_true = (vectori [|0; 1; 2; 0; 1; 2|]) in
-   let y_pred = (vectori [|0; 2; 1; 0; 0; 1|]) in
-   print_ndarray @@ recall_score ~y_true y_pred ~average:'macro' ();
-   [%expect {|
-      0.33...
+let%expect_test "recall_score" =
+  let open Sklearn.Metrics in
+  let y_true = vectori [|0; 1; 2; 0; 1; 2|] in
+  let y_pred = vectori [|0; 2; 1; 0; 0; 1|] in
+  print_ndarray @@ recall_score ~y_true ~y_pred ~average:`Macro ();
+  [%expect {|
+      0.3333333333333333
+   |}];
+  print_ndarray @@ recall_score ~y_true ~y_pred ~average:`Micro ();
+  [%expect {|
+      0.3333333333333333
+   |}];
+  print_ndarray @@ recall_score ~y_true ~y_pred ~average:`Weighted ();
+  [%expect {|
+      0.3333333333333333
+   |}];
+  print_ndarray @@ recall_score ~y_true ~y_pred ~average:`None ();
+  [%expect {|
+      [1. 0. 0.]
+   |}];
+  let y_true = vectori [|0; 0; 0; 0; 0; 0|] in
+  print_ndarray @@ recall_score ~y_true ~y_pred ~average:`None ();
+  [%expect {|
+      [0.5 0.  0. ]
+   |}];
+  print_ndarray @@ recall_score ~y_true ~y_pred ~average:`None ~zero_division:`One ();
+  [%expect {|
+      [0.5 1.  1. ]
    |}]
-   print_ndarray @@ recall_score ~y_true y_pred ~average:'micro' ();
-   [%expect {|
-      0.33...
-   |}]
-   print_ndarray @@ recall_score ~y_true y_pred ~average:'weighted' ();
-   [%expect {|
-      0.33...
-   |}]
-   print_ndarray @@ recall_score ~y_true y_pred ~average:None ();
-   [%expect {|
-      array([1., 0., 0.])
-   |}]
-   let y_true = (vectori [|0; 0; 0; 0; 0; 0|]) in
-   print_ndarray @@ recall_score ~y_true y_pred ~average:None ();
-   [%expect {|
-      array([0.5, 0. , 0. ])
-   |}]
-   print_ndarray @@ recall_score ~y_true y_pred ~average:None ~zero_division:1 ();
-   [%expect {|
-      array([0.5, 1. , 1. ])
-   |}]
-
-*)
-
-
 
 (* roc_auc_score *)
 (*
@@ -2007,17 +1875,12 @@ array([0.5, 1. , 1. ])
 
 *)
 
-(* TEST TODO
-   let%expect_test "roc_auc_score" =
-   let open Sklearn.Metrics in
-   let y_true = .array (vectori [|0; 0; 1; 1|]) np in
-   let y_scores = .array [0.1 0.4 0.35 0.8] np in
-   print_ndarray @@ roc_auc_score ~y_true y_scores ();
-   [%expect {|
-   |}]
-
-*)
-
+let%expect_test "roc_auc_score" =
+  let open Sklearn.Metrics in
+  let y_true = vectori [|0; 0; 1; 1|] in
+  let y_score = vector [|0.1; 0.4; 0.35; 0.8|] in
+  print_float @@ roc_auc_score ~y_true ~y_score ();
+  [%expect {| 0.75 |}]
 
 
 (* roc_curve *)
@@ -2035,26 +1898,21 @@ array([0. , 0.5, 0.5, 1. , 1. ])
 
 *)
 
-(* TEST TODO
-   let%expect_test "roc_curve" =
-   let open Sklearn.Metrics in
-   let y = .array (vectori [|1; 1; 2; 2|]) np in
-   let scores = .array [0.1 0.4 0.35 0.8] np in
-   let fpr, tpr, thresholds = .roc_curve ~y scores ~pos_label:2 metrics in
-   print_ndarray @@ fpr;
-   [%expect {|
-      array([0. , 0. , 0.5, 0.5, 1. ])
-   |}]
-   print_ndarray @@ tpr;
-   [%expect {|
-      array([0. , 0.5, 0.5, 1. , 1. ])
-   |}]
-   print_ndarray @@ thresholds;
-   [%expect {|
-   |}]
-
-*)
-
+let%expect_test "roc_curve" =
+  let open Sklearn.Metrics in
+  let y = vectori [|1; 1; 2; 2|] in
+  let scores = vector [|0.1; 0.4; 0.35; 0.8|] in
+  let fpr, tpr, thresholds = roc_curve ~y_true:y ~y_score:scores ~pos_label:(`I 2) () in
+  print_ndarray fpr;
+  [%expect {|
+      [0.  0.  0.5 0.5 1. ]
+   |}];
+  print_ndarray tpr;
+  [%expect {|
+      [0.  0.5 0.5 1.  1. ]
+   |}];
+  print_ndarray thresholds;
+  [%expect {| [1.8  0.8  0.4  0.35 0.1 ] |}]
 
 
 (* zero_one_loss *)
@@ -2069,22 +1927,22 @@ array([0. , 0.5, 0.5, 1. , 1. ])
 
 *)
 
-(* TEST TODO
-   let%expect_test "zero_one_loss" =
-   let open Sklearn.Metrics in
-   let y_pred = (vectori [|1; 2; 3; 4|]) in
-   let y_true = (vectori [|2; 2; 3; 4|]) in
-   print_ndarray @@ zero_one_loss ~y_true y_pred ();
-   [%expect {|
+let print_zol x = match x with
+  | `I x -> Format.printf "%d\n" x
+  | `F x -> Format.printf "%g\n" x
+
+let%expect_test "zero_one_loss" =
+  let open Sklearn.Metrics in
+  let y_pred = vectori [|1; 2; 3; 4|] in
+  let y_true = vectori [|2; 2; 3; 4|] in
+  print_zol @@ zero_one_loss ~y_true ~y_pred ();
+  [%expect {|
       0.25
-   |}]
-   print_ndarray @@ zero_one_loss ~y_true y_pred ~normalize:false ();
-   [%expect {|
+   |}];
+  print_zol @@ zero_one_loss ~y_true ~y_pred ~normalize:false ();
+  [%expect {|
       1
    |}]
-
-*)
-
 
 
 (* zero_one_loss *)
@@ -2094,11 +1952,8 @@ array([0. , 0.5, 0.5, 1. , 1. ])
 
 *)
 
-(* TEST TODO
-   let%expect_test "zero_one_loss" =
-   let open Sklearn.Metrics in
-   print_ndarray @@ zero_one_loss(.array (matrixi [|[|0; 1|]; [|1; 1|]|])) np.ones((2 2)) np;
-   [%expect {|
-   |}]
-
-*)
+let%expect_test "zero_one_loss" =
+  let open Sklearn.Metrics in
+  let module Arr = Sklearn.Arr in
+  print_zol @@ zero_one_loss ~y_true:(matrixi [|[|0; 1|]; [|1; 1|]|]) ~y_pred:(Arr.ones [2;2]) ();
+  [%expect {| 0.5 |}]

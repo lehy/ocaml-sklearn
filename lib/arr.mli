@@ -121,6 +121,8 @@ val max : t -> float
 
 val argsort : t -> t
 
+val sort : t -> t
+
 val ones : ?dtype : Dtype.t -> int list -> t
 val zeros : ?dtype : Dtype.t -> int list -> t
 
@@ -236,7 +238,8 @@ end
 
     Build an Array containing strings. *)
 module String : sig
-
+  val of_list : string list -> t
+  
   (** ### vector
 
       Build a vector from an OCaml string array.
@@ -428,3 +431,5 @@ module Random : sig
   val seed : int -> unit
   val random_sample : int list -> t
 end
+
+val check : Py.Object.t -> bool

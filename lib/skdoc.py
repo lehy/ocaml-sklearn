@@ -58,12 +58,13 @@ class Type:
     def tag(self):
         ta = self.tag_name()
         t = f"`{ta} of {self.ml_type}"
+        t_ret = f"`{ta} of {self.ml_type_ret}"
         destruct = f"`{ta} x -> {self.wrap} x"
         if self.is_type is None:
             construct = None
         else:
             construct = f"if {self.is_type} x then `{ta} ({self.unwrap} x)"
-        return t, destruct, construct
+        return t, t_ret, destruct, construct
 
 
 class Bunch(Type):
@@ -110,9 +111,10 @@ class StringValue(Type):
     def tag(self):
         ta = tag(self.text)
         t = f"`{ta}"
+        t_ret = t
         destruct = f'`{ta} -> {self.wrap} "{self.text}"'
         construct = None
-        return t, destruct, construct
+        return t, t_ret, destruct, construct
 
 
 class IntValue(Type):
@@ -128,9 +130,10 @@ class IntValue(Type):
     def tag(self):
         ta = ['Zero', 'One', 'Two'][self.value]
         t = f"`{ta}"
+        t_ret = t
         destruct = f'`{ta} -> {self.wrap} {self.value}'
         construct = None
-        return t, destruct, construct
+        return t, t_ret, destruct, construct
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.value})"
@@ -139,7 +142,7 @@ class IntValue(Type):
 class Enum(Type):
     def can_be_returned(self):
         for elt in self.elements:
-            if elt.tag()[2] is None:
+            if elt.tag()[3] is None:
                 # print(f"WW enum {self} cannot be returned because element {elt} cannot be discriminated")
                 return False
         return True
@@ -149,15 +152,31 @@ class Enum(Type):
         self.elements = elements
         self.ml_type = "[" + ' | '.join([elt.tag()[0]
                                          for elt in elements]) + "]"
-        wrap_cases = [f"| {elt.tag()[1]}\n" for elt in elements]
+        wrap_cases = [f"| {elt.tag()[2]}\n" for elt in elements]
         self.wrap = f"(function\n{''.join(wrap_cases)})"
 
         if self.can_be_returned():
-            self.ml_type_ret = self.ml_type
-            unwrap_cases = [f"{elt.tag()[2]}" for elt in elements]
+            self.ml_type_ret = "[" + ' | '.join(
+                [elt.tag()[1] for elt in elements]) + "]"
+            unwrap_cases = [f"{elt.tag()[3]}" for elt in elements]
             self.unwrap = '(fun x -> ' + ' else '.join(
                 unwrap_cases
-            ) + ' else failwith "could not identify type from Python value")'
+            ) + ' else failwith (Printf.sprintf "Sklearn: could not identify type from Python value %s (%s)" (Py.Object.to_string x) (Wrap_utils.type_string x)))'
+
+
+class Optional(Type):
+    def __init__(self, t):
+        # args are wrapped as a enum including `None
+        # returns are wrapped using an option
+        self.t = t
+        if isinstance(t, Enum):
+            self.as_enum = Enum(t.elements + [NoneValue()])
+        else:
+            self.as_enum = Enum([t, NoneValue()])
+        self.ml_type = self.as_enum.ml_type
+        self.wrap = self.as_enum.wrap
+        self.ml_type_ret = f'{self.t.ml_type_ret} option'
+        self.unwrap = f'(fun py -> if Py.is_none py then None else Some ({self.t.unwrap} py))'
 
 
 class Tuple(Type):
@@ -175,6 +194,7 @@ class Tuple(Type):
                                  for i in range(len(self.elements))]) + ')'
         wrap_elts = [f"({elt.wrap} ml_{i})" for i, elt in enumerate(elements)]
         self.wrap = f"(fun {split} -> Py.Tuple.of_list [{'; '.join(wrap_elts)}])"
+        self.is_type = 'Py.Tuple.check'
 
 
 class Int(Type):
@@ -183,7 +203,7 @@ class Int(Type):
     wrap = 'Py.Int.of_int'
     ml_type_ret = 'int'
     unwrap = 'Py.Int.to_int'
-    is_type = 'Py.Int.check'
+    is_type = 'Wrap_utils.check_int'
 
     def tag_name(self):
         return tag("I")
@@ -218,7 +238,7 @@ class Float(Type):
     wrap = 'Py.Float.of_float'
     ml_type_ret = 'float'
     unwrap = 'Py.Float.to_float'
-    is_type = 'Py.Float.check'
+    is_type = 'Wrap_utils.check_float'
 
     def tag_name(self):
         return tag("F")
@@ -238,7 +258,7 @@ class Ndarray(Type):
     wrap = 'Sklearn.Ndarray.to_pyobject'
     ml_type_ret = 'Sklearn.Ndarray.t'
     unwrap = 'Sklearn.Ndarray.of_pyobject'
-    is_type = 'Wrap_utils.isinstance Wrap_utils.ndarray'
+    is_type = 'Wrap_utils.check_array'
 
 
 class SparseMatrix(Type):
@@ -247,7 +267,7 @@ class SparseMatrix(Type):
     wrap = 'Sklearn.Csr_matrix.to_pyobject'
     ml_type_ret = 'Sklearn.Csr_matrix.t'
     unwrap = 'Sklearn.Csr_matrix.of_pyobject'
-    is_type = 'Wrap_utils.isinstance Wrap_utils.csr_matrix'
+    is_type = 'Wrap_utils.check_csr_matrix'
 
 
 class Arr(Type):
@@ -316,19 +336,27 @@ class Arr(Type):
     wrap = 'Sklearn.Arr.to_pyobject'
     ml_type_ret = 'Sklearn.Arr.t'
     unwrap = 'Sklearn.Arr.of_pyobject'
-    is_type = f'(fun x -> ({Ndarray.is_type} x) || ({SparseMatrix.is_type} x))'
+    is_type = f'Arr.check'
 
 
-class ArrGenerator(Type):
-    names = ["generator of array"]
-    ml_type = 'Sklearn.Arr.t Seq.t'
-    wrap = 'Py.Iter.of_seq'
-    ml_type_ret = 'Sklearn.Arr.t Seq.t'
-    unwrap = '(fun py -> Py.Iter.to_seq py |> Seq.map Sklearn.Arr.of_pyobject)'
-    is_type = 'Py.Iter.check'
+class Generator(Type):
+    def __init__(self, t):
+        super().__init__()
+        self.t = t
+        self.ml_type = f'{t.ml_type} Seq.t'
+        self.wrap = f'(fun ml -> Seq.map {t.wrap} ml |> Py.Iter.of_seq)'
+        self.ml_type_ret = f'{t.ml_type_ret} Seq.t'
+        self.unwrap = f'(fun py -> Py.Iter.to_seq py |> Seq.map {t.unwrap})'
+        self.is_type = 'Py.Iter.check'
 
     def tag_name(self):
         return 'Iter'
+
+
+def ArrGenerator():
+    ret = Generator(Arr())
+    ret.names = ['generator of array']
+    return ret
 
 
 class LossFunction(Type):
@@ -339,9 +367,7 @@ class LossFunction(Type):
 
 
 class ClassificationReport(Type):
-    # XXX ml_type is needed even for retuning, since we use it atm to
-    # build the return type inside enums (see Type.tag()).
-    ml_type = '(string * <precision:float; recall:float; f1_score:float; support:float>) list'
+    # ml_type = '(string * <precision:float; recall:float; f1_score:float; support:float>) list'
     ml_type_ret = '(string * <precision:float; recall:float; f1_score:float; support:float>) list'
     unwrap = '''(fun py -> Py.Dict.fold (fun kpy vpy acc -> ((Py.String.to_string kpy), object
       method precision = Py.Dict.get_item_string vpy "precision" |> Wrap_utils.Option.get |> Py.Float.to_float
@@ -350,7 +376,7 @@ class ClassificationReport(Type):
       method support = Py.Dict.get_item_string vpy "support" |> Wrap_utils.Option.get |> Py.Float.to_float
     end)::acc) py [])
     '''
-    is_type = 'Wrap_utils.isinstance Wrap_utils.dict'
+    is_type = 'Py.Dict.check'
 
     def tag_name(self):
         return 'Dict'
@@ -433,7 +459,7 @@ class String(Type):
     wrap = 'Py.String.of_string'
     ml_type_ret = 'string'
     unwrap = 'Py.String.to_string'
-    is_type = 'Wrap_utils.isinstance Wrap_utils.string'
+    is_type = 'Py.String.check'
 
     def tag_name(self):
         return tag("S")
@@ -447,21 +473,21 @@ class NoneValue(Type):
     names = ['None', 'none']
 
     def tag(self):
-        return '`None', '`None -> Py.none', None
+        return '`None', '`None', '`None -> Py.none', None
 
 
 class TrueValue(Type):
     names = ['True', 'true']
 
     def tag(self):
-        return '`True', '`True -> Py.Bool.t', None
+        return '`True', '`True', '`True -> Py.Bool.t', None
 
 
 class FalseValue(Type):
     names = ['False', 'false']
 
     def tag(self):
-        return '`False', '`False -> Py.Bool.f', None
+        return '`False', '`False', '`False -> Py.Bool.f', None
 
 
 class RandomState(Type):
@@ -522,7 +548,7 @@ class Dict(Type):
     ml_type_ret = 'Sklearn.Dict.t'
     wrap = 'Sklearn.Dict.to_pyobject'
     unwrap = 'Sklearn.Dict.of_pyobject'
-    is_type = 'Wrap_utils.isinstance Wrap_utils.dict'
+    is_type = 'Py.Dict.check'
 
 
 class ParamGridDict(Type):
@@ -539,7 +565,7 @@ class DictIntToFloat(Type):
     names = ['dict int to float']
     ml_type = '(int * float) list'
     wrap = '(Py.Dict.of_bindings_map Py.Int.of_int Py.Float.of_float)'
-    is_type = 'Wrap_utils.isinstance Wrap_utils.dict'
+    is_type = 'Py.Dict.check'
 
 
 class Callable(Type):
@@ -550,9 +576,8 @@ def Slice():
     int_or_none = Enum([NoneValue(), Int()])
     ret = Tuple([int_or_none, int_or_none, int_or_none])
     destruct = "(`Slice _) as s -> Wrap_utils.Slice.of_variant s"
-    ret.tag = lambda: (
-        f"`Slice of ({int_or_none.ml_type}) * ({int_or_none.ml_type}) * ({int_or_none.ml_type})",
-        destruct, None)
+    t = f"`Slice of ({int_or_none.ml_type}) * ({int_or_none.ml_type}) * ({int_or_none.ml_type})"
+    ret.tag = lambda: (t, t, destruct, None)
     return ret
 
 
@@ -632,17 +657,19 @@ def remove_default(text):
 def remove_shape(text):
     # print(f"remove_shape 0: {text}")
     text = re.sub(
-        r'(of\s+)?shape\s*[:=]?\s*[([](\S+,\s*)*\S+?\s*[\])](\s*,?\s*or\s*[([](\S+,\s*)*\S+?\s*[\])])*',
+        r'((of|with)\s+)?shape\s*[:=]?\s*[([](\S+,\s*)*\S+?\s*[\])](\s*,?\s*or\s*[([](\S+,\s*)*\S+?\s*[\])])*',
         '', text)
     # print(f"remove_shape 1: {text}")
     # two levels of parentheses should be enough for anyone
-    text = re.sub(r'(of\s+)?shape\s*[:=]?\s*\([^()]*(\([^()]*\)[^()]*)?\)', '',
+    text = re.sub(r'((of|with)\s+)?shape\s*[:=]?\s*\([^()]*(\([^()]*\)[^()]*)?\)', '',
                   text)
     text = re.sub(r'(,\s*)?(of\s+)?length \S+', '', text)
     text = re.sub(r"""(,\s*)?\[[^'"[\]()]+,[^'"[\]()]+\]""", '', text)
     text = re.sub(r'if\s+\S+\s*=+\s*\S+\s*', '', text)
     text = re.sub(r'(,\s*)?\s*\d-dimensional\s*', '', text)
     text = re.sub(r"""\(\s*(n_\w+,\s*)*n_\w+,?\s*\)""", '', text)
+    text = re.sub(r"shape\s*=\s*\[[^[\]]+\]", '', text)
+    # print(f"text without shape: {text}")
     return text
 
 
@@ -818,8 +845,10 @@ def simplify_enum(enum):
                                lambda x: isinstance(x, NoneValue))
     assert len(none) <= 1, enum
     if none:
+        inside = simplify_enum(type(enum)(not_none))
+        return Optional(inside)
         # enum = EnumOption(not_none)
-        enum = type(enum)(not_none + [NoneValue()])
+        # enum = type(enum)(not_none + [NoneValue()])
 
     # Enum(String, StringValue, StringValue) should just be
     # Enum(StringValue, StringValue) since that is (probably) a
@@ -879,7 +908,7 @@ def append(container, ctor, *args, **kwargs):
     try:
         elt = ctor(*args, **kwargs)
     except (NoSignature, OutsideScope, NoDoc, Deprecated) as e:
-        # print(f"WW append: caught error building {ctor}: {type(e)}({e})")
+        # print(f"WW append: caught error building {ctor}({args}, {kwargs}): {type(e)}({e})")
         return
     container.append(elt)
 
@@ -1220,7 +1249,10 @@ class Class:
                 # way to have them show up: let overrides specify
                 # everything.
                 # print(f"II wrapping non-callable method {name}: {item}")
-                elts.append(Method(name, qualname, item, overrides))
+                try:
+                    elts.append(Method(name, qualname, item, overrides))
+                except Exception as e:
+                    print(f"WW method {qualname} has complete override spec but there was an error wrapping it: {e}")
             elif isinstance(item, property):
                 print(f"WW not wrapping member {qualname}: {item}")
             else:
@@ -1355,6 +1387,9 @@ class Class:
 
 
 def remove_none_from_enum(t):
+    if isinstance(t, Optional):
+        return t.t
+
     if not isinstance(t, Enum):
         return t
 
@@ -1693,7 +1728,7 @@ def make_return_type(type_dict):
 
     if not type_dict:
         return builtin['object']
-    
+
     if len(type_dict) == 1:
         if list(type_dict.keys())[0] == 'self':
             return builtin['self']
@@ -1701,8 +1736,10 @@ def make_return_type(type_dict):
         if is_yield:
             if isinstance(v, Arr):
                 return ArrGenerator()
-            elif not isinstance(v, ArrGenerator) and not isinstance(v, PyObject):
-                print(f"WW yielded value is not a generator ({v}), forcing type to Py.Object.t")
+            elif not isinstance(v, Generator) and not isinstance(v, PyObject):
+                print(
+                    f"WW yielded value is not a generator ({v}), forcing type to Py.Object.t"
+                )
                 return PyObject()
             else:
                 return v
@@ -1710,10 +1747,13 @@ def make_return_type(type_dict):
             return v
 
     assert len(type_dict) > 1, type_dict
-            
+
     if is_yield:
-        print(f"WW unsupported yield of multiple values {type_dict}, falling back to Py.Object.t")
-        return PyObject()
+        for k, ty in type_dict.items():
+            assert not isinstance(
+                ty, Generator
+            ), f"yielded tuple has a suspect Generator: {type_dict}"
+        return Generator(Tuple(list(type_dict.values())))
 
     return Tuple(list(type_dict.values()))
 
@@ -2121,7 +2161,7 @@ def parse_types_simple(doc, section='Parameters'):
 
     if section == 'Yields':
         ret['__is_yield'] = True
-        
+
     return ret
 
 
@@ -2256,7 +2296,7 @@ class Function:
                 ret_type = parse_bunch_simple(doc, section='Returns')
             else:
                 ret_type_elements = parse_types_simple(doc, section='Returns')
-                
+
                 for k, v in fixed_values.items():
                     if v[1] and k in ret_type_elements:
                         del ret_type_elements[k]
@@ -2624,7 +2664,8 @@ overrides = {
                 StringValue("uniform_average"),
                 Arr()
             ])
-        })
+        }),
+    r'\.get_n_splits$': dict(ret_type=Int())
 }
 
 
@@ -2671,11 +2712,11 @@ def main():
         remove_me = set()
         for elt in csr_matrix.elements:
             for ty in elt.iter_types():
-                if isinstance(ty, (Arr, Dtype, ArrGenerator)):
+                if isinstance(ty, (Arr, Dtype, Generator)):
                     remove_me.add(elt)
                 elif isinstance(ty, Enum):
                     for t in ty.elements:
-                        if isinstance(t, (Arr, Dtype, ArrGenerator)):
+                        if isinstance(t, (Arr, Dtype, Generator)):
                             remove_me.add(elt)
         for elt in remove_me:
             # print(f"Csr_matrix: removing {elt}")

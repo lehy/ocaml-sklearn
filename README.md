@@ -160,11 +160,12 @@ the files and start porting examples. One can refer to
 have already been ported (almost) completely.
 
 The following examples have been ported completely:
+- [ensemble](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/ensemble.ml)
+- [metrics](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/metrics.ml)
 - [neighbors](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/neighbors.ml)
 - [pipeline](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/pipeline.ml)
 - [preprocessing](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/preprocessing.ml)
 - [svm](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/svm.ml)
-- [ensemble](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/ensemble.ml)
 
 The following examples still need to be ported:
 - [calibration](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/calibration.ml)
@@ -184,7 +185,6 @@ The following examples still need to be ported:
 - [kernel_approximation](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/kernel_approximation.ml)
 - [linear_model](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/linear_model.ml)
 - [manifold](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/manifold.ml)
-- [metrics](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/metrics.ml)
 - [model_selection](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/model_selection.ml)
 - [multiclass](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/multiclass.ml)
 - [multioutput](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/multioutput.ml)

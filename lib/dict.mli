@@ -14,6 +14,8 @@ val get_opt : (module BUILD with type t = 'a) -> name : string -> t -> 'a option
 val fold_py : f : ('acc -> string -> Py.Object.t -> 'acc) -> init : 'acc -> t -> 'acc
 val fold : (module BUILD with type t = 'a) -> f : ('acc -> string -> 'a -> 'acc) -> init : 'acc -> t -> 'acc
 
+val keys : t -> string list
+
 val of_pyobject : Py.Object.t -> t
 val to_pyobject : t -> Py.Object.t
 val pp : Format.formatter -> t -> unit

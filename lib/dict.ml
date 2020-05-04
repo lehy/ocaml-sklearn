@@ -29,6 +29,9 @@ let get (type a) (module B : BUILD with type t = a) ~name self =
   | None -> raise Not_found
   | Some x -> x
 
+let keys x =
+  fold_py ~f:(fun acc k _v -> k::acc) ~init:[] x |> List.rev
+
 let of_pyobject self = self
 let to_pyobject self = self
 let to_string self = Py.Object.to_string self
