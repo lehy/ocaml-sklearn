@@ -779,7 +779,7 @@ let%expect_test "make_scorer" =
    |}];
   let grid =
     Sklearn.Model_selection.GridSearchCV.create
-      ~estimator:(Sklearn.Svm.LinearSVC.(create ~random_state:0 () |> to_pyobject))
+      ~estimator:Sklearn.Svm.LinearSVC.(create ~random_state:0 () |> as_estimator)
       ~param_grid:(`Grid ["C", `Ints [1; 10]]) ~scoring:(`Callable ftwo_scorer) ~cv:(`I 2) ()
   in
   print Sklearn.Model_selection.GridSearchCV.pp @@
@@ -1603,7 +1603,7 @@ let%expect_test "plot_roc_curve" =
           max_iter=-1, probability=False, random_state=0, shrinking=True, tol=0.001,
           verbose=False)
    |}];
-  print_py @@ Sklearn.Metrics.plot_roc_curve ~estimator:(SVC.to_pyobject clf) ~x:x_test ~y:y_test ();
+  print_py @@ Sklearn.Metrics.plot_roc_curve ~estimator:SVC.(as_estimator clf) ~x:x_test ~y:y_test ();
   let output = Re.replace_string (Re.Perl.compile_pat {|0x[a-f0-9]+|}) ~by:"0x..." [%expect.output]
   in
   print_string output;

@@ -5,6 +5,7 @@ import inspect
 import textwrap
 import io
 import os
+import collections
 
 
 class Section_title:
@@ -65,6 +66,14 @@ class Type:
         else:
             construct = f"if {self.is_type} x then `{ta} ({self.unwrap} x)"
         return t, t_ret, destruct, construct
+
+    def delegate_to(self, t):
+        self.ml_type = t.ml_type
+        self.ml_type_ret = t.ml_type_ret
+        self.wrap = t.wrap
+        self.unwrap = t.unwrap
+        self.tag = t.tag
+        self.tag_name = t.tag_name
 
 
 class Bunch(Type):
@@ -177,6 +186,9 @@ class Optional(Type):
         self.wrap = self.as_enum.wrap
         self.ml_type_ret = f'{self.t.ml_type_ret} option'
         self.unwrap = f'(fun py -> if Py.is_none py then None else Some ({self.t.unwrap} py))'
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self.t})'
 
 
 class Tuple(Type):
@@ -498,17 +510,54 @@ class LinearOperator(Type):
     names = ['LinearOperator']
 
 
-class CrossValGenerator(Type):
-    names = ['cross-validation generator']
+class BaseType(Type):
+    def __init__(self, name, tag_name=None):
+        self.name = name
+        if tag_name is None:
+            self._tag_name = name
+        else:
+            self._tag_name = tag_name
+        self.ml_type = f'Sklearn.{name}.t'
+        self.wrap = f'Sklearn.{name}.to_pyobject'
+
+    def tag_name(self):
+        return self._tag_name
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self.name})'
 
 
-class Estimator(Type):
+class CrossValGenerator(BaseType):
+    names = [
+        'cross-validation generator', 'cross-validation splitter',
+        'CV splitter'
+    ]
+
+    def __init__(self):
+        super().__init__('BaseCrossValidator', 'CrossValidator')
+
+
+class Estimator(BaseType):
     names = [
         'instance BaseEstimator', 'BaseEstimator instance',
         'estimator instance', 'instance estimator', 'estimator object',
         'estimator'
     ]
 
+    def __init__(self):
+        super().__init__('BaseEstimator', 'Estimator')
+
+class Transformer(BaseType):
+    names = [
+        'instance TransformerMixin', 'TransformerMixin instance',
+        'instance Transformer', 'Transformer instance',
+        'transformer instance', 'instance transformer', 'transformer object',
+        'transformer'
+    ]
+
+    def __init__(self):
+        super().__init__('TransformerMixin', 'Transformer')
+        
 
 class JoblibMemory(Type):
     names = ['object with the joblib.Memory interface']
@@ -580,6 +629,56 @@ def Slice():
     ret.tag = lambda: (t, t, destruct, None)
     return ret
 
+
+class Registry:
+    def __init__(self):
+        self.types = collections.defaultdict(list)
+        self.module_path = {}
+        self.bases = collections.defaultdict(set)
+        
+    def add_class(self, klass, module_path):
+        ancestors = inspect.getmro(klass)
+        if self.module_path.get(klass, module_path) != module_path:
+            existing = self.module_path[klass]
+            if 'Base' not in existing:
+                print(
+                    f"WW {klass.__name__} is already registered with path {existing}, ignoring path {module_path}"
+                )
+        else:
+            self.module_path[klass] = module_path
+        for ancestor in ancestors:
+            if ancestor is not klass:
+                ancestor_name = ancestor.__name__
+                if ('Base' in ancestor_name
+                    or 'Mixin' in ancestor_name) and not ancestor_name.startswith('_'):
+                    self.types[ancestor].append(klass)
+                    self.bases[klass].add(ancestor)
+
+    def write(self, build_dir):
+        print("writing registry, generated modules:")
+        for k, v in self.types.items():
+            self._write_type(build_dir, k, v)
+
+    def _write_type(self, build_dir, t, elements):
+        module_name = ucfirst(t.__name__)
+        dire = build_dir
+        dire.mkdir(parents=True, exist_ok=True)
+        print(f"{module_name}.ml")
+        with open(dire / f"{module_name}.ml", 'w') as f:
+            self._write_type_raw(f, t, elements)
+        print(f"{module_name}.mli")
+        with open(dire / f"{module_name}.mli", 'w') as f:
+            f.write("type t = ..\n")
+            f.write("val __to_pyobject_ref : (t -> Py.Object.t) ref\n")
+            f.write("val to_pyobject : t -> Py.Object.t\n")
+
+    def _write_type_raw(self, f, t, elements):
+        f.write("type t = ..\n")
+        f.write(f"""let __to_pyobject_ref : (t -> Py.Object.t) ref =
+  ref (fun _ -> invalid_arg "Sklearn.{ucfirst(t.__name__)}.to_pyobject: unknown datatype")
+
+let to_pyobject : t -> Py.Object.t = fun x -> !__to_pyobject_ref x
+""")
 
 def deindent(line):
     m = re.match('^( *)(.*)$', line)
@@ -661,8 +760,9 @@ def remove_shape(text):
         '', text)
     # print(f"remove_shape 1: {text}")
     # two levels of parentheses should be enough for anyone
-    text = re.sub(r'((of|with)\s+)?shape\s*[:=]?\s*\([^()]*(\([^()]*\)[^()]*)?\)', '',
-                  text)
+    text = re.sub(
+        r'((of|with)\s+)?shape\s*[:=]?\s*\([^()]*(\([^()]*\)[^()]*)?\)', '',
+        text)
     text = re.sub(r'(,\s*)?(of\s+)?length \S+', '', text)
     text = re.sub(r"""(,\s*)?\[[^'"[\]()]+,[^'"[\]()]+\]""", '', text)
     text = re.sub(r'if\s+\S+\s*=+\s*\S+\s*', '', text)
@@ -722,10 +822,14 @@ def parse_enum(t):
     # print("parse_enum returns:", elts)
     return elts
 
-
-transformer_list = List(Tuple([String(), PyObject()]))
+transformer_list = List(Tuple([String(), Transformer()]))
 transformer_list.names = [
-    'list of (string, transformer) tuples', 'list of (str, estimator)',
+    'list of (string, transformer) tuples'
+]
+
+estimator_list = List(Tuple([String(), Estimator()]))
+estimator_list.names = [
+    'list of (str, estimator)',
     'list of (str, estimator) tuples'
 ]
 
@@ -770,7 +874,8 @@ builtin_types = [
     Self(),
     Pipeline(),
     FeatureUnion(),
-    transformer_list
+    estimator_list,
+    transformer_list,
 ]
 builtin = {}
 init_builtins(builtin, builtin_types)
@@ -914,12 +1019,13 @@ def append(container, ctor, *args, **kwargs):
 
 
 class Package:
-    def __init__(self, pkg, overrides):
+    def __init__(self, pkg, overrides, registry):
         self.pkg = pkg
         self.ml_name = ucfirst(self.pkg.__name__)
-        self.modules = self._list_modules(pkg, overrides)
+        self.modules = self._list_modules(pkg, overrides, registry)
+        self.registry = registry
 
-    def _list_modules(self, pkg, overrides):
+    def _list_modules(self, pkg, overrides, registry):
         ret = []
         for mod in pkgutil.iter_modules(pkg.__path__):
             name = mod.name
@@ -928,7 +1034,10 @@ class Package:
             full_name = f"{pkg.__name__}.{name}"
             module = importlib.import_module(full_name)
             ret.append(
-                Module(module, parent_name=self.ml_name, overrides=overrides))
+                Module(module,
+                       parent_name=self.ml_name,
+                       overrides=overrides,
+                       registry=registry))
         return ret
 
     def __str__(self):
@@ -1031,7 +1140,7 @@ def write_generated_header(f):
 
 
 class Module:
-    def __init__(self, module, parent_name, overrides):
+    def __init__(self, module, parent_name, overrides, registry):
         self.full_python_name = module.__name__
         if not self.full_python_name.startswith('sklearn'):
             raise OutsideScope
@@ -1047,9 +1156,10 @@ class Module:
             self.full_ml_name = self.ml_name
         # print(f"building module {self.full_python_name}")
         self.module = module
-        self.elements = self._list_elements(module, overrides)
+        self.elements = self._list_elements(module, overrides, registry)
+        self.registry = registry
 
-    def _list_elements(self, module, overrides):
+    def _list_elements(self, module, overrides, registry):
         elts = []
         for name in dir(module):
             qualname = f"{self.full_python_name}.{name}"
@@ -1061,10 +1171,10 @@ class Module:
             item = getattr(module, name)
             parent_name = self.full_ml_name
             if inspect.ismodule(item):
-                append(elts, Module, item, parent_name, overrides)
+                append(elts, Module, item, parent_name, overrides, registry)
             elif inspect.isclass(item):
-                if not inspect.isabstract(item):
-                    append(elts, Class, item, parent_name, overrides)
+                if not inspect.isabstract(item) and 'Base' not in item.__name__ and 'Mixin' not in item.__name__:
+                    append(elts, Class, item, parent_name, overrides, registry)
             elif callable(item):
                 append(elts, Function, name, qualname, item, overrides)
         return elts
@@ -1172,16 +1282,27 @@ def is_hashable(x):
         return False
     return True
 
+def caster(x):
+    x = re.sub(r'Mixin|Base', '', x)
+    x = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', x)
+    x = re.sub('([a-z0-9])([A-Z])', r'\1_\2', x).lower()
+    x = 'as_' + x
+    return x
 
 # Major Major
 class Class:
-    def __init__(self, klass, parent_name, overrides):
+    def __init__(self, klass, parent_name, overrides, registry):
         self.klass = klass
         self.parent_name = parent_name
         self.constructor = Ctor(self.klass.__name__, self.klass.__name__,
                                 self.klass, overrides)
         self.elements = self._list_elements(overrides)
         self.ml_name = ucfirst(self.klass.__name__)
+        for item in ['deprecated', 'Parallel', 'ABCMeta']:
+            if klass.__name__ == item:
+                raise OutsideScope(klass)
+        self.registry = registry
+        registry.add_class(klass, f'{parent_name}.{self.ml_name}')
 
     def remove_element(self, elt):
         self.elements = [x for x in self.elements if x is not elt]
@@ -1252,7 +1373,9 @@ class Class:
                 try:
                     elts.append(Method(name, qualname, item, overrides))
                 except Exception as e:
-                    print(f"WW method {qualname} has complete override spec but there was an error wrapping it: {e}")
+                    print(
+                        f"WW method {qualname} has complete override spec but there was an error wrapping it: {e}"
+                    )
             elif isinstance(item, property):
                 print(f"WW not wrapping member {qualname}: {item}")
             else:
@@ -1277,7 +1400,16 @@ class Class:
         f.write("type t = Py.Object.t\n")
         f.write("let of_pyobject x = x\n")
         f.write("let to_pyobject x = x\n")
-
+        for base in self.registry.bases[self.klass]:
+            base_name = ucfirst(base.__name__)
+            f.write(f"""
+            type {base_name}.t += {base_name} of t;;
+            {base_name}.__to_pyobject_ref := let old_to_pyobject = !{base_name}.__to_pyobject_ref in function
+            | {base_name} x -> to_pyobject x
+            | x -> old_to_pyobject x
+            let {caster(base_name)} x = {base_name} x
+            """)
+        
     def write(self, path, module_path, ns):
         module_path = f"{module_path}.{self.ml_name}"
         name = self.klass.__name__
@@ -1324,6 +1456,10 @@ class Class:
         f.write("type t\n")
         f.write("val of_pyobject : Py.Object.t -> t\n")
         f.write("val to_pyobject : t -> Py.Object.t\n\n")
+        for base in self.registry.bases[self.klass]:
+            base_name = ucfirst(base.__name__)
+            f.write(f"type {base_name}.t += {base_name} of t\n")
+            f.write(f"val {caster(base_name)} : t -> {base_name}.t\n")
         self.constructor.write_to_mli(f, module_path)
         for element in self.elements:
             element.write_to_mli(f, module_path)
@@ -2263,7 +2399,8 @@ class Function:
             for k in signature.parameters.keys():
                 if k not in param_types:
                     param_types[k] = UnknownType(
-                        f"{k} not found in parsed types {param_types}")
+                        f"{k} not found in parsed types {list(param_types.keys())}"
+                    )
             param_types = self.overrides.types(self.qualname, param_types)
 
         parameters = []
@@ -2301,6 +2438,7 @@ class Function:
                     if v[1] and k in ret_type_elements:
                         del ret_type_elements[k]
                 ret_type = make_return_type(ret_type_elements)
+
         return Return(ret_type)
 
     def ml(self, module_path):
@@ -2578,7 +2716,7 @@ overrides = {
     r'\.fit$':
     dict(ret_type=Self()),
     r'Pipeline$':
-    dict(param_types=dict(steps=transformer_list,
+    dict(param_types=dict(steps=estimator_list,
                           memory=Enum([NoneValue(
                           ), String(), JoblibMemory()]),
                           verbose=Bool())),
@@ -2665,7 +2803,8 @@ overrides = {
                 Arr()
             ])
         }),
-    r'\.get_n_splits$': dict(ret_type=Int())
+    r'\.get_n_splits$': dict(ret_type=Int()),
+    r'\.make_pipeline$': dict(types={r'^steps$': List(Estimator())})
 }
 
 
@@ -2699,14 +2838,16 @@ def main():
         print("skdoc.py: no argument passed, not doing anything")
         return
 
+    registry = Registry()
+
     mode = sys.argv[1]
     if mode == "build":
-        pkg = Package(sklearn, over)
+        pkg = Package(sklearn, over, registry)
         pkg.write(build_dir)
         # Write this one separately, no sense having it in metrics and
         # it causes cross dep problems.
         csr_matrix = Class(sklearn.metrics.pairwise.csr_matrix, "Sklearn",
-                           over)
+                           over, registry)
         # Remove all Csr_matrix methods that cause a dependence on Sklearn.Arr, since
         # they cause a dependency cycle.
         remove_me = set()
@@ -2723,11 +2864,13 @@ def main():
             csr_matrix.remove_element(elt)
         csr_matrix.write(build_dir, "Sklearn", ns="sklearn.metrics.pairwise")
         write_version(build_dir)
+
+        registry.write(build_dir)
     elif mode == "doc":
-        pkg = Package(sklearn, over)
+        pkg = Package(sklearn, over, registry)
         pkg.write_doc(pathlib.Path('./doc'))
     elif mode == "examples":
-        pkg = Package(sklearn, over)
+        pkg = Package(sklearn, over, registry)
         path = pathlib.Path('./_build/examples/auto/')
         print(f"extracting examples to {path}")
         pkg.write_examples(path)

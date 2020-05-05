@@ -177,8 +177,8 @@ Pipeline(steps=[('standardscaler', StandardScaler()),
 
 let%expect_test "make_pipeline" =
   let open Sklearn in
-  let pipe = Pipeline.make_pipeline [Preprocessing.StandardScaler.(create () |> to_pyobject);
-                                     Naive_bayes.GaussianNB.(create () |> to_pyobject)] in
+  let pipe = Pipeline.make_pipeline [Preprocessing.StandardScaler.(create () |> as_estimator);
+                                     Naive_bayes.GaussianNB.(create () |> as_estimator)] in
   print Pipeline.Pipeline.pp pipe;
     [%expect {|
             Pipeline(memory=None,
@@ -225,8 +225,8 @@ let%expect_test "FeatureUnion" =
   let open Sklearn in
   let open Pipeline in
   let union = FeatureUnion.create
-      ~transformer_list:["pca", Sklearn.Decomposition.PCA.(create ~n_components:(`I 1) () |> to_pyobject);
-                         "svd", Sklearn.Decomposition.TruncatedSVD.(create ~n_components:2 () |> to_pyobject)] ()
+      ~transformer_list:["pca", Sklearn.Decomposition.PCA.(create ~n_components:(`I 1) () |> as_transformer);
+                         "svd", Sklearn.Decomposition.TruncatedSVD.(create ~n_components:2 () |> as_transformer)] ()
   in
   let x = matrix [|[|0.; 1.; 3.|]; [|2.; 2.; 5.|]|] in
   print_ndarray @@ FeatureUnion.fit_transform union ~x;
@@ -244,10 +244,10 @@ let%expect_test "complex_pipeline" =
     let _ = Py.Run.eval ~start:Py.File "import sklearn.feature_selection" in
     Py.Run.eval "sklearn.feature_selection.f_regression"
   in
-  let anova_filter = Feature_selection.SelectKBest.create ~score_func:f_regression ~k:(`I 5) () in
-  let clf = Svm.SVC.create ~kernel:"linear" () in
-  let anova_svm = Pipeline.create ~steps:["anova", Feature_selection.SelectKBest.to_pyobject anova_filter;
-                                          "svc", Svm.SVC.to_pyobject clf] ()
+  let anova_filter = Feature_selection.SelectKBest.(create ~score_func:f_regression ~k:(`I 5) () |> as_estimator) in
+  let clf = Svm.SVC.(create ~kernel:"linear" () |> as_estimator) in
+  let anova_svm = Pipeline.create ~steps:["anova", anova_filter;
+                                          "svc", clf] ()
   in
   let anova_svm = Pipeline.(
       set_params anova_svm ~kwargs:["anova__k", (Py.Int.of_int 10); "svc__C", (Py.Float.of_float 0.1)]

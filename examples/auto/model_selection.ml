@@ -40,8 +40,8 @@ let%expect_test "GridSearchCV" =
                           "C", `Ints [1; 10]]
   in
   let module SVC = Sklearn.Svm.SVC in
-  let svc = SVC.(create () |> to_pyobject) in
-  let clf = GridSearchCV.create ~estimator:svc ~param_grid () in
+  let svc = SVC.create () in
+  let clf = GridSearchCV.create ~estimator:(SVC.BaseEstimator svc) ~param_grid () in
   print GridSearchCV.pp @@ GridSearchCV.fit ~x:iris#data ~y:iris#target clf;
   [%expect {|
       GridSearchCV(cv=None, error_score=nan,

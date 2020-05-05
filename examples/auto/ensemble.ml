@@ -320,13 +320,13 @@ let%expect_test "StackingClassifier" =
   let open Sklearn.Ensemble in
   let open Sklearn.Pipeline in
   let iris = Sklearn.Datasets.load_iris () in
-  let estimators = ["rf", RandomForestClassifier.(create ~n_estimators:10 ~random_state:42 () |> to_pyobject);
-                    "svr", make_pipeline [ Sklearn.Preprocessing.StandardScaler.(create () |> to_pyobject);
-                                           Sklearn.Svm.LinearSVC.(create ~random_state:42 () |> to_pyobject)]
-                           |> Pipeline.to_pyobject]
+  let estimators = ["rf", RandomForestClassifier.(create ~n_estimators:10 ~random_state:42 () |> as_estimator);
+                    "svr", make_pipeline [ Sklearn.Preprocessing.StandardScaler.(create () |> as_estimator);
+                                           Sklearn.Svm.LinearSVC.(create ~random_state:42 () |> as_estimator)]
+                           |> Pipeline.as_estimator]
   in
   let clf = StackingClassifier.create ~estimators
-      ~final_estimator:Sklearn.Linear_model.LogisticRegression.(create () |> to_pyobject) ()
+      ~final_estimator:Sklearn.Linear_model.LogisticRegression.(create () |> as_estimator) ()
   in
   let [@ocaml.warning "-8"] [x_train; x_test; y_train; y_test] =
     Sklearn.Model_selection.train_test_split [iris#data; iris#target] ~stratify:iris#target ~random_state:42
@@ -362,10 +362,10 @@ let%expect_test "StackingClassifier" =
 let%expect_test "StackingRegressor" =
   let open Sklearn.Ensemble in
   let diabetes = Sklearn.Datasets.load_diabetes () in
-  let estimators = ["lr", Sklearn.Linear_model.RidgeCV.(create () |> to_pyobject);
-                    "svr", Sklearn.Svm.LinearSVR.(create ~random_state:42 () |> to_pyobject)] in
+  let estimators = ["lr", Sklearn.Linear_model.RidgeCV.(create () |> as_estimator);
+                    "svr", Sklearn.Svm.LinearSVR.(create ~random_state:42 () |> as_estimator)] in
   let reg = StackingRegressor.create ~estimators
-      ~final_estimator:RandomForestRegressor.(create ~n_estimators:10 ~random_state:42 () |> to_pyobject) ()
+      ~final_estimator:RandomForestRegressor.(create ~n_estimators:10 ~random_state:42 () |> as_estimator) ()
   in
   let [@ocaml.warning "-8"] [x_train; x_test; y_train; y_test] =
     Sklearn.Model_selection.train_test_split [diabetes#data; diabetes#target] ~random_state:42
@@ -420,9 +420,9 @@ let%expect_test "VotingClassifier" =
   let open Sklearn.Ensemble in
   let open Sklearn.Linear_model in
   let open Sklearn.Naive_bayes in
-  let clf1 = LogisticRegression.(create ~multi_class:`Multinomial ~random_state:1 () |> to_pyobject) in
-  let clf2 = RandomForestClassifier.(create ~n_estimators:50 ~random_state:1 () |> to_pyobject) in
-  let clf3 = GaussianNB.(create () |> to_pyobject) in
+  let clf1 = LogisticRegression.(create ~multi_class:`Multinomial ~random_state:1 () |> as_estimator) in
+  let clf2 = RandomForestClassifier.(create ~n_estimators:50 ~random_state:1 () |> as_estimator) in
+  let clf3 = GaussianNB.(create () |> as_estimator) in
   let x = matrixi [|[|-1; -1|]; [|-2; -1|]; [|-3; -2|]; [|1; 1|]; [|2; 1|]; [|3; 2|]|] in
   let y = vectori [|1; 1; 1; 2; 2; 2|] in
   let eclf1 = VotingClassifier.create ~estimators:["lr", clf1; "rf", clf2; "gnb", clf3] ~voting:`Hard () in
@@ -472,8 +472,8 @@ let%expect_test "VotingClassifier" =
 let%expect_test "VotingRegressor" =
   let open Sklearn.Ensemble in
   let open Sklearn.Linear_model in
-  let r1 = LinearRegression.(create () |> to_pyobject) in
-  let r2 = RandomForestRegressor.(create ~n_estimators:10 ~random_state:1 () |> to_pyobject) in
+  let r1 = LinearRegression.(create () |> as_estimator) in
+  let r2 = RandomForestRegressor.(create ~n_estimators:10 ~random_state:1 () |> as_estimator) in
   let x = matrixi [|[|1; 1|]; [|2; 4|]; [|3; 9|]; [|4; 16|]; [|5; 25|]; [|6; 36|]|] in
   let y = vectori [|2; 6; 12; 20; 30; 42|] in
   let er = VotingRegressor.create ~estimators:["lr", r1;
