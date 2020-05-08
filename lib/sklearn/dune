@@ -13,69 +13,97 @@
 ;; https://github.com/ocaml/dune/issues/1017
 (rule (copy ../common/wrap_utils_common.ml wrap_utils_common.ml))
 
-(rule (targets base.ml conftest.mli discriminant_analysis.ml
-               experimental.mli impute.ml kernel_ridge.mli
-               model_selection.ml random_projection.ml tests.mli
-               base.mli covariance.ml discriminant_analysis.mli
-               externals.ml impute.mli linear_model.ml
-               model_selection.mli neighbors.ml random_projection.mli
-               tree.ml calibration.ml covariance.mli dummy.ml
-               externals.mli inspection.ml linear_model.mli
-               multiclass.ml neighbors.mli semi_supervised.ml tree.mli
-               calibration.mli cross_decomposition.ml dummy.mli
-               feature_extraction.ml inspection.mli manifold.ml
-               multiclass.mli neural_network.ml semi_supervised.mli
-               utils.ml cluster.ml cross_decomposition.mli ensemble.ml
-               feature_extraction.mli isotonic.ml manifold.mli
-               multioutput.ml neural_network.mli setup.ml utils.mli
-               cluster.mli datasets.ml ensemble.mli
-               feature_selection.ml isotonic.mli metrics.ml
-               multioutput.mli pipeline.ml setup.mli compose.ml
-               datasets.mli exceptions.ml feature_selection.mli
-               kernel_approximation.ml metrics.mli naive_bayes.ml
-               pipeline.mli svm.ml compose.mli decomposition.ml
-               exceptions.mli gaussian_process.ml
-               kernel_approximation.mli mixture.ml naive_bayes.mli
-               preprocessing.ml svm.mli conftest.ml decomposition.mli
-               experimental.ml gaussian_process.mli kernel_ridge.ml
-               mixture.mli preprocessing.mli tests.ml csr_matrix.ml
-               csr_matrix.mli version.ml BaseEstimator.ml
-               BaseEstimator.mli ClassifierMixin.ml
-               ClassifierMixin.mli MetaEstimatorMixin.ml
-               MetaEstimatorMixin.mli RegressorMixin.ml
-               RegressorMixin.mli TransformerMixin.ml
-               TransformerMixin.mli LinearClassifierMixin.ml
-               LinearClassifierMixin.mli SparseCoefMixin.ml
-               SparseCoefMixin.mli ClusterMixin.ml ClusterMixin.mli
-               BaseSpectral.ml BaseSpectral.mli BiclusterMixin.ml
-               BiclusterMixin.mli OutlierMixin.ml OutlierMixin.mli
-               MultiOutputMixin.ml MultiOutputMixin.mli
-               SparseCodingMixin.ml SparseCodingMixin.mli
-               BaseWeightBoosting.ml BaseWeightBoosting.mli
-               BaseEnsemble.ml BaseEnsemble.mli BaseBagging.ml
-               BaseBagging.mli BaseForest.ml BaseForest.mli
-               BaseGradientBoosting.ml BaseGradientBoosting.mli
-               SelectorMixin.ml SelectorMixin.mli
-               StationaryKernelMixin.ml StationaryKernelMixin.mli
-               GenericKernelMixin.ml GenericKernelMixin.mli
-               NormalizedKernelMixin.ml NormalizedKernelMixin.mli
-               BaseSGDClassifier.ml BaseSGDClassifier.mli BaseSGD.ml
-               BaseSGD.mli BaseSGDRegressor.ml BaseSGDRegressor.mli
-               BaseMixture.ml BaseMixture.mli DensityMixin.ml
-               DensityMixin.mli BaseSearchCV.ml BaseSearchCV.mli
-               BaseCrossValidator.ml BaseCrossValidator.mli
-               BaseShuffleSplit.ml BaseShuffleSplit.mli
-               NeighborsBase.ml NeighborsBase.mli KNeighborsMixin.ml
-               KNeighborsMixin.mli SupervisedIntegerMixin.ml
-               SupervisedIntegerMixin.mli SupervisedFloatMixin.ml
-               SupervisedFloatMixin.mli UnsupervisedMixin.ml
-               UnsupervisedMixin.mli RadiusNeighborsMixin.ml
-               RadiusNeighborsMixin.mli BaseMultilayerPerceptron.ml
-               BaseMultilayerPerceptron.mli BaseRandomProjection.ml
-               BaseRandomProjection.mli BaseLabelPropagation.ml
-               BaseLabelPropagation.mli BaseSVC.ml BaseSVC.mli
-               BaseLibSVM.ml BaseLibSVM.mli BaseDecisionTree.ml
-               BaseDecisionTree.mli IndexMixin.ml IndexMixin.mli)
+(rule (targets
+       BaseTypes.ml
+       BaseTypes.mli
+       base.ml
+       base.mli
+       calibration.ml
+       calibration.mli
+       cluster.ml
+       cluster.mli
+       compose.ml
+       compose.mli
+       conftest.ml
+       conftest.mli
+       covariance.ml
+       covariance.mli
+       cross_decomposition.ml
+       cross_decomposition.mli
+       csr_matrix.ml
+       csr_matrix.mli
+       datasets.ml
+       datasets.mli
+       decomposition.ml
+       decomposition.mli
+       discriminant_analysis.ml
+       discriminant_analysis.mli
+       dummy.ml
+       dummy.mli
+       ensemble.ml
+       ensemble.mli
+       exceptions.ml
+       exceptions.mli
+       experimental.ml
+       experimental.mli
+       externals.ml
+       externals.mli
+       feature_extraction.ml
+       feature_extraction.mli
+       feature_selection.ml
+       feature_selection.mli
+       gaussian_process.ml
+       gaussian_process.mli
+       impute.ml
+       impute.mli
+       inspection.ml
+       inspection.mli
+       isotonic.ml
+       isotonic.mli
+       kernel_approximation.ml
+       kernel_approximation.mli
+       kernel_ridge.ml
+       kernel_ridge.mli
+       linear_model.ml
+       linear_model.mli
+       manifold.ml
+       manifold.mli
+       metrics.ml
+       metrics.mli
+       mixture.ml
+       mixture.mli
+       model_selection.ml
+       model_selection.mli
+       multiclass.ml
+       multiclass.mli
+       multioutput.ml
+       multioutput.mli
+       naive_bayes.ml
+       naive_bayes.mli
+       neighbors.ml
+       neighbors.mli
+       neural_network.ml
+       neural_network.mli
+       pipeline.ml
+       pipeline.mli
+       preprocessing.ml
+       preprocessing.mli
+       random_projection.ml
+       random_projection.mli
+       semi_supervised.ml
+       semi_supervised.mli
+       setup.ml
+       setup.mli
+       svm.ml
+       svm.mli
+       tests.ml
+       tests.mli
+       tree.ml
+       tree.mli
+       utils.ml
+       utils.mli
+       wrap_version.ml
+       )
 
       (deps ../version.sh ../skdoc.sh ../skdoc.py)
       (action (run bash ../skdoc.sh build-sklearn))

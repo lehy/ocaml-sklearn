@@ -1,7 +1,7 @@
 include Wrap_utils_common
 
 let init () =
-  init "sklearn" Version.version
+  init "sklearn" Wrap_version.version
 
 let () = init ()
 

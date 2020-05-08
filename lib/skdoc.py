@@ -524,7 +524,7 @@ class CrossValGenerator(BaseType):
     ]
 
     def __init__(self):
-        super().__init__('BaseCrossValidator', 'CrossValidator')
+        super().__init__('BaseTypes.BaseCrossValidator', 'CrossValidator')
 
 
 class Estimator(BaseType):
@@ -535,7 +535,7 @@ class Estimator(BaseType):
     ]
 
     def __init__(self):
-        super().__init__('BaseEstimator', 'Estimator')
+        super().__init__('BaseTypes.BaseEstimator', 'Estimator')
 
 
 class Transformer(BaseType):
@@ -546,7 +546,7 @@ class Transformer(BaseType):
     ]
 
     def __init__(self):
-        super().__init__('TransformerMixin', 'Transformer')
+        super().__init__('BaseTypes.TransformerMixin', 'Transformer')
 
 
 class PyObject(Type):
@@ -655,16 +655,28 @@ class Registry:
             self.module_path[klass] = module_path
         for ancestor in ancestors:
             if ancestor is not klass:
-                ancestor_name = ancestor.__name__
-                if (('Base' in ancestor_name or 'Mixin' in ancestor_name)
+                ancestor_name = ancestor.__name__.lower()
+                # tweaked for sklearn+scipy
+                if (('base' in ancestor_name or 'mixin' in ancestor_name
+                     or 'rv_' in ancestor_name)
                         and not ancestor_name.startswith('_')):
+                    # if not ancestor_name.startswith('_'):
                     self.types[ancestor].append(klass)
                     self.bases[klass].add(ancestor)
 
     def write(self, build_dir):
-        print("writing registry, generated modules:")
-        for k, v in self.types.items():
-            self._write_type(build_dir, k, v)
+        build_dir.mkdir(parents=True, exist_ok=True)
+        ml = build_dir / "BaseTypes.ml"
+        self.add_generated_file(ml)
+        with open(ml, 'w') as f:
+            for k, v in self.types.items():
+                self._write_type_ml(f, k, v)
+
+        mli = build_dir / "BaseTypes.mli"
+        self.add_generated_file(mli)
+        with open(mli, 'w') as f:
+            for k, v in self.types.items():
+                self._write_type_mli(f, k, v)
 
     def report_generated(self):
         if self.generated_files:
@@ -676,28 +688,24 @@ class Registry:
             for f in sorted(self.generated_doc_files):
                 print(f)
 
-    def _write_type(self, build_dir, t, elements):
+    def _write_type_mli(self, f, t, elements):
         module_name = make_module_name(t.__name__)
-        dire = build_dir
-        dire.mkdir(parents=True, exist_ok=True)
-        ml = dire / f"{module_name}.ml"
-        with open(ml, 'w') as f:
-            self.add_generated_file(ml)
-            self._write_type_raw(f, t, elements)
-        mli = dire / f"{module_name}.mli"
-        with open(mli, 'w') as f:
-            self.add_generated_file(mli)
-            f.write("type t = ..\n")
-            f.write("val __to_pyobject_ref : (t -> Py.Object.t) ref\n")
-            f.write("val to_pyobject : t -> Py.Object.t\n")
+        f.write(f"module {module_name} : sig\n")
+        f.write("type t = ..\n")
+        f.write("val __to_pyobject_ref : (t -> Py.Object.t) ref\n")
+        f.write("val to_pyobject : t -> Py.Object.t\n")
+        f.write(f"end\n\n")
 
-    def _write_type_raw(self, f, t, elements):
+    def _write_type_ml(self, f, t, elements):
+        module_name = make_module_name(t.__name__)
+        f.write(f"module {module_name} = struct\n")
         f.write("type t = ..\n")
         f.write(f"""let __to_pyobject_ref : (t -> Py.Object.t) ref =
   ref (fun _ -> invalid_arg "Sklearn.{make_module_name(t.__name__)}.to_pyobject: unknown datatype")
 
 let to_pyobject : t -> Py.Object.t = fun x -> !__to_pyobject_ref x
 """)
+        f.write(f"end\n\n")
 
 
 def deindent(line):
@@ -1284,10 +1292,9 @@ class Module:
             element.write_to_ml(f, module_path)
 
     def write_mli_inside(self, f, module_path):
-        f.write(
-            """(** Get an attribute of this module as a Py.Object.t.
+        f.write("""(** Get an attribute of this module as a Py.Object.t.
                    This is useful to pass a Python function to another function. *)\n"""
-        )
+                )
         f.write("val get_py : string -> Py.Object.t\n\n")
         for element in self.elements:
             element.write_to_mli(f, module_path)
@@ -1441,10 +1448,12 @@ class Class:
                     continue
                 if is_hashable(item):
                     if item not in callables:
-                        append(elts, Method, name, qualname, item, overrides, builtin)
+                        append(elts, Method, name, qualname, item, overrides,
+                               builtin)
                         callables.add(item)
                 else:
-                    append(elts, Method, name, qualname, item, overrides, builtin)
+                    append(elts, Method, name, qualname, item, overrides,
+                           builtin)
             elif overrides.has_complete_spec(qualname):
                 # Some methods show up as properties on the class, and
                 # are present only in some instantiations (for example
@@ -1453,7 +1462,8 @@ class Class:
                 # everything.
                 # print(f"II wrapping non-callable method {name}: {item}")
                 try:
-                    elts.append(Method(name, qualname, item, overrides, builtin))
+                    elts.append(
+                        Method(name, qualname, item, overrides, builtin))
                 except Exception as e:
                     print(
                         f"WW method {qualname} has complete override spec but there was an error wrapping it: {e}"
@@ -1485,8 +1495,9 @@ class Class:
         for base in self.registry.bases[self.klass]:
             base_name = make_module_name(base.__name__)
             f.write(f"""
-            type {base_name}.t += {base_name} of t;;
-            {base_name}.__to_pyobject_ref := let old_to_pyobject = !{base_name}.__to_pyobject_ref in function
+            type BaseTypes.{base_name}.t += {base_name} of t;;
+            BaseTypes.{base_name}.__to_pyobject_ref := let old_to_pyobject =
+              !BaseTypes.{base_name}.__to_pyobject_ref in function
             | {base_name} x -> to_pyobject x
             | x -> old_to_pyobject x
             let {caster(base_name)} x = {base_name} x
@@ -1543,8 +1554,9 @@ class Class:
         f.write("val to_pyobject : t -> Py.Object.t\n\n")
         for base in self.registry.bases[self.klass]:
             base_name = make_module_name(base.__name__)
-            f.write(f"type {base_name}.t += {base_name} of t\n")
-            f.write(f"val {caster(base_name)} : t -> {base_name}.t\n")
+            f.write(f"type BaseTypes.{base_name}.t += {base_name} of t\n")
+            f.write(
+                f"val {caster(base_name)} : t -> BaseTypes.{base_name}.t\n")
         self.constructor.write_to_mli(f, module_path)
         for element in self.elements:
             element.write_to_mli(f, module_path)
@@ -2450,7 +2462,8 @@ class Function:
         raw_doc = getattr(function, '__doc__', '')
         signature = self._signature()
         fixed_values = overrides.fixed_values(self.qualname)
-        parameters = self._build_parameters(signature, raw_doc, fixed_values, builtin)
+        parameters = self._build_parameters(signature, raw_doc, fixed_values,
+                                            builtin)
         ret = self._build_ret(signature, raw_doc, fixed_values, builtin)
         self.wrapper = Wrapper(python_name, self._ml_name(python_name), doc,
                                parameters, ret, "function", namespace)
@@ -2531,9 +2544,7 @@ class Function:
         ret_type = self.overrides.ret_type(self.qualname)
         if ret_type is None:
             if self.overrides.returns_bunch(self.qualname):
-                ret_type = parse_bunch_simple(doc,
-                                              builtin,
-                                              section='Returns')
+                ret_type = parse_bunch_simple(doc, builtin, section='Returns')
             else:
                 ret_type_elements = parse_types_simple(doc,
                                                        builtin,
@@ -2932,7 +2943,7 @@ def write_version(package, build_dir, registry):
         package.__version__).version
     full_version_ml = '[' + '; '.join([f'"{x}"' for x in full_version]) + ']'
     version_ml = '(' + ', '.join(str(x) for x in full_version[:2]) + ')'
-    ml = build_dir / 'version.ml'
+    ml = build_dir / 'wrap_version.ml'
     with open(ml, 'w') as f:
         registry.add_generated_file(ml)
         f.write(f'let full_version = {full_version_ml}\n')

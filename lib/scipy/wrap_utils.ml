@@ -1,7 +1,7 @@
 include Wrap_utils_common
 
 let init () =
-  init "scipy" Version.version
+  init "scipy" Wrap_version.version
 
 let () = init ()
 

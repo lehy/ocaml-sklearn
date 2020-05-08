@@ -13,13 +13,39 @@
 ;; https://github.com/ocaml/dune/issues/1017
 (rule (copy ../common/wrap_utils_common.ml wrap_utils_common.ml))
 
-(rule (targets BaseException.ml BaseException.mli IndexMixin.ml
-               IndexMixin.mli NDInterpolatorBase.ml NDInterpolatorBase.mli cluster.ml
-               cluster.mli conftest.ml conftest.mli constants.ml constants.mli fft.ml
-               fft.mli fftpack.ml fftpack.mli integrate.ml integrate.mli
-               interpolate.ml interpolate.mli io.ml io.mli misc.ml misc.mli
-               ndimage.ml ndimage.mli odr.ml odr.mli setup.ml setup.mli signal.ml
-               signal.mli stats.ml stats.mli version.ml)
+(rule (targets
+       BaseTypes.ml
+       BaseTypes.mli
+       cluster.ml
+       cluster.mli
+       conftest.ml
+       conftest.mli
+       constants.ml
+       constants.mli
+       fft.ml
+       fft.mli
+       fftpack.ml
+       fftpack.mli
+       integrate.ml
+       integrate.mli
+       interpolate.ml
+       interpolate.mli
+       io.ml
+       io.mli
+       misc.ml
+       misc.mli
+       ndimage.ml
+       ndimage.mli
+       odr.ml
+       odr.mli
+       setup.ml
+       setup.mli
+       signal.ml
+       signal.mli
+       stats.ml
+       stats.mli
+       wrap_version.ml
+       )
       (deps ../version.sh ../skdoc.sh ../skdoc.py)
       (action (run bash ../skdoc.sh build-scipy))
       (mode fallback))
