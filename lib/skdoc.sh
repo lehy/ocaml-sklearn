@@ -3,7 +3,7 @@ set -e
 set -x
 
 ROOT=$(realpath $(dirname "$0"))/..
-VENV="$ROOT/.venv"
+VENV="$ROOT/.venv-$@"
 echo "ROOT from $0 is $ROOT"
 source "$ROOT/lib/version.sh"
 if ! test -e "$VENV/bin/activate"; then
