@@ -1,10 +1,11 @@
 import re
-import pkgutil
-import importlib
-import inspect
-import textwrap
 import io
 import os
+import inspect
+import pkgutil
+import pathlib
+import textwrap
+import importlib
 import collections
 
 
@@ -170,7 +171,8 @@ class Enum(Type):
             unwrap_cases = [f"{elt.tag()[3]}" for elt in elements]
             self.unwrap = '(fun x -> ' + ' else '.join(
                 unwrap_cases
-            ) + ' else failwith (Printf.sprintf "Sklearn: could not identify type from Python value %s (%s)" (Py.Object.to_string x) (Wrap_utils.type_string x)))'
+            ) + ''' else failwith (Printf.sprintf "Sklearn: could not identify type from Python value %s (%s)"
+                                                  (Py.Object.to_string x) (Wrap_utils.type_string x)))'''
 
 
 class Optional(Type):
@@ -375,7 +377,8 @@ class LossFunction(Type):
     names = ['LossFunction', 'concrete ``LossFunction``']
     # ml_type = 'Sklearn.Arr.t -> Sklearn.Arr.t -> float'
     ml_type_ret = 'Sklearn.Arr.t -> Sklearn.Arr.t -> float'
-    unwrap = '(fun py -> fun x y -> Py.Callable.to_function py [|Sklearn.Arr.to_pyobject x; Sklearn.Arr.to_pyobject y|] |> Py.Float.to_float)'
+    unwrap = '''(fun py -> fun x y -> Py.Callable.to_function py
+       [|Sklearn.Arr.to_pyobject x; Sklearn.Arr.to_pyobject y|] |> Py.Float.to_float)'''
 
 
 class ClassificationReport(Type):
@@ -401,7 +404,8 @@ class Array(Type):
         self.ml_type = f"{t.ml_type} array"
         self.wrap = f'(fun ml -> Py.Array.of_array {t.wrap} (fun _ -> invalid_arg "read-only") ml)'
         self.ml_type_ret = f"{t.ml_type} array"
-        self.unwrap = f"(fun py -> let len = Py.Sequence.length py in Array.init len (fun i -> {t.unwrap} (Py.Sequence.get_item py i)))"
+        self.unwrap = f"""(fun py -> let len = Py.Sequence.length py in Array.init len
+          (fun i -> {t.unwrap} (Py.Sequence.get_item py i)))"""
 
     def __str__(self):
         return repr(self)
@@ -410,7 +414,7 @@ class Array(Type):
         return f"Array[{str(self.t)}]"
 
 
-class ArrayList(Type):
+class ArrPyList(Type):
     names = ['iterable of iterables', 'list of arrays', 'list of ndarray']
     ml_type = 'Sklearn.Arr.List.t'
     ml_type_ret = 'Sklearn.Arr.List.t'
@@ -419,13 +423,11 @@ class ArrayList(Type):
 
 
 class List(Type):
-    def __init__(self, t):
+    def __init__(self, t, names=[]):
         self.t = t
-        self.names = []
+        self.names = names
         self.ml_type = f"{t.ml_type} list"
         self.wrap = f'(fun ml -> Py.List.of_list_map {t.wrap} ml)'
-        # self.ml_type_ret = f"{t.ml_type} array"
-        # self.unwrap = f"(fun py -> let len = Py.Sequence.length py in Array.init len (fun i -> {t.unwrap} (Py.Sequence.get_item py i)))"
         self.ml_type_ret = f"{t.ml_type} list"
         self.unwrap = f"(fun py -> Py.List.to_list_map ({t.unwrap}) py)"
 
@@ -477,10 +479,6 @@ class String(Type):
         return tag("S")
 
 
-# class ArrayLike(Type):
-#     names = ['list-like', 'list']
-
-
 class NoneValue(Type):
     names = ['None', 'none']
 
@@ -500,14 +498,6 @@ class FalseValue(Type):
 
     def tag(self):
         return '`False', '`False', '`False -> Py.Bool.f', None
-
-
-class RandomState(Type):
-    names = ['RandomState instance', 'instance of RandomState', 'RandomState']
-
-
-class LinearOperator(Type):
-    names = ['LinearOperator']
 
 
 class BaseType(Type):
@@ -530,7 +520,7 @@ class BaseType(Type):
 class CrossValGenerator(BaseType):
     names = [
         'cross-validation generator', 'cross-validation splitter',
-        'CV splitter'
+        'CV splitter', 'a cross-validator instance'
     ]
 
     def __init__(self):
@@ -547,20 +537,16 @@ class Estimator(BaseType):
     def __init__(self):
         super().__init__('BaseEstimator', 'Estimator')
 
+
 class Transformer(BaseType):
     names = [
         'instance TransformerMixin', 'TransformerMixin instance',
-        'instance Transformer', 'Transformer instance',
-        'transformer instance', 'instance transformer', 'transformer object',
-        'transformer'
+        'instance Transformer', 'Transformer instance', 'transformer instance',
+        'instance transformer', 'transformer object', 'transformer'
     ]
 
     def __init__(self):
         super().__init__('TransformerMixin', 'Transformer')
-        
-
-class JoblibMemory(Type):
-    names = ['object with the joblib.Memory interface']
 
 
 class PyObject(Type):
@@ -581,14 +567,11 @@ class Dtype(Type):
     unwrap = 'Sklearn.Arr.Dtype.of_pyobject'
 
 
-class TypeList(Type):
-    names = ['list of type', 'list of types']
-
-
 class Dict(Type):
     # XXX dict of numpy (masked) ndarrays is the format of a
     # DataFrame, we could have a more appropriate OCaml type for it
-    # maybe?
+    # maybe, rather than this generic one (which is just a Python
+    # dict)?
     names = [
         'dict', 'Dict', 'dictionary', 'mapping of string to any',
         'dict of numpy (masked) ndarrays'
@@ -602,8 +585,20 @@ class Dict(Type):
 
 class ParamGridDict(Type):
     names = []
-    ml_type = '(string * [`Ints of int list | `Floats of float list | `Strings of string list]) list'
+    ml_type = '''(string * [`Ints of int list | `Floats of float list |
+                            `Strings of string list | `Bools of bool list]) list'''
     wrap = '(fun x -> Sklearn.Dict.(of_param_grid_alist x |> to_pyobject))'
+
+    def tag_name(self):
+        return 'Grid'
+
+
+class ParamDistributionsDict(Type):
+    names = []
+    ml_type = '''(string * [`Ints of int list | `Floats of float list |
+                            `Strings of string list | `Bools of bool list |
+                            `Dist of Py.Object.t]) list'''
+    wrap = '(fun x -> Sklearn.Dict.(of_param_distributions_alist x |> to_pyobject))'
 
     def tag_name(self):
         return 'Grid'
@@ -635,7 +630,19 @@ class Registry:
         self.types = collections.defaultdict(list)
         self.module_path = {}
         self.bases = collections.defaultdict(set)
-        
+        self.generated_files = []
+        self.generated_doc_files = []
+
+    def add_generated_file(self, f):
+        f = pathlib.Path(f)
+        assert f not in self.generated_files, f"source file already generated: {f}"
+        self.generated_files.append(f)
+
+    def add_generated_doc_files(self, f):
+        f = pathlib.Path(f)
+        assert f not in self.generated_doc_files, f"doc file already generated: {f}"
+        self.generated_doc_files.append(f)
+
     def add_class(self, klass, module_path):
         ancestors = inspect.getmro(klass)
         if self.module_path.get(klass, module_path) != module_path:
@@ -649,8 +656,8 @@ class Registry:
         for ancestor in ancestors:
             if ancestor is not klass:
                 ancestor_name = ancestor.__name__
-                if ('Base' in ancestor_name
-                    or 'Mixin' in ancestor_name) and not ancestor_name.startswith('_'):
+                if (('Base' in ancestor_name or 'Mixin' in ancestor_name)
+                        and not ancestor_name.startswith('_')):
                     self.types[ancestor].append(klass)
                     self.bases[klass].add(ancestor)
 
@@ -659,15 +666,27 @@ class Registry:
         for k, v in self.types.items():
             self._write_type(build_dir, k, v)
 
+    def report_generated(self):
+        if self.generated_files:
+            print("II generated source files:")
+            for f in sorted(self.generated_files):
+                print(f)
+        if self.generated_doc_files:
+            print("II generated doc files:")
+            for f in sorted(self.generated_doc_files):
+                print(f)
+
     def _write_type(self, build_dir, t, elements):
-        module_name = ucfirst(t.__name__)
+        module_name = make_module_name(t.__name__)
         dire = build_dir
         dire.mkdir(parents=True, exist_ok=True)
-        print(f"{module_name}.ml")
-        with open(dire / f"{module_name}.ml", 'w') as f:
+        ml = dire / f"{module_name}.ml"
+        with open(ml, 'w') as f:
+            self.add_generated_file(ml)
             self._write_type_raw(f, t, elements)
-        print(f"{module_name}.mli")
-        with open(dire / f"{module_name}.mli", 'w') as f:
+        mli = dire / f"{module_name}.mli"
+        with open(mli, 'w') as f:
+            self.add_generated_file(mli)
             f.write("type t = ..\n")
             f.write("val __to_pyobject_ref : (t -> Py.Object.t) ref\n")
             f.write("val to_pyobject : t -> Py.Object.t\n")
@@ -675,10 +694,11 @@ class Registry:
     def _write_type_raw(self, f, t, elements):
         f.write("type t = ..\n")
         f.write(f"""let __to_pyobject_ref : (t -> Py.Object.t) ref =
-  ref (fun _ -> invalid_arg "Sklearn.{ucfirst(t.__name__)}.to_pyobject: unknown datatype")
+  ref (fun _ -> invalid_arg "Sklearn.{make_module_name(t.__name__)}.to_pyobject: unknown datatype")
 
 let to_pyobject : t -> Py.Object.t = fun x -> !__to_pyobject_ref x
 """)
+
 
 def deindent(line):
     m = re.match('^( *)(.*)$', line)
@@ -822,63 +842,71 @@ def parse_enum(t):
     # print("parse_enum returns:", elts)
     return elts
 
-transformer_list = List(Tuple([String(), Transformer()]))
-transformer_list.names = [
-    'list of (string, transformer) tuples'
-]
 
-estimator_list = List(Tuple([String(), Estimator()]))
-estimator_list.names = [
-    'list of (str, estimator)',
-    'list of (str, estimator) tuples'
-]
+estimator_list = List(
+    Tuple([String(), Estimator()]),
+    names=['list of (str, estimator)', 'list of (str, estimator) tuples'])
 
 
-def init_builtins(builtin, builtin_types):
-    builtin.clear()
-    for t in builtin_types:
-        for name in t.names:
-            assert name not in builtin
-            builtin[name] = t
+class BuiltinTypes:
+    def __init__(self, builtins):
+        self._builtins = {}
+        for t in builtins:
+            for name in t.names:
+                assert name not in self._builtins, f"'{name}' is present several times in builtin types"
+                self._builtins[name] = t
+        self._used_names = set()
+
+    def __getitem__(self, k):
+        self._used_names.add(k)
+        return self._builtins[k]
+
+    def report_unused(self):
+        unused = set(self._builtins.keys()).diff(self._used_names)
+        if unused:
+            print("WW some type names were not used:")
+            for name in unused:
+                print("- {name} ({self._builtins[name]})")
 
 
-builtin_types = [
+generic_builtin_types = [
     Int(),
     Float(),
     Bool(),
-    Arr(),
-    ArrGenerator(),
-    LossFunction(),
-    Ndarray(),
     FloatList(),
     StringList(),
-    ArrayList(),
     SparseMatrix(),
     String(),
-    Dict(),
     DictIntToFloat(),
-    Callable(),
-    # Iterable(),
-    Dtype(),
-    TypeList(),
-    # ArrayLike(),
     NoneValue(),
     TrueValue(),
     FalseValue(),
-    RandomState(),
-    LinearOperator(),
-    CrossValGenerator(),
-    Estimator(),
-    JoblibMemory(),
     PyObject(),
     Self(),
+    Callable(),
+]
+
+numpy_builtin_types = BuiltinTypes(generic_builtin_types + [
+    Ndarray(),
+])
+
+scipy_builtin_types = BuiltinTypes(generic_builtin_types + [])
+
+sklearn_builtin_types = BuiltinTypes(generic_builtin_types + [
+    Arr(),
+    ArrGenerator(),
+    LossFunction(),
+    ArrPyList(),
+    Dict(),
+    Dtype(),
+    CrossValGenerator(),
+    Estimator(),
     Pipeline(),
     FeatureUnion(),
     estimator_list,
-    transformer_list,
-]
-builtin = {}
-init_builtins(builtin, builtin_types)
+    List(Tuple([String(), Transformer()]),
+         names=['list of (string, transformer) tuples']),
+])
 
 
 def partition(l, pred):
@@ -944,7 +972,7 @@ def simplify_enum(enum):
     # There are (probably legitimate) cases where False is accepted
     # but not True!
     if len(false_true) == 2:
-        enum = Enum([builtin['bool']] + not_false_true)
+        enum = Enum([Bool()] + not_false_true)
 
     none, not_none = partition(enum.elements,
                                lambda x: isinstance(x, NoneValue))
@@ -1012,20 +1040,27 @@ def indent(s, w=4):
 def append(container, ctor, *args, **kwargs):
     try:
         elt = ctor(*args, **kwargs)
-    except (NoSignature, OutsideScope, NoDoc, Deprecated) as e:
+    except (NoSignature, OutsideScope, NoDoc, Deprecated, AlreadySeen):
         # print(f"WW append: caught error building {ctor}({args}, {kwargs}): {type(e)}({e})")
         return
+    if hasattr(elt, 'ml_name'):
+        while elt.ml_name in [getattr(x, 'ml_name', None) for x in container]:
+            new_name = elt.ml_name + "'"
+            print(
+                "WW renaming {elt.ml_name} to {new_name} to prevent name clash"
+            )
+            elt.ml_name = new_name
     container.append(elt)
 
 
 class Package:
-    def __init__(self, pkg, overrides, registry):
+    def __init__(self, pkg, overrides, registry, builtin):
         self.pkg = pkg
-        self.ml_name = ucfirst(self.pkg.__name__)
-        self.modules = self._list_modules(pkg, overrides, registry)
+        self.ml_name = make_module_name(self.pkg.__name__)
+        self.modules = self._list_modules(pkg, overrides, registry, builtin)
         self.registry = registry
 
-    def _list_modules(self, pkg, overrides, registry):
+    def _list_modules(self, pkg, overrides, registry, builtin):
         ret = []
         for mod in pkgutil.iter_modules(pkg.__path__):
             name = mod.name
@@ -1033,11 +1068,13 @@ class Package:
                 continue
             full_name = f"{pkg.__name__}.{name}"
             module = importlib.import_module(full_name)
-            ret.append(
-                Module(module,
-                       parent_name=self.ml_name,
-                       overrides=overrides,
-                       registry=registry))
+            append(ret,
+                   Module,
+                   module,
+                   parent_name=self.ml_name,
+                   overrides=overrides,
+                   registry=registry,
+                   builtin=builtin)
         return ret
 
     def __str__(self):
@@ -1075,6 +1112,10 @@ class Package:
 
 
 class OutsideScope(Exception):
+    pass
+
+
+class AlreadySeen(Exception):
     pass
 
 
@@ -1133,6 +1174,13 @@ def mlid(s):
     return s
 
 
+def make_module_name(x):
+    if not re.match(r'^[a-zA-Z]', x):
+        return 'M' + x
+    else:
+        return ucfirst(x)
+
+
 def write_generated_header(f):
     f.write(
         "(* This file was generated by lib/skdoc.py, do not edit by hand. *)\n"
@@ -1140,26 +1188,35 @@ def write_generated_header(f):
 
 
 class Module:
-    def __init__(self, module, parent_name, overrides, registry):
+    _seen = set()
+
+    def __init__(self, module, parent_name, overrides, registry, builtin):
+        # print(f"DD wrapping {module.__name__} {module}")
+        if module in self._seen:
+            # print("DD -> already seen")
+            raise AlreadySeen(module)
+        # print("DD -> wrapping it")
+        self._seen.add(module)
         self.full_python_name = module.__name__
-        if not self.full_python_name.startswith('sklearn'):
+        if not overrides.check_scope(self.full_python_name):
             raise OutsideScope
         if '.externals.' in self.full_python_name:
             raise OutsideScope
 
         self.parent_name = parent_name
         self.python_name = module.__name__.split('.')[-1]
-        self.ml_name = ucfirst(self.python_name)
+        self.ml_name = make_module_name(self.python_name)
         if parent_name:
             self.full_ml_name = f"{parent_name}.{self.ml_name}"
         else:
             self.full_ml_name = self.ml_name
         # print(f"building module {self.full_python_name}")
         self.module = module
-        self.elements = self._list_elements(module, overrides, registry)
+        self.elements = self._list_elements(module, overrides, registry,
+                                            builtin)
         self.registry = registry
 
-    def _list_elements(self, module, overrides, registry):
+    def _list_elements(self, module, overrides, registry, builtin):
         elts = []
         for name in dir(module):
             qualname = f"{self.full_python_name}.{name}"
@@ -1171,12 +1228,17 @@ class Module:
             item = getattr(module, name)
             parent_name = self.full_ml_name
             if inspect.ismodule(item):
-                append(elts, Module, item, parent_name, overrides, registry)
+                append(elts, Module, item, parent_name, overrides, registry,
+                       builtin)
             elif inspect.isclass(item):
-                if not inspect.isabstract(item) and 'Base' not in item.__name__ and 'Mixin' not in item.__name__:
-                    append(elts, Class, item, parent_name, overrides, registry)
+                if not inspect.isabstract(
+                        item
+                ) and 'Base' not in item.__name__ and 'Mixin' not in item.__name__:
+                    append(elts, Class, item, parent_name, overrides, registry,
+                           builtin)
             elif callable(item):
-                append(elts, Function, name, qualname, item, overrides)
+                append(elts, Function, name, qualname, item, overrides,
+                       builtin)
         return elts
 
     def __str__(self):
@@ -1198,7 +1260,8 @@ class Module:
     def write_header(self, f):
         # if self.has_callables():
         f.write("let () = Wrap_utils.init ();;\n")
-        f.write(f'let ns = Py.import "{self.module.__name__}"\n\n')
+        f.write(
+            f'let __wrap_namespace = Py.import "{self.module.__name__}"\n\n')
         # else:
         #     f.write(
         #         "(* this module has no callables, skipping init and ns *)\n")
@@ -1207,20 +1270,23 @@ class Module:
         module_path = f"{module_path}.{self.ml_name}"
         ml = f"{path / self.python_name}.ml"
         with open(ml, 'w') as f:
+            self.registry.add_generated_file(ml)
             self.write_ml_inside(f, module_path)
         mli = f"{path / self.python_name}.mli"
         with open(mli, 'w') as f:
+            self.registry.add_generated_file(mli)
             self.write_mli_inside(f, module_path)
 
     def write_ml_inside(self, f, module_path):
         self.write_header(f)
-        f.write("let get_py name = Py.Module.get ns name\n")
+        f.write("let get_py name = Py.Module.get __wrap_namespace name\n")
         for element in self.elements:
             element.write_to_ml(f, module_path)
 
     def write_mli_inside(self, f, module_path):
         f.write(
-            "(** Get an attribute of this module as a Py.Object.t. This is useful to pass a Python function to another function. *)\n"
+            """(** Get an attribute of this module as a Py.Object.t.
+                   This is useful to pass a Python function to another function. *)\n"""
         )
         f.write("val get_py : string -> Py.Object.t\n\n")
         for element in self.elements:
@@ -1233,12 +1299,14 @@ class Module:
             module_path = self.ml_name
         md = f"{path / self.python_name}.md"
         with open(md, 'w') as f:
+            self.registry.add_generated_doc_file(md)
             for element in self.elements:
                 element.write_to_md(f, module_path)
 
     def write_examples(self, path):
-        md = f"{path / self.python_name}.ml"
-        with open(md, 'w') as f:
+        ml = f"{path / self.python_name}.ml"
+        with open(ml, 'w') as f:
+            self.registry.add_generated_file(ml)
             for element in self.elements:
                 element.write_examples_to(f)
 
@@ -1282,6 +1350,7 @@ def is_hashable(x):
         return False
     return True
 
+
 def caster(x):
     x = re.sub(r'Mixin|Base', '', x)
     x = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', x)
@@ -1289,15 +1358,25 @@ def caster(x):
     x = 'as_' + x
     return x
 
+
 # Major Major
 class Class:
-    def __init__(self, klass, parent_name, overrides, registry):
+    _seen = set()
+
+    def __init__(self, klass, parent_name, overrides, registry, builtin):
+        # print(f"DD wrapping class {parent_name}.{klass.__name__} {klass} {id(klass)}")
+        klass_key = f"{parent_name}.{klass}"
+        if klass_key in self._seen:
+            # print("DD -> already seen")
+            raise AlreadySeen(klass)
+        # print("DD -> wrapping this class")
+        self._seen.add(klass_key)
         self.klass = klass
         self.parent_name = parent_name
         self.constructor = Ctor(self.klass.__name__, self.klass.__name__,
-                                self.klass, overrides)
-        self.elements = self._list_elements(overrides)
-        self.ml_name = ucfirst(self.klass.__name__)
+                                self.klass, overrides, builtin)
+        self.elements = self._list_elements(overrides, builtin)
+        self.ml_name = make_module_name(self.klass.__name__)
         for item in ['deprecated', 'Parallel', 'ABCMeta']:
             if klass.__name__ == item:
                 raise OutsideScope(klass)
@@ -1307,12 +1386,13 @@ class Class:
     def remove_element(self, elt):
         self.elements = [x for x in self.elements if x is not elt]
 
-    def _list_elements(self, overrides):
+    def _list_elements(self, overrides, builtin):
         elts = []
 
         # Parse attributes first, so that we avoid warning about them
         # when listing methods.
         attributes = parse_types_simple(self.klass.__doc__,
+                                        builtin,
                                         section="Attributes")
         attributes = overrides.types(self.klass.__name__, attributes)
 
@@ -1332,7 +1412,7 @@ class Class:
                 proto = self.klass()
             except FutureWarning:
                 raise Deprecated()
-            except Exception as e:
+            except Exception:
                 # print(f"WW cannot create proto for {self.klass.__name__}: {e}")
                 # print(f"WW could not create proto for {self.klass.__name__}")
                 proto = self.klass
@@ -1343,7 +1423,9 @@ class Class:
             # Build our own qualname instead of relying on
             # item.__name__/item.__qualname__, which are unreliable.
             qualname = f"{self.klass.__name__}.{name}"
-            if name.startswith('_') and name not in ['__getitem__']:
+            if name.startswith('_') and name not in [
+                    '__getitem__', '__iter__'
+            ]:
                 continue
             try:
                 item = getattr(proto, name, None)
@@ -1359,10 +1441,10 @@ class Class:
                     continue
                 if is_hashable(item):
                     if item not in callables:
-                        append(elts, Method, name, qualname, item, overrides)
+                        append(elts, Method, name, qualname, item, overrides, builtin)
                         callables.add(item)
                 else:
-                    append(elts, Method, name, qualname, item, overrides)
+                    append(elts, Method, name, qualname, item, overrides, builtin)
             elif overrides.has_complete_spec(qualname):
                 # Some methods show up as properties on the class, and
                 # are present only in some instantiations (for example
@@ -1371,7 +1453,7 @@ class Class:
                 # everything.
                 # print(f"II wrapping non-callable method {name}: {item}")
                 try:
-                    elts.append(Method(name, qualname, item, overrides))
+                    elts.append(Method(name, qualname, item, overrides, builtin))
                 except Exception as e:
                     print(
                         f"WW method {qualname} has complete override spec but there was an error wrapping it: {e}"
@@ -1401,7 +1483,7 @@ class Class:
         f.write("let of_pyobject x = x\n")
         f.write("let to_pyobject x = x\n")
         for base in self.registry.bases[self.klass]:
-            base_name = ucfirst(base.__name__)
+            base_name = make_module_name(base.__name__)
             f.write(f"""
             type {base_name}.t += {base_name} of t;;
             {base_name}.__to_pyobject_ref := let old_to_pyobject = !{base_name}.__to_pyobject_ref in function
@@ -1409,19 +1491,21 @@ class Class:
             | x -> old_to_pyobject x
             let {caster(base_name)} x = {base_name} x
             """)
-        
+
     def write(self, path, module_path, ns):
         module_path = f"{module_path}.{self.ml_name}"
         name = self.klass.__name__
         ml = f"{path / name}.ml"
         with open(ml, 'w') as f:
+            self.registry.add_generated_file(ml)
             f.write("let () = Wrap_utils.init ();;\n")
-            f.write(f'let ns = Py.import "{ns}"\n\n')
+            f.write(f'let __wrap_namespace = Py.import "{ns}"\n\n')
 
             self.write_to_ml(f, module_path, wrap=False)
 
         mli = f"{path / name}.mli"
         with open(mli, 'w') as f:
+            self.registry.add_generated_file(mli)
             self.write_to_mli(f, module_path, wrap=False)
 
     def write_doc(self, path, module_path):
@@ -1429,6 +1513,7 @@ class Class:
         name = self.klass.__name__
         md = f"{path / name}.md"
         with open(md, 'w') as f:
+            self.registry.add_generated_doc_file(md)
             self.constructor.write_to_md(f, module_path)
             for element in self.elements:
                 element.write_to_md(f, module_path)
@@ -1457,7 +1542,7 @@ class Class:
         f.write("val of_pyobject : Py.Object.t -> t\n")
         f.write("val to_pyobject : t -> Py.Object.t\n\n")
         for base in self.registry.bases[self.klass]:
-            base_name = ucfirst(base.__name__)
+            base_name = make_module_name(base.__name__)
             f.write(f"type {base_name}.t += {base_name} of t\n")
             f.write(f"val {caster(base_name)} : t -> {base_name}.t\n")
         self.constructor.write_to_mli(f, module_path)
@@ -1617,9 +1702,11 @@ def clean_doc(doc):
     doc = re.sub(r'\(\*', '( *', doc)
     doc = re.sub(r'\{\|', '{ |', doc)
     doc = re.sub(r'\|\}', '| }', doc)
-    num_quotes = doc.count('"')
-    if num_quotes % 2 == 1:
-        doc = doc + '"'
+    # just do away with double quotes entirely
+    doc = re.sub(r'"', "'", doc)
+    # num_quotes = doc.count('"')
+    # if num_quotes % 2 == 1:
+    #     doc = doc + '"'
     return doc
 
 
@@ -1691,14 +1778,14 @@ class Input:
 
         def replace_method(m):
             obj = m.group(1)
-            klass = ucfirst(self.env.get(obj, ''))
+            klass = make_module_name(self.env.get(obj, ''))
             method = mlid(m.group(2))
             ml_args = format_ml_args(m.group(3))
             return f"{klass}.{method} {ml_args} {obj}"
 
         def replace_attribute(m):
             obj = m.group(1)
-            klass = ucfirst(self.env.get(obj, ''))
+            klass = make_module_name(self.env.get(obj, ''))
             method = mlid(m.group(2))
             return f"{klass}.{method} {obj}"
 
@@ -1821,7 +1908,8 @@ class Example:
                 self.elements[-1].append(line)
 
     def write(self, f):
-        module = ucfirst(os.path.splitext(os.path.split(f.name)[-1])[0])
+        module = make_module_name(
+            os.path.splitext(os.path.split(f.name)[-1])[0])
         f.write("(* TEST TODO\n")
         f.write(f'let%expect_test "{self.name}" =\n')
         f.write(f"  let open Sklearn.{module} in\n")
@@ -1863,11 +1951,11 @@ def make_return_type(type_dict):
         is_yield = False
 
     if not type_dict:
-        return builtin['object']
+        return PyObject()
 
     if len(type_dict) == 1:
         if list(type_dict.keys())[0] == 'self':
-            return builtin['self']
+            return Self()
         v = list(type_dict.values())[0]
         if is_yield:
             if isinstance(v, Arr):
@@ -2214,7 +2302,7 @@ class Wrapper:
         return textwrap.dedent(ret)
 
 
-def parse_type_simple(t, param_name):
+def parse_type_simple(t, param_name, builtin):
     t = remove_ranges(t)
     t = re.sub(r'\s*\(\)\s*', '', t)
 
@@ -2227,22 +2315,22 @@ def parse_type_simple(t, param_name):
     if ret is not None:
         if isinstance(ret, Dict):
             if param_name in ['class_weight']:
-                ret = builtin['dict int to float']
+                ret = DictIntToFloat()
         if isinstance(ret, Arr):
             if param_name in ['filenames']:
-                ret = builtin['list of string']
+                ret = StringList()
         if isinstance(ret, (Arr)):
             if param_name in ['feature_names', 'target_names']:
-                ret = builtin['list of string']
+                ret = StringList()
             if param_name in ['neigh_ind', 'is_inlier']:
-                ret = builtin['ndarray']
+                ret = Arr()
         return ret
 
     elts = parse_enum(t)
     if elts is not None:
         if all([is_string(elt) for elt in elts]):
             return Enum([StringValue(e.strip("\"'")) for e in elts])
-        elts = [parse_type_simple(elt, param_name) for elt in elts]
+        elts = [parse_type_simple(elt, param_name, builtin) for elt in elts]
         # print("parsed enum elts:", elts)
         ret = Enum(elts)
         ret = simplify_enum(ret)
@@ -2256,7 +2344,7 @@ def parse_type_simple(t, param_name):
         return UnknownType(t)
 
 
-def parse_types_simple(doc, section='Parameters'):
+def parse_types_simple(doc, builtin, section='Parameters'):
     if doc is None:
         return {}
     elements = parse_params(doc, section)
@@ -2284,7 +2372,7 @@ def parse_types_simple(doc, section='Parameters'):
             if value.startswith('ref:'):
                 continue
 
-            ty = parse_type_simple(value, param_name)
+            ty = parse_type_simple(value, param_name, builtin)
             ret[param_name] = ty
 
         except Exception as e:
@@ -2293,7 +2381,7 @@ def parse_types_simple(doc, section='Parameters'):
             raise
 
     if not ret and section == 'Returns':
-        return parse_types_simple(doc, section='Yields')
+        return parse_types_simple(doc, builtin, section='Yields')
 
     if section == 'Yields':
         ret['__is_yield'] = True
@@ -2301,7 +2389,7 @@ def parse_types_simple(doc, section='Parameters'):
     return ret
 
 
-def parse_bunch_fetch(elements):
+def parse_bunch_fetch(elements, builtin):
     ret = {}
     for element in elements:
         for line in element.text.split("\n"):
@@ -2315,7 +2403,7 @@ def parse_bunch_fetch(elements):
                 value = m.group(2)
                 value = remove_shape(value)
                 value = value.strip(" \n\t,.;")
-                ret[name] = parse_type_simple(value, name)
+                ret[name] = parse_type_simple(value, name, builtin)
     ret = Bunch(ret)
     return ret
 
@@ -2337,14 +2425,14 @@ def parse_bunch_load(elements):
     return Bunch({k: types[k] for k in attributes})
 
 
-def parse_bunch_simple(doc, section='Returns'):
+def parse_bunch_simple(doc, builtin, section='Returns'):
     elements = parse_params(doc, section)
 
     if 'attributes are' in elements[0].text or (
             len(elements) > 1 and 'attributes are' in elements[1].text):
         return parse_bunch_load(elements)
     else:
-        return parse_bunch_fetch(elements)
+        return parse_bunch_fetch(elements, builtin)
 
 
 class Function:
@@ -2353,7 +2441,8 @@ class Function:
                  qualname,
                  function,
                  overrides,
-                 namespace='ns'):
+                 builtin,
+                 namespace='__wrap_namespace'):
         self.overrides = overrides
         self.function = function
         self.qualname = qualname
@@ -2361,8 +2450,8 @@ class Function:
         raw_doc = getattr(function, '__doc__', '')
         signature = self._signature()
         fixed_values = overrides.fixed_values(self.qualname)
-        parameters = self._build_parameters(signature, raw_doc, fixed_values)
-        ret = self._build_ret(signature, raw_doc, fixed_values)
+        parameters = self._build_parameters(signature, raw_doc, fixed_values, builtin)
+        ret = self._build_ret(signature, raw_doc, fixed_values, builtin)
         self.wrapper = Wrapper(python_name, self._ml_name(python_name), doc,
                                parameters, ret, "function", namespace)
 
@@ -2385,14 +2474,20 @@ class Function:
         if sig is not None:
             return sig
         try:
-            return inspect.signature(self.function)
+            if hasattr(self.function, '_parse_args'):
+                # Signature the scipy way.
+                return inspect.signature(self.function._parse_args)
+            else:
+                return inspect.signature(self.function)
         except ValueError:
             raise NoSignature(self.function)
 
-    def _build_parameters(self, signature, doc, fixed_values):
+    def _build_parameters(self, signature, doc, fixed_values, builtin):
         param_types = self.overrides.param_types(self.qualname)
         if param_types is None:
-            param_types = parse_types_simple(doc, section='Parameters')
+            param_types = parse_types_simple(doc,
+                                             builtin,
+                                             section='Parameters')
             # Make sure all params are in param_types, so that the
             # overrides trigger (even in case the params were not
             # found parsing the doc).
@@ -2404,9 +2499,15 @@ class Function:
             param_types = self.overrides.types(self.qualname, param_types)
 
         parameters = []
+        # Some functions in Scipy have both an n and an N parameter,
+        # which are both mapped to n in OCaml. Detect and fix it.
+        seen_ml_names = set()
         for python_name, parameter in signature.parameters.items():
             ty = param_types[python_name]
             param = Parameter(python_name, ty, parameter)
+            while param.ml_name in seen_ml_names:
+                param.ml_name += "'"
+            seen_ml_names.add(param.ml_name)
             if python_name in fixed_values:
                 param.fixed_value = fixed_values[python_name][0]
             if param.is_star_star():
@@ -2426,13 +2527,17 @@ class Function:
             parameters.append(param)
         return parameters
 
-    def _build_ret(self, signature, doc, fixed_values):
+    def _build_ret(self, signature, doc, fixed_values, builtin):
         ret_type = self.overrides.ret_type(self.qualname)
         if ret_type is None:
             if self.overrides.returns_bunch(self.qualname):
-                ret_type = parse_bunch_simple(doc, section='Returns')
+                ret_type = parse_bunch_simple(doc,
+                                              builtin,
+                                              section='Returns')
             else:
-                ret_type_elements = parse_types_simple(doc, section='Returns')
+                ret_type_elements = parse_types_simple(doc,
+                                                       builtin,
+                                                       section='Returns')
 
                 for k, v in fixed_values.items():
                     if v[1] and k in ret_type_elements:
@@ -2481,11 +2586,12 @@ class Function:
 
 
 class Method(Function):
-    def __init__(self, python_name, qualname, function, overrides):
+    def __init__(self, python_name, qualname, function, overrides, builtin):
         super().__init__(python_name,
                          qualname,
                          function,
                          overrides,
+                         builtin,
                          namespace='self')
         self.wrapper.doc_type = "method"
 
@@ -2503,15 +2609,16 @@ class Method(Function):
 
 
 class Ctor(Function):
-    def __init__(self, python_name, qualname, function, overrides):
+    def __init__(self, python_name, qualname, function, overrides, builtin):
         super().__init__(python_name,
                          qualname,
                          function,
                          overrides,
-                         namespace='ns')
+                         builtin,
+                         namespace='__wrap_namespace')
         self.wrapper.doc_type = "constructor and attributes"
 
-    def _build_ret(self, _signature, _doc, _fixed_values):
+    def _build_ret(self, _signature, _doc, _fixed_values, _builtin):
         return Return(Self())
 
     def _ml_name(self, _python_name):
@@ -2533,9 +2640,13 @@ def compile_dict_keys(dic):
 
 
 class Overrides:
-    def __init__(self, overrides):
+    def __init__(self, overrides, score=r''):
         self.overrides = self._compile_regexes(overrides)
         self.triggered = set()
+        self.scope = score
+
+    def check_scope(self, full_python_name):
+        return re.match(self.scope, full_python_name)
 
     def _compile_regexes(self, overrides):
         overrides = compile_dict_keys(overrides)
@@ -2675,6 +2786,8 @@ overrides = {
          ret_type=Arr()),
     r'__getitem__$':
     dict(ml_name='get_item'),
+    r'__iter__$':
+    dict(ml_name='iter', ret_type=Generator(Dict())),
     r'Pipeline.__getitem__$':
     dict(param_types={
         'self': Self(),
@@ -2706,11 +2819,11 @@ overrides = {
     dict(fixed_values=dict(coef=('true', False))),
     r'\.radius_neighbors$':
     # dict(ret_type=Tuple([List(Arr()), List(Arr())])),
-    dict(ret_type=Tuple([ArrayList(), ArrayList()])),
+    dict(ret_type=Tuple([ArrPyList(), ArrPyList()])),
     r'^NearestCentroid\.fit$':
     dict(param_types=dict(X=Arr(), y=Arr())),
     r'MultiLabelBinarizer\.(fit_transform|fit)':
-    dict(types={'^y$': ArrayList()}),
+    dict(types={'^y$': ArrPyList()}),
     r'\.(decision_function|predict|predict_proba|fit_predict|transform|fit_transform)$':
     dict(ret_type=Arr(), types={r'^X$': Arr()}),
     r'\.fit$':
@@ -2718,7 +2831,7 @@ overrides = {
     r'Pipeline$':
     dict(param_types=dict(steps=estimator_list,
                           memory=Enum([NoneValue(
-                          ), String(), JoblibMemory()]),
+                          ), String(), UnknownType('Joblib Memory')]),
                           verbose=Bool())),
     r'load_iris$':
     dict(ret_type=Bunch({
@@ -2780,7 +2893,7 @@ overrides = {
                           axis=Int(),
                           limit=Tuple([Float(), Float()])),
          ret_type=Arr()),
-    '\.auc$':
+    r'\.auc$':
     dict(param_types=dict(x=Arr(), y=Arr()), ret_type=Float()),
     r'\.classification_report$':
     dict(ret_type=Enum([String(), ClassificationReport()])),
@@ -2788,10 +2901,15 @@ overrides = {
     # don't see how it can ever return an int.
     r'\.hamming_loss$':
     dict(ret_type=Float()),
-    r'CV$':
+    r'(CV|ParameterGrid)$':
     dict(types={
         r'^param_grid$': Enum([ParamGridDict(),
                                List(ParamGridDict())])
+    }),
+    r'ParameterSampler$':
+    dict(types={
+        r'^param_distributions$': Enum([ParamDistributionsDict(),
+                                        List(ParamDistributionsDict())])
     }),
     r'\.mean_(\w+)_error$':
     dict(
@@ -2808,28 +2926,25 @@ overrides = {
 }
 
 
-def write_version(build_dir):
+def write_version(package, build_dir, registry):
     import sklearn.utils
     full_version = sklearn.utils.validation.LooseVersion(
-        sklearn.__version__).version
+        package.__version__).version
     full_version_ml = '[' + '; '.join([f'"{x}"' for x in full_version]) + ']'
     version_ml = '(' + ', '.join(str(x) for x in full_version[:2]) + ')'
-    with open(build_dir / 'version.ml', 'w') as f:
+    ml = build_dir / 'version.ml'
+    with open(ml, 'w') as f:
+        registry.add_generated_file(ml)
         f.write(f'let full_version = {full_version_ml}\n')
         f.write(f'let version = {version_ml}\n')
 
 
 def main():
-    import sklearn
-
     # There are FutureWarnings about deprecated items. We want to
     # catch them in order not to wrap them.
     import warnings
     warnings.simplefilter('error', FutureWarning)
 
-    over = Overrides(overrides)
-
-    import pathlib
     build_dir = pathlib.Path('.')
     # build_dir.mkdir(parents=True, exist_ok=True)
 
@@ -2838,16 +2953,18 @@ def main():
         print("skdoc.py: no argument passed, not doing anything")
         return
 
-    registry = Registry()
-
     mode = sys.argv[1]
-    if mode == "build":
-        pkg = Package(sklearn, over, registry)
+    if mode == "build-sklearn":
+        import sklearn
+        over = Overrides(overrides, r'sklearn(\..+)?')
+        registry = Registry()
+        builtin = sklearn_builtin_types
+        pkg = Package(sklearn, over, registry, builtin)
         pkg.write(build_dir)
         # Write this one separately, no sense having it in metrics and
         # it causes cross dep problems.
         csr_matrix = Class(sklearn.metrics.pairwise.csr_matrix, "Sklearn",
-                           over, registry)
+                           over, registry, builtin)
         # Remove all Csr_matrix methods that cause a dependence on Sklearn.Arr, since
         # they cause a dependency cycle.
         remove_me = set()
@@ -2863,14 +2980,41 @@ def main():
             # print(f"Csr_matrix: removing {elt}")
             csr_matrix.remove_element(elt)
         csr_matrix.write(build_dir, "Sklearn", ns="sklearn.metrics.pairwise")
-        write_version(build_dir)
+        write_version(sklearn, build_dir, registry)
 
         registry.write(build_dir)
+        registry.report_generated()
+
+    elif mode == "build-scipy":
+        builtin = scipy_builtin_types
+        import scipy
+        over = Overrides({}, r'scipy(\..+)?')
+        registry = Registry()
+        pkg = Package(scipy, over, registry, builtin)
+        pkg.write(build_dir)
+        write_version(scipy, build_dir, registry)
+        registry.write(build_dir)
+        registry.report_generated()
+
+    elif mode == "build-numpy":
+        builtin = numpy_builtin_types
+        import numpy
+        over = Overrides({}, r'numpy(\..+)?')
+        registry = Registry()
+        pkg = Package(numpy, over, registry, builtin)
+        pkg.write(build_dir)
+        write_version(numpy, build_dir, registry)
+        registry.write(build_dir)
+        registry.report_generated()
+
     elif mode == "doc":
-        pkg = Package(sklearn, over, registry)
+        builtin = sklearn_builtin_types
+        pkg = Package(sklearn, over, registry, builtin)
         pkg.write_doc(pathlib.Path('./doc'))
+
     elif mode == "examples":
-        pkg = Package(sklearn, over, registry)
+        builtin = sklearn_builtin_types
+        pkg = Package(sklearn, over, registry, builtin)
         path = pathlib.Path('./_build/examples/auto/')
         print(f"extracting examples to {path}")
         pkg.write_examples(path)

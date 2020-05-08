@@ -474,17 +474,17 @@ True
 
 *)
 
-(* TEST TODO
-   let%expect_test "ParameterGrid" =
-   let open Sklearn.Model_selection in
-   let param_grid = {'a': (vectori [|1; 2|]), 'b': [true, false]} in
-   print_ndarray @@ list(ParameterGrid(param_grid)) == ([{'a': 1, 'b': true}, {'a': 1, 'b': false},{'a': 2, 'b': true}, {'a': 2, 'b': false}]);
-   [%expect {|
-      True
+let%expect_test "ParameterGrid" =
+  let open Sklearn.Model_selection in
+  let param_grid = `Grid ["a", `Ints [1; 2]; "b", `Bools [true; false]] in
+  let iter = ParameterGrid.(create ~param_grid () |> iter) in
+  Seq.iter (fun dict -> Format.printf "%a\n" Sklearn.Dict.pp dict) iter;
+  [%expect {|
+      {'a': 1, 'b': True}
+      {'a': 1, 'b': False}
+      {'a': 2, 'b': True}
+      {'a': 2, 'b': False}
    |}]
-
-*)
-
 
 
 (* ParameterGrid *)
@@ -499,22 +499,22 @@ True
 
 *)
 
-(* TEST TODO
-   let%expect_test "ParameterGrid" =
-   let open Sklearn.Model_selection in
-   let grid = [{'kernel': ['linear']}, {'kernel': ['rbf'], 'gamma': [1, 10]}] in
-   print_ndarray @@ list(ParameterGrid(grid)) == [{'kernel': 'linear'},{'kernel': 'rbf', 'gamma': 1},{'kernel': 'rbf', 'gamma': 10}];
-   [%expect {|
-      True
+let%expect_test "ParameterGrid" =
+  let open Sklearn.Model_selection in
+  let grid = `List [["kernel", `Strings ["linear"]];
+                    ["kernel", `Strings ["rbf"]; "gamma", `Ints [1; 10]]] in
+  let param_grid = ParameterGrid.create ~param_grid:grid () in
+  let iter =  ParameterGrid.iter param_grid in
+  Seq.iter (fun dict -> Format.printf "%a\n" Sklearn.Dict.pp dict) iter;
+  [%expect {|
+      {'kernel': 'linear'}
+      {'gamma': 1, 'kernel': 'rbf'}
+      {'gamma': 10, 'kernel': 'rbf'}
+   |}];
+  print_py @@ ParameterGrid.get_item ~ind:1 param_grid;
+  [%expect {|
+      {'kernel': 'rbf', 'gamma': 1}
    |}]
-   print_ndarray @@ ParameterGrid(grid)(vectori [|1|]) == {'kernel': 'rbf', 'gamma': 1};
-   [%expect {|
-      True
-   |}]
-
-*)
-
-
 
 (* ParameterSampler *)
 (*
@@ -534,19 +534,19 @@ True
 
 *)
 
-(* TEST TODO
-   let%expect_test "ParameterSampler" =
-   let open Sklearn.Model_selection in
-   let rng = np..randomState ~0 random in
-   let param_grid = {'a':(vectori [|1; 2|]), 'b': expon ()} in
-   let param_list = list(ParameterSampler(param_grid, n_iter=4,random_state=rng)) in
-   let rounded_list = [dict((k, round ~v 6 ()) for (k, v) in d.items ())for d in param_list] in
-   print_ndarray @@ rounded_list == [{'b': 0.89856, 'a': 1},{'b': 0.923223, 'a': 1},{'b': 1.878964, 'a': 2},{'b': 1.038159, 'a': 2}];
-   [%expect {|
+
+let%expect_test "ParameterSampler" =
+  let open Sklearn.Model_selection in
+  let param_distributions = `Grid ["a", `Ints [1; 2]; "b", `Dist (Scipy.Stats.expon ())] in
+  let sampler = ParameterSampler.create ~param_distributions ~n_iter:4 ~random_state:0 () in
+  let iter = ParameterSampler.iter sampler in
+  Seq.iter (fun dict -> Format.printf "%a\n" Sklearn.Dict.pp dict) iter;
+  [%expect {|
+    {'a': 1, 'b': 0.8985603929935616}
+    {'a': 1, 'b': 0.9232231458040688}
+    {'a': 2, 'b': 1.8789640641973517}
+    {'a': 2, 'b': 1.0381592949436094}
    |}]
-
-*)
-
 
 
 (* PredefinedSplit *)
@@ -569,28 +569,33 @@ TRAIN: [1 2 3] TEST: [0]
 
 *)
 
-(* TEST TODO
-   let%expect_test "PredefinedSplit" =
-   let open Sklearn.Model_selection in
-   let x = .array (matrixi [|[|1; 2|]; [|3; 4|]; [|1; 2|]; [|3; 4|]|]) np in
-   let y = .array (vectori [|0; 0; 1; 1|]) np in
-   let test_fold = [0, 1, -1, 1] in
-   let ps = PredefinedSplit.create ~test_fold () in
-   print_ndarray @@ PredefinedSplit.get_n_splits ps;
-   [%expect {|
+let%expect_test "PredefinedSplit" =
+  let open Sklearn.Model_selection in
+  let module Arr = Sklearn.Arr in
+  let x = matrixi [|[|1; 2|]; [|3; 4|]; [|1; 2|]; [|3; 4|]|] in
+  let y = vectori [|0; 0; 1; 1|] in
+  let test_fold = vectori [|0; 1; -1; 1|] in
+  let ps = PredefinedSplit.create ~test_fold () in
+  print_int @@ PredefinedSplit.get_n_splits ps;
+  [%expect {|
       2
-   |}]
-   print_ndarray @@ print ~ps ();
-   [%expect {|
+   |}];
+  print PredefinedSplit.pp ps;
+  [%expect {|
       PredefinedSplit(test_fold=array([ 0,  1, -1,  1]))
-   |}]
-   print_ndarray @@ for train_index, test_index in PredefinedSplit.split ):print("TRAIN:" ~train_index "TEST:" ~test_index psX_train, X_test = x[train_index], x[test_index]y_train, y_test = y[train_index], y[test_index];
-   [%expect {|
+   |}];
+  let splits = PredefinedSplit.split ps in
+  Seq.iter (fun (train_index, test_index) ->
+      Format.printf "TRAIN: %a TEST: %a\n" Arr.pp train_index Arr.pp test_index;
+      let _x_train, _x_test = Arr.(get x ~i:[`Arr train_index], get x ~i:[`Arr test_index]) in
+      let _y_train, _y_test = Arr.(get y ~i:[`Arr train_index], get y ~i:[`Arr test_index]) in
+      ()
+      (* Format.printf "%a %a %a %a\n" Arr.pp x_train Arr.pp x_test Arr.pp y_train Arr.pp y_test; *)
+    ) splits;
+  [%expect {|
       TRAIN: [1 2 3] TEST: [0]
+      TRAIN: [0 2] TEST: [1 3]
    |}]
-
-*)
-
 
 
 (* RandomizedSearchCV *)
@@ -610,20 +615,16 @@ TRAIN: [1 2 3] TEST: [0]
 
 *)
 
-(* TEST TODO
-   let%expect_test "RandomizedSearchCV" =
-   let open Sklearn.Model_selection in
-   let iris = load_iris () in
-   let logistic = LogisticRegression.create ~solver:'saga' ~tol:1e-2 ~max_iter:200 ~random_state:0 () in
-   let distributions = dict(C=uniform ~loc:0 ~scale:4 (),penalty=['l2', 'l1']) in
-   let clf = RandomizedSearchCV.create ~logistic distributions ~random_state:0 () in
-   let search = RandomizedSearchCV.fit iris.data iris.target clf in
-   print_ndarray @@ .best_params_ search;
-   [%expect {|
-   |}]
-
-*)
-
+(* let%expect_test "RandomizedSearchCV" =
+ *    let open Sklearn.Model_selection in
+ *    let iris = Sklearn.Datasets.load_iris () in
+ *    let logistic = Sklearn.Linear_model.LogisticRegression.create ~solver:`Saga ~tol:1e-2 ~max_iter:200 ~random_state:0 () in
+ *    let distributions = dict(C=uniform ~loc:0 ~scale:4 (),penalty=['l2', 'l1']) in
+ *    let clf = RandomizedSearchCV.create ~logistic distributions ~random_state:0 () in
+ *    let search = RandomizedSearchCV.fit iris.data iris.target clf in
+ *    print_ndarray @@ .best_params_ search;
+ *    [%expect {|
+ *    |}] *)
 
 
 (* RepeatedKFold *)
