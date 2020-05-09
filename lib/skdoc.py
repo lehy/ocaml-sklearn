@@ -9,6 +9,60 @@ import importlib
 import collections
 
 
+def ucfirst(s):
+    if not s:
+        return s
+    return s[0].upper() + s[1:]
+
+
+def lcfirst(s):
+    if not s:
+        return s
+    return s[0].lower() + s[1:]
+
+
+# http://caml.inria.fr/pub/docs/manual-ocaml/lex.html#sss:keywords
+ml_keywords = set(
+    re.split(
+        r'\s+', """
+      and         as          assert      asr         begin       class
+      constraint  do          done        downto      else        end
+      exception   external    false       for         fun         function
+      functor     if          in          include     inherit     initializer
+      land        lazy        let         lor         lsl         lsr
+      lxor        match       method      mod         module      mutable
+      new         nonrec      object      of          open        or
+      private     rec         sig         struct      then        to
+      true        try         type        val         virtual     when
+      while       with
+""".strip()))
+
+
+def tag(s):
+    s = re.sub(r'[^a-zA-Z0-9_]+', '_', s)
+    s = re.sub(r'^([^a-zA-Z])', r'T\1', s)
+    return ucfirst(s)
+
+
+def mlid(s):
+    if s is None:
+        return None
+    # DESCR -> descr
+    if s == s.upper():
+        return s.lower()
+    s = lcfirst(s)
+    if s in ml_keywords:
+        return s + '_'
+    return s
+
+
+def make_module_name(x):
+    if not re.match(r'^[a-zA-Z]', x):
+        return 'M' + x
+    else:
+        return ucfirst(x)
+
+
 class Section_title:
     def __init__(self, text):
         self.text = text
@@ -498,8 +552,8 @@ class BaseType(Type):
             self._tag_name = name
         else:
             self._tag_name = tag_name
-        self.ml_type = f'Sklearn.{name}.t'
-        self.wrap = f'Sklearn.{name}.to_pyobject'
+        self.ml_type = f'[>`{tag(name)}] Sklearn.Obj.t'
+        self.wrap = f'Sklearn.Obj.to_pyobject'
 
     def tag_name(self):
         return self._tag_name
@@ -515,7 +569,7 @@ class CrossValGenerator(BaseType):
     ]
 
     def __init__(self):
-        super().__init__('BaseTypes.BaseCrossValidator', 'CrossValidator')
+        super().__init__('BaseCrossValidator', 'CrossValidator')
 
 
 class Estimator(BaseType):
@@ -526,7 +580,7 @@ class Estimator(BaseType):
     ]
 
     def __init__(self):
-        super().__init__('BaseTypes.BaseEstimator', 'Estimator')
+        super().__init__('BaseEstimator', 'Estimator')
 
 
 class Transformer(BaseType):
@@ -537,7 +591,7 @@ class Transformer(BaseType):
     ]
 
     def __init__(self):
-        super().__init__('BaseTypes.TransformerMixin', 'Transformer')
+        super().__init__('TransformerMixin', 'Transformer')
 
 
 class PyObject(Type):
@@ -548,6 +602,8 @@ class Self(Type):
     names = ['self']
     ml_type = 't'
     ml_type_ret = 't'
+    wrap = 'to_pyobject'
+    unwrap = 'of_pyobject'
 
 
 class Dtype(Type):
@@ -654,18 +710,7 @@ class Registry:
                     self.bases[klass].add(ancestor)
 
     def write(self, build_dir):
-        build_dir.mkdir(parents=True, exist_ok=True)
-        ml = build_dir / "BaseTypes.ml"
-        self.add_generated_file(ml)
-        with open(ml, 'w') as f:
-            for k, v in self.types.items():
-                self._write_type_ml(f, k, v)
-
-        mli = build_dir / "BaseTypes.mli"
-        self.add_generated_file(mli)
-        with open(mli, 'w') as f:
-            for k, v in self.types.items():
-                self._write_type_mli(f, k, v)
+        pass
 
     def report_generated(self):
         if self.generated_files:
@@ -676,25 +721,6 @@ class Registry:
             print("II generated doc files:")
             for f in sorted(self.generated_doc_files):
                 print(f)
-
-    def _write_type_mli(self, f, t, elements):
-        module_name = make_module_name(t.__name__)
-        f.write(f"module {module_name} : sig\n")
-        f.write("type t = ..\n")
-        f.write("val __to_pyobject_ref : (t -> Py.Object.t) ref\n")
-        f.write("val to_pyobject : t -> Py.Object.t\n")
-        f.write(f"end\n\n")
-
-    def _write_type_ml(self, f, t, elements):
-        module_name = make_module_name(t.__name__)
-        f.write(f"module {module_name} = struct\n")
-        f.write("type t = ..\n")
-        f.write(f"""let __to_pyobject_ref : (t -> Py.Object.t) ref =
-  ref (fun _ -> invalid_arg "Sklearn.{make_module_name(t.__name__)}.to_pyobject: unknown datatype")
-
-let to_pyobject : t -> Py.Object.t = fun x -> !__to_pyobject_ref x
-""")
-        f.write(f"end\n\n")
 
 
 def deindent(line):
@@ -1145,60 +1171,6 @@ class Deprecated(Exception):
     pass
 
 
-def ucfirst(s):
-    if not s:
-        return s
-    return s[0].upper() + s[1:]
-
-
-def lcfirst(s):
-    if not s:
-        return s
-    return s[0].lower() + s[1:]
-
-
-# http://caml.inria.fr/pub/docs/manual-ocaml/lex.html#sss:keywords
-ml_keywords = set(
-    re.split(
-        r'\s+', """
-      and         as          assert      asr         begin       class
-      constraint  do          done        downto      else        end
-      exception   external    false       for         fun         function
-      functor     if          in          include     inherit     initializer
-      land        lazy        let         lor         lsl         lsr
-      lxor        match       method      mod         module      mutable
-      new         nonrec      object      of          open        or
-      private     rec         sig         struct      then        to
-      true        try         type        val         virtual     when
-      while       with
-""".strip()))
-
-
-def tag(s):
-    s = re.sub(r'[^a-zA-Z0-9_]+', '_', s)
-    s = re.sub(r'^([^a-zA-Z])', r'T\1', s)
-    return ucfirst(s)
-
-
-def mlid(s):
-    if s is None:
-        return None
-    # DESCR -> descr
-    if s == s.upper():
-        return s.lower()
-    s = lcfirst(s)
-    if s in ml_keywords:
-        return s + '_'
-    return s
-
-
-def make_module_name(x):
-    if not re.match(r'^[a-zA-Z]', x):
-        return 'M' + x
-    else:
-        return ucfirst(x)
-
-
 def write_generated_header(f):
     f.write(
         "(* This file was generated by lib/skdoc.py, do not edit by hand. *)\n"
@@ -1222,7 +1194,7 @@ class Module:
                  registry,
                  builtin,
                  inside=[]):
-        print(f"DD wrapping {module.__name__}")
+        # print(f"DD wrapping {module.__name__}")
         # Scipy has the modules exported everywhere. Trying to keep only one copy is hard.
         # Reverting to preventing cycles.
         if module in inside:
@@ -1290,7 +1262,7 @@ class Module:
                 continue
             item = getattr(module, name)
             parent_name = self.full_ml_name
-            print(f"DD wrapping {parent_name}.{name}: {module}")
+            # print(f"DD wrapping {parent_name}.{name}: {module}")
             if inspect.isclass(item):
                 if (not inspect.isabstract(item)
                         and 'Base' not in item.__name__
@@ -1545,20 +1517,23 @@ class Class:
         ret += "]"
         return ret
 
+    def tags(self):
+        tags = [
+            f"`{tag(base.__name__)}"
+            for base in self.registry.bases[self.klass]
+        ]
+        tags.append("`Object")
+        return "[" + ' | '.join(tags) + "]"
+
     def write_header(self, f):
-        f.write("type t = Py.Object.t\n")
-        f.write("let of_pyobject x = x\n")
-        f.write("let to_pyobject x = x\n")
+        f.write(f"type t = {self.tags()} Obj.t\n")
+        f.write("let of_pyobject x = ((Obj.of_pyobject x) : t)\n")
+        f.write("let to_pyobject x = Obj.to_pyobject x\n")
         for base in self.registry.bases[self.klass]:
             base_name = make_module_name(base.__name__)
-            f.write(f"""
-            type BaseTypes.{base_name}.t += {base_name} of t;;
-            BaseTypes.{base_name}.__to_pyobject_ref := let old_to_pyobject =
-              !BaseTypes.{base_name}.__to_pyobject_ref in function
-            | {base_name} x -> to_pyobject x
-            | x -> old_to_pyobject x
-            let {caster(base_name)} x = {base_name} x
-            """)
+            f.write(
+                f"let {caster(base_name)} x = (x :> [`{tag(base_name)}] Obj.t)"
+            )
 
     def write(self, path, module_path, ns):
         module_path = f"{module_path}.{self.ml_name}"
@@ -1594,7 +1569,8 @@ class Class:
         self.constructor.write_to_ml(f, module_path)
         for element in self.elements:
             element.write_to_ml(f, module_path)
-        f.write("let to_string self = Py.Object.to_string self\n")
+        f.write(
+            "let to_string self = Py.Object.to_string (to_pyobject self)\n")
         f.write('let show self = to_string self\n')
         f.write(
             'let pp formatter self = Format.fprintf formatter "%s" (show self)\n'
@@ -1606,14 +1582,14 @@ class Class:
         if wrap:
             f.write(f"module {self.ml_name} : sig\n")
             module_path = f"{module_path}.{self.ml_name}"
-        f.write("type t\n")
+        f.write(f"type t = {self.tags()} Obj.t\n")
         f.write("val of_pyobject : Py.Object.t -> t\n")
         f.write("val to_pyobject : t -> Py.Object.t\n\n")
         for base in self.registry.bases[self.klass]:
             base_name = make_module_name(base.__name__)
-            f.write(f"type BaseTypes.{base_name}.t += {base_name} of t\n")
+            # f.write(f"type BaseTypes.{base_name}.t += {base_name} of t\n")
             f.write(
-                f"val {caster(base_name)} : t -> BaseTypes.{base_name}.t\n")
+                f"val {caster(base_name)} : t -> [`{tag(base_name)}] Obj.t\n")
         self.constructor.write_to_mli(f, module_path)
         for element in self.elements:
             element.write_to_mli(f, module_path)
@@ -1718,7 +1694,7 @@ class Attribute:
         # -> providing both raising + option getters
         f.write(f"""
 let {self.ml_name_opt} self =
-  match Py.Object.get_attr_string self "{self.name}" with
+  match Py.Object.get_attr_string (to_pyobject self) "{self.name}" with
   | None -> failwith "attribute {self.name} not found"
   | Some x -> if Py.is_none x then None else Some ({unwrap} x)
 
@@ -2671,7 +2647,7 @@ class Method(Function):
                          function,
                          overrides,
                          builtin,
-                         namespace='self')
+                         namespace='(to_pyobject self)')
         self.wrapper.doc_type = "method"
 
     def _build_parameters(self, *args, **kwargs):

@@ -10,7 +10,7 @@ type param_grid = [`Ints of int list | `Floats of float list |
 
 type param_distributions = [`Ints of int list | `Floats of float list |
                             `Strings of string list | `Bools of bool list
-                           | `Dist of Scipy.BaseTypes.Rv_generic.t]
+                           | `Dist of [`Rv_generic] Scipy.Obj.t]
 
 val of_param_grid_alist : (string * param_grid) list -> t
 val of_param_distributions_alist : (string * param_distributions) list -> t

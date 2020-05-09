@@ -326,7 +326,7 @@ let%expect_test "StackingClassifier" =
                            |> Pipeline.as_estimator]
   in
   let clf = StackingClassifier.create ~estimators
-      ~final_estimator:Sklearn.Linear_model.LogisticRegression.(create () |> as_estimator) ()
+      ~final_estimator:Sklearn.Linear_model.LogisticRegression.(create ()) ()
   in
   let [@ocaml.warning "-8"] [x_train; x_test; y_train; y_test] =
     Sklearn.Model_selection.train_test_split [iris#data; iris#target] ~stratify:iris#target ~random_state:42
@@ -365,7 +365,7 @@ let%expect_test "StackingRegressor" =
   let estimators = ["lr", Sklearn.Linear_model.RidgeCV.(create () |> as_estimator);
                     "svr", Sklearn.Svm.LinearSVR.(create ~random_state:42 () |> as_estimator)] in
   let reg = StackingRegressor.create ~estimators
-      ~final_estimator:RandomForestRegressor.(create ~n_estimators:10 ~random_state:42 () |> as_estimator) ()
+      ~final_estimator:RandomForestRegressor.(create ~n_estimators:10 ~random_state:42 ()) ()
   in
   let [@ocaml.warning "-8"] [x_train; x_test; y_train; y_test] =
     Sklearn.Model_selection.train_test_split [diabetes#data; diabetes#target] ~random_state:42

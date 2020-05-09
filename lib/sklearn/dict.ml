@@ -10,7 +10,7 @@ type param_grid = [`Ints of int list | `Floats of float list |
 
 type param_distributions = [`Ints of int list | `Floats of float list |
                             `Strings of string list | `Bools of bool list
-                           | `Dist of Scipy.BaseTypes.Rv_generic.t]
+                           | `Dist of [`Rv_generic] Scipy.Obj.t]
 
 let of_param : param_grid -> Py.Object.t = function
   | `Ints x -> Py.List.of_list_map Py.Int.of_int x
@@ -23,7 +23,7 @@ let of_distribution : param_distributions -> Py.Object.t = function
   | `Floats x -> Py.List.of_list_map Py.Float.of_float x
   | `Strings x -> Py.List.of_list_map Py.String.of_string x
   | `Bools x -> Py.List.of_list_map Py.Bool.of_bool x
-  | `Dist x -> Scipy.BaseTypes.Rv_generic.to_pyobject x
+  | `Dist x -> Scipy.Obj.to_pyobject x
 
 let of_param_grid_alist param_grid =
   Py.Dict.of_bindings_map Py.String.of_string of_param param_grid
