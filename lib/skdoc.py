@@ -223,22 +223,13 @@ class Int(Type):
         return tag("I")
 
 
-class Pipeline(Type):
-    names = ['Pipeline', 'pipeline']
-    ml_type = 'Sklearn.Pipeline.Pipeline.t'
-    wrap = 'Sklearn.Pipeline.Pipeline.to_pyobject'
-    ml_type_ret = 'Sklearn.Pipeline.Pipeline.t'
-    unwrap = 'Sklearn.Pipeline.Pipeline.of_pyobject'
-
-
-# XXX TODO refactor this, we could process returned classes in a more generic manner maybe?
-# (need to figure out a clean way to have these work wherever they are used)
-class FeatureUnion(Type):
-    names = ['FeatureUnion']
-    ml_type = 'Sklearn.Pipeline.FeatureUnion.t'
-    wrap = 'Sklearn.Pipeline.FeatureUnion.to_pyobject'
-    ml_type_ret = 'Sklearn.Pipeline.FeatureUnion.t'
-    unwrap = 'Sklearn.Pipeline.FeatureUnion.of_pyobject'
+class WrappedModule(Type):
+    def __init__(self, module, names=[]):
+        self.names = names
+        self.ml_type = f'{module}.t'
+        self.ml_type_ret = f'{module}.t'
+        self.wrap = f'{module}.to_pyobject'
+        self.unwrap = f'{module}.of_pyobject'
 
 
 class Float(Type):
@@ -585,8 +576,7 @@ class Dict(Type):
 
 class ParamGridDict(Type):
     names = []
-    ml_type = '''(string * [`Ints of int list | `Floats of float list |
-                            `Strings of string list | `Bools of bool list]) list'''
+    ml_type = '''(string * Sklearn.Dict.param_grid) list'''
     wrap = '(fun x -> Sklearn.Dict.(of_param_grid_alist x |> to_pyobject))'
 
     def tag_name(self):
@@ -595,9 +585,7 @@ class ParamGridDict(Type):
 
 class ParamDistributionsDict(Type):
     names = []
-    ml_type = '''(string * [`Ints of int list | `Floats of float list |
-                            `Strings of string list | `Bools of bool list |
-                            `Dist of Py.Object.t]) list'''
+    ml_type = '''(string * Sklearn.Dict.param_distributions) list'''
     wrap = '(fun x -> Sklearn.Dict.(of_param_distributions_alist x |> to_pyobject))'
 
     def tag_name(self):
@@ -646,11 +634,12 @@ class Registry:
     def add_class(self, klass, module_path):
         ancestors = inspect.getmro(klass)
         if self.module_path.get(klass, module_path) != module_path:
-            existing = self.module_path[klass]
-            if 'Base' not in existing:
-                print(
-                    f"WW {klass.__name__} is already registered with path {existing}, ignoring path {module_path}"
-                )
+            # existing = self.module_path[klass]
+            # if 'Base' not in existing:
+            #     print(
+            #         f"WW {klass.__name__} is already registered with path {existing}, ignoring path {module_path}"
+            #     )
+            pass
         else:
             self.module_path[klass] = module_path
         for ancestor in ancestors:
@@ -909,8 +898,8 @@ sklearn_builtin_types = BuiltinTypes(generic_builtin_types + [
     Dtype(),
     CrossValGenerator(),
     Estimator(),
-    Pipeline(),
-    FeatureUnion(),
+    WrappedModule('Sklearn.Pipeline.Pipeline', ['Pipeline', 'pipeline']),
+    WrappedModule('Sklearn.Pipeline.FeatureUnion', ['FeatureUnion']),
     estimator_list,
     List(Tuple([String(), Transformer()]),
          names=['list of (string, transformer) tuples']),
@@ -1045,17 +1034,26 @@ def indent(s, w=4):
     return ret
 
 
+def maybe_to_string(x):
+    try:
+        return str(x)
+    except:  # noqa: E722
+        return '<str failed>'
+
+
 def append(container, ctor, *args, **kwargs):
     try:
         elt = ctor(*args, **kwargs)
     except (NoSignature, OutsideScope, NoDoc, Deprecated, AlreadySeen):
-        # print(f"WW append: caught error building {ctor}({args}, {kwargs}): {type(e)}({e})")
+        # print(
+        #     f"WW append: caught error building {ctor} {maybe_to_string(args)}: {type(e)}"
+        # )
         return
     if hasattr(elt, 'ml_name'):
         while elt.ml_name in [getattr(x, 'ml_name', None) for x in container]:
             new_name = elt.ml_name + "'"
             print(
-                "WW renaming {elt.ml_name} to {new_name} to prevent name clash"
+                f"WW renaming {elt.ml_name} to {new_name} to prevent name clash"
             )
             elt.ml_name = new_name
     container.append(elt)
@@ -1068,7 +1066,7 @@ class Package:
         self.modules = self._list_modules(pkg, overrides, registry, builtin)
         self.registry = registry
 
-    def _list_modules(self, pkg, overrides, registry, builtin):
+    def _list_module_raw(self, pkg):
         ret = []
         for mod in pkgutil.iter_modules(pkg.__path__):
             name = mod.name
@@ -1076,6 +1074,18 @@ class Package:
                 continue
             full_name = f"{pkg.__name__}.{name}"
             module = importlib.import_module(full_name)
+            ret.append(module)
+        return ret
+
+    def _list_modules(self, pkg, overrides, registry, builtin):
+        ret = []
+        modules = self._list_module_raw(pkg)
+        # scipy has the toplevel modules (scipy.stats,
+        # scipy.linalg...) appearing as submodules in various places,
+        # this causes terrible duplication.
+        for module in modules:
+            overrides.add_blacklisted_submodule(module)
+        for module in modules:
             append(ret,
                    Module,
                    module,
@@ -1195,16 +1205,29 @@ def write_generated_header(f):
     )
 
 
-class Module:
-    _seen = set()
+def fix_naming(elements):
+    names = set()
+    for elt in elements:
+        if hasattr(elt, 'ml_name'):
+            while elt.ml_name in names:
+                elt.ml_name += "'"
+            names.add(elt.ml_name)
 
-    def __init__(self, module, parent_name, overrides, registry, builtin):
-        # print(f"DD wrapping {module.__name__} {module}")
-        if module in self._seen:
-            # print("DD -> already seen")
+
+class Module:
+    def __init__(self,
+                 module,
+                 parent_name,
+                 overrides,
+                 registry,
+                 builtin,
+                 inside=[]):
+        print(f"DD wrapping {module.__name__}")
+        # Scipy has the modules exported everywhere. Trying to keep only one copy is hard.
+        # Reverting to preventing cycles.
+        if module in inside:
             raise AlreadySeen(module)
-        # print("DD -> wrapping it")
-        self._seen.add(module)
+        inside = [module] + inside
         self.full_python_name = module.__name__
         if not overrides.check_scope(self.full_python_name):
             raise OutsideScope
@@ -1221,33 +1244,66 @@ class Module:
         # print(f"building module {self.full_python_name}")
         self.module = module
         self.elements = self._list_elements(module, overrides, registry,
-                                            builtin)
+                                            builtin, inside)
         self.registry = registry
+        print(f"DD finished building module {module}")
 
-    def _list_elements(self, module, overrides, registry, builtin):
-        elts = []
+    def _list_modules_raw(self, module, overrides):
+        modules = []
         for name in dir(module):
             qualname = f"{self.full_python_name}.{name}"
             if name.startswith('_'):
+                continue
+            if name in ['test', 'scipy']:  # for scipy
+                continue
+            item = getattr(module, name)
+            if overrides.is_blacklisted_submodule(item):
+                print(f"DD blacklisting submodule {qualname}: {item}")
+                continue
+            if inspect.ismodule(item):
+                modules.append(item)
+        return modules
+
+    def _list_elements(self, module, overrides, registry, builtin, inside):
+        modules_raw = self._list_modules_raw(module, overrides)
+        for mod in modules_raw:
+            overrides.add_blacklisted_submodule(mod)
+        modules = []
+        # Process modules first. We list them all, and blacklist them
+        # so that we don't wrap them again deeper in the hierarchy;
+        # then we wrap them.
+        for mod in modules_raw:
+            parent_name = self.full_ml_name
+            append(modules, Module, mod, parent_name, overrides, registry,
+                   builtin, inside)
+
+        classes = []
+        functions = []
+        for name in dir(module):
+            qualname = f"{self.full_python_name}.{name}"
+            if name.startswith('_'):
+                continue
+            if name in ['test', 'scipy']:  # for scipy
                 continue
             # emit this one separately, not inside sklearn.metrics
             if name == "csr_matrix":
                 continue
             item = getattr(module, name)
             parent_name = self.full_ml_name
-            if inspect.ismodule(item):
-                append(elts, Module, item, parent_name, overrides, registry,
-                       builtin)
-            elif inspect.isclass(item):
-                if not inspect.isabstract(
-                        item
-                ) and 'Base' not in item.__name__ and 'Mixin' not in item.__name__:
-                    append(elts, Class, item, parent_name, overrides, registry,
-                           builtin)
+            print(f"DD wrapping {parent_name}.{name}: {module}")
+            if inspect.isclass(item):
+                if (not inspect.isabstract(item)
+                        and 'Base' not in item.__name__
+                        and 'Mixin' not in item.__name__):
+                    append(classes, Class, item, parent_name, overrides,
+                           registry, builtin)
             elif callable(item):
-                append(elts, Function, name, qualname, item, overrides,
+                append(functions, Function, name, qualname, item, overrides,
                        builtin)
-        return elts
+
+        elements = modules + classes + functions
+        fix_naming(elements)
+        return elements
 
     def __str__(self):
         return repr(self)
@@ -1275,6 +1331,7 @@ class Module:
         #         "(* this module has no callables, skipping init and ns *)\n")
 
     def write(self, path, module_path):
+        print(f"DD writing module {self.python_name}")
         module_path = f"{module_path}.{self.ml_name}"
         ml = f"{path / self.python_name}.ml"
         with open(ml, 'w') as f:
@@ -2314,6 +2371,15 @@ class Wrapper:
         return textwrap.dedent(ret)
 
 
+_already_printed = set()
+
+
+def print_once(s):
+    if s not in _already_printed:
+        print(s)
+        _already_printed.add(s)
+
+
 def parse_type_simple(t, param_name, builtin):
     t = remove_ranges(t)
     t = re.sub(r'\s*\(\)\s*', '', t)
@@ -2352,7 +2418,7 @@ def parse_type_simple(t, param_name, builtin):
     elif is_int(t):
         return IntValue(t)
     else:
-        print(f"WW failed to parse type: {t}")
+        print_once(f"WW failed to parse type: {t}")
         return UnknownType(t)
 
 
@@ -2457,6 +2523,7 @@ class Function:
                  namespace='__wrap_namespace'):
         self.overrides = overrides
         self.function = function
+        self.python_name = python_name
         self.qualname = qualname
         doc = inspect.getdoc(function)
         raw_doc = getattr(function, '__doc__', '')
@@ -2467,6 +2534,7 @@ class Function:
         ret = self._build_ret(signature, raw_doc, fixed_values, builtin)
         self.wrapper = Wrapper(python_name, self._ml_name(python_name), doc,
                                parameters, ret, "function", namespace)
+        overrides.notice_function(self)
 
     def iter_types(self):
         for param in self.wrapper.parameters:
@@ -2655,6 +2723,29 @@ class Overrides:
         self.overrides = self._compile_regexes(overrides)
         self.triggered = set()
         self.scope = score
+        self._on_function = []
+        self._blacklisted_submodules = []
+
+    def is_blacklisted_submodule(self, m):
+        for x in self._blacklisted_submodules:
+            if x is m:
+                return True
+        return False
+
+    def add_blacklisted_submodule(self, m):
+        self._blacklisted_submodules.append(m)
+
+    def on_function(self, f):
+        self._on_function.append(f)
+
+    def notice_function(self, f):
+        # print(f"DD noticing function {f}, calling callbacks")
+        for cb in self._on_function:
+            try:
+                cb(f)
+            except Exception as e:
+                print(f"WW {f}: on_function callback raised an exception: {e}")
+                raise
 
     def check_scope(self, full_python_name):
         return re.match(self.scope, full_python_name)
@@ -2786,7 +2877,7 @@ def dummy_shuffle(*arrays, random_state=None, n_samples=None):
 
 sig_shuffle = inspect.signature(dummy_shuffle)
 
-overrides = {
+sklearn_overrides = {
     r'Pipeline\.inverse_transform$':
     dict(signature=sig_inverse_transform,
          param_types={
@@ -2917,7 +3008,7 @@ overrides = {
         r'^param_grid$': Enum([ParamGridDict(),
                                List(ParamGridDict())])
     }),
-    r'ParameterSampler$':
+    r'(ParameterSampler|RandomizedSearchCV)$':
     dict(types={
         r'^param_distributions$': Enum([ParamDistributionsDict(),
                                         List(ParamDistributionsDict())])
@@ -2936,6 +3027,8 @@ overrides = {
     r'\.make_pipeline$': dict(types={r'^steps$': List(Estimator())})
 }
 
+scipy_overrides = {r'': dict(types={r'^loc$': Float(), '^scale$': Float()})}
+
 
 def write_version(package, build_dir, registry):
     import sklearn.utils
@@ -2948,6 +3041,18 @@ def write_version(package, build_dir, registry):
         registry.add_generated_file(ml)
         f.write(f'let full_version = {full_version_ml}\n')
         f.write(f'let version = {version_ml}\n')
+
+
+def scipy_on_function(f):
+    import scipy.stats.distributions
+    # print(f"DD calling scipy callback on {f.qualname}")
+    if f.qualname.startswith('scipy.stats'):
+        gen = f'{f.python_name}_gen'
+        # print(f"DD testing for hasattr {gen}")
+        if hasattr(scipy.stats.distributions, gen):
+            f.wrapper.ret.ty = WrappedModule(
+                f'Scipy.Stats.Distributions.{make_module_name(gen)}')
+            # print(f"DD adjusted return type on {f}")
 
 
 def main():
@@ -2967,7 +3072,7 @@ def main():
     mode = sys.argv[1]
     if mode == "build-sklearn":
         import sklearn
-        over = Overrides(overrides, r'sklearn(\..+)?')
+        over = Overrides(sklearn_overrides, r'sklearn(\..+)?')
         registry = Registry()
         builtin = sklearn_builtin_types
         pkg = Package(sklearn, over, registry, builtin)
@@ -2999,7 +3104,8 @@ def main():
     elif mode == "build-scipy":
         builtin = scipy_builtin_types
         import scipy
-        over = Overrides({}, r'scipy(\..+)?')
+        over = Overrides(scipy_overrides, r'scipy(\..+)?')
+        over.on_function(scipy_on_function)
         registry = Registry()
         pkg = Package(scipy, over, registry, builtin)
         pkg.write(build_dir)

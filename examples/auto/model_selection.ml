@@ -537,7 +537,8 @@ let%expect_test "ParameterGrid" =
 
 let%expect_test "ParameterSampler" =
   let open Sklearn.Model_selection in
-  let param_distributions = `Grid ["a", `Ints [1; 2]; "b", `Dist (Scipy.Stats.expon ())] in
+  let param_distributions = `Grid ["a", `Ints [1; 2];
+                                   "b", `Dist (Scipy.Stats.(expon () |> Distributions.Expon_gen.as_rv_generic))] in
   let sampler = ParameterSampler.create ~param_distributions ~n_iter:4 ~random_state:0 () in
   let iter = ParameterSampler.iter sampler in
   Seq.iter (fun dict -> Format.printf "%a\n" Sklearn.Dict.pp dict) iter;
@@ -615,16 +616,20 @@ let%expect_test "PredefinedSplit" =
 
 *)
 
-(* let%expect_test "RandomizedSearchCV" =
- *    let open Sklearn.Model_selection in
- *    let iris = Sklearn.Datasets.load_iris () in
- *    let logistic = Sklearn.Linear_model.LogisticRegression.create ~solver:`Saga ~tol:1e-2 ~max_iter:200 ~random_state:0 () in
- *    let distributions = dict(C=uniform ~loc:0 ~scale:4 (),penalty=['l2', 'l1']) in
- *    let clf = RandomizedSearchCV.create ~logistic distributions ~random_state:0 () in
- *    let search = RandomizedSearchCV.fit iris.data iris.target clf in
- *    print_ndarray @@ .best_params_ search;
- *    [%expect {|
- *    |}] *)
+let%expect_test "RandomizedSearchCV" =
+  let open Sklearn.Model_selection in
+  let iris = Sklearn.Datasets.load_iris () in
+  let logistic = Sklearn.Linear_model.LogisticRegression.(
+      create ~solver:`Saga ~tol:1e-2 ~max_iter:200 ~random_state:0 () |> as_estimator)
+  in
+  let param_distributions =
+    `Grid ["C", `Dist (Scipy.Stats.(uniform ~loc:0. ~scale:4. () |> Distributions.Uniform_gen.as_rv_generic));
+           "penalty", `Strings ["l2"; "l1"]]
+  in
+  let clf = RandomizedSearchCV.create ~estimator:logistic ~param_distributions ~random_state:0 () in
+  let search = RandomizedSearchCV.fit ~x:iris#data ~y:iris#target clf in
+  print Sklearn.Dict.pp @@ RandomizedSearchCV.best_params_ search;
+  [%expect {| {'C': 2.195254015709299, 'penalty': 'l1'} |}]
 
 
 (* RepeatedKFold *)

@@ -5,11 +5,15 @@ module type BUILD = sig
   val of_pyobject : Py.Object.t -> t
 end
 
-val of_param_grid_alist : (string * [`Ints of int list | `Floats of float list |
-                                     `Strings of string list | `Bools of bool list]) list -> t
-val of_param_distributions_alist : (string * [`Ints of int list | `Floats of float list |
-                                              `Strings of string list | `Bools of bool list
-                                             | `Dist of Py.Object.t]) list -> t
+type param_grid = [`Ints of int list | `Floats of float list |
+                   `Strings of string list | `Bools of bool list]
+
+type param_distributions = [`Ints of int list | `Floats of float list |
+                            `Strings of string list | `Bools of bool list
+                           | `Dist of Scipy.BaseTypes.Rv_generic.t]
+
+val of_param_grid_alist : (string * param_grid) list -> t
+val of_param_distributions_alist : (string * param_distributions) list -> t
 
 (*  raises Not_found  *)
 val get : (module BUILD with type t = 'a) -> name : string -> t -> 'a
