@@ -14,8 +14,6 @@
 (rule (copy ../common/wrap_utils_common.ml wrap_utils_common.ml))
 
 (rule (targets
-       BaseTypes.ml
-       BaseTypes.mli
        cluster.ml
        cluster.mli
        conftest.ml

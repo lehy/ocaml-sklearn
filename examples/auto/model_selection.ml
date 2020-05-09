@@ -41,7 +41,7 @@ let%expect_test "GridSearchCV" =
   in
   let module SVC = Sklearn.Svm.SVC in
   let svc = SVC.create () in
-  let clf = GridSearchCV.create ~estimator:(SVC.BaseEstimator svc) ~param_grid () in
+  let clf = GridSearchCV.create ~estimator:svc ~param_grid () in
   print GridSearchCV.pp @@ GridSearchCV.fit ~x:iris#data ~y:iris#target clf;
   [%expect {|
       GridSearchCV(cv=None, error_score=nan,
@@ -620,7 +620,7 @@ let%expect_test "RandomizedSearchCV" =
   let open Sklearn.Model_selection in
   let iris = Sklearn.Datasets.load_iris () in
   let logistic = Sklearn.Linear_model.LogisticRegression.(
-      create ~solver:`Saga ~tol:1e-2 ~max_iter:200 ~random_state:0 () |> as_estimator)
+      create ~solver:`Saga ~tol:1e-2 ~max_iter:200 ~random_state:0 ())
   in
   let param_distributions =
     `Grid ["C", `Dist (Scipy.Stats.(uniform ~loc:0. ~scale:4. () |> Distributions.Uniform_gen.as_rv_generic));
