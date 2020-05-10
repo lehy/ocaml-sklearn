@@ -651,22 +651,26 @@ TRAIN: [0 3] TEST: [1 2]
 
 *)
 
-(* TEST TODO
-   let%expect_test "RepeatedKFold" =
-   let open Sklearn.Model_selection in
-   let x = .array (matrixi [|[|1; 2|]; [|3; 4|]; [|1; 2|]; [|3; 4|]|]) np in
-   let y = .array (vectori [|0; 0; 1; 1|]) np in
-   let rkf = RepeatedKFold.create ~n_splits:2 ~n_repeats:2 ~random_state:2652124 () in
-   print_ndarray @@ for train_index, test_index in RepeatedKFold.split x):print("TRAIN:" ~train_index "TEST:" ~test_index rkfX_train, X_test = x[train_index], x[test_index]y_train, y_test = y[train_index], y[test_index];
-   [%expect {|
+let%expect_test "RepeatedKFold" =
+  let open Sklearn.Model_selection in
+  let module Arr = Sklearn.Arr in
+  let x = matrixi [|[|1; 2|]; [|3; 4|]; [|1; 2|]; [|3; 4|]|] in
+  let y = vectori [|0; 0; 1; 1|] in
+  let rkf = RepeatedKFold.create ~n_splits:2 ~n_repeats:2 ~random_state:2652124 () in
+  let splits = RepeatedKFold.split rkf ~x in
+  Seq.iter (fun (train_index, test_index) ->
+      Format.printf "TRAIN: %a TEST: %a\n" Arr.pp train_index Arr.pp test_index;
+      let _x_train, _x_test = Arr.(get x ~i:[`Arr train_index], get x ~i:[`Arr test_index]) in
+      let _y_train, _y_test = Arr.(get y ~i:[`Arr train_index], get y ~i:[`Arr test_index]) in
+      ()
+      (* Format.printf "%a %a %a %a\n" Arr.pp x_train Arr.pp x_test Arr.pp y_train Arr.pp y_test; *)
+    ) splits;
+  [%expect {|
       TRAIN: [0 1] TEST: [2 3]
       TRAIN: [2 3] TEST: [0 1]
       TRAIN: [1 2] TEST: [0 3]
       TRAIN: [0 3] TEST: [1 2]
    |}]
-
-*)
-
 
 
 (* RepeatedStratifiedKFold *)
@@ -689,21 +693,26 @@ TRAIN: [0 2] TEST: [1 3]
 
 *)
 
-(* TEST TODO
-   let%expect_test "RepeatedStratifiedKFold" =
-   let open Sklearn.Model_selection in
-   let x = .array (matrixi [|[|1; 2|]; [|3; 4|]; [|1; 2|]; [|3; 4|]|]) np in
-   let y = .array (vectori [|0; 0; 1; 1|]) np in
-   let rskf = RepeatedStratifiedKFold.create ~n_splits:2 ~n_repeats:2 ~random_state:36851234 () in
-   print_ndarray @@ for train_index, test_index in RepeatedStratifiedKFold.split ~x y):print("TRAIN:" ~train_index "TEST:" ~test_index rskfX_train, X_test = x[train_index], x[test_index]y_train, y_test = y[train_index], y[test_index];
-   [%expect {|
+let%expect_test "RepeatedStratifiedKFold" =
+  let open Sklearn.Model_selection in
+  let module Arr = Sklearn.Arr in
+  let x = matrixi [|[|1; 2|]; [|3; 4|]; [|1; 2|]; [|3; 4|]|] in
+  let y = vectori [|0; 0; 1; 1|] in
+  let rskf = RepeatedStratifiedKFold.create ~n_splits:2 ~n_repeats:2 ~random_state:36851234 () in
+  let splits = RepeatedStratifiedKFold.split rskf ~x ~y in
+  Seq.iter (fun (train_index, test_index) ->
+      Format.printf "TRAIN: %a TEST: %a\n" Arr.pp train_index Arr.pp test_index;
+      let _x_train, _x_test = Arr.(get x ~i:[`Arr train_index], get x ~i:[`Arr test_index]) in
+      let _y_train, _y_test = Arr.(get y ~i:[`Arr train_index], get y ~i:[`Arr test_index]) in
+      ()
+      (* Format.printf "%a %a %a %a\n" Arr.pp x_train Arr.pp x_test Arr.pp y_train Arr.pp y_test; *)
+    ) splits;
+  [%expect {|
       TRAIN: [1 2] TEST: [0 3]
       TRAIN: [0 3] TEST: [1 2]
       TRAIN: [1 3] TEST: [0 2]
       TRAIN: [0 2] TEST: [1 3]
    |}]
-
-*)
 
 
 
@@ -736,39 +745,51 @@ TRAIN: [3 4 1] TEST: [5 2]
 
 *)
 
-(* TEST TODO
-   let%expect_test "ShuffleSplit" =
-   let open Sklearn.Model_selection in
-   let x = .array (matrixi [|[|1; 2|]; [|3; 4|]; [|5; 6|]; [|7; 8|]; [|3; 4|]; [|5; 6|]|]) np in
-   let y = .array (vectori [|1; 2; 1; 2; 1; 2|]) np in
-   let rs = ShuffleSplit.create ~n_splits:5 ~test_size:.25 ~random_state:0 () in
-   print_ndarray @@ ShuffleSplit.get_n_splits ~x rs;
-   [%expect {|
+let%expect_test "ShuffleSplit" =
+  let open Sklearn.Model_selection in
+  let module Arr = Sklearn.Arr in
+  let x = matrixi [|[|1; 2|]; [|3; 4|]; [|5; 6|]; [|7; 8|]; [|3; 4|]; [|5; 6|]|] in
+  let y = vectori [|1; 2; 1; 2; 1; 2|] in
+  let rs = ShuffleSplit.create ~n_splits:5 ~test_size:(`F 0.25) ~random_state:0 () in
+  print_int @@ ShuffleSplit.get_n_splits rs;
+  [%expect {|
       5
-   |}]
-   print_ndarray @@ print ~rs ();
-   [%expect {|
+   |}];
+  print ShuffleSplit.pp rs;
+  [%expect {|
       ShuffleSplit(n_splits=5, random_state=0, test_size=0.25, train_size=None)
-   |}]
-   print_ndarray @@ for train_index, test_index in ShuffleSplit.split x):print("TRAIN:" ~train_index "TEST:" ~test_index rs;
-   [%expect {|
+   |}];
+  let splits = ShuffleSplit.split rs ~x in
+  Seq.iter (fun (train_index, test_index) ->
+      Format.printf "TRAIN: %a TEST: %a\n" Arr.pp train_index Arr.pp test_index;
+      let _x_train, _x_test = Arr.(get x ~i:[`Arr train_index], get x ~i:[`Arr test_index]) in
+      let _y_train, _y_test = Arr.(get y ~i:[`Arr train_index], get y ~i:[`Arr test_index]) in
+      ()
+      (* Format.printf "%a %a %a %a\n" Arr.pp x_train Arr.pp x_test Arr.pp y_train Arr.pp y_test; *)
+    ) splits;
+  [%expect {|
       TRAIN: [1 3 0 4] TEST: [5 2]
       TRAIN: [4 0 2 5] TEST: [1 3]
       TRAIN: [1 2 4 0] TEST: [3 5]
       TRAIN: [3 4 1 0] TEST: [5 2]
       TRAIN: [3 5 1 0] TEST: [2 4]
-   |}]
-   let rs = ShuffleSplit.create ~n_splits:5 ~train_size:0.5 ~test_size:.25 ~random_state:0 () in
-   print_ndarray @@ for train_index, test_index in ShuffleSplit.split x):print("TRAIN:" ~train_index "TEST:" ~test_index rs;
-   [%expect {|
+   |}];
+  let rs = ShuffleSplit.create ~n_splits:5 ~train_size:(`F 0.5) ~test_size:(`F 0.25) ~random_state:0 () in
+  let splits = ShuffleSplit.split rs ~x in
+  Seq.iter (fun (train_index, test_index) ->
+      Format.printf "TRAIN: %a TEST: %a\n" Arr.pp train_index Arr.pp test_index;
+      let _x_train, _x_test = Arr.(get x ~i:[`Arr train_index], get x ~i:[`Arr test_index]) in
+      let _y_train, _y_test = Arr.(get y ~i:[`Arr train_index], get y ~i:[`Arr test_index]) in
+      ()
+      (* Format.printf "%a %a %a %a\n" Arr.pp x_train Arr.pp x_test Arr.pp y_train Arr.pp y_test; *)
+    ) splits;
+  [%expect {|
       TRAIN: [1 3 0] TEST: [5 2]
       TRAIN: [4 0 2] TEST: [1 3]
       TRAIN: [1 2 4] TEST: [3 5]
       TRAIN: [3 4 1] TEST: [5 2]
+      TRAIN: [3 5 1] TEST: [2 4]
    |}]
-
-*)
-
 
 
 (* StratifiedKFold *)
