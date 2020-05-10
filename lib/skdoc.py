@@ -1520,10 +1520,10 @@ class Class:
     def tags(self):
         tags = [
             f"`{tag(base.__name__)}"
-            for base in self.registry.bases[self.klass]
+            for base in (list(self.registry.bases[self.klass]) + [self.klass])
         ]
         tags.append("`Object")
-        return "[" + ' | '.join(tags) + "]"
+        return "[" + ' | '.join(sorted(tags)) + "]"
 
     def write_header(self, f):
         f.write(f"type t = {self.tags()} Obj.t\n")
