@@ -117,7 +117,7 @@ let%expect_test "BaggingClassifier" =
      classes... would be a lot of work, probably harder to use, for a
      benefit that is relatively mild. Suggestions welcome.  -- Ronan,
      2020-04-19 *)
-  let clf = BaggingClassifier.(create ~base_estimator:Sklearn.Svm.SVC.(create () |> to_pyobject)
+  let clf = BaggingClassifier.(create ~base_estimator:Sklearn.Svm.SVC.(create ())
                                  ~n_estimators:10 ~random_state:0 ()
                                |> fit ~x ~y)
   in
@@ -146,7 +146,7 @@ let%expect_test "BaggingRegressor" =
   let x, y, _coefs = Sklearn.Datasets.make_regression ~n_samples:100 ~n_features:4
       ~n_informative:2 ~n_targets:1 ~random_state:0 ~shuffle:false ()
   in
-  let regr = BaggingRegressor.(create ~base_estimator:Sklearn.Svm.SVR.(create () |> to_pyobject)
+  let regr = BaggingRegressor.(create ~base_estimator:Sklearn.Svm.SVR.(create ())
                                  ~n_estimators:10 ~random_state:0 ()
                                |> fit ~x ~y)
   in

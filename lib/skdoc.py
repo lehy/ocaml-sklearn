@@ -100,6 +100,8 @@ class Type:
             text = getattr(self, 'elements', '')
         return f"{self.__class__.__name__}({text})"
 
+    names = []
+    
     ml_type = 'Py.Object.t'
     wrap = 'Wrap_utils.id'
 
@@ -473,7 +475,7 @@ class List(Type):
         self.names = names
         self.ml_type = f"{t.ml_type} list"
         self.wrap = f'(fun ml -> Py.List.of_list_map {t.wrap} ml)'
-        self.ml_type_ret = f"{t.ml_type} list"
+        self.ml_type_ret = f"{t.ml_type_ret} list"
         self.unwrap = f"(fun py -> Py.List.to_list_map ({t.unwrap}) py)"
 
     def __str__(self):
@@ -546,15 +548,14 @@ class FalseValue(Type):
 
 
 class BaseType(Type):
-    def __init__(self, name, tag_name=None):
+    def __init__(self, name):
         self.name = name
-        if tag_name is None:
-            self._tag_name = name
-        else:
-            self._tag_name = tag_name
-        self.ml_type = f'[>`{tag(name)}] Sklearn.Obj.t'
-        self.wrap = f'Sklearn.Obj.to_pyobject'
-
+        self._tag_name = tag(name.split('.')[-1])
+        self.ml_type = f'[>`{self._tag_name}] Sklearn.Obj.t'
+        self.wrap = f'{name}.to_pyobject'
+        self.ml_type_ret = f'{name}.t'
+        self.unwrap = f'{name}.of_pyobject'
+        
     def tag_name(self):
         return self._tag_name
 
@@ -569,7 +570,7 @@ class CrossValGenerator(BaseType):
     ]
 
     def __init__(self):
-        super().__init__('BaseCrossValidator', 'CrossValidator')
+        super().__init__('Sklearn.Model_selection.BaseCrossValidator')
 
 
 class Estimator(BaseType):
@@ -580,7 +581,18 @@ class Estimator(BaseType):
     ]
 
     def __init__(self):
-        super().__init__('BaseEstimator', 'Estimator')
+        super().__init__('Sklearn.Base.BaseEstimator')
+
+
+class Regressor(BaseType):
+    names = [
+        'instance RegressorMixin', 'RegressorMixin instance',
+        'regressor instance', 'instance regressor', 'regressor object',
+        'regressor'
+    ]
+
+    def __init__(self):
+        super().__init__('Sklearn.Base.RegressorMixin')
 
 
 class Transformer(BaseType):
@@ -591,7 +603,7 @@ class Transformer(BaseType):
     ]
 
     def __init__(self):
-        super().__init__('TransformerMixin', 'Transformer')
+        super().__init__('Sklearn.Base.TransformerMixin')
 
 
 class PyObject(Type):
@@ -599,11 +611,11 @@ class PyObject(Type):
 
 
 class Self(Type):
-    names = ['self']
-    ml_type = 't'
-    ml_type_ret = 't'
-    wrap = 'to_pyobject'
-    unwrap = 'of_pyobject'
+    def __init__(self):
+        self.ml_type = '[> tag] Obj.t'
+        self.ml_type_ret = 't'
+        self.wrap = 'to_pyobject'
+        self.unwrap = 'of_pyobject'
 
 
 class Dtype(Type):
@@ -866,7 +878,7 @@ def parse_enum(t):
     return elts
 
 
-estimator_list = List(
+estimator_alist = List(
     Tuple([String(), Estimator()]),
     names=['list of (str, estimator)', 'list of (str, estimator) tuples'])
 
@@ -926,7 +938,9 @@ sklearn_builtin_types = BuiltinTypes(generic_builtin_types + [
     Estimator(),
     WrappedModule('Sklearn.Pipeline.Pipeline', ['Pipeline', 'pipeline']),
     WrappedModule('Sklearn.Pipeline.FeatureUnion', ['FeatureUnion']),
-    estimator_list,
+    estimator_alist,
+    List(Estimator(), names=['list of estimators', 'list of estimator']),
+    List(Regressor(), names=['list of regressors', 'list of regressor']),
     List(Tuple([String(), Transformer()]),
          names=['list of (string, transformer) tuples']),
 ])
@@ -1218,7 +1232,7 @@ class Module:
         self.elements = self._list_elements(module, overrides, registry,
                                             builtin, inside)
         self.registry = registry
-        print(f"DD finished building module {module}")
+        # print(f"DD finished building module {module}")
 
     def _list_modules_raw(self, module, overrides):
         modules = []
@@ -1230,7 +1244,7 @@ class Module:
                 continue
             item = getattr(module, name)
             if overrides.is_blacklisted_submodule(item):
-                print(f"DD blacklisting submodule {qualname}: {item}")
+                # print(f"DD blacklisting submodule {qualname}: {item}")
                 continue
             if inspect.ismodule(item):
                 modules.append(item)
@@ -1258,17 +1272,14 @@ class Module:
             if name in ['test', 'scipy']:  # for scipy
                 continue
             # emit this one separately, not inside sklearn.metrics
-            if name == "csr_matrix":
-                continue
+            # if name == "csr_matrix":
+            #     continue
             item = getattr(module, name)
             parent_name = self.full_ml_name
             # print(f"DD wrapping {parent_name}.{name}: {module}")
             if inspect.isclass(item):
-                if (not inspect.isabstract(item)
-                        and 'Base' not in item.__name__
-                        and 'Mixin' not in item.__name__):
-                    append(classes, Class, item, parent_name, overrides,
-                           registry, builtin)
+                append(classes, Class, item, parent_name, overrides, registry,
+                       builtin)
             elif callable(item):
                 append(functions, Function, name, qualname, item, overrides,
                        builtin)
@@ -1303,7 +1314,7 @@ class Module:
         #         "(* this module has no callables, skipping init and ns *)\n")
 
     def write(self, path, module_path):
-        print(f"DD writing module {self.python_name}")
+        # print(f"DD writing module {self.python_name}")
         module_path = f"{module_path}.{self.ml_name}"
         ml = f"{path / self.python_name}.ml"
         with open(ml, 'w') as f:
@@ -1409,8 +1420,11 @@ class Class:
         self._seen.add(klass_key)
         self.klass = klass
         self.parent_name = parent_name
-        self.constructor = Ctor(self.klass.__name__, self.klass.__name__,
-                                self.klass, overrides, builtin)
+        if inspect.isabstract(klass):
+            self.constructor = DummyFunction()
+        else:
+            self.constructor = Ctor(self.klass.__name__, self.klass.__name__,
+                                    self.klass, overrides, builtin)
         self.elements = self._list_elements(overrides, builtin)
         self.ml_name = make_module_name(self.klass.__name__)
         for item in ['deprecated', 'Parallel', 'ABCMeta']:
@@ -1525,7 +1539,11 @@ class Class:
         tags.append("`Object")
         return "[" + ' | '.join(sorted(tags)) + "]"
 
+    def self_tag(self):
+        return f"`{tag(self.klass.__name__)}"
+    
     def write_header(self, f):
+        f.write(f"type tag = [{self.self_tag()}]\n")
         f.write(f"type t = {self.tags()} Obj.t\n")
         f.write("let of_pyobject x = ((Obj.of_pyobject x) : t)\n")
         f.write("let to_pyobject x = Obj.to_pyobject x\n")
@@ -1582,9 +1600,10 @@ class Class:
         if wrap:
             f.write(f"module {self.ml_name} : sig\n")
             module_path = f"{module_path}.{self.ml_name}"
+        f.write(f"type tag = [{self.self_tag()}]\n")
         f.write(f"type t = {self.tags()} Obj.t\n")
         f.write("val of_pyobject : Py.Object.t -> t\n")
-        f.write("val to_pyobject : t -> Py.Object.t\n\n")
+        f.write("val to_pyobject : [> tag] Obj.t -> Py.Object.t\n\n")
         for base in self.registry.bases[self.klass]:
             base_name = make_module_name(base.__name__)
             # f.write(f"type BaseTypes.{base_name}.t += {base_name} of t\n")
@@ -2187,8 +2206,9 @@ class DummyUnitParameter:
 
 
 class SelfParameter:
-    python_name = 'self'
-    ty = Self()
+    def __init__(self):
+        self.python_name = 'self'
+        self.ty = Self()
 
     def is_named(self):
         return False
@@ -2197,7 +2217,7 @@ class SelfParameter:
         return False
 
     def sig(self, module_path):
-        return 't'
+        return self.ty.ml_type #'t'
 
     def decl(self):
         return 'self'
@@ -2402,14 +2422,15 @@ def parse_types_simple(doc, builtin, section='Parameters'):
     if doc is None:
         return {}
     elements = parse_params(doc, section)
-
+    # print(f"DD elements: {elements}")
+    
     ret = {}
     for element in elements:
         try:
             text = element.text.strip()
             if not text or text.startswith('..'):
                 continue
-            m = re.match(r'^(\w+)\s*:\s*([^\n]+)', text)
+            m = re.match(r'^\**(\w+)\s*:\s*([^\n]+)', text)
             if m is None:
                 mm = re.match(r'^(\w+)\s*\n', text)
                 if mm is not None:
@@ -2638,6 +2659,26 @@ class Function:
         ret += f"  {self.mli('Sklearn', doc=False)}"
         # ret += f"  {self.ml('Sklearn')}"
         return ret
+
+
+class DummyFunction:
+    def __init__(self):
+        pass
+
+    def write_to_ml(self, *args, **kwargs):
+        pass
+
+    def write_to_mli(self, *args, **kwargs):
+        pass
+
+    def write_to_md(self, *args, **kwargs):
+        pass
+
+    def write_examples_to(self, *args, **kwargs):
+        pass
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}()'
 
 
 class Method(Function):
@@ -2907,7 +2948,7 @@ sklearn_overrides = {
     r'\.fit$':
     dict(ret_type=Self()),
     r'Pipeline$':
-    dict(param_types=dict(steps=estimator_list,
+    dict(param_types=dict(steps=estimator_alist,
                           memory=Enum([NoneValue(
                           ), String(), UnknownType('Joblib Memory')]),
                           verbose=Bool())),
@@ -2947,6 +2988,7 @@ sklearn_overrides = {
             "^verbose$": Int(),
             '^named_(estimators|steps|transformers)_?$': Dict(),
             # '^y_(true|pred)$': Arr(),
+            r'^base_estimator$': Estimator(),
         }),
     r'power_transform$':
     dict(types={

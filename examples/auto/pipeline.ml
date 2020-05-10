@@ -196,8 +196,8 @@ let%expect_test "make_pipeline" =
 
 let%expect_test "make_union" =
   let open Sklearn in
-  let union = Pipeline.make_union [Sklearn.Decomposition.PCA.(create () |> to_pyobject);
-                                   Sklearn.Decomposition.TruncatedSVD.(create () |> to_pyobject)]
+  let union = Pipeline.make_union [Sklearn.Decomposition.PCA.(create () |> as_estimator);
+                                   Sklearn.Decomposition.TruncatedSVD.(create () |> as_estimator)]
   in
   print Pipeline.FeatureUnion.pp union;
   [%expect {|
