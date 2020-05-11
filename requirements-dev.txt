@@ -5,6 +5,7 @@ ipython
 mkdocs
 mkdocs-material
 mkdocs-pymdownx-material-extras
+regex
 scikit-learn
 pytest
 yapf

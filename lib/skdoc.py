@@ -1,4 +1,4 @@
-import re
+import regex as re
 import io
 import os
 import inspect
@@ -39,6 +39,8 @@ ml_keywords = set(
 
 
 def tag(s):
+    if not s:
+        s = 'T'
     s = re.sub(r'[^a-zA-Z0-9_]+', '_', s)
     s = re.sub(r'^([^a-zA-Z])', r'T\1', s)
     return ucfirst(s)
@@ -101,7 +103,7 @@ class Type:
         return f"{self.__class__.__name__}({text})"
 
     names = []
-    
+
     ml_type = 'Py.Object.t'
     wrap = 'Wrap_utils.id'
 
@@ -194,7 +196,9 @@ class IntValue(Type):
     unwrap = 'Py.Int.to_int'
 
     def tag(self):
-        ta = ['Zero', 'One', 'Two'][self.value]
+        tags = ['Zero', 'One', 'Two']
+        assert 0 <= self.value < len(tags), (self.value, tags)
+        ta = tags[self.value]
         t = f"`{ta}"
         t_ret = t
         destruct = f'`{ta} -> {self.wrap} {self.value}'
@@ -378,6 +382,7 @@ class Arr(Type):
         'label indicator array / sparse matrix',
         'label indicator matrix',
         'array  or',
+        '{array}',
         # the sparse matrices
         'sparse matrix',
         'sparse-matrix',
@@ -555,7 +560,7 @@ class BaseType(Type):
         self.wrap = f'{name}.to_pyobject'
         self.ml_type_ret = f'{name}.t'
         self.unwrap = f'{name}.of_pyobject'
-        
+
     def tag_name(self):
         return self._tag_name
 
@@ -627,13 +632,13 @@ class Dtype(Type):
 
 
 class Dict(Type):
-    # XXX dict of numpy (masked) ndarrays is the format of a
+    # XXX 'dict of numpy (masked) ndarrays' is the format of a
     # DataFrame, we could have a more appropriate OCaml type for it
     # maybe, rather than this generic one (which is just a Python
     # dict)?
     names = [
         'dict', 'Dict', 'dictionary', 'mapping of string to any',
-        'dict of numpy (masked) ndarrays'
+        'dict of numpy (masked) ndarrays', 'dict of numpy ndarrays'
     ]
     ml_type = 'Sklearn.Dict.t'
     ml_type_ret = 'Sklearn.Dict.t'
@@ -716,7 +721,7 @@ class Registry:
                 # tweaked for sklearn+scipy
                 if (('base' in ancestor_name or 'mixin' in ancestor_name
                      or 'rv_' in ancestor_name)
-                        and not ancestor_name.startswith('_')):
+                    and not ancestor_name.startswith('_')):
                     # if not ancestor_name.startswith('_'):
                     self.types[ancestor].append(klass)
                     self.bases[klass].add(ancestor)
@@ -749,6 +754,7 @@ def parse(doc):
     first_line, *lines = lines
     for line in lines:
         indent, line = deindent(line)
+        # print(f"line: '{line}' indent: {indent}")
         if previous_indent is None:
             previous_indent = indent
 
@@ -758,7 +764,8 @@ def parse(doc):
             previous_indent = None
             if line:
                 element.append(line)
-        elif re.match('^-+$', line):
+        elif re.match(r'^-+$', line):
+            # print(f'found underline, element: {element}')
             block, title = element[:-1], element[-1]
             if block:
                 elements.append(Paragraph("\n".join(block)))
@@ -798,6 +805,7 @@ def parse_params(doc, section='Parameters'):
 
 
 def remove_default(text):
+    text = re.sub(r'(,\s*)?\(\S+\s+by\s+default\)', '', text)
     text = re.sub(r'\s*\(default\)', '', text)
     text = re.sub(r'\s*\(if [^()]+\)', '', text)
     text = re.sub(r'[Dd]efaults\s+to\s+\S+\.?', '', text)
@@ -808,24 +816,129 @@ def remove_default(text):
     return text
 
 
+class ReParser:
+    """Parsing things with regexps, like shapes and enums. This is
+       probably the cleanest I can do without turning to a proper
+       parser generator.
+
+    """
+    def __init__(self):
+        nob = r'(?:[^()[\]]*)'
+
+        onep = rf'(?:\({nob}\))'
+        oneb = rf'(?:\[{nob}\])'
+        onec = rf'(?:\{{{nob}\}})'
+        one = rf'(?:{oneb}|{onep}|{onec})'
+
+        onepn = r'(?:\( (?:[nm]\w*,\s*)+ (?:[nm]\w*)? \))'
+        onebn = r'(?:\[ (?:[nm]\w*,\s*)+ (?:[nm]\w*)? \])'
+        onecn = r'(?:\{ (?:[nm]\w*,\s*)+ (?:[nm]\w*)? \})'
+        onen = rf'(?:{onepn}|{onebn}|{onecn})'
+
+        twop = rf'(?:\((?:{nob}{one})*{nob}?\))'
+        twob = rf'(?:\[(?:{nob}{one})*{nob}?\])'
+        twoc = rf'(?:\{{(?:{nob}{one})*{nob}?\}})'
+        two = rf'(?:{twob}|{twop}|{twoc})'
+
+        threep = rf'(?:\((?:{nob}{two})*{nob}?\))'
+        threeb = rf'(?:\[(?:{nob}{two})*{nob}?\])'
+        threec = rf'(?:\{{(?:{nob}{two})*{nob}?\}})'
+        three = rf'(?:{threeb}|{threep}|{threec})'
+        self.three = three
+
+        ifelse = rf'(if \s+ \S+ \s* =+ \s* \S+ \s+ else \s* {three})'
+        ort = rf'(,? \s* or \s* ({three}|smaller) (\s* if \s+ \S+ \s* =+ \s* \S+)?)'
+
+        # Things inside parentheses, with several spaces but no comma (=>
+        # not a tuple). There can be paren groups with commas inside them, though.
+        p_no_tuple = rf'(\( ([^(),]* {three})* [^(),]* \s [^\s(),]+ \s ([^(),]* {three})* [^(),]* \))'
+
+        res = [
+            rf'(((of|with) \s+)? shape) (\s* ([=:]\s* | of \s*)?)? {three} (\s* ({ifelse}|{ort}))?',
+            rf'(of \s*)? {onen} (?:\s* if \s+ \S+ \s* =+ \s* \S+)?',
+            r'(of|with) \s+ length (\s+ | \s*[=:]\s*) \S+',
+            r'\S+-dimension(al)?',
+            p_no_tuple,
+        ]
+        shape = '|'.join([rf'({x})' for x in res])
+
+        self.shape = self._comp(shape)
+
+        enum_elt = rf'(?P<elt>(?:(?:(?! \s+ or \s+) [^()[\],])* {three})* (?:(?! \s+ or \s+)[^()[\],])*)'
+        enum_comma = rf'(?:(?:{enum_elt},)+ {enum_elt})'
+        enum_semi = rf'(?:(?:{enum_elt};)+ {enum_elt})'
+        enum_or = rf'(?:(?:{enum_elt} \s+ or \s)+ {enum_elt})'
+        enum_comma_or = rf'(?:{enum_comma} \s or \s {enum_elt})'
+
+        string = rf'''(?P<elt>"[^"]+" | '[^']+' | None) (?: \s* \( \s* default \s* \) \s*)?'''
+        strings_comma = rf'(?:(?:{string} \s* , \s*)* {string})'
+        strings_semi = rf'(?:(?:{string} \s* ; \s*)* {string})'
+        strings = rf'(?:\s* (?:{strings_comma} | {strings_semi}) \s*)'
+        strings_p = rf'(?:\( \s* {strings} \s* \))'
+        strings_b = rf'(?:\[ \s* {strings} \s* \])'
+        strings_c = rf'(?:\{{ \s* {strings} \s* \}})'
+        string_enum = rf'(?:(?:str(ing)? (?:\s+ in | \s* [,:])? \s*)? (?:{strings_p} | {strings_b} | {strings_c}))'
+
+        enum_c = rf'(?: \{{ (?:{enum_comma} | {enum_semi}) \}})'
+
+        enum = rf'^\s* (?:{string_enum} | {enum_c} | {enum_comma} | {enum_or} | {enum_comma_or}) \s*$'
+        self.string = self._comp(string)
+        self.strings = self._comp(strings)
+        self.strings_c = self._comp(strings_c)
+        self.string_enum = self._comp(string_enum)
+        self.enum_elt = self._comp(enum_elt)
+        self.enum_comma = self._comp(enum_comma)
+        self.enum_or = self._comp(enum_or)
+        self.enum_comma_or = self._comp(enum_comma_or)
+        self.enum = self._comp(enum)
+
+    def _comp(self, patt):
+        return re.compile(patt, flags=re.VERBOSE | re.IGNORECASE)
+
+
+re_parser = ReParser()
+
+
 def remove_shape(text):
-    # print(f"remove_shape 0: {text}")
-    text = re.sub(
-        r'((of|with)\s+)?shape\s*[:=]?\s*[([](\S+,\s*)*\S+?\s*[\])](\s*,?\s*or\s*[([](\S+,\s*)*\S+?\s*[\])])*',
-        '', text)
-    # print(f"remove_shape 1: {text}")
-    # two levels of parentheses should be enough for anyone
-    text = re.sub(
-        r'((of|with)\s+)?shape\s*[:=]?\s*\([^()]*(\([^()]*\)[^()]*)?\)', '',
-        text)
-    text = re.sub(r'(,\s*)?(of\s+)?length \S+', '', text)
-    text = re.sub(r"""(,\s*)?\[[^'"[\]()]+,[^'"[\]()]+\]""", '', text)
-    text = re.sub(r'if\s+\S+\s*=+\s*\S+\s*', '', text)
-    text = re.sub(r'(,\s*)?\s*\d-dimensional\s*', '', text)
-    text = re.sub(r"""\(\s*(n_\w+,\s*)*n_\w+,?\s*\)""", '', text)
-    text = re.sub(r"shape\s*=\s*\[[^[\]]+\]", '', text)
-    # print(f"text without shape: {text}")
+    text = re.sub(re_parser.shape, '', text)
+
     return text
+
+
+def test_remove_shape():
+    tests = [
+        'shape [n,m]',
+        'of shape (n_samples,) or (n_samples, n_outputs)',
+        'shape (n_samples, n_features)',
+        '(len() equal to cv or 1 if cv == "prefit")', 'of shape [n_samples]',
+        'of shape (n_class,)', 'shape (n_bins,) or smaller',
+        'shape = [1, n_features] if n_classes == 2 else [n_classes, n_features]',
+        'shape (n_samples, n_features), or             (n_samples, n_samples)',
+        'shape of (n_samples, n_features)', 'of shape of (n_targets,)',
+        'shape of (n_class * (n_class-1) / 2,)', 'of (N,)', 'of (n_features,)',
+        """shape (n_queries, n_features),                 or (n_queries, n_indexed) if metric == 'precomputed'""",
+        '(n_samples, n_features)',
+        "[n_samples_a, n_samples_a] if metric == 'precomputed'"
+    ]
+
+    success = True
+    for test in tests:
+        result = remove_shape(test)
+        if result:
+            print(f"EE test fails: '{test}' -> '{result}' (expected '')")
+            success = False
+
+    tests_no = [
+        "string in ['raw_values', 'uniform_average',                 'variance_weighted']",
+        'list of (int,) or list of (int, int)'
+    ]
+    for test in tests_no:
+        result = remove_shape(test)
+        if result != test:
+            print(f"EE test fails: '{test}' -> '{result}' (expected '{test}')")
+            success = False
+
+    return success
 
 
 def is_string(x):
@@ -841,41 +954,60 @@ def is_int(x):
 
 
 def parse_enum(t):
-    """Love.
-    """
-    if not t:
+    m = re.match(re_parser.enum, t)
+    if m is None:
         return None
-    # print(f"parse_enum: {t}")
-    elts = None
-    m = re.match(r'^str(?:ing)?\s*(?:,|in|)\s*(\{.*\}|\[.*\]|\(.*\))$', t)
-    if m is not None:
-        return parse_enum(m.group(1))
-    t = re.sub(r'(?:str(?:ing)?\s*in\s*)?(\{[^}]+\})',
-               lambda m: re.sub(r'[,|]|\s+or\s+', ' __OR__ ', m.group(1)), t)
-    t = re.sub(r'(?:str(?:ing)?\s*in\s*)?(\[[^}]+\])',
-               lambda m: re.sub(r'[,|]|\s+or\s+', ' __OR__ ', m.group(1)), t)
-    t = re.sub(r'(?:str(?:ing)?\s*in\s*)?(\([^}]+\))',
-               lambda m: re.sub(r'[,|]|\s+or\s+', ' __OR__ ', m.group(1)), t)
-    # if '__OR__' in t:
-    #     print(f"replaced , with __OR__: {t}")
-    assert 'str in ' not in t, t
-    if (t[0] == '{' and t[-1] == '}') or (t[0] == '[' and t[-1] == ']') or (
-            t[0] == '(' and t[-1] == ')'):
-        elts = re.split(',|__OR__', t[1:-1])
-    elif '|' in t:
-        elts = t.split('|')
-    elif re.search(r'\bor\s+', t) is not None:
-        elts = list(re.split(r',|\bor\s+', t))
-    elif ',' in t:
-        elts = t.split(',')
-    elif ' __OR__ ' in t:
-        elts = t.split('__OR__')
-    else:
-        return None
-    elts = [x.strip() for x in elts]
-    elts = [x for x in elts if x]
-    # print("parse_enum returns:", elts)
-    return elts
+    ret = m.captures("elt")
+    ret = [x.strip() for x in ret]
+    ret = [x for x in ret if x]
+    return ret
+
+
+def test_parse_enum():
+    tests = [
+        ('list of (int,) or list of (int, int)',
+         ['list of (int,)', 'list of (int, int)']),
+        ('list of (int,) or list of (int, int) or list of str',
+         ['list of (int,)', 'list of (int, int)', 'list of str']),
+        ('list of (int,), list of (int, int)',
+         ['list of (int,)', 'list of (int, int)']),
+        ('list of (int,), list of (int, int) or list of ndarray',
+         ['list of (int,)', 'list of (int, int)', 'list of ndarray']),
+        ("string in {'a', 'b'}", ["'a'", "'b'"]),
+        ("str in {'a', 'b'}", ["'a'", "'b'"]),
+        ("str, {'a', 'b'}", ["'a'", "'b'"]),
+        ("string, {'a', 'b'}", ["'a'", "'b'"]),
+        ("string in ['a', 'b']", ["'a'", "'b'"]),
+        ("str in ['a', 'b']", ["'a'", "'b'"]),
+        ("str, ['a', 'b']", ["'a'", "'b'"]),
+        ("string, ['a', 'b']", ["'a'", "'b'"]),
+        ("string in ('a', 'b')", ["'a'", "'b'"]),
+        ("str in ('a', 'b')", ["'a'", "'b'"]),
+        ("str, ('a', 'b')", ["'a'", "'b'"]),
+        ("string, ('a', 'b')", ["'a'", "'b'"]),
+        ("string : {'a', 'b'}", ["'a'", "'b'"]),
+        ("str : {'a', 'b'}", ["'a'", "'b'"]),
+        ("str: {'a', 'b'}", ["'a'", "'b'"]),
+        ("{array-like, sparse matrix}", ['array-like', 'sparse matrix']),
+        ("""string, [None, 'binary', 'micro', 'macro', 'samples',                        'weighted']""",
+         ['None', "'binary'", "'micro'", "'macro'", "'samples'", "'weighted'"]),
+        ("""string, [None, 'binary' (default), 'micro', 'macro', 'samples',                        'weighted']""",
+         ['None', "'binary'", "'micro'", "'macro'", "'samples'", "'weighted'"]),
+        ("{'raw_values', 'uniform_average'} or array-like of shape",
+         ["{'raw_values', 'uniform_average'}", "array-like of shape"]),
+        ('array-like  or BallTree', ['array-like', 'BallTree'])
+    ]
+
+    success = True
+    for test, expected in tests:
+        elts = parse_enum(test)
+        if elts != expected:
+            print(
+                f"EE error in enum test: '{test}' -> {elts} (expected {expected})"
+            )
+            success = False
+
+    return success
 
 
 estimator_alist = List(
@@ -1017,8 +1149,8 @@ def simplify_enum(enum):
     if none:
         inside = simplify_enum(type(enum)(not_none))
         return Optional(inside)
-        # enum = EnumOption(not_none)
-        # enum = type(enum)(not_none + [NoneValue()])
+    # enum = EnumOption(not_none)
+    # enum = type(enum)(not_none + [NoneValue()])
 
     # Enum(String, StringValue, StringValue) should just be
     # Enum(StringValue, StringValue) since that is (probably) a
@@ -1041,7 +1173,7 @@ def simplify_enum(enum):
     is_obj, is_not_obj = partition(
         enum.elements, lambda x: isinstance(x, (PyObject, UnknownType)))
     if len(is_obj) > 1:
-        enum = type(enum)(is_not_obj + [PyObject()])
+        enum = type(enum)(is_not_obj + [PyObject()]) # XXX
 
     # A one-element enum is just the element itself.
     if len(enum.elements) == 1:
@@ -1541,7 +1673,7 @@ class Class:
 
     def self_tag(self):
         return f"`{tag(self.klass.__name__)}"
-    
+
     def write_header(self, f):
         f.write(f"type tag = [{self.self_tag()}]\n")
         f.write(f"type t = {self.tags()} Obj.t\n")
@@ -2217,7 +2349,7 @@ class SelfParameter:
         return False
 
     def sig(self, module_path):
-        return self.ty.ml_type #'t'
+        return self.ty.ml_type  #'t'
 
     def decl(self):
         return 'self'
@@ -2376,7 +2508,8 @@ def print_once(s):
         _already_printed.add(s)
 
 
-def parse_type_simple(t, param_name, builtin):
+def parse_type_simple(t, param_name, builtin, context):
+    t_orig = t
     t = remove_ranges(t)
     t = re.sub(r'\s*\(\)\s*', '', t)
 
@@ -2404,7 +2537,10 @@ def parse_type_simple(t, param_name, builtin):
     if elts is not None:
         if all([is_string(elt) for elt in elts]):
             return Enum([StringValue(e.strip("\"'")) for e in elts])
-        elts = [parse_type_simple(elt, param_name, builtin) for elt in elts]
+        elts = [
+            parse_type_simple(elt, param_name, builtin,
+                              f"{context}: enum {elts}") for elt in elts
+        ]
         # print("parsed enum elts:", elts)
         ret = Enum(elts)
         ret = simplify_enum(ret)
@@ -2414,7 +2550,7 @@ def parse_type_simple(t, param_name, builtin):
     elif is_int(t):
         return IntValue(t)
     else:
-        print_once(f"WW failed to parse type: {t}")
+        print_once(f"WW {context}: '{t_orig}': failed to parse type: '{t}'")
         return UnknownType(t)
 
 
@@ -2423,7 +2559,7 @@ def parse_types_simple(doc, builtin, section='Parameters'):
         return {}
     elements = parse_params(doc, section)
     # print(f"DD elements: {elements}")
-    
+
     ret = {}
     for element in elements:
         try:
@@ -2447,7 +2583,10 @@ def parse_types_simple(doc, builtin, section='Parameters'):
             if value.startswith('ref:'):
                 continue
 
-            ty = parse_type_simple(value, param_name, builtin)
+            ty = parse_type_simple(value,
+                                   param_name,
+                                   builtin,
+                                   context=f"in '{text}'")
             ret[param_name] = ty
 
         except Exception as e:
@@ -2478,7 +2617,10 @@ def parse_bunch_fetch(elements, builtin):
                 value = m.group(2)
                 value = remove_shape(value)
                 value = value.strip(" \n\t,.;")
-                ret[name] = parse_type_simple(value, name, builtin)
+                ret[name] = parse_type_simple(value,
+                                              name,
+                                              builtin,
+                                              context=f"in '{line}'")
     ret = Bunch(ret)
     return ret
 
@@ -2501,8 +2643,9 @@ def parse_bunch_load(elements):
 
 
 def parse_bunch_simple(doc, builtin, section='Returns'):
-    elements = parse_params(doc, section)
-
+    elements = parse_params(doc, section=section)
+    assert elements, (doc, parse(doc))
+    
     if 'attributes are' in elements[0].text or (
             len(elements) > 1 and 'attributes are' in elements[1].text):
         return parse_bunch_load(elements)
@@ -2861,7 +3004,7 @@ class Overrides:
     def report_not_triggered(self):
         not_triggered = set()
         for k, _v in self.overrides.items():
-            if isinstance(k, re.Pattern):
+            if hasattr(k, 'pattern'):
                 k = k.pattern
             if k not in self.triggered:
                 not_triggered.add(k)
@@ -2988,7 +3131,7 @@ sklearn_overrides = {
             "^verbose$": Int(),
             '^named_(estimators|steps|transformers)_?$': Dict(),
             # '^y_(true|pred)$': Arr(),
-            r'^base_estimator$': Estimator(),
+            r'^(base_)?estimator$': Estimator(),
         }),
     r'power_transform$':
     dict(types={
@@ -3156,6 +3299,9 @@ def main():
 
     over.report_not_triggered()
 
+
+assert test_remove_shape(), "some remove_shape() tests failed"
+assert test_parse_enum(), "some parse_enum() tests failed"
 
 if __name__ == '__main__':
     main()

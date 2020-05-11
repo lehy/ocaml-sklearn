@@ -11,5 +11,5 @@ if ! test -e "$VENV/bin/activate"; then
    python3 -mvenv "$VENV"
 fi
 source "$VENV"/bin/activate
-pip install scikit-learn=="$SKLEARN_FULL_VERSION" pytest
+pip install scikit-learn=="$SKLEARN_FULL_VERSION" pytest regex
 python3 "$ROOT"/lib/skdoc.py "$@"

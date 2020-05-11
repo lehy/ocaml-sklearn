@@ -812,29 +812,32 @@ TRAIN: [0 2] TEST: [1 3]
 
 *)
 
-(* TEST TODO
-   let%expect_test "StratifiedKFold" =
-   let open Sklearn.Model_selection in
-   let x = .array (matrixi [|[|1; 2|]; [|3; 4|]; [|1; 2|]; [|3; 4|]|]) np in
-   let y = .array (vectori [|0; 0; 1; 1|]) np in
-   let skf = StratifiedKFold.create ~n_splits:2 () in
-   print_ndarray @@ StratifiedKFold.get_n_splits ~x y skf;
-   [%expect {|
+let%expect_test "StratifiedKFold" =
+  let open Sklearn.Model_selection in
+  let module Arr = Sklearn.Arr in
+  let x = matrixi [|[|1; 2|]; [|3; 4|]; [|1; 2|]; [|3; 4|]|] in
+  let y = vectori [|0; 0; 1; 1|] in
+  let skf = StratifiedKFold.create ~n_splits:2 () in
+  print_int @@ StratifiedKFold.get_n_splits skf;
+  [%expect {|
       2
-   |}]
-   print_ndarray @@ print ~skf ();
-   [%expect {|
+   |}];
+  print StratifiedKFold.pp skf;
+  [%expect {|
       StratifiedKFold(n_splits=2, random_state=None, shuffle=False)
-   |}]
-   print_ndarray @@ for train_index, test_index in StratifiedKFold.split ~x y):print("TRAIN:" ~train_index "TEST:" ~test_index skfX_train, X_test = x[train_index], x[test_index]y_train, y_test = y[train_index], y[test_index];
-   [%expect {|
+   |}];
+  let splits = StratifiedKFold.split skf ~x ~y in
+  Seq.iter (fun (train_index, test_index) ->
+      Format.printf "TRAIN: %a TEST: %a\n" Arr.pp train_index Arr.pp test_index;
+      let _x_train, _x_test = Arr.(get x ~i:[`Arr train_index], get x ~i:[`Arr test_index]) in
+      let _y_train, _y_test = Arr.(get y ~i:[`Arr train_index], get y ~i:[`Arr test_index]) in
+      ()
+      (* Format.printf "%a %a %a %a\n" Arr.pp x_train Arr.pp x_test Arr.pp y_train Arr.pp y_test; *)
+    ) splits;
+  [%expect {|
       TRAIN: [1 3] TEST: [0 2]
       TRAIN: [0 2] TEST: [1 3]
    |}]
-
-*)
-
-
 
 (* StratifiedShuffleSplit *)
 (*
@@ -858,30 +861,36 @@ TRAIN: [4 1 0] TEST: [2 3 5]
 
 *)
 
-(* TEST TODO
-   let%expect_test "StratifiedShuffleSplit" =
-   let open Sklearn.Model_selection in
-   let x = .array (matrixi [|[|1; 2|]; [|3; 4|]; [|1; 2|]; [|3; 4|]; [|1; 2|]; [|3; 4|]|]) np in
-   let y = .array (vectori [|0; 0; 0; 1; 1; 1|]) np in
-   let sss = StratifiedShuffleSplit.create ~n_splits:5 ~test_size:0.5 ~random_state:0 () in
-   print_ndarray @@ StratifiedShuffleSplit.get_n_splits ~x y sss;
-   [%expect {|
+let%expect_test "StratifiedShuffleSplit" =
+  let open Sklearn.Model_selection in
+  let module Arr = Sklearn.Arr in
+  let x = matrixi [|[|1; 2|]; [|3; 4|]; [|1; 2|]; [|3; 4|]; [|1; 2|]; [|3; 4|]|] in
+  let y = vectori [|0; 0; 0; 1; 1; 1|] in
+  let sss = StratifiedShuffleSplit.create ~n_splits:5 ~test_size:(`F 0.5) ~random_state:0 () in
+  print_int @@ StratifiedShuffleSplit.get_n_splits sss;
+  [%expect {|
       5
-   |}]
-   print_ndarray @@ print ~sss ();
-   [%expect {|
-      StratifiedShuffleSplit(n_splits=5, random_state=0, ...)
-   |}]
-   print_ndarray @@ for train_index, test_index in StratifiedShuffleSplit.split ~x y):print("TRAIN:" ~train_index "TEST:" ~test_index sssX_train, X_test = x[train_index], x[test_index]y_train, y_test = y[train_index], y[test_index];
-   [%expect {|
+   |}];
+  print StratifiedShuffleSplit.pp sss;
+  [%expect {|
+      StratifiedShuffleSplit(n_splits=5, random_state=0, test_size=0.5,
+                  train_size=None)
+   |}];
+  let splits = StratifiedShuffleSplit.split sss ~x ~y in
+  Seq.iter (fun (train_index, test_index) ->
+      Format.printf "TRAIN: %a TEST: %a\n" Arr.pp train_index Arr.pp test_index;
+      let _x_train, _x_test = Arr.(get x ~i:[`Arr train_index], get x ~i:[`Arr test_index]) in
+      let _y_train, _y_test = Arr.(get y ~i:[`Arr train_index], get y ~i:[`Arr test_index]) in
+      ()
+      (* Format.printf "%a %a %a %a\n" Arr.pp x_train Arr.pp x_test Arr.pp y_train Arr.pp y_test; *)
+    ) splits;
+  [%expect {|
       TRAIN: [5 2 3] TEST: [4 1 0]
       TRAIN: [5 1 4] TEST: [0 2 3]
       TRAIN: [5 0 2] TEST: [4 3 1]
       TRAIN: [4 1 0] TEST: [2 3 5]
+      TRAIN: [0 5 1] TEST: [3 4 2]
    |}]
-
-*)
-
 
 
 (* TimeSeriesSplit *)
@@ -905,27 +914,31 @@ TRAIN: [0 1 2 3 4] TEST: [5]
 
 *)
 
-(* TEST TODO
-   let%expect_test "TimeSeriesSplit" =
-   let open Sklearn.Model_selection in
-   let x = .array (matrixi [|[|1; 2|]; [|3; 4|]; [|1; 2|]; [|3; 4|]; [|1; 2|]; [|3; 4|]|]) np in
-   let y = .array (vectori [|1; 2; 3; 4; 5; 6|]) np in
-   let tscv = TimeSeriesSplit.create () in
-   print_ndarray @@ print ~tscv ();
-   [%expect {|
+let%expect_test "TimeSeriesSplit" =
+  let open Sklearn.Model_selection in
+  let module Arr = Sklearn.Arr in
+  let x = matrixi [|[|1; 2|]; [|3; 4|]; [|1; 2|]; [|3; 4|]; [|1; 2|]; [|3; 4|]|] in
+  let y = vectori [|1; 2; 3; 4; 5; 6|] in
+  let tscv = TimeSeriesSplit.create () in
+  print TimeSeriesSplit.pp tscv;
+  [%expect {|
       TimeSeriesSplit(max_train_size=None, n_splits=5)
-   |}]
-   print_ndarray @@ for train_index, test_index in TimeSeriesSplit.split x):print("TRAIN:" ~train_index "TEST:" ~test_index tscvX_train, X_test = x[train_index], x[test_index]y_train, y_test = y[train_index], y[test_index];
-   [%expect {|
+   |}];
+  let splits = TimeSeriesSplit.split tscv ~x ~y in
+  Seq.iter (fun (train_index, test_index) ->
+      Format.printf "TRAIN: %a TEST: %a\n" Arr.pp train_index Arr.pp test_index;
+      let _x_train, _x_test = Arr.(get x ~i:[`Arr train_index], get x ~i:[`Arr test_index]) in
+      let _y_train, _y_test = Arr.(get y ~i:[`Arr train_index], get y ~i:[`Arr test_index]) in
+      ()
+      (* Format.printf "%a %a %a %a\n" Arr.pp x_train Arr.pp x_test Arr.pp y_train Arr.pp y_test; *)
+    ) splits;
+  [%expect {|
       TRAIN: [0] TEST: [1]
       TRAIN: [0 1] TEST: [2]
       TRAIN: [0 1 2] TEST: [3]
       TRAIN: [0 1 2 3] TEST: [4]
       TRAIN: [0 1 2 3 4] TEST: [5]
    |}]
-
-*)
-
 
 
 (* cross_val_predict *)
@@ -936,21 +949,20 @@ TRAIN: [0 1 2 3 4] TEST: [5]
 >>> X = diabetes.data[:150]
 >>> y = diabetes.target[:150]
 >>> lasso = linear_model.Lasso()
+>>> print(cross_val_score(lasso, X, y, cv=3))
+[0.33150734 0.08022311 0.03531764]
 
 *)
 
-(* TEST TODO
-   let%expect_test "cross_val_predict" =
-   let open Sklearn.Model_selection in
-   let diabetes = .load_diabetes datasets in
-   let x = diabetes.data[:150] in
-   let y = diabetes.target[:150] in
-   let lasso = .lasso linear_model in
-   [%expect {|
-   |}]
-
-*)
-
+let%expect_test "cross_val_predict" =
+  let open Sklearn.Model_selection in
+  let module Arr = Sklearn.Arr in
+  let diabetes = Sklearn.Datasets.load_diabetes () in
+  let x = Arr.(get diabetes#data ~i:[slice ~j:150 ()]) in
+  let y = Arr.(get diabetes#target ~i:[slice ~j:150 ()]) in
+  let lasso = Sklearn.Linear_model.Lasso.create () in
+  print_ndarray @@ cross_val_score ~estimator:lasso ~x ~y ();
+  [%expect {| [0.29828759 0.22414975 0.15479913 0.25519691 0.17109036] |}]
 
 
 (* cross_val_score *)
