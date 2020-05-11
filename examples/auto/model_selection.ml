@@ -978,19 +978,17 @@ let%expect_test "cross_val_predict" =
 
 *)
 
-(* TEST TODO
-   let%expect_test "cross_val_score" =
-   let open Sklearn.Model_selection in
-   let diabetes = .load_diabetes datasets in
-   let x = diabetes.data[:150] in
-   let y = diabetes.target[:150] in
-   let lasso = .lasso linear_model in
-   print_ndarray @@ print(cross_val_score ~lasso x y ~cv:3 ());
-   [%expect {|
+let%expect_test "cross_val_score" =
+  let open Sklearn.Model_selection in
+  let module Arr = Sklearn.Arr in
+  let diabetes = Sklearn.Datasets.load_diabetes () in
+  let x = Arr.(get diabetes#data ~i:[slice ~j:150 ()]) in
+  let y = Arr.(get diabetes#target ~i:[slice ~j:150 ()]) in
+  let lasso = Sklearn.Linear_model.Lasso.create () in
+  print_ndarray @@ cross_val_score ~estimator:lasso ~x ~y ~cv:(`I 3) ();
+[%expect {|
       [0.33150734 0.08022311 0.03531764]
    |}]
-
-*)
 
 
 
@@ -1005,52 +1003,11 @@ let%expect_test "cross_val_predict" =
 >>> X = diabetes.data[:150]
 >>> y = diabetes.target[:150]
 >>> lasso = linear_model.Lasso()
-
-*)
-
-(* TEST TODO
-   let%expect_test "cross_validate" =
-   let open Sklearn.Model_selection in
-   let diabetes = .load_diabetes datasets in
-   let x = diabetes.data[:150] in
-   let y = diabetes.target[:150] in
-   let lasso = .lasso linear_model in
-   [%expect {|
-   |}]
-
-*)
-
-
-
-(* cross_validate *)
-(*
 >>> cv_results = cross_validate(lasso, X, y, cv=3)
 >>> sorted(cv_results.keys())
 ['fit_time', 'score_time', 'test_score']
 >>> cv_results['test_score']
 array([0.33150734, 0.08022311, 0.03531764])
-
-*)
-
-(* TEST TODO
-   let%expect_test "cross_validate" =
-   let open Sklearn.Model_selection in
-   let cv_results = cross_validate ~lasso x y ~cv:3 () in
-   print_ndarray @@ sorted .keys () cv_results;
-   [%expect {|
-      ['fit_time', 'score_time', 'test_score']
-   |}]
-   print_ndarray @@ cv_results['test_score'];
-   [%expect {|
-      array([0.33150734, 0.08022311, 0.03531764])
-   |}]
-
-*)
-
-
-
-(* cross_validate *)
-(*
 >>> scores = cross_validate(lasso, X, y, cv=3,
 ...                         scoring=('r2', 'neg_mean_squared_error'),
 ...                         return_train_score=True)
@@ -1058,6 +1015,32 @@ array([0.33150734, 0.08022311, 0.03531764])
 [-3635.5... -3573.3... -6114.7...]
 >>> print(scores['train_r2'])
 [0.28010158 0.39088426 0.22784852]
+
+*)
+
+(*  almost done, need to wrap ~scoring param correctly  *)
+(* let%expect_test "cross_val_score" =
+ *   let open Sklearn.Model_selection in
+ *   let module Arr = Sklearn.Arr in
+ *   let diabetes = Sklearn.Datasets.load_diabetes () in
+ *   let x = Arr.(get diabetes#data ~i:[slice ~j:150 ()]) in
+ *   let y = Arr.(get diabetes#target ~i:[slice ~j:150 ()]) in
+ *   let lasso = Sklearn.Linear_model.Lasso.create () in
+ *   let cv_results = cross_validate ~estimator:lasso ~x ~y ~cv:(`I 3) () in
+ *   print_ndarray (Sklearn.Dict.keys cv_results |> Arr.String.of_list);
+ *   [%expect {| ['fit_time' 'score_time' 'test_score'] |}];
+ *   print_ndarray @@ Sklearn.Dict.get (module Arr) ~name:"test_score" cv_results;
+ *   [%expect {| [0.33150734 0.08022311 0.03531764] |}];
+ *   let scores = cross_validate ~estimator:lasso ~x ~y ~cv:(`I 3)
+ *       ~scoring:[`R2; `Neg_mean_squared_error] ~return_train_score:true
+ *   in
+ *   print_ndarray @@ Sklearn.Dict.get (module Arr) ~name:"test_neg_mean_squared_error" scores;
+ *   [%expect {| |}];
+ *   print_ndarray @@ Sklearn.Dict.get (module Arr) ~name:"train_r2" scores;
+ *   [%expect {| |}] *)
+
+(* cross_validate *)
+(*
 
 *)
 

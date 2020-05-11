@@ -638,7 +638,8 @@ class Dict(Type):
     # dict)?
     names = [
         'dict', 'Dict', 'dictionary', 'mapping of string to any',
-        'dict of numpy (masked) ndarrays', 'dict of numpy ndarrays'
+        'dict of numpy (masked) ndarrays', 'dict of numpy ndarrays',
+        'dict of float arrays'
     ]
     ml_type = 'Sklearn.Dict.t'
     ml_type_ret = 'Sklearn.Dict.t'
