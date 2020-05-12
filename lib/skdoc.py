@@ -1574,7 +1574,7 @@ class Class:
 
         # Parse attributes first, so that we avoid warning about them
         # when listing methods.
-        attributes = parse_types_simple(self.klass.__doc__,
+        attributes = parse_types(self.klass.__doc__,
                                         builtin,
                                         section="Attributes")
         attributes = overrides.types(self.klass.__name__, attributes)
@@ -2509,7 +2509,7 @@ def print_once(s):
         _already_printed.add(s)
 
 
-def parse_type_simple(t, param_name, builtin, context):
+def parse_type(t, param_name, builtin, context):
     t_orig = t
     t = remove_ranges(t)
     t = re.sub(r'\s*\(\)\s*', '', t)
@@ -2539,7 +2539,7 @@ def parse_type_simple(t, param_name, builtin, context):
         if all([is_string(elt) for elt in elts]):
             return Enum([StringValue(e.strip("\"'")) for e in elts])
         elts = [
-            parse_type_simple(elt, param_name, builtin,
+            parse_type(elt, param_name, builtin,
                               f"{context}: enum {elts}") for elt in elts
         ]
         # print("parsed enum elts:", elts)
@@ -2555,7 +2555,7 @@ def parse_type_simple(t, param_name, builtin, context):
         return UnknownType(t)
 
 
-def parse_types_simple(doc, builtin, section='Parameters'):
+def parse_types(doc, builtin, section='Parameters'):
     if doc is None:
         return {}
     elements = parse_params(doc, section)
@@ -2584,7 +2584,7 @@ def parse_types_simple(doc, builtin, section='Parameters'):
             if value.startswith('ref:'):
                 continue
 
-            ty = parse_type_simple(value,
+            ty = parse_type(value,
                                    param_name,
                                    builtin,
                                    context=f"in '{text}'")
@@ -2596,7 +2596,7 @@ def parse_types_simple(doc, builtin, section='Parameters'):
             raise
 
     if not ret and section == 'Returns':
-        return parse_types_simple(doc, builtin, section='Yields')
+        return parse_types(doc, builtin, section='Yields')
 
     if section == 'Yields':
         ret['__is_yield'] = True
@@ -2618,7 +2618,7 @@ def parse_bunch_fetch(elements, builtin):
                 value = m.group(2)
                 value = remove_shape(value)
                 value = value.strip(" \n\t,.;")
-                ret[name] = parse_type_simple(value,
+                ret[name] = parse_type(value,
                                               name,
                                               builtin,
                                               context=f"in '{line}'")
@@ -2707,7 +2707,7 @@ class Function:
     def _build_parameters(self, signature, doc, fixed_values, builtin):
         param_types = self.overrides.param_types(self.qualname)
         if param_types is None:
-            param_types = parse_types_simple(doc,
+            param_types = parse_types(doc,
                                              builtin,
                                              section='Parameters')
             # Make sure all params are in param_types, so that the
@@ -2755,9 +2755,9 @@ class Function:
             if self.overrides.returns_bunch(self.qualname):
                 ret_type = parse_bunch_simple(doc, builtin, section='Returns')
             else:
-                ret_type_elements = parse_types_simple(doc,
-                                                       builtin,
-                                                       section='Returns')
+                ret_type_elements = parse_types(doc,
+                                                builtin,
+                                                section='Returns')
 
                 for k, v in fixed_values.items():
                     if v[1] and k in ret_type_elements:
