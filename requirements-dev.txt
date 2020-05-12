@@ -2,6 +2,7 @@ flake8
 ghp-import
 jedi
 ipython
+matplotlib
 mkdocs
 mkdocs-material
 mkdocs-pymdownx-material-extras
@@ -9,3 +10,4 @@ regex
 scikit-learn
 pytest
 yapf
+
