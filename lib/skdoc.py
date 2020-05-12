@@ -87,6 +87,29 @@ class Paragraph:
         return f"{self.__class__.__name__}('{self.text}')"
 
 
+class TypeContext:
+    def __init__(self, **kwargs):
+        self.bindings = kwargs
+
+    def add(self, **kwargs):
+        ret = type(self)(**self.bindings)
+        ret.bindings.update(kwargs)
+        return ret
+
+    def __getattr__(self, name):
+        return self.bindings[name]
+
+    def __str__(self):
+        return repr(self)
+
+    def __repr__(self):
+        ret = "--------- context:\n"
+        for k, v in self.bindings.items():
+            ret += f"{k}:\n"
+            ret += indent(maybe_to_string(v)) + "\n"
+        return ret
+
+
 class Type:
     def visit(self, f):
         f(self)
@@ -101,6 +124,9 @@ class Type:
         if text is None:
             text = getattr(self, 'elements', '')
         return f"{self.__class__.__name__}({text})"
+
+    def __call_(self, function_name, param_name):
+        return self
 
     names = []
 
@@ -402,7 +428,7 @@ class Arr(Type):
     wrap = 'Sklearn.Arr.to_pyobject'
     ml_type_ret = 'Sklearn.Arr.t'
     unwrap = 'Sklearn.Arr.of_pyobject'
-    is_type = f'Arr.check'
+    is_type = 'Arr.check'
 
 
 class Generator(Type):
@@ -493,13 +519,13 @@ class List(Type):
 class StarStar(Type):
     def __init__(self):
         self.names = []
-        self.ml_type = f"(string * Py.Object.t) list"
+        self.ml_type = "(string * Py.Object.t) list"
 
     def __str__(self):
         return repr(self)
 
     def __repr__(self):
-        return f"**kwargs"
+        return "**kwargs"
 
 
 class FloatList(Type):
@@ -722,7 +748,7 @@ class Registry:
                 # tweaked for sklearn+scipy
                 if (('base' in ancestor_name or 'mixin' in ancestor_name
                      or 'rv_' in ancestor_name)
-                    and not ancestor_name.startswith('_')):
+                        and not ancestor_name.startswith('_')):
                     # if not ancestor_name.startswith('_'):
                     self.types[ancestor].append(klass)
                     self.bases[klass].add(ancestor)
@@ -871,7 +897,7 @@ class ReParser:
         enum_or = rf'(?:(?:{enum_elt} \s+ or \s)+ {enum_elt})'
         enum_comma_or = rf'(?:{enum_comma} \s or \s {enum_elt})'
 
-        string = rf'''(?P<elt>"[^"]+" | '[^']+' | None) (?: \s* \( \s* default \s* \) \s*)?'''
+        string = r'''(?P<elt>"[^"]+" | '[^']+' | None) (?: \s* \( \s* default \s* \) \s*)?'''
         strings_comma = rf'(?:(?:{string} \s* , \s*)* {string})'
         strings_semi = rf'(?:(?:{string} \s* ; \s*)* {string})'
         strings = rf'(?:\s* (?:{strings_comma} | {strings_semi}) \s*)'
@@ -908,8 +934,7 @@ def remove_shape(text):
 
 def test_remove_shape():
     tests = [
-        'shape [n,m]',
-        'of shape (n_samples,) or (n_samples, n_outputs)',
+        'shape [n,m]', 'of shape (n_samples,) or (n_samples, n_outputs)',
         'shape (n_samples, n_features)',
         '(len() equal to cv or 1 if cv == "prefit")', 'of shape [n_samples]',
         'of shape (n_class,)', 'shape (n_bins,) or smaller',
@@ -991,9 +1016,11 @@ def test_parse_enum():
         ("str: {'a', 'b'}", ["'a'", "'b'"]),
         ("{array-like, sparse matrix}", ['array-like', 'sparse matrix']),
         ("""string, [None, 'binary', 'micro', 'macro', 'samples',                        'weighted']""",
-         ['None', "'binary'", "'micro'", "'macro'", "'samples'", "'weighted'"]),
+         ['None', "'binary'", "'micro'", "'macro'", "'samples'",
+          "'weighted'"]),
         ("""string, [None, 'binary' (default), 'micro', 'macro', 'samples',                        'weighted']""",
-         ['None', "'binary'", "'micro'", "'macro'", "'samples'", "'weighted'"]),
+         ['None', "'binary'", "'micro'", "'macro'", "'samples'",
+          "'weighted'"]),
         ("{'raw_values', 'uniform_average'} or array-like of shape",
          ["{'raw_values', 'uniform_average'}", "array-like of shape"]),
         ('array-like  or BallTree', ['array-like', 'BallTree'])
@@ -1079,10 +1106,10 @@ sklearn_builtin_types = BuiltinTypes(generic_builtin_types + [
 ])
 
 
-def partition(l, pred):
+def partition(li, pred):
     sat = []
     unsat = []
-    for x in l:
+    for x in li:
         if pred(x):
             sat.append(x)
         else:
@@ -1174,7 +1201,7 @@ def simplify_enum(enum):
     is_obj, is_not_obj = partition(
         enum.elements, lambda x: isinstance(x, (PyObject, UnknownType)))
     if len(is_obj) > 1:
-        enum = type(enum)(is_not_obj + [PyObject()]) # XXX
+        enum = type(enum)(is_not_obj + [PyObject()])  # XXX
 
     # A one-element enum is just the element itself.
     if len(enum.elements) == 1:
@@ -1370,7 +1397,6 @@ class Module:
     def _list_modules_raw(self, module, overrides):
         modules = []
         for name in dir(module):
-            qualname = f"{self.full_python_name}.{name}"
             if name.startswith('_'):
                 continue
             if name in ['test', 'scipy']:  # for scipy
@@ -1425,7 +1451,7 @@ class Module:
         return repr(self)
 
     def __repr__(self):
-        ret = f"Module(self.full_python_name)[\n"
+        ret = f"Module({self.full_python_name})[\n"
         for elt in self.elements:
             ret += indent(repr(elt) + ",") + "\n"
         ret += "]"
@@ -1575,8 +1601,9 @@ class Class:
         # Parse attributes first, so that we avoid warning about them
         # when listing methods.
         attributes = parse_types(self.klass.__doc__,
-                                        builtin,
-                                        section="Attributes")
+                                 builtin,
+                                 TypeContext(klass=self.klass),
+                                 section="Attributes")
         attributes = overrides.types(self.klass.__name__, attributes)
 
         # There may be several times the same function behind the same
@@ -2350,7 +2377,7 @@ class SelfParameter:
         return False
 
     def sig(self, module_path):
-        return self.ty.ml_type  #'t'
+        return self.ty.ml_type
 
     def decl(self):
         return 'self'
@@ -2509,10 +2536,12 @@ def print_once(s):
         _already_printed.add(s)
 
 
-def parse_type(t, param_name, builtin, context):
+def parse_type(t, builtin, context):
     t_orig = t
     t = remove_ranges(t)
     t = re.sub(r'\s*\(\)\s*', '', t)
+
+    param_name = context.param_name
 
     ret = None
     try:
@@ -2539,8 +2568,8 @@ def parse_type(t, param_name, builtin, context):
         if all([is_string(elt) for elt in elts]):
             return Enum([StringValue(e.strip("\"'")) for e in elts])
         elts = [
-            parse_type(elt, param_name, builtin,
-                              f"{context}: enum {elts}") for elt in elts
+            parse_type(elt, builtin, context.add(enum_elts=elts))
+            for elt in elts
         ]
         # print("parsed enum elts:", elts)
         ret = Enum(elts)
@@ -2551,11 +2580,14 @@ def parse_type(t, param_name, builtin, context):
     elif is_int(t):
         return IntValue(t)
     else:
-        print_once(f"WW {context}: '{t_orig}': failed to parse type: '{t}'")
+        print(f"WW failed to parse type: '{t}', context follows")
+        print(context)
         return UnknownType(t)
 
 
-def parse_types(doc, builtin, section='Parameters'):
+def parse_types(doc, builtin, context, section='Parameters'):
+    context = context.add(section=section)
+
     if doc is None:
         return {}
     elements = parse_params(doc, section)
@@ -2576,18 +2608,19 @@ def parse_types(doc, builtin, section='Parameters'):
                 continue
             param_name = m.group(1)
 
-            value = m.group(2)
-            value = remove_default(value)
-            value = remove_shape(value)
-            value = value.strip(" \n\t,.;")
+            type_string = m.group(2)
+            type_string = remove_default(type_string)
+            type_string = remove_shape(type_string)
+            type_string = type_string.strip(" \n\t,.;")
 
-            if value.startswith('ref:'):
+            if type_string.startswith('ref:'):
                 continue
 
-            ty = parse_type(value,
-                                   param_name,
-                                   builtin,
-                                   context=f"in '{text}'")
+            ty = parse_type(type_string,
+                            builtin,
+                            context=context.add(text=text,
+                                                param_name=param_name,
+                                                type_string=type_string))
             ret[param_name] = ty
 
         except Exception as e:
@@ -2596,7 +2629,10 @@ def parse_types(doc, builtin, section='Parameters'):
             raise
 
     if not ret and section == 'Returns':
-        return parse_types(doc, builtin, section='Yields')
+        return parse_types(doc,
+                           builtin,
+                           context.add(return_fallback_to_yield=True),
+                           section='Yields')
 
     if section == 'Yields':
         ret['__is_yield'] = True
@@ -2604,7 +2640,8 @@ def parse_types(doc, builtin, section='Parameters'):
     return ret
 
 
-def parse_bunch_fetch(elements, builtin):
+def parse_bunch_fetch(elements, builtin, context):
+    context = context.add(group='bunch_fetch')
     ret = {}
     for element in elements:
         for line in element.text.split("\n"):
@@ -2619,14 +2656,14 @@ def parse_bunch_fetch(elements, builtin):
                 value = remove_shape(value)
                 value = value.strip(" \n\t,.;")
                 ret[name] = parse_type(value,
-                                              name,
-                                              builtin,
-                                              context=f"in '{line}'")
+                                       builtin,
+                                       context=context.add(param_name=name,
+                                                           line=line))
     ret = Bunch(ret)
     return ret
 
 
-def parse_bunch_load(elements):
+def parse_bunch_load(elements, context):
     text = ' '.join(e.text for e in elements)
     attributes = re.findall(r"'([^']+)'", text)
     print(attributes)
@@ -2643,15 +2680,15 @@ def parse_bunch_load(elements):
     return Bunch({k: types[k] for k in attributes})
 
 
-def parse_bunch_simple(doc, builtin, section='Returns'):
+def parse_bunch(doc, builtin, context, section='Returns'):
     elements = parse_params(doc, section=section)
     assert elements, (doc, parse(doc))
-    
+
     if 'attributes are' in elements[0].text or (
             len(elements) > 1 and 'attributes are' in elements[1].text):
-        return parse_bunch_load(elements)
+        return parse_bunch_load(elements, context)
     else:
-        return parse_bunch_fetch(elements, builtin)
+        return parse_bunch_fetch(elements, builtin, context)
 
 
 class Function:
@@ -2666,6 +2703,8 @@ class Function:
         self.function = function
         self.python_name = python_name
         self.qualname = qualname
+        self.context = TypeContext(function=function,
+                                   function_qualname=qualname)
         doc = inspect.getdoc(function)
         raw_doc = getattr(function, '__doc__', '')
         signature = self._signature()
@@ -2708,8 +2747,9 @@ class Function:
         param_types = self.overrides.param_types(self.qualname)
         if param_types is None:
             param_types = parse_types(doc,
-                                             builtin,
-                                             section='Parameters')
+                                      builtin,
+                                      context=self.context.add(group="params"),
+                                      section='Parameters')
             # Make sure all params are in param_types, so that the
             # overrides trigger (even in case the params were not
             # found parsing the doc).
@@ -2753,11 +2793,16 @@ class Function:
         ret_type = self.overrides.ret_type(self.qualname)
         if ret_type is None:
             if self.overrides.returns_bunch(self.qualname):
-                ret_type = parse_bunch_simple(doc, builtin, section='Returns')
+                ret_type = parse_bunch(doc,
+                                       builtin,
+                                       context=self.context.add(group="ret_bunch"),
+                                       section='Returns')
             else:
-                ret_type_elements = parse_types(doc,
-                                                builtin,
-                                                section='Returns')
+                ret_type_elements = parse_types(
+                    doc,
+                    builtin,
+                    context=self.context.add(group="ret"),
+                    section='Returns')
 
                 for k, v in fixed_values.items():
                     if v[1] and k in ret_type_elements:
