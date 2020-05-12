@@ -6,6 +6,7 @@ import pkgutil
 import pathlib
 import textwrap
 import importlib
+import functools
 import collections
 
 
@@ -125,7 +126,11 @@ class Type:
             text = getattr(self, 'elements', '')
         return f"{self.__class__.__name__}({text})"
 
-    def __call_(self, function_name, param_name):
+    def __call__(self, context):
+        """This is so that users can put either a Type or a function context
+        -> Type in overrides.
+
+        """
         return self
 
     names = []
@@ -243,7 +248,10 @@ class Enum(Type):
                 return False
         return True
 
-    def __init__(self, elements):
+    def __init__(self, elements, name=None):
+        print(f"DD building enum: {elements}")
+        for elt in elements:
+            assert isinstance(elt, Type), elt
         assert elements, elements
         self.elements = elements
         self.ml_type = "[" + ' | '.join([elt.tag()[0]
@@ -259,6 +267,9 @@ class Enum(Type):
                 unwrap_cases
             ) + ''' else failwith (Printf.sprintf "Sklearn: could not identify type from Python value %s (%s)"
                                                   (Py.Object.to_string x) (Wrap_utils.type_string x)))'''
+
+        if name is not None:
+            self.tag_name = lambda: name
 
 
 class Optional(Type):
@@ -888,27 +899,30 @@ class ReParser:
             p_no_tuple,
         ]
         shape = '|'.join([rf'({x})' for x in res])
+        shape = rf'(,\s*)?(?:{shape})'
 
         self.shape = self._comp(shape)
 
         enum_elt = rf'(?P<elt>(?:(?:(?! \s+ or \s+) [^()[\],])* {three})* (?:(?! \s+ or \s+)[^()[\],])*)'
         enum_comma = rf'(?:(?:{enum_elt},)+ {enum_elt})'
         enum_semi = rf'(?:(?:{enum_elt};)+ {enum_elt})'
+        enum_pipe = rf'(?:(?:{enum_elt}\|)+ {enum_elt})'
         enum_or = rf'(?:(?:{enum_elt} \s+ or \s)+ {enum_elt})'
         enum_comma_or = rf'(?:{enum_comma} \s or \s {enum_elt})'
 
         string = r'''(?P<elt>"[^"]+" | '[^']+' | None) (?: \s* \( \s* default \s* \) \s*)?'''
         strings_comma = rf'(?:(?:{string} \s* , \s*)* {string})'
         strings_semi = rf'(?:(?:{string} \s* ; \s*)* {string})'
-        strings = rf'(?:\s* (?:{strings_comma} | {strings_semi}) \s*)'
+        strings_pipe = rf'(?:(?:{string} \s* \| \s*)* {string})'
+        strings = rf'(?:\s* (?:{strings_comma} | {strings_semi} | {strings_pipe}) \s*)'
         strings_p = rf'(?:\( \s* {strings} \s* \))'
         strings_b = rf'(?:\[ \s* {strings} \s* \])'
         strings_c = rf'(?:\{{ \s* {strings} \s* \}})'
-        string_enum = rf'(?:(?:str(ing)? (?:\s+ in | \s* [,:])? \s*)? (?:{strings_p} | {strings_b} | {strings_c}))'
+        string_enum = rf'(?:(?:str(ing)? (?:\s+ in | \s* [,:])? \s*)? (?:{strings_p} | {strings_b} | {strings_c} | {strings_pipe}))'
 
-        enum_c = rf'(?: \{{ (?:{enum_comma} | {enum_semi}) \}})'
+        enum_c = rf'(?: \{{ (?:{enum_comma} | {enum_semi} | {enum_pipe}) \}})'
 
-        enum = rf'^\s* (?:{string_enum} | {enum_c} | {enum_comma} | {enum_or} | {enum_comma_or}) \s*$'
+        enum = rf'^\s* (?:{string_enum} | {enum_c} | {enum_comma} | {enum_pipe} | {enum_or} | {enum_comma_or}) \s*$'
         self.string = self._comp(string)
         self.strings = self._comp(strings)
         self.strings_c = self._comp(strings_c)
@@ -1023,7 +1037,9 @@ def test_parse_enum():
           "'weighted'"]),
         ("{'raw_values', 'uniform_average'} or array-like of shape",
          ["{'raw_values', 'uniform_average'}", "array-like of shape"]),
-        ('array-like  or BallTree', ['array-like', 'BallTree'])
+        ('array-like  or BallTree', ['array-like', 'BallTree']),
+        ("'linear' | 'poly' | 'rbf' | 'sigmoid' | 'cosine' | 'precomputed'",
+         ["'linear'", "'poly'", "'rbf'", "'sigmoid'", "'cosine'", "'precomputed'"])
     ]
 
     success = True
@@ -1154,6 +1170,7 @@ def simplify_arr_or_float(enum):
 
 
 def simplify_enum(enum):
+    print(f"DD simplifying enum {enum}")
     # flatten (once should be enough?)
     elts = []
     for elt in enum.elements:
@@ -1175,8 +1192,11 @@ def simplify_enum(enum):
                                lambda x: isinstance(x, NoneValue))
     assert len(none) <= 1, enum
     if none:
-        inside = simplify_enum(type(enum)(not_none))
-        return Optional(inside)
+        if not_none:
+            inside = simplify_enum(type(enum)(not_none))
+            return Optional(inside)
+        else:
+            return none
     # enum = EnumOption(not_none)
     # enum = type(enum)(not_none + [NoneValue()])
 
@@ -1584,7 +1604,8 @@ class Class:
         else:
             self.constructor = Ctor(self.klass.__name__, self.klass.__name__,
                                     self.klass, overrides, builtin)
-        self.elements = self._list_elements(overrides, builtin)
+        context = TypeContext(klass=self.klass)
+        self.elements = self._list_elements(overrides, builtin, context)
         self.ml_name = make_module_name(self.klass.__name__)
         for item in ['deprecated', 'Parallel', 'ABCMeta']:
             if klass.__name__ == item:
@@ -1595,16 +1616,17 @@ class Class:
     def remove_element(self, elt):
         self.elements = [x for x in self.elements if x is not elt]
 
-    def _list_elements(self, overrides, builtin):
+    def _list_elements(self, overrides, builtin, context):
         elts = []
 
         # Parse attributes first, so that we avoid warning about them
         # when listing methods.
         attributes = parse_types(self.klass.__doc__,
                                  builtin,
-                                 TypeContext(klass=self.klass),
+                                 context,
                                  section="Attributes")
-        attributes = overrides.types(self.klass.__name__, attributes)
+        attributes = overrides.types(self.klass.__name__, attributes,
+                                     context.add(group="attributes"))
 
         # There may be several times the same function behind the same
         # name. Track elements already seen.
@@ -1710,7 +1732,7 @@ class Class:
         for base in self.registry.bases[self.klass]:
             base_name = make_module_name(base.__name__)
             f.write(
-                f"let {caster(base_name)} x = (x :> [`{tag(base_name)}] Obj.t)"
+                f"let {caster(base_name)} x = (x :> [`{tag(base_name)}] Obj.t)\n"
             )
 
     def write(self, path, module_path, ns):
@@ -2536,8 +2558,22 @@ def print_once(s):
         _already_printed.add(s)
 
 
+def assert_returns(t):
+    def make(f):
+        @functools.wraps(f)
+        def wrapped(*args, **kwargs):
+            ret = f(*args, **kwargs)
+            assert isinstance(ret, t), f
+            return ret
+
+        return wrapped
+
+    return make
+
+
+@assert_returns(Type)
 def parse_type(t, builtin, context):
-    t_orig = t
+    print(f"DD parse_type {t}")
     t = remove_ranges(t)
     t = re.sub(r'\s*\(\)\s*', '', t)
 
@@ -2710,7 +2746,7 @@ class Function:
         signature = self._signature()
         fixed_values = overrides.fixed_values(self.qualname)
         parameters = self._build_parameters(signature, raw_doc, fixed_values,
-                                            builtin)
+                                            builtin, self.context)
         ret = self._build_ret(signature, raw_doc, fixed_values, builtin)
         self.wrapper = Wrapper(python_name, self._ml_name(python_name), doc,
                                parameters, ret, "function", namespace)
@@ -2743,12 +2779,14 @@ class Function:
         except ValueError:
             raise NoSignature(self.function)
 
-    def _build_parameters(self, signature, doc, fixed_values, builtin):
+    def _build_parameters(self, signature, doc, fixed_values, builtin,
+                          context):
+        context = context.add(group="params")
         param_types = self.overrides.param_types(self.qualname)
         if param_types is None:
             param_types = parse_types(doc,
                                       builtin,
-                                      context=self.context.add(group="params"),
+                                      context=context,
                                       section='Parameters')
             # Make sure all params are in param_types, so that the
             # overrides trigger (even in case the params were not
@@ -2758,7 +2796,8 @@ class Function:
                     param_types[k] = UnknownType(
                         f"{k} not found in parsed types {list(param_types.keys())}"
                     )
-            param_types = self.overrides.types(self.qualname, param_types)
+            param_types = self.overrides.types(self.qualname, param_types,
+                                               context)
 
         parameters = []
         # Some functions in Scipy have both an n and an N parameter,
@@ -2790,19 +2829,19 @@ class Function:
         return parameters
 
     def _build_ret(self, signature, doc, fixed_values, builtin):
-        ret_type = self.overrides.ret_type(self.qualname)
+        context = self.context.add(group="ret")
+        ret_type = self.overrides.ret_type(self.qualname, context)
         if ret_type is None:
             if self.overrides.returns_bunch(self.qualname):
                 ret_type = parse_bunch(doc,
                                        builtin,
-                                       context=self.context.add(group="ret_bunch"),
+                                       context=context,
                                        section='Returns')
             else:
-                ret_type_elements = parse_types(
-                    doc,
-                    builtin,
-                    context=self.context.add(group="ret"),
-                    section='Returns')
+                ret_type_elements = parse_types(doc,
+                                                builtin,
+                                                context,
+                                                section='Returns')
 
                 for k, v in fixed_values.items():
                     if v[1] and k in ret_type_elements:
@@ -3006,7 +3045,7 @@ class Overrides:
             return ret[0]
         return None
 
-    def ret_type(self, qualname):
+    def ret_type(self, qualname, context):
         ret = []
         for dic in self._iter_function_matches(qualname, 'ret_type'):
             if 'ret_type' in dic:
@@ -3014,17 +3053,18 @@ class Overrides:
         assert len(ret) <= 1, ("several ret_type found for function", qualname,
                                ret)
         if ret:
-            return ret[0]
+            return ret[0](context)
         return None
 
-    def types(self, qualname, param_types):
+    def types(self, qualname, param_types, context):
         param_types = dict(param_types)
         for dic in self._iter_function_matches(qualname, 'types'):
             # use list() to freeze the list, we will be modifying param_types
             for k in list(param_types.keys()):
                 for param_re, ty in dic.get('types', {}).items():
                     if re.search(param_re, k) is not None:
-                        param_types[k] = ty
+                        auto_type = param_types[k]
+                        param_types[k] = ty(context.add(auto_type=auto_type))
         return param_types
 
     def fixed_values(self, qualname):
@@ -3082,6 +3122,36 @@ def dummy_shuffle(*arrays, random_state=None, n_samples=None):
 
 
 sig_shuffle = inspect.signature(dummy_shuffle)
+
+
+def map_enum(t, f):
+    if isinstance(t, Enum):
+        return type(t)([f(x) for x in t.elements])
+    elif isinstance(t, Optional):
+        return type(t)(map_enum(t.t, f))
+    else:
+        return t
+
+
+def scoring_param(context):
+    import sklearn.metrics
+    print(list(sklearn.metrics.SCORERS.keys()))
+    scoring = Enum([StringValue(x) for x in sklearn.metrics.SCORERS.keys()])
+    scoring.tag_name = lambda: "Score"
+    print(f"DD scoring context:\n{context}")
+
+    def to_scoring(t):
+        if isinstance(t, String):
+            return scoring
+        elif isinstance(t, UnknownType) and t.text in [
+                'tuple', 'list/tuple', 'tuple/list'
+        ]:
+            return List(scoring)
+        else:
+            return t
+
+    return map_enum(context.auto_type, to_scoring)
+
 
 sklearn_overrides = {
     r'Pipeline\.inverse_transform$':
@@ -3178,6 +3248,7 @@ sklearn_overrides = {
             '^named_(estimators|steps|transformers)_?$': Dict(),
             # '^y_(true|pred)$': Arr(),
             r'^(base_)?estimator$': Estimator(),
+            r'scoring': scoring_param
         }),
     r'power_transform$':
     dict(types={

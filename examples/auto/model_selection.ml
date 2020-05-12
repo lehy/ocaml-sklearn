@@ -1018,26 +1018,25 @@ array([0.33150734, 0.08022311, 0.03531764])
 
 *)
 
-(*  almost done, need to wrap ~scoring param correctly  *)
-(* let%expect_test "cross_val_score" =
- *   let open Sklearn.Model_selection in
- *   let module Arr = Sklearn.Arr in
- *   let diabetes = Sklearn.Datasets.load_diabetes () in
- *   let x = Arr.(get diabetes#data ~i:[slice ~j:150 ()]) in
- *   let y = Arr.(get diabetes#target ~i:[slice ~j:150 ()]) in
- *   let lasso = Sklearn.Linear_model.Lasso.create () in
- *   let cv_results = cross_validate ~estimator:lasso ~x ~y ~cv:(`I 3) () in
- *   print_ndarray (Sklearn.Dict.keys cv_results |> Arr.String.of_list);
- *   [%expect {| ['fit_time' 'score_time' 'test_score'] |}];
- *   print_ndarray @@ Sklearn.Dict.get (module Arr) ~name:"test_score" cv_results;
- *   [%expect {| [0.33150734 0.08022311 0.03531764] |}];
- *   let scores = cross_validate ~estimator:lasso ~x ~y ~cv:(`I 3)
- *       ~scoring:[`R2; `Neg_mean_squared_error] ~return_train_score:true
- *   in
- *   print_ndarray @@ Sklearn.Dict.get (module Arr) ~name:"test_neg_mean_squared_error" scores;
- *   [%expect {| |}];
- *   print_ndarray @@ Sklearn.Dict.get (module Arr) ~name:"train_r2" scores;
- *   [%expect {| |}] *)
+let%expect_test "cross_val_score" =
+  let open Sklearn.Model_selection in
+  let module Arr = Sklearn.Arr in
+  let diabetes = Sklearn.Datasets.load_diabetes () in
+  let x = Arr.(get diabetes#data ~i:[slice ~j:150 ()]) in
+  let y = Arr.(get diabetes#target ~i:[slice ~j:150 ()]) in
+  let lasso = Sklearn.Linear_model.Lasso.create () in
+  let cv_results = cross_validate ~estimator:lasso ~x ~y ~cv:(`I 3) () in
+  print_ndarray (Sklearn.Dict.keys cv_results |> Arr.String.of_list);
+  [%expect {| ['fit_time' 'score_time' 'test_score'] |}];
+  print_ndarray @@ Sklearn.Dict.get (module Arr) ~name:"test_score" cv_results;
+  [%expect {| [0.33150734 0.08022311 0.03531764] |}];
+  let scores = cross_validate ~estimator:lasso ~x ~y ~cv:(`I 3)
+      ~scoring:(`List [`R2; `Neg_mean_squared_error]) ~return_train_score:true ()
+  in
+  print_ndarray @@ Sklearn.Dict.get (module Arr) ~name:"test_neg_mean_squared_error" scores;
+  [%expect {| [-3635.51152303 -3573.34242148 -6114.78229547] |}];
+  print_ndarray @@ Sklearn.Dict.get (module Arr) ~name:"train_r2" scores;
+  [%expect {| [0.28010158 0.39088426 0.22784852] |}]
 
 (* cross_validate *)
 (*
