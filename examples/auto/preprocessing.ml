@@ -60,7 +60,7 @@ array([[0.       , 0.6931...],
 let%expect_test "FunctionTransformer" =
   let open Sklearn.Preprocessing in
   let transformer = FunctionTransformer.create np.log1p () in  
-  let x = .array (matrixi [|[|0; 1|]; [|2; 3|]|]) np in  
+  let x = matrixi [|[|0; 1|]; [|2; 3|]|] in  
   print_ndarray @@ FunctionTransformer.transform ~x transformer;  
   [%expect {|
       array([[0.       , 0.6931...],      

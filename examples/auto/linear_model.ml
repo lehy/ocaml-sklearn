@@ -473,7 +473,7 @@ array([1., 2.])
 (* TEST TODO
 let%expect_test "LinearRegression" =
   let open Sklearn.Linear_model in
-  let x = .array (matrixi [|[|1; 1|]; [|1; 2|]; [|2; 2|]; [|2; 3|]|]) np in  
+  let x = matrixi [|[|1; 1|]; [|1; 2|]; [|2; 2|]; [|2; 3|]|] in  
   print_ndarray @@ # y = 1 * x_0 + 2 * x_1 + 3;  
   let y = .dot ~x np.array((vectori [|1; 2|])) np + 3 in  
   let reg = LinearRegression().fit ~x y () in  
@@ -1085,8 +1085,8 @@ SGDClassifier()
 (* TEST TODO
 let%expect_test "SGDClassifier" =
   let open Sklearn.Linear_model in
-  let x = .array (matrixi [|[|-1; -1|]; [|-2; -1|]; [|1; 1|]; [|2; 1|]|]) np in  
-  let Y = .array (vectori [|1; 1; 2; 2|]) np in  
+  let x = matrixi [|[|-1; -1|]; [|-2; -1|]; [|1; 1|]; [|2; 1|]|] in  
+  let Y = vectori [|1; 1; 2; 2|] in  
   let clf = .sGDClassifier ~max_iter:1000 ~tol:1e-3 linear_model in  
   print_ndarray @@ .fit ~x Y clf;  
   [%expect {|

@@ -126,7 +126,7 @@ array([[ 0.7],
 let%expect_test "cdist" =
   let open Sklearn.Gaussian_process in
   let a = .array [(vectori [|0; 0; 0|]) (vectori [|0; 0; 1|]) (vectori [|0; 1; 0|]) (vectori [|0; 1; 1|]) (vectori [|1; 0; 0|]) (vectori [|1; 0; 1|]) (vectori [|1; 1; 0|]) (vectori [|1; 1; 1|])] np in  
-  let b = .array (matrix [|[| 0.1; 0.2; 0.4|]|]) np in  
+  let b = matrix [|[| 0.1; 0.2; 0.4|]|] in  
   print_ndarray @@ .cdist ~a b 'cityblock' distance;  
   [%expect {|
       array([[ 0.7],      

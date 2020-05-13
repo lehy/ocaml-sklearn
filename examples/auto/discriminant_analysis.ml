@@ -14,8 +14,8 @@ LinearDiscriminantAnalysis()
 (* TEST TODO
 let%expect_test "LinearDiscriminantAnalysis" =
   let open Sklearn.Discriminant_analysis in
-  let x = .array (matrixi [|[|-1; -1|]; [|-2; -1|]; [|-3; -2|]; [|1; 1|]; [|2; 1|]; [|3; 2|]|]) np in  
-  let y = .array (vectori [|1; 1; 1; 2; 2; 2|]) np in  
+  let x = matrixi [|[|-1; -1|]; [|-2; -1|]; [|-3; -2|]; [|1; 1|]; [|2; 1|]; [|3; 2|]|] in  
+  let y = vectori [|1; 1; 1; 2; 2; 2|] in  
   let clf = LinearDiscriminantAnalysis.create () in  
   print LinearDiscriminantAnalysis.pp @@ LinearDiscriminantAnalysis.fit ~x y clf;  
   [%expect {|
@@ -46,8 +46,8 @@ QuadraticDiscriminantAnalysis()
 (* TEST TODO
 let%expect_test "QuadraticDiscriminantAnalysis" =
   let open Sklearn.Discriminant_analysis in
-  let x = .array (matrixi [|[|-1; -1|]; [|-2; -1|]; [|-3; -2|]; [|1; 1|]; [|2; 1|]; [|3; 2|]|]) np in  
-  let y = .array (vectori [|1; 1; 1; 2; 2; 2|]) np in  
+  let x = matrixi [|[|-1; -1|]; [|-2; -1|]; [|-3; -2|]; [|1; 1|]; [|2; 1|]; [|3; 2|]|] in  
+  let y = vectori [|1; 1; 1; 2; 2; 2|] in  
   let clf = QuadraticDiscriminantAnalysis.create () in  
   print QuadraticDiscriminantAnalysis.pp @@ QuadraticDiscriminantAnalysis.fit ~x y clf;  
   [%expect {|

@@ -986,7 +986,7 @@ let%expect_test "cross_val_score" =
   let y = Arr.(get diabetes#target ~i:[slice ~j:150 ()]) in
   let lasso = Sklearn.Linear_model.Lasso.create () in
   print_ndarray @@ cross_val_score ~estimator:lasso ~x ~y ~cv:(`I 3) ();
-[%expect {|
+  [%expect {|
       [0.33150734 0.08022311 0.03531764]
    |}]
 
@@ -1038,27 +1038,6 @@ let%expect_test "cross_val_score" =
   print_ndarray @@ Sklearn.Dict.get (module Arr) ~name:"train_r2" scores;
   [%expect {| [0.28010158 0.39088426 0.22784852] |}]
 
-(* cross_validate *)
-(*
-
-*)
-
-(* TEST TODO
-   let%expect_test "cross_validate" =
-   let open Sklearn.Model_selection in
-   let scores = cross_validate(lasso, x, y, cv=3,scoring=('r2', 'neg_mean_squared_error'),return_train_score=true) in
-   print_ndarray @@ print scores['test_neg_mean_squared_error'] ();
-   [%expect {|
-      [-3635.5... -3573.3... -6114.7...]
-   |}]
-   print_ndarray @@ print scores['train_r2'] ();
-   [%expect {|
-      [0.28010158 0.39088426 0.22784852]
-   |}]
-
-*)
-
-
 
 (* train_test_split *)
 (*
@@ -1073,32 +1052,6 @@ array([[0, 1],
        [8, 9]])
 >>> list(y)
 [0, 1, 2, 3, 4]
-
-*)
-
-(* TEST TODO
-   let%expect_test "train_test_split" =
-   let open Sklearn.Model_selection in
-   let x, y = .arange 10).reshape((5 2)) range(5 np in
-   print_ndarray @@ x;
-   [%expect {|
-      array([[0, 1],
-             [2, 3],
-             [4, 5],
-             [6, 7],
-             [8, 9]])
-   |}]
-   print_ndarray @@ list ~y ();
-   [%expect {|
-      [0, 1, 2, 3, 4]
-   |}]
-
-*)
-
-
-
-(* train_test_split *)
-(*
 >>> X_train, X_test, y_train, y_test = train_test_split(
 ...     X, y, test_size=0.33, random_state=42)
 ...
@@ -1116,45 +1069,45 @@ array([[2, 3],
 
 *)
 
-(* TEST TODO
-   let%expect_test "train_test_split" =
-   let open Sklearn.Model_selection in
-   let X_train, X_test, y_train, y_test = train_test_split ~x y ~test_size:0.33 ~random_state:42 () in
-   X_train
-   [%expect {|
-      array([[4, 5],
-             [0, 1],
-             [6, 7]])
-   |}]
-   y_train
-   [%expect {|
-      [2, 0, 3]
-   |}]
-   print_ndarray @@ X_test;
-   [%expect {|
-      array([[2, 3],
-             [8, 9]])
-   |}]
-   print_ndarray @@ y_test;
-   [%expect {|
-      [1, 4]
-   |}]
-
-*)
-
-
-
-(* train_test_split *)
-(*
->>> train_test_split(y, shuffle=False)
-
-*)
-
-(* TEST TODO
-   let%expect_test "train_test_split" =
-   let open Sklearn.Model_selection in
-   print_ndarray @@ train_test_split y ~shuffle:false ();
-   [%expect {|
-   |}]
-
-*)
+let%expect_test "train_test_split" =
+  let open Sklearn.Model_selection in
+  let x, y = Sklearn.Arr.(arange 10 |> reshape ~shape:[|5; 2|], arange 5) in
+  print_ndarray @@ x;
+  [%expect {|
+      [[0 1]
+       [2 3]
+       [4 5]
+       [6 7]
+       [8 9]]
+   |}];
+  print_ndarray y;
+  [%expect {|
+      [0 1 2 3 4]
+   |}];
+  let [@ocaml.warning "-8"] [x_train; x_test; y_train; y_test] =
+    train_test_split [x; y] ~test_size:(`F 0.33) ~random_state:42
+  in
+  print_ndarray x_train;
+  [%expect {|
+        [[4 5]
+         [0 1]
+         [6 7]]
+     |}];
+  print_ndarray y_train;
+  [%expect {|
+        [2 0 3]
+     |}];
+  print_ndarray x_test;
+  [%expect {|
+        [[2 3]
+         [8 9]]
+     |}];
+  print_ndarray y_test;
+  [%expect {|
+        [1 4]
+     |}];
+  let [@ocaml.warning "-8"] [y_train; y_test] = train_test_split [y] ~shuffle:false in
+  print_ndarray y_train;
+  [%expect {| [0 1 2] |}];
+  print_ndarray y_test;
+  [%expect {| [3 4] |}]

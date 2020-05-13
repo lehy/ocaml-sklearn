@@ -243,7 +243,7 @@ let%expect_test "MiniBatchSparsePCA" =
 (* TEST TODO
 let%expect_test "NMF" =
   let open Sklearn.Decomposition in
-  let x = .array (matrix [|[|1; 1|]; [|2; 1|]; [|3; 1.2|]; [|4; 1|]; [|5; 0.8|]; [|6; 1|]|]) np in  
+  let x = matrix [|[|1; 1|]; [|2; 1|]; [|3; 1.2|]; [|4; 1|]; [|5; 0.8|]; [|6; 1|]|] in  
   let model = NMF.create ~n_components:2 ~init:'random' ~random_state:0 () in  
   let W = NMF.fit_transform ~x model in  
   let H = NMF.components_ model in  
@@ -272,7 +272,7 @@ PCA(n_components=2)
 (* TEST TODO
 let%expect_test "PCA" =
   let open Sklearn.Decomposition in
-  let x = .array (matrixi [|[|-1; -1|]; [|-2; -1|]; [|-3; -2|]; [|1; 1|]; [|2; 1|]; [|3; 2|]|]) np in  
+  let x = matrixi [|[|-1; -1|]; [|-2; -1|]; [|-3; -2|]; [|1; 1|]; [|2; 1|]; [|3; 2|]|] in  
   let pca = PCA.create ~n_components:2 () in  
   print PCA.pp @@ PCA.fit ~x pca;  
   [%expect {|
@@ -369,7 +369,7 @@ IncrementalPCA(batch_size=3, n_components=2)
 (* TEST TODO
 let%expect_test "_BasePCA.transform" =
   let open Sklearn.Decomposition in
-  let x = .array (matrixi [|[|-1; -1|]; [|-2; -1|]; [|-3; -2|]; [|1; 1|]; [|2; 1|]; [|3; 2|]|]) np in  
+  let x = matrixi [|[|-1; -1|]; [|-2; -1|]; [|-3; -2|]; [|1; 1|]; [|2; 1|]; [|3; 2|]|] in  
   let ipca = IncrementalPCA.create ~n_components:2 ~batch_size:3 () in  
   print IncrementalPCA.pp @@ IncrementalPCA.fit ~x ipca;  
   [%expect {|
@@ -480,7 +480,7 @@ let%expect_test "TruncatedSVD" =
 (* TEST TODO
 let%expect_test "non_negative_factorization" =
   let open Sklearn.Decomposition in
-  let x = .array (matrix [|[|1;1|]; [|2; 1|]; [|3; 1.2|]; [|4; 1|]; [|5; 0.8|]; [|6; 1|]|]) np in  
+  let x = matrix [|[|1;1|]; [|2; 1|]; [|3; 1.2|]; [|4; 1|]; [|5; 0.8|]; [|6; 1|]|] in  
   let W, H, n_iter = non_negative_factorization x ~n_components:2 ~init:'random' ~random_state:0 () in  
   [%expect {|
   |}]

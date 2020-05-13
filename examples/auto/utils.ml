@@ -798,7 +798,7 @@ array([1, 2, 3, 4])
 (* TEST TODO
 let%expect_test "_arraymethod.<locals>.wrapped_method" =
   let open Sklearn.Utils in
-  let a = .array (matrixi [|[|1;2|]; [|3;4|]|]) np in  
+  let a = matrixi [|[|1;2|]; [|3;4|]|] in  
   print_ndarray @@ a.flatten ();  
   [%expect {|
       array([1, 2, 3, 4])      
@@ -1309,7 +1309,7 @@ array([2, 1, 3, 4])
 (* TEST TODO
 let%expect_test "MaskedArray.partition" =
   let open Sklearn.Utils in
-  let a = .array (vectori [|3; 4; 2; 1|]) np in  
+  let a = vectori [|3; 4; 2; 1|] in  
   print_ndarray @@ a.partition ~3 ();  
   print_ndarray @@ a;  
   [%expect {|
@@ -1949,7 +1949,7 @@ array([[1, 3],
 (* TEST TODO
 let%expect_test "_arraymethod.<locals>.wrapped_method" =
   let open Sklearn.Utils in
-  let a = .array (matrixi [|[|1; 2|]; [|3; 4|]|]) np in  
+  let a = matrixi [|[|1; 2|]; [|3; 4|]|] in  
   print_ndarray @@ a;  
   [%expect {|
       array([[1, 2],      
@@ -1989,7 +1989,7 @@ array([0.25,  0.25])
 (* TEST TODO
 let%expect_test "MaskedArray.var" =
   let open Sklearn.Utils in
-  let a = .array (matrixi [|[|1; 2|]; [|3; 4|]|]) np in  
+  let a = matrixi [|[|1; 2|]; [|3; 4|]|] in  
   print_ndarray @@ .var ~a np;  
   [%expect {|
       1.25      
@@ -2071,7 +2071,7 @@ array([ 120.,  210.])
 (* TEST TODO
 let%expect_test "comb" =
   let open Sklearn.Utils in
-  let k = .array (vectori [|3; 4|]) np in  
+  let k = vectori [|3; 4|] in  
   let n = .array [10 10] np in  
   print_ndarray @@ comb ~n k ~exact:false ();  
   [%expect {|

@@ -122,7 +122,7 @@ let%expect_test "LabelBinarizer" =
 let%expect_test "OneVsRestClassifier" =
   let open Sklearn.Multiclass in
   let x = .array [[10 10] [8 10] [-5 5.5] [-5.4 5.5] [-20 -20] [-15 -20]] np in  
-  let y = .array (vectori [|0; 0; 1; 1; 2; 2|]) np in  
+  let y = vectori [|0; 0; 1; 1; 2; 2|] in  
   let clf = OneVsRestClassifier(SVC()).fit ~x y () in  
   print_ndarray @@ OneVsRestClassifier.predict (matrixi [|[|-19; -20|]; [|9; 9|]; [|-5; 5|]|]) clf;  
   [%expect {|

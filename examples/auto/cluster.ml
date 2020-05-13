@@ -1,3 +1,19 @@
+let print f x = Format.printf "%a" f x
+let print_py x = Format.printf "%s" (Py.Object.to_string x)
+let print_ndarray = print Sklearn.Arr.pp
+let print_float = Format.printf "%g\n"
+let print_string = Format.printf "%s\n"
+let print_int = Format.printf "%d\n"
+
+let matrix = Sklearn.Arr.Float.matrix
+let vector = Sklearn.Arr.Float.vector
+let matrixi = Sklearn.Arr.Int.matrix
+let vectori = Sklearn.Arr.Int.vector
+let vectors = Sklearn.Arr.String.vector
+
+let option_get = function Some x -> x | None -> invalid_arg "option_get: None"
+
+
 (* AffinityPropagation *)
 (*
 >>> from sklearn.cluster import AffinityPropagation
@@ -17,30 +33,28 @@ array([[1, 2],
 
 *)
 
-(* TEST TODO
 let%expect_test "AffinityPropagation" =
   let open Sklearn.Cluster in
-  let x = .array [(vectori [|1; 2|]) (vectori [|1; 4|]) (vectori [|1; 0|]) (vectori [|4; 2|]) (vectori [|4; 4|]) (vectori [|4; 0|])] np in  
-  let clustering = AffinityPropagation().fit ~x () in  
-  print_ndarray @@ clustering;  
+  let x = matrixi [|[|1; 2|]; [|1; 4|]; [|1; 0|]; [|4; 2|]; [|4; 4|]; [|4; 0|]|] in
+  let clustering = AffinityPropagation.(create () |> fit ~x) in
+  print AffinityPropagation.pp clustering;
   [%expect {|
-      AffinityPropagation()      
-  |}]
-  print_ndarray @@ AffinityPropagation.labels_ clustering;  
+      AffinityPropagation(affinity='euclidean', convergence_iter=15, copy=True,
+                          damping=0.5, max_iter=200, preference=None, verbose=False)
+  |}];
+  print_ndarray @@ AffinityPropagation.labels_ clustering;
   [%expect {|
-      array([0, 0, 0, 1, 1, 1])      
-  |}]
-  print_ndarray @@ AffinityPropagation.predict (matrixi [|[|0; 0|]; [|4; 4|]|]) clustering;  
+      [0 0 0 1 1 1]
+  |}];
+  print_ndarray @@ AffinityPropagation.predict ~x:(matrixi [|[|0; 0|]; [|4; 4|]|]) clustering;
   [%expect {|
-      array([0, 1])      
-  |}]
-  print_ndarray @@ AffinityPropagation.cluster_centers_ clustering;  
+      [0 1]
+  |}];
+  print_ndarray @@ AffinityPropagation.cluster_centers_ clustering;
   [%expect {|
-      array([[1, 2],      
-             [4, 2]])      
+      [[1 2]
+       [4 2]]
   |}]
-
-*)
 
 
 
@@ -57,21 +71,18 @@ AgglomerativeClustering()
 
 *)
 
-(* TEST TODO
 let%expect_test "AgglomerativeClustering" =
   let open Sklearn.Cluster in
-  let x = .array [(vectori [|1; 2|]) (vectori [|1; 4|]) (vectori [|1; 0|]) (vectori [|4; 2|]) (vectori [|4; 4|]) (vectori [|4; 0|])] np in  
-  let clustering = AgglomerativeClustering().fit ~x () in  
-  print_ndarray @@ clustering;  
+  let x = matrixi [|[|1; 2|]; [|1; 4|]; [|1; 0|]; [|4; 2|]; [|4; 4|]; [|4; 0|]|] in
+  let clustering = AgglomerativeClustering.(create () |> fit ~x) in
+  print AgglomerativeClustering.pp @@ clustering;
   [%expect {|
-      AgglomerativeClustering()      
-  |}]
-  print_ndarray @@ AgglomerativeClustering.labels_ clustering;  
-  [%expect {|
-  |}]
-
-*)
-
+      AgglomerativeClustering(affinity='euclidean', compute_full_tree='auto',
+                              connectivity=None, distance_threshold=None,
+                              linkage='ward', memory=None, n_clusters=2)
+   |}];
+  print_ndarray @@ AgglomerativeClustering.labels_ clustering;
+  [%expect {| [1 1 1 0 0 0] |}]
 
 
 (* Birch *)
@@ -85,21 +96,17 @@ Birch(n_clusters=None)
 
 *)
 
-(* TEST TODO
 let%expect_test "Birch" =
   let open Sklearn.Cluster in
-  let x = (matrix [|[|0; 1|]; [|0.3; 1|]; [|-0.3; 1|]; [|0; -1|]; [|0.3; -1|]; [|-0.3; -1|]|]) in  
-  let brc = Birch.create ~n_clusters:None () in  
-  print Birch.pp @@ Birch.fit ~x brc;  
+  let x = matrix [|[|0.; 1.|]; [|0.3; 1.|]; [|-0.3; 1.|]; [|0.; -1.|]; [|0.3; -1.|]; [|-0.3; -1.|]|] in
+  let brc = Birch.create ~n_clusters:`None () in
+  print Birch.pp @@ Birch.fit ~x brc;
   [%expect {|
-      Birch(n_clusters=None)      
-  |}]
-  print_ndarray @@ Birch.predict ~x brc;  
-  [%expect {|
-  |}]
-
-*)
-
+      Birch(branching_factor=50, compute_labels=True, copy=True, n_clusters=None,
+            threshold=0.5)
+   |}];
+  print_ndarray @@ Birch.predict ~x brc;
+  [%expect {| [0 0 0 1 1 1] |}]
 
 
 (* DBSCAN *)
@@ -116,22 +123,19 @@ DBSCAN(eps=3, min_samples=2)
 
 *)
 
-(* TEST TODO
 let%expect_test "DBSCAN" =
   let open Sklearn.Cluster in
-  let x = .array [(vectori [|1; 2|]) (vectori [|2; 2|]) (vectori [|2; 3|]) (vectori [|8; 7|]) (vectori [|8; 8|]) [25 80]] np in  
-  let clustering = DBSCAN(eps=3, min_samples=2).fit ~x () in  
-  print_ndarray @@ DBSCAN.labels_ clustering;  
+  let x = matrixi [|[|1; 2|]; [|2; 2|]; [|2; 3|]; [|8; 7|]; [|8; 8|]; [|25; 80|]|] in
+  let clustering = DBSCAN.(create ~eps:3. ~min_samples:2 () |> fit ~x) in
+  print_ndarray @@ DBSCAN.labels_ clustering;
   [%expect {|
-      array([ 0,  0,  0,  1,  1, -1])      
-  |}]
-  print_ndarray @@ clustering;  
+      [ 0  0  0  1  1 -1]
+   |}];
+  print DBSCAN.pp clustering;
   [%expect {|
-      DBSCAN(eps=3, min_samples=2)      
-  |}]
-
-*)
-
+      DBSCAN(algorithm='auto', eps=3.0, leaf_size=30, metric='euclidean',
+             metric_params=None, min_samples=2, n_jobs=None, p=None)
+   |}]
 
 
 (* FeatureAgglomeration *)
@@ -149,24 +153,24 @@ FeatureAgglomeration(n_clusters=32)
 
 *)
 
-(* TEST TODO
 let%expect_test "FeatureAgglomeration" =
   let open Sklearn.Cluster in
-  let digits = .load_digits datasets in  
-  let images = .images digits in  
-  let x = .reshape ~images (len ~images () -1) np in  
-  let agglo = .featureAgglomeration ~n_clusters:32 cluster in  
-  print_ndarray @@ .fit ~x agglo;  
+  let module Arr = Sklearn.Arr in
+  let digits = Sklearn.Datasets.load_digits () in
+  let images = digits#images in
+  let x = Arr.(reshape images ~shape:[|(shape images).(0); -1|]) in
+  let agglo = FeatureAgglomeration.create ~n_clusters:32 () in
+  print FeatureAgglomeration.pp @@ FeatureAgglomeration.fit ~x agglo;
+  print_string @@ Re.replace_string (Re.Perl.compile_pat "0x[a-fA-F0-9]+") ~by:"0x..." [%expect.output];
   [%expect {|
-      FeatureAgglomeration(n_clusters=32)      
-  |}]
-  let X_reduced = .transform ~x agglo in  
-  print_ndarray @@ X_reduced.shape;  
-  [%expect {|
-  |}]
-
-*)
-
+      FeatureAgglomeration(affinity='euclidean', compute_full_tree='auto',
+                           connectivity=None, distance_threshold=None, linkage='ward',
+                           memory=None, n_clusters=32,
+                           pooling_func=<function mean at 0x...>)
+   |}];
+  let x_reduced = FeatureAgglomeration.transform ~x agglo in
+  print_ndarray @@ Arr.Int.vector @@ Arr.shape x_reduced;
+  [%expect {| [1797   32] |}]
 
 
 (* KMeans *)
@@ -185,26 +189,23 @@ array([[10.,  2.],
 
 *)
 
-(* TEST TODO
 let%expect_test "KMeans" =
-  let open Sklearn.Cluster in
-  let x = .array [(vectori [|1; 2|]) (vectori [|1; 4|]) (vectori [|1; 0|]) [10 2] [10 4] [10 0]] np in  
-  let kmeans = KMeans(n_clusters=2, random_state=0).fit ~x () in  
-  print_ndarray @@ KMeans.labels_ kmeans;  
-  [%expect {|
-      array([1, 1, 1, 0, 0, 0], dtype=int32)      
-  |}]
-  print_ndarray @@ KMeans.predict (matrixi [|[|0; 0|]; [|12; 3|]|]) kmeans;  
-  [%expect {|
-      array([1, 0], dtype=int32)      
-  |}]
-  print_ndarray @@ KMeans.cluster_centers_ kmeans;  
-  [%expect {|
-      array([[10.,  2.],      
-  |}]
-
-*)
-
+   let open Sklearn.Cluster in
+   let x = matrixi [|[|1; 2|]; [|1; 4|]; [|1; 0|]; [|10; 2|]; [|10; 4|]; [|10; 0|]|] in
+   let kmeans = KMeans.(create ~n_clusters:2 ~random_state:0 () |> fit ~x) in
+   print_ndarray @@ KMeans.labels_ kmeans;
+   [%expect {|
+      [1 1 1 0 0 0]
+   |}];
+   print_ndarray @@ KMeans.predict ~x:(matrixi [|[|0; 0|]; [|12; 3|]|]) kmeans;
+   [%expect {|
+      [1 0]
+   |}];
+   print_ndarray @@ KMeans.cluster_centers_ kmeans;
+   [%expect {|
+      [[10.  2.]
+       [ 1.  2.]]
+   |}]
 
 
 (* MeanShift *)
@@ -223,25 +224,23 @@ MeanShift(bandwidth=2)
 
 *)
 
-(* TEST TODO
 let%expect_test "MeanShift" =
-  let open Sklearn.Cluster in
-  let x = .array [(vectori [|1; 1|]) (vectori [|2; 1|]) (vectori [|1; 0|]) (vectori [|4; 7|]) (vectori [|3; 5|]) (vectori [|3; 6|])] np in  
-  let clustering = MeanShift(bandwidth=2).fit ~x () in  
-  print_ndarray @@ MeanShift.labels_ clustering;  
-  [%expect {|
-      array([1, 1, 1, 0, 0, 0])      
-  |}]
-  print_ndarray @@ MeanShift.predict (matrixi [|[|0; 0|]; [|5; 5|]|]) clustering;  
-  [%expect {|
-      array([1, 0])      
-  |}]
-  print_ndarray @@ clustering;  
-  [%expect {|
-      MeanShift(bandwidth=2)      
-  |}]
-
-*)
+   let open Sklearn.Cluster in
+   let x = matrixi [|[|1; 1|]; [|2; 1|]; [|1; 0|]; [|4; 7|]; [|3; 5|]; [|3; 6|]|] in
+   let clustering = MeanShift.(create ~bandwidth:2. () |> fit ~x) in
+   print_ndarray @@ MeanShift.labels_ clustering;
+   [%expect {|
+      [1 1 1 0 0 0]
+   |}];
+   print_ndarray @@ MeanShift.predict ~x:(matrixi [|[|0; 0|]; [|5; 5|]|]) clustering;
+   [%expect {|
+      [1 0]
+   |}];
+   print MeanShift.pp @@ clustering;
+   [%expect {|
+      MeanShift(bandwidth=2.0, bin_seeding=False, cluster_all=True, max_iter=300,
+                min_bin_freq=1, n_jobs=None, seeds=None)
+   |}]
 
 
 
@@ -276,36 +275,36 @@ array([[3.95918367, 2.40816327],
 
 *)
 
-(* TEST TODO
 let%expect_test "MiniBatchKMeans" =
   let open Sklearn.Cluster in
-  let x = .array [(vectori [|1; 2|]) (vectori [|1; 4|]) (vectori [|1; 0|]) (vectori [|4; 2|]) (vectori [|4; 0|]) (vectori [|4; 4|]) (vectori [|4; 5|]) (vectori [|0; 1|]) (vectori [|2; 2|]) (vectori [|3; 2|]) (vectori [|5; 5|]) [1 -1]] np in  
-  print_ndarray @@ # manually fit on batches;  
-  let kmeans = MiniBatchKMeans.create ~n_clusters:2 ~random_state:0 ~batch_size:6 () in  
-  let kmeans = MiniBatchKMeans.partial_fit x[0:6 :] kmeans in  
-  let kmeans = MiniBatchKMeans.partial_fit x[6:12 :] kmeans in  
-  print_ndarray @@ MiniBatchKMeans.cluster_centers_ kmeans;  
-  [%expect {|
-      array([[2. , 1. ],      
-             [3.5, 4.5]])      
-  |}]
-  print_ndarray @@ MiniBatchKMeans.predict (matrixi [|[|0; 0|]; [|4; 4|]|]) kmeans;  
-  [%expect {|
-      array([0, 1], dtype=int32)      
-  |}]
-  print_ndarray @@ # fit on the whole data;  
-  let kmeans = MiniBatchKMeans(n_clusters=2,random_state=0,batch_size=6,max_iter=10).fit ~x () in  
-  print_ndarray @@ MiniBatchKMeans.cluster_centers_ kmeans;  
-  [%expect {|
-      array([[3.95918367, 2.40816327],      
-             [1.12195122, 1.3902439 ]])      
-  |}]
-  print_ndarray @@ MiniBatchKMeans.predict (matrixi [|[|0; 0|]; [|4; 4|]|]) kmeans;  
-  [%expect {|
-  |}]
-
-*)
-
+  let module Arr = Sklearn.Arr in
+   let x = matrixi [|[|1; 2|]; [|1; 4|]; [|1; 0|];
+                     [|4; 2|]; [|4; 0|]; [|4; 4|];
+                     [|4; 5|]; [|0; 1|]; [|2; 2|];
+                     [|3; 2|]; [|5; 5|]; [|1; -1|]|]
+   in
+   (* manually fit on batches *)
+   let kmeans = MiniBatchKMeans.create ~n_clusters:2 ~random_state:0 ~batch_size:6 () in
+   let kmeans = MiniBatchKMeans.partial_fit ~x:Arr.(get x ~i:[slice ~j:6 (); slice ()]) kmeans in
+   let kmeans = MiniBatchKMeans.partial_fit ~x:Arr.(get x ~i:[slice ~i:6 (); slice ()]) kmeans in
+   print_ndarray @@ MiniBatchKMeans.cluster_centers_ kmeans;
+   [%expect {|
+      [[2.  1. ]
+       [3.5 4.5]]
+   |}];
+   print_ndarray @@ MiniBatchKMeans.predict ~x:(matrixi [|[|0; 0|]; [|4; 4|]|]) kmeans;
+   [%expect {|
+      [0 1]
+   |}];
+   (* fit on the whole data *)
+   let kmeans = MiniBatchKMeans.(create ~n_clusters:2 ~random_state:0 ~batch_size:6 ~max_iter:10 () |> fit ~x) in
+   print_ndarray @@ MiniBatchKMeans.cluster_centers_ kmeans;
+   [%expect {|
+      [[3.95918367 2.40816327]
+       [1.12195122 1.3902439 ]]
+   |}];
+   print_ndarray @@ MiniBatchKMeans.predict ~x:(matrixi [|[|0; 0|]; [|4; 4|]|]) kmeans;
+   [%expect {| [1 0] |}]
 
 
 (* OPTICS *)
@@ -319,17 +318,12 @@ let%expect_test "MiniBatchKMeans" =
 
 *)
 
-(* TEST TODO
 let%expect_test "OPTICS" =
-  let open Sklearn.Cluster in
-  let x = .array [(vectori [|1; 2|]) (vectori [|2; 5|]) (vectori [|3; 6|]) (vectori [|8; 7|]) (vectori [|8; 8|]) (vectori [|7; 3|])] np in  
-  let clustering = OPTICS(min_samples=2).fit ~x () in  
-  print_ndarray @@ OPTICS.labels_ clustering;  
-  [%expect {|
-  |}]
-
-*)
-
+   let open Sklearn.Cluster in
+   let x = matrixi [|[|1; 2|]; [|2; 5|]; [|3; 6|]; [|8; 7|]; [|8; 8|]; [|7; 3|]|] in
+   let clustering = OPTICS.(create ~min_samples:(`I 2) () |> fit ~x) in
+   print_ndarray @@ OPTICS.labels_ clustering;
+   [%expect {| [0 0 0 1 1 1] |}]
 
 
 (* SpectralBiclustering *)
@@ -348,26 +342,25 @@ SpectralBiclustering(n_clusters=2, random_state=0)
 
 *)
 
-(* TEST TODO
 let%expect_test "SpectralBiclustering" =
-  let open Sklearn.Cluster in
-  let x = .array [(vectori [|1; 1|]) (vectori [|2; 1|]) (vectori [|1; 0|]) (vectori [|4; 7|]) (vectori [|3; 5|]) (vectori [|3; 6|])] np in  
-  let clustering = SpectralBiclustering(n_clusters=2, random_state=0).fit ~x () in  
-  print_ndarray @@ SpectralBiclustering.row_labels_ clustering;  
-  [%expect {|
-      array([1, 1, 1, 0, 0, 0], dtype=int32)      
-  |}]
-  print_ndarray @@ SpectralBiclustering.column_labels_ clustering;  
-  [%expect {|
-      array([0, 1], dtype=int32)      
-  |}]
-  print_ndarray @@ clustering;  
-  [%expect {|
-      SpectralBiclustering(n_clusters=2, random_state=0)      
-  |}]
-
-*)
-
+   let open Sklearn.Cluster in
+   let x = matrixi [|[|1; 1|]; [|2; 1|]; [|1; 0|]; [|4; 7|]; [|3; 5|]; [|3; 6|]|] in
+   let clustering = SpectralBiclustering.(create ~n_clusters:(`I 2) ~random_state:0 () |> fit ~x) in
+   print_ndarray @@ SpectralBiclustering.row_labels_ clustering;
+   [%expect {|
+      [1 1 1 0 0 0]
+   |}];
+   print_ndarray @@ SpectralBiclustering.column_labels_ clustering;
+   [%expect {|
+      [0 1]
+   |}];
+   print SpectralBiclustering.pp @@ clustering;
+   [%expect {|
+      SpectralBiclustering(init='k-means++', method='bistochastic', mini_batch=False,
+                           n_best=3, n_clusters=2, n_components=6, n_init=10,
+                           n_jobs=None, n_svd_vecs=None, random_state=0,
+                           svd_method='randomized')
+   |}]
 
 
 (* SpectralClustering *)
@@ -387,23 +380,23 @@ SpectralClustering(assign_labels='discretize', n_clusters=2,
 
 *)
 
-(* TEST TODO
 let%expect_test "SpectralClustering" =
-  let open Sklearn.Cluster in
-  let x = .array [(vectori [|1; 1|]) (vectori [|2; 1|]) (vectori [|1; 0|]) (vectori [|4; 7|]) (vectori [|3; 5|]) (vectori [|3; 6|])] np in  
-  let clustering = SpectralClustering(n_clusters=2,assign_labels="discretize",random_state=0).fit ~x () in  
-  print_ndarray @@ SpectralClustering.labels_ clustering;  
-  [%expect {|
-      array([1, 1, 1, 0, 0, 0])      
-  |}]
-  print_ndarray @@ clustering;  
-  [%expect {|
-      SpectralClustering(assign_labels='discretize', n_clusters=2,      
-          random_state=0)      
-  |}]
-
-*)
-
+   let open Sklearn.Cluster in
+   let x = matrixi [|[|1; 1|]; [|2; 1|]; [|1; 0|]; [|4; 7|]; [|3; 5|]; [|3; 6|]|] in
+   let clustering = SpectralClustering.(
+       create ~n_clusters:2 ~assign_labels:`Discretize ~random_state:0 () |> fit ~x)
+   in
+   print_ndarray @@ SpectralClustering.labels_ clustering;
+   [%expect {|
+      [1 1 1 0 0 0]
+   |}];
+   print SpectralClustering.pp @@ clustering;
+   [%expect {|
+      SpectralClustering(affinity='rbf', assign_labels='discretize', coef0=1,
+                         degree=3, eigen_solver=None, eigen_tol=0.0, gamma=1.0,
+                         kernel_params=None, n_clusters=2, n_components=None,
+                         n_init=10, n_jobs=None, n_neighbors=10, random_state=0)
+   |}]
 
 
 (* SpectralCoclustering *)
@@ -422,25 +415,21 @@ SpectralCoclustering(n_clusters=2, random_state=0)
 
 *)
 
-(* TEST TODO
 let%expect_test "SpectralCoclustering" =
-  let open Sklearn.Cluster in
-  let x = .array [(vectori [|1; 1|]) (vectori [|2; 1|]) (vectori [|1; 0|]) (vectori [|4; 7|]) (vectori [|3; 5|]) (vectori [|3; 6|])] np in  
-  let clustering = SpectralCoclustering(n_clusters=2, random_state=0).fit ~x () in  
-  print_ndarray @@ clustering.row_labels_ #doctest: +SKIP;  
-  [%expect {|
-      array([0, 1, 1, 0, 0, 0], dtype=int32)      
-  |}]
-  print_ndarray @@ clustering.column_labels_ #doctest: +SKIP;  
-  [%expect {|
-      array([0, 0], dtype=int32)      
-  |}]
-  print_ndarray @@ clustering;  
-  [%expect {|
-      SpectralCoclustering(n_clusters=2, random_state=0)      
-  |}]
-
-*)
-
-
-
+   let open Sklearn.Cluster in
+   let x = matrixi [|[|1; 1|]; [|2; 1|]; [|1; 0|]; [|4; 7|]; [|3; 5|]; [|3; 6|]|] in
+   let clustering = SpectralCoclustering.(create ~n_clusters:2 ~random_state:0 () |> fit ~x) in
+   print_ndarray @@ SpectralCoclustering.row_labels_ clustering;
+   [%expect {|
+      [0 1 1 0 0 0]
+   |}];
+   print_ndarray @@ SpectralCoclustering.column_labels_ clustering;
+   [%expect {|
+      [0 0]
+   |}];
+   print SpectralCoclustering.pp @@ clustering;
+   [%expect {|
+      SpectralCoclustering(init='k-means++', mini_batch=False, n_clusters=2,
+                           n_init=10, n_jobs=None, n_svd_vecs=None, random_state=0,
+                           svd_method='randomized')
+   |}]

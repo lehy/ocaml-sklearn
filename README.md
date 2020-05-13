@@ -160,16 +160,19 @@ the files and start porting examples. One can refer to
 have already been ported (almost) completely.
 
 The following examples have been ported completely:
+- [calibration](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/calibration.ml)
+- [cluster](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/cluster.ml)
 - [ensemble](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/ensemble.ml)
+- [manifold](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/manifold.ml)
 - [metrics](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/metrics.ml)
+- [model_selection](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/model_selection.ml)
 - [neighbors](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/neighbors.ml)
+- [neural_network](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/neural_network.ml)
 - [pipeline](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/pipeline.ml)
 - [preprocessing](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/preprocessing.ml)
 - [svm](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/svm.ml)
 
 The following examples still need to be ported:
-- [calibration](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/calibration.ml)
-- [cluster](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/cluster.ml)
 - [compose](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/compose.ml)
 - [covariance](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/covariance.ml)
 - [cross_decomposition](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/cross_decomposition.ml)
@@ -184,12 +187,9 @@ The following examples still need to be ported:
 - [isotonic](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/isotonic.ml)
 - [kernel_approximation](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/kernel_approximation.ml)
 - [linear_model](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/linear_model.ml)
-- [manifold](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/manifold.ml)
-- [model_selection](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/model_selection.ml)
 - [multiclass](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/multiclass.ml)
 - [multioutput](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/multioutput.ml)
 - [naive_bayes](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/naive_bayes.ml)
-- [neural_network](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/neural_network.ml)
 - [random_projection](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/random_projection.ml)
 - [semi_supervised](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/semi_supervised.ml)
 - [tree](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/tree.ml)

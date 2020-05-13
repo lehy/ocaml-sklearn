@@ -18,7 +18,7 @@ let%expect_test "BernoulliNB" =
   let open Sklearn.Naive_bayes in
   let rng = np..randomState ~1 random in  
   let x = .randint 5 ~size:(6 100) rng in  
-  let Y = .array (vectori [|1; 2; 3; 4; 4; 5|]) np in  
+  let Y = vectori [|1; 2; 3; 4; 4; 5|] in  
   let clf = BernoulliNB.create () in  
   print BernoulliNB.pp @@ BernoulliNB.fit ~x Y clf;  
   [%expect {|
@@ -52,7 +52,7 @@ let%expect_test "CategoricalNB" =
   let open Sklearn.Naive_bayes in
   let rng = np..randomState ~1 random in  
   let x = .randint 5 ~size:(6 100) rng in  
-  let y = .array (vectori [|1; 2; 3; 4; 5; 6|]) np in  
+  let y = vectori [|1; 2; 3; 4; 5; 6|] in  
   let clf = CategoricalNB.create () in  
   print CategoricalNB.pp @@ CategoricalNB.fit ~x y clf;  
   [%expect {|
@@ -86,7 +86,7 @@ let%expect_test "ComplementNB" =
   let open Sklearn.Naive_bayes in
   let rng = np..randomState ~1 random in  
   let x = .randint 5 ~size:(6 100) rng in  
-  let y = .array (vectori [|1; 2; 3; 4; 5; 6|]) np in  
+  let y = vectori [|1; 2; 3; 4; 5; 6|] in  
   let clf = ComplementNB.create () in  
   print ComplementNB.pp @@ ComplementNB.fit ~x y clf;  
   [%expect {|
@@ -122,8 +122,8 @@ GaussianNB()
 (* TEST TODO
 let%expect_test "GaussianNB" =
   let open Sklearn.Naive_bayes in
-  let x = .array (matrixi [|[|-1; -1|]; [|-2; -1|]; [|-3; -2|]; [|1; 1|]; [|2; 1|]; [|3; 2|]|]) np in  
-  let Y = .array (vectori [|1; 1; 1; 2; 2; 2|]) np in  
+  let x = matrixi [|[|-1; -1|]; [|-2; -1|]; [|-3; -2|]; [|1; 1|]; [|2; 1|]; [|3; 2|]|] in  
+  let Y = vectori [|1; 1; 1; 2; 2; 2|] in  
   let clf = GaussianNB.create () in  
   print GaussianNB.pp @@ GaussianNB.fit ~x Y clf;  
   [%expect {|
@@ -267,7 +267,7 @@ let%expect_test "MultinomialNB" =
   let open Sklearn.Naive_bayes in
   let rng = np..randomState ~1 random in  
   let x = .randint 5 ~size:(6 100) rng in  
-  let y = .array (vectori [|1; 2; 3; 4; 5; 6|]) np in  
+  let y = vectori [|1; 2; 3; 4; 5; 6|] in  
   let clf = MultinomialNB.create () in  
   print MultinomialNB.pp @@ MultinomialNB.fit ~x y clf;  
   [%expect {|
