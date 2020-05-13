@@ -171,6 +171,7 @@ The following examples have been ported completely:
 - [pipeline](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/pipeline.ml)
 - [preprocessing](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/preprocessing.ml)
 - [svm](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/svm.ml)
+- [tree](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/tree.ml)
 
 The following examples still need to be ported:
 - [compose](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/compose.ml)
@@ -192,7 +193,6 @@ The following examples still need to be ported:
 - [naive_bayes](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/naive_bayes.ml)
 - [random_projection](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/random_projection.ml)
 - [semi_supervised](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/semi_supervised.ml)
-- [tree](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/tree.ml)
 - [utils](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/utils.ml)
 
 ### Generating documentation

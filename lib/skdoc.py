@@ -656,6 +656,13 @@ class ClusterEstimator(BaseType):
         super().__init__('Sklearn.Base.ClusterMixin')
 
 
+class DecisionTreeClassifier(BaseType):
+    names = ['decision tree classifier']
+
+    def __init__(self):
+        super().__init__('Sklearn.Tree.DecisionTreeClassifier')
+
+
 class PyObject(Type):
     names = ['object']
 
@@ -766,7 +773,7 @@ class Registry:
                 ancestor_name = ancestor.__name__.lower()
                 # tweaked for sklearn+scipy
                 if (('base' in ancestor_name or 'mixin' in ancestor_name
-                     or 'rv_' in ancestor_name)
+                     or 'rv_' in ancestor_name or 'decisiontree' in ancestor_name)
                         and not ancestor_name.startswith('_')):
                     # if not ancestor_name.startswith('_'):
                     self.types[ancestor].append(klass)
@@ -1129,6 +1136,7 @@ sklearn_builtin_types = BuiltinTypes(generic_builtin_types + [
     CrossValGenerator(),
     Estimator(),
     ClusterEstimator(),
+    DecisionTreeClassifier(),
     WrappedModule('Sklearn.Pipeline.Pipeline', ['Pipeline', 'pipeline']),
     WrappedModule('Sklearn.Pipeline.FeatureUnion', ['FeatureUnion']),
     estimator_alist,
@@ -2602,7 +2610,7 @@ def parse_type(t, builtin, context):
                 ret = StringList()
         if isinstance(ret, (Arr)):
             if param_name in ['feature_names', 'target_names']:
-                ret = StringList()
+                ret = List(String())
             if param_name in ['neigh_ind', 'is_inlier']:
                 ret = Arr()
         return ret
@@ -2718,7 +2726,7 @@ def parse_bunch_load(elements, context):
                  DESCR=String(),
                  filename=String(),
                  target_names=Arr(),
-                 feature_names=Arr(),
+                 feature_names=List(String()),
                  images=Arr(),
                  filenames=Arr())
     return Bunch({k: types[k] for k in attributes})
@@ -3234,7 +3242,7 @@ sklearn_overrides = {
         'data': Arr(),
         'target': Arr(),
         'target_names': Arr(),
-        'feature_names': Arr(),
+        'feature_names': List(String()),
         'DESCR': String(),
         'filename': String()
     })),
@@ -3242,7 +3250,7 @@ sklearn_overrides = {
     dict(ret_type=Bunch({
         'data': Arr(),
         'target': Arr(),
-        'feature_names': Arr(),
+        'feature_names': List(String()),
         'DESCR': String(),
         'filename': String()
     })),
@@ -3267,7 +3275,8 @@ sklearn_overrides = {
             # '^y_(true|pred)$': Arr(),
             r'^(base_)?estimator$': Estimator(),
             r'scoring': scoring_param,
-            r'labels_': if_unknown(Arr())
+            r'labels_': if_unknown(Arr()),
+            r'^decision_tree$': if_unknown(BaseType('Sklearn.Tree.BaseDecisionTree')),
         }),
     r'power_transform$':
     dict(types={
@@ -3324,6 +3333,7 @@ sklearn_overrides = {
     r'\.make_pipeline$': dict(types={r'^steps$': List(Estimator())}),
     r'Birch$': dict(types={r'^n_clusters$': Enum([NoneValue(), Int(), ClusterEstimator()])}),
     r'^SpectralBiclustering$': dict(types={r'^n_clusters$': Enum([Int(), Tuple([Int(), Int()])])}),
+    r'export_graphviz$': dict(ret_type=Optional(String()))
 }
 
 scipy_overrides = {r'': dict(types={r'^loc$': Float(), '^scale$': Float()})}
