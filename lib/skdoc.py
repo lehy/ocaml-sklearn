@@ -249,7 +249,7 @@ class Enum(Type):
         return True
 
     def __init__(self, elements, name=None):
-        print(f"DD building enum: {elements}")
+        # print(f"DD building enum: {elements}")
         for elt in elements:
             assert isinstance(elt, Type), elt
         assert elements, elements
@@ -309,7 +309,7 @@ class Tuple(Type):
 
 
 class Int(Type):
-    names = ['int', 'integer', 'integer > 0', 'int with']
+    names = ['int', 'integer', 'integer > 0', 'int with', 'int > 1']
     ml_type = 'int'
     wrap = 'Py.Int.of_int'
     ml_type_ret = 'int'
@@ -334,7 +334,8 @@ class Float(Type):
         'float', 'floating', 'double', 'positive float',
         'strictly positive float', 'non-negative float', 'numeric',
         'float (upperlimited by 1.0)', 'float in range', 'number',
-        'numerical value', 'scalar', 'float in [0., 1.]', 'float in'
+        'numerical value', 'scalar', 'float in [0., 1.]', 'float in',
+        'float between 0 and 1'
     ]
     ml_type = 'float'
     wrap = 'Py.Float.of_float'
@@ -648,6 +649,13 @@ class Transformer(BaseType):
         super().__init__('Sklearn.Base.TransformerMixin')
 
 
+class ClusterEstimator(BaseType):
+    names = ['instance of sklearn.cluster model', 'sklearn.cluster model']
+
+    def __init__(self):
+        super().__init__('Sklearn.Base.ClusterMixin')
+
+
 class PyObject(Type):
     names = ['object']
 
@@ -903,12 +911,12 @@ class ReParser:
 
         self.shape = self._comp(shape)
 
-        enum_elt = rf'(?P<elt>(?:(?:(?! \s+ or \s+) [^()[\],])* {three})* (?:(?! \s+ or \s+)[^()[\],])*)'
+        enum_elt = rf'(?P<elt>(?:(?:(?! (?:, \s* | \s) or \s+) [^()[\],])* {three})* (?:(?! (?:, \s* | \s) or \s+)[^()[\],])*)'
         enum_comma = rf'(?:(?:{enum_elt},)+ {enum_elt})'
         enum_semi = rf'(?:(?:{enum_elt};)+ {enum_elt})'
         enum_pipe = rf'(?:(?:{enum_elt}\|)+ {enum_elt})'
-        enum_or = rf'(?:(?:{enum_elt} \s+ or \s)+ {enum_elt})'
-        enum_comma_or = rf'(?:{enum_comma} \s or \s {enum_elt})'
+        enum_or = rf'(?:(?:{enum_elt} (?:,\s* | \s) or \s)+ {enum_elt})'
+        enum_comma_or = rf'(?:{enum_comma} (?:,\s* | \s) or \s {enum_elt})'
 
         string = r'''(?P<elt>"[^"]+" | '[^']+' | None) (?: \s* \( \s* default \s* \) \s*)?'''
         strings_comma = rf'(?:(?:{string} \s* , \s*)* {string})'
@@ -1038,8 +1046,16 @@ def test_parse_enum():
         ("{'raw_values', 'uniform_average'} or array-like of shape",
          ["{'raw_values', 'uniform_average'}", "array-like of shape"]),
         ('array-like  or BallTree', ['array-like', 'BallTree']),
-        ("'linear' | 'poly' | 'rbf' | 'sigmoid' | 'cosine' | 'precomputed'",
-         ["'linear'", "'poly'", "'rbf'", "'sigmoid'", "'cosine'", "'precomputed'"])
+        ('array-like,  BallTree', ['array-like', 'BallTree']),
+        ('array-like,  BallTree or Tata', ['array-like', 'BallTree', 'Tata']),
+        ('array-like,  BallTree,  or Tata', ['array-like', 'BallTree',
+                                             'Tata']),
+        ('array-like or  BallTree,  or Tata',
+         ['array-like', 'BallTree', 'Tata']),
+        ("'linear' | 'poly' | 'rbf' | 'sigmoid' | 'cosine' | 'precomputed'", [
+            "'linear'", "'poly'", "'rbf'", "'sigmoid'", "'cosine'",
+            "'precomputed'"
+        ])
     ]
 
     success = True
@@ -1112,6 +1128,7 @@ sklearn_builtin_types = BuiltinTypes(generic_builtin_types + [
     Dtype(),
     CrossValGenerator(),
     Estimator(),
+    ClusterEstimator(),
     WrappedModule('Sklearn.Pipeline.Pipeline', ['Pipeline', 'pipeline']),
     WrappedModule('Sklearn.Pipeline.FeatureUnion', ['FeatureUnion']),
     estimator_alist,
@@ -1170,7 +1187,7 @@ def simplify_arr_or_float(enum):
 
 
 def simplify_enum(enum):
-    print(f"DD simplifying enum {enum}")
+    # print(f"DD simplifying enum {enum}")
     # flatten (once should be enough?)
     elts = []
     for elt in enum.elements:
@@ -2549,15 +2566,6 @@ class Wrapper:
         return textwrap.dedent(ret)
 
 
-_already_printed = set()
-
-
-def print_once(s):
-    if s not in _already_printed:
-        print(s)
-        _already_printed.add(s)
-
-
 def assert_returns(t):
     def make(f):
         @functools.wraps(f)
@@ -2573,7 +2581,7 @@ def assert_returns(t):
 
 @assert_returns(Type)
 def parse_type(t, builtin, context):
-    print(f"DD parse_type {t}")
+    # print(f"DD parse_type {t}")
     t = remove_ranges(t)
     t = re.sub(r'\s*\(\)\s*', '', t)
 
@@ -3153,6 +3161,16 @@ def scoring_param(context):
     return map_enum(context.auto_type, to_scoring)
 
 
+def if_unknown(t):
+    def f(context):
+        if isinstance(context.auto_type, (PyObject, UnknownType)):
+            return t
+        else:
+            return context.auto_type
+
+    return f
+
+
 sklearn_overrides = {
     r'Pipeline\.inverse_transform$':
     dict(signature=sig_inverse_transform,
@@ -3204,7 +3222,7 @@ sklearn_overrides = {
     dict(types={'^y$': ArrPyList()}),
     r'\.(decision_function|predict|predict_proba|fit_predict|transform|fit_transform)$':
     dict(ret_type=Arr(), types={r'^X$': Arr()}),
-    r'\.fit$':
+    r'\.(fit|partial_fit)$':
     dict(ret_type=Self()),
     r'Pipeline$':
     dict(param_types=dict(steps=estimator_alist,
@@ -3248,7 +3266,8 @@ sklearn_overrides = {
             '^named_(estimators|steps|transformers)_?$': Dict(),
             # '^y_(true|pred)$': Arr(),
             r'^(base_)?estimator$': Estimator(),
-            r'scoring': scoring_param
+            r'scoring': scoring_param,
+            r'labels_': if_unknown(Arr())
         }),
     r'power_transform$':
     dict(types={
@@ -3302,7 +3321,9 @@ sklearn_overrides = {
             ])
         }),
     r'\.get_n_splits$': dict(ret_type=Int()),
-    r'\.make_pipeline$': dict(types={r'^steps$': List(Estimator())})
+    r'\.make_pipeline$': dict(types={r'^steps$': List(Estimator())}),
+    r'Birch$': dict(types={r'^n_clusters$': Enum([NoneValue(), Int(), ClusterEstimator()])}),
+    r'^SpectralBiclustering$': dict(types={r'^n_clusters$': Enum([Int(), Tuple([Int(), Int()])])}),
 }
 
 scipy_overrides = {r'': dict(types={r'^loc$': Float(), '^scale$': Float()})}
