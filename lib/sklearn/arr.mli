@@ -27,6 +27,8 @@ val of_bigarray : ('a, 'b, 'c) Bigarray.Genarray.t -> t
 
 val to_int_array : t -> int array
 val to_float_array : t -> float array
+val to_string_array : t -> string array
+val to_string_list : t -> string list
 
 (** ## module Array.List
 
@@ -128,6 +130,7 @@ val zeros : ?dtype : Dtype.t -> int list -> t
 
 val get_int : i:int list -> t -> int
 val get_float : i:int list -> t -> float
+val get_string : i:int list -> t -> string
 
 val slice : ?i : int -> ?j : int -> ?step : int -> unit -> [> `Slice of Wrap_utils.Slice.t]
 val get : i:[`I of int | `Slice of Wrap_utils.Slice.t | `Arr of t | `Newaxis | `Ellipsis] list -> t -> t

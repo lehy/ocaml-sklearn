@@ -127,6 +127,11 @@ let get_float ~i self =
   | None -> raise (invalid_arg "Sklearn.Ndarray.get_float")
   | Some x -> Py.Float.to_float x
 
+let get_string ~i self =
+  match Py.Object.get_item self (Py.Tuple.of_list_map Py.Int.of_int i) with
+  | None -> raise (invalid_arg "Sklearn.Ndarray.get_float")
+  | Some x -> Py.String.to_string x
+
 let ones ?dtype shape =
   match dtype with
   | None -> Py.Module.get_function numpy "ones" [|Py.Tuple.of_list_map Py.Int.of_int shape|]
@@ -180,6 +185,16 @@ let to_float_array x =
   let x = ravel x in
   let len = (shape x).(0) in
   Array.init len (fun i -> get_float ~i:[i] x)
+
+let to_string_array x =
+  let x = ravel x in
+  let len = (shape x).(0) in
+  Array.init len (fun i -> get_string ~i:[i] x)
+
+let to_string_list x =
+  let x = ravel x in
+  let len = (shape x).(0) in
+  Stdlib.List.init len (fun i -> get_string ~i:[i] x)
 
 let slice ?i ?j ?step () =
   `Slice (Wrap_utils.Slice.create_options ?i ?j ?step ())
