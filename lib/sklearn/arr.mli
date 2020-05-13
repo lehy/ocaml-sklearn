@@ -425,6 +425,8 @@ val full : ?dtype:Dtype.t -> shape:int list -> Object.elt -> t
 
 val flatnonzero : t -> t
 
+val flatten : t -> t
+
 val iter : t -> t Seq.t
 
 module Random : sig

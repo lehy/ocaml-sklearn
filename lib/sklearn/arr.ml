@@ -324,7 +324,10 @@ let full ?dtype ~shape fill_value =
 
 let flatnonzero x =
   Py.Module.get_function numpy "flatnonzero" [|to_pyobject x|] |> of_pyobject
-  
+
+let flatten self =
+  Py.Module.get_function self "flatten" [||] |> of_pyobject
+
 let iter x =
   Py.Module.get_function builtins "iter" [|to_pyobject x|] |> Py.Iter.to_seq |> Seq.map of_pyobject
 
