@@ -287,7 +287,7 @@ let%expect_test "complex_pipeline" =
     [False False  True  True False False  True  True False  True False  True
       True False  True False  True  True False False] |}];
   (*  anova_svm.names_steps.anova: not wrapping that, won't be easier than the above  *)
-  let sub_pipeline = Pipeline.get_item anova_svm ~ind:(`Slice(`None, `I 1, `None)) |> Pipeline.of_pyobject in
+  let sub_pipeline = Pipeline.get_item anova_svm ~ind:(Arr.slice ~j:1 ()) |> Pipeline.of_pyobject in
   let svc = Pipeline.get_item anova_svm ~ind:(`I (-1)) |> Svm.SVC.of_pyobject in
   let coef = Svm.SVC.coef_ svc in
   Sklearn.Arr.(shape coef |> Int.vector |> print pp);

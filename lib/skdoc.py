@@ -166,6 +166,14 @@ class Type:
         self.tag_name = t.tag_name
 
 
+class Ignored(Type):
+    names = ['ignored', 'Ignored']
+
+
+class RandomState(Type):
+    names = ['RandomState instance', 'RandomState', 'instance of RandomState']
+
+
 class Bunch(Type):
     def __init__(self, elements):
         self.elements = elements
@@ -291,7 +299,9 @@ class Optional(Type):
 
 
 class Tuple(Type):
-    def __init__(self, elements):
+    def __init__(self, elements, names=None):
+        if names is not None:
+            self.names = names
         self.elements = elements
         self.ml_type = '(' + ' * '.join(elt.ml_type for elt in elements) + ')'
         self.ml_type_ret = '(' + ' * '.join(elt.ml_type_ret
@@ -309,7 +319,10 @@ class Tuple(Type):
 
 
 class Int(Type):
-    names = ['int', 'integer', 'integer > 0', 'int with', 'int > 1']
+    names = [
+        'int', 'integer', 'integer > 0', 'int with', 'int > 1',
+        'strictly positive integer', 'an integer'
+    ]
     ml_type = 'int'
     wrap = 'Py.Int.of_int'
     ml_type_ret = 'int'
@@ -321,8 +334,9 @@ class Int(Type):
 
 
 class WrappedModule(Type):
-    def __init__(self, module, names=[]):
-        self.names = names
+    def __init__(self, module, names=None):
+        if names is not None:
+            self.names = names
         self.ml_type = f'{module}.t'
         self.ml_type_ret = f'{module}.t'
         self.wrap = f'{module}.to_pyobject'
@@ -335,7 +349,9 @@ class Float(Type):
         'strictly positive float', 'non-negative float', 'numeric',
         'float (upperlimited by 1.0)', 'float in range', 'number',
         'numerical value', 'scalar', 'float in [0., 1.]', 'float in',
-        'float between 0 and 1'
+        'float between 0 and 1', '0 <= shrinkage <= 1',
+        '0 < support_fraction < 1', 'non-negative real', '0 < double < 1',
+        'float between 0.0 and 1.0'
     ]
     ml_type = 'float'
     wrap = 'Py.Float.of_float'
@@ -348,7 +364,9 @@ class Float(Type):
 
 
 class Bool(Type):
-    names = ['bool', 'boolean', 'Boolean', 'Bool', 'boolean value']
+    names = [
+        'bool', 'boolean', 'Boolean', 'Bool', 'boolean value', 'type boolean'
+    ]
     ml_type = 'bool'
     wrap = 'Py.Bool.of_bool'
     ml_type_ret = 'bool'
@@ -382,59 +400,80 @@ class Arr(Type):
 
     """
     names = [
-        'ndarray',
-        'numpy array',
-        'array of floats',
-        'nd-array',
-        'array',
-        'float ndarray',
-        'iterable',
-        'indexable',
+        '1D array',
+        '1d array-like',
+        '2D array',
+        '2D ndarray',
+        '2D numpy.ndarray',
+        '3D array',
+        'A collection of strings',
         'an iterable',
-        'numeric array-like',
+        'array  or',
+        'array (n_samples]',
+        'array [n_core_samples]',
+        'array like',
         'array of float',
+        'array of floats',
+        'array of int',
+        'array of integers',
+        'array of shape `shape`'
+        'array of shape `shape`',
+        'array of shape of (n_targets',
+        'array',
+        'array-like of float',
+        'array-like of shape at least 2D',
+        'array-like of shape',
         'array-like',
         'array_like',
-        'array like',
-        'array-like of shape',
-        'array-like of shape at least 2D',
-        'array of shape of (n_targets',
-        'array of shape `shape`'
-        'np.matrix',
-        'numpy.matrix',
+        'bool array',
+        'collection of string',
         'float array with',
-        'matrix',
-        '1d array-like',
+        'float ndarray',
+        'indexable',
         'int array',
         'int array-like',
-        'ndarray of floats',
-        'numpy array of int',
-        'numpy array of float',
-        '(sparse) array-like',
-        'array of int',
-        'numpy.ndarray',
-        'array-like of float',
-        'bool array',
-        'list-like',
-        'list',
+        'integer ndarray',
+        'iterable',
         'label indicator array / sparse matrix',
         'label indicator matrix',
-        'array  or',
+        'list',
+        'list-like',
+        'matrix',
+        'nd-array',
+        'ndarray of floats',
+        'ndarray',
+        'np.array',
+        'np.matrix',
+        'numeric array-like',
+        'numpy array . Shape depends on ``subset``',
+        'numpy array of float',
+        'numpy array of int',
+        'numpy array',
+        'numpy.matrix',
+        'numpy.ndarray',
+        'record array',
+        'sequence of floats',
         '{array}',
         # the sparse matrices
+        '(sparse) array-like',
+        'CSC sparse matrix',
+        'CSC',
+        'CSR matrix with',
+        'CSR matrix',
+        'CSR sparse matrix',
+        'CSR',
+        'scipy csr array',
+        'scipy.sparse matrix',
+        'scipy.sparse',
+        'scipy.sparse.csr_matrix of floats'
+        'scipy.sparse.csr_matrix',
+        'sparse (CSR) matrix',
+        'sparse CSR matrix',
+        'sparse array',
+        'sparse graph in CSR format',
+        'sparse matrix with',
         'sparse matrix',
         'sparse-matrix',
-        'CSR matrix',
-        'CSR matrix with',
-        'CSR sparse matrix',
-        'sparse graph in CSR format',
-        'scipy.sparse.csr_matrix',
-        'CSR',
-        'scipy.sparse',
-        'scipy.sparse matrix',
-        'sparse matrix with',
-        "CSC",
-        "CSC sparse matrix"
     ]
     ml_type = 'Sklearn.Arr.t'
     wrap = 'Sklearn.Arr.to_pyobject'
@@ -505,7 +544,10 @@ class Array(Type):
 
 
 class ArrPyList(Type):
-    names = ['iterable of iterables', 'list of arrays', 'list of ndarray']
+    names = [
+        'iterable of iterables', 'list of arrays', 'list of ndarray', 'arrays',
+        'sparse matrices', 'list of array-like'
+    ]
     ml_type = 'Sklearn.Arr.List.t'
     ml_type_ret = 'Sklearn.Arr.List.t'
     wrap = 'Sklearn.Arr.List.to_pyobject'
@@ -513,13 +555,17 @@ class ArrPyList(Type):
 
 
 class List(Type):
-    def __init__(self, t, names=[]):
+    def __init__(self, t, names=None):
         self.t = t
-        self.names = names
+        if names is not None:
+            self.names = names
         self.ml_type = f"{t.ml_type} list"
         self.wrap = f'(fun ml -> Py.List.of_list_map {t.wrap} ml)'
         self.ml_type_ret = f"{t.ml_type_ret} list"
         self.unwrap = f"(fun py -> Py.List.to_list_map ({t.unwrap}) py)"
+
+    def tag_name(self):
+        return self.t.tag_name() + 's'
 
     def __str__(self):
         return repr(self)
@@ -540,16 +586,17 @@ class StarStar(Type):
         return "**kwargs"
 
 
-class FloatList(Type):
-    names = ['list of floats']
-    ml_type = 'float list'
-    wrap = '(Py.List.of_list_map Py.Float.of_float)'
+class FloatList(List):
+    def __init__(self):
+        super().__init__(
+            Float(),
+            names=['list of floats', 'list positive floats', 'list of float'])
 
 
 class StringList(Type):
     names = [
         'list of strings', 'list of string', 'list/tuple of strings',
-        'tuple of str', 'list of str', 'strings'
+        'tuple of str', 'list of str', 'strings', 'tuple of strings'
     ]
     ml_type = 'string list'
     wrap = '(Py.List.of_list_map Py.String.of_string)'
@@ -618,7 +665,7 @@ class CrossValGenerator(BaseType):
 
 class Estimator(BaseType):
     names = [
-        'instance BaseEstimator', 'BaseEstimator instance',
+        'instance BaseEstimator', 'BaseEstimator instance', 'BaseEstimator',
         'estimator instance', 'instance estimator', 'estimator object',
         'estimator'
     ]
@@ -676,7 +723,10 @@ class Self(Type):
 
 
 class Dtype(Type):
-    names = ['type', 'dtype', 'numpy dtype']
+    names = [
+        'type', 'dtype', 'numpy dtype', 'data-type', 'column dtype',
+        'numpy data type'
+    ]
     ml_type = 'Sklearn.Arr.Dtype.t'
     wrap = 'Sklearn.Arr.Dtype.to_pyobject'
     ml_type_ret = 'Sklearn.Arr.Dtype.t'
@@ -691,7 +741,8 @@ class Dict(Type):
     names = [
         'dict', 'Dict', 'dictionary', 'mapping of string to any',
         'dict of numpy (masked) ndarrays', 'dict of numpy ndarrays',
-        'dict of float arrays'
+        'dict of float arrays', 'dictionary of string to any',
+        'dict of string -> object', 'a dict'
     ]
     ml_type = 'Sklearn.Dict.t'
     ml_type_ret = 'Sklearn.Dict.t'
@@ -730,13 +781,12 @@ class Callable(Type):
     names = ['callable', 'function']
 
 
-def Slice():
-    int_or_none = Enum([NoneValue(), Int()])
-    ret = Tuple([int_or_none, int_or_none, int_or_none])
-    destruct = "(`Slice _) as s -> Wrap_utils.Slice.of_variant s"
-    t = f"`Slice of ({int_or_none.ml_type}) * ({int_or_none.ml_type}) * ({int_or_none.ml_type})"
-    ret.tag = lambda: (t, t, destruct, None)
-    return ret
+class Slice(Type):
+    names = ['slice']
+    ml_type = 'Sklearn.Wrap_utils.Slice.t'
+    ml_type_ret = 'Sklearn.Wrap_utils.Slice.t'
+    wrap = 'Sklearn.Wrap_utils.Slice.to_pyobject'
+    unwrap = 'Sklearn.Wrap_utils.Slice.of_pyobject'
 
 
 class Registry:
@@ -772,8 +822,8 @@ class Registry:
             if ancestor is not klass:
                 ancestor_name = ancestor.__name__.lower()
                 # tweaked for sklearn+scipy
-                if (('base' in ancestor_name or 'mixin' in ancestor_name
-                     or 'rv_' in ancestor_name or 'decisiontree' in ancestor_name)
+                if (('base' in ancestor_name or 'mixin' in ancestor_name or
+                     'rv_' in ancestor_name or 'decisiontree' in ancestor_name)
                         and not ancestor_name.startswith('_')):
                     # if not ancestor_name.startswith('_'):
                     self.types[ancestor].append(klass)
@@ -918,7 +968,7 @@ class ReParser:
 
         self.shape = self._comp(shape)
 
-        enum_elt = rf'(?P<elt>(?:(?:(?! (?:, \s* | \s) or \s+) [^()[\],])* {three})* (?:(?! (?:, \s* | \s) or \s+)[^()[\],])*)'
+        enum_elt = rf'(?P<elt>(?:(?:(?! (?:, \s* | \s) or \s+) [^()[\],])* {three})* (?:(?! (?:, \s* | \s) or \s+)[^()[\],])*)'  # noqa
         enum_comma = rf'(?:(?:{enum_elt},)+ {enum_elt})'
         enum_semi = rf'(?:(?:{enum_elt};)+ {enum_elt})'
         enum_pipe = rf'(?:(?:{enum_elt}\|)+ {enum_elt})'
@@ -933,7 +983,7 @@ class ReParser:
         strings_p = rf'(?:\( \s* {strings} \s* \))'
         strings_b = rf'(?:\[ \s* {strings} \s* \])'
         strings_c = rf'(?:\{{ \s* {strings} \s* \}})'
-        string_enum = rf'(?:(?:str(ing)? (?:\s+ in | \s* [,:])? \s*)? (?:{strings_p} | {strings_b} | {strings_c} | {strings_pipe}))'
+        string_enum = rf'(?:(?:str(ing)? (?:\s+ in | \s* [,:])? \s*)? (?:{strings_p} | {strings_b} | {strings_c} | {strings_pipe}))'  # noqa
 
         enum_c = rf'(?: \{{ (?:{enum_comma} | {enum_semi} | {enum_pipe}) \}})'
 
@@ -1111,6 +1161,7 @@ generic_builtin_types = [
     StringList(),
     SparseMatrix(),
     String(),
+    Slice(),
     DictIntToFloat(),
     NoneValue(),
     TrueValue(),
@@ -1118,6 +1169,12 @@ generic_builtin_types = [
     PyObject(),
     Self(),
     Callable(),
+    Ignored(),
+    Tuple([Int(), Int()], names=['(int, int)']),
+    Tuple([Float(), Float()],
+          names=['pair of floats', '(float, float)', 'pair of floats >= 0']),
+    List(Tuple([Int(), Int()]), names=['list of (int, int)']),
+    RandomState(),
 ]
 
 numpy_builtin_types = BuiltinTypes(generic_builtin_types + [
@@ -1133,6 +1190,7 @@ sklearn_builtin_types = BuiltinTypes(generic_builtin_types + [
     ArrPyList(),
     Dict(),
     Dtype(),
+    List(Dtype(), names=['list of column dtypes', 'list of types']),
     CrossValGenerator(),
     Estimator(),
     ClusterEstimator(),
@@ -1140,10 +1198,12 @@ sklearn_builtin_types = BuiltinTypes(generic_builtin_types + [
     WrappedModule('Sklearn.Pipeline.Pipeline', ['Pipeline', 'pipeline']),
     WrappedModule('Sklearn.Pipeline.FeatureUnion', ['FeatureUnion']),
     estimator_alist,
+    List(Arr(), names=['list of numpy arrays']),
     List(Estimator(), names=['list of estimators', 'list of estimator']),
     List(Regressor(), names=['list of regressors', 'list of regressor']),
     List(Tuple([String(), Transformer()]),
          names=['list of (string, transformer) tuples']),
+    Tuple([Arr(), Arr()], names=['tuple of (A, B) ndarrays']),
 ])
 
 
@@ -2587,6 +2647,9 @@ def assert_returns(t):
     return make
 
 
+_types_not_parsed = set()
+
+
 @assert_returns(Type)
 def parse_type(t, builtin, context):
     # print(f"DD parse_type {t}")
@@ -2632,8 +2695,10 @@ def parse_type(t, builtin, context):
     elif is_int(t):
         return IntValue(t)
     else:
-        print(f"WW failed to parse type: '{t}', context follows")
-        print(context)
+        if t and t not in _types_not_parsed:
+            print(f"WW failed to parse type: '{t}', context follows")
+            print(context)
+            _types_not_parsed.add(t)
         return UnknownType(t)
 
 
@@ -2666,6 +2731,13 @@ def parse_types(doc, builtin, context, section='Parameters'):
             type_string = type_string.strip(" \n\t,.;")
 
             if type_string.startswith('ref:'):
+                continue
+
+            if not type_string:
+                print(
+                    f"WW no type string found for '{param_name}' in '{m.group(2)}', context follows"
+                )
+                print(context)
                 continue
 
             ty = parse_type(type_string,
@@ -3333,7 +3405,20 @@ sklearn_overrides = {
     r'\.make_pipeline$': dict(types={r'^steps$': List(Estimator())}),
     r'Birch$': dict(types={r'^n_clusters$': Enum([NoneValue(), Int(), ClusterEstimator()])}),
     r'^SpectralBiclustering$': dict(types={r'^n_clusters$': Enum([Int(), Tuple([Int(), Int()])])}),
-    r'export_graphviz$': dict(ret_type=Optional(String()))
+    r'export_graphviz$': dict(ret_type=Optional(String())),
+    r'SimpleImputer$': dict(types={r'^strategy$': Enum([StringValue('mean'), StringValue('median'),
+                                                        StringValue('most_frequent'), StringValue('constant')])}),
+    r'ColumnTransformer$': dict(types={
+        r'^transformers$': List(Tuple([String(), Transformer(),
+                                       Enum([String(), Int(), List(String()), List(Int()),
+                                             Slice(), Arr(), Callable()])]))}),
+    r'TransformedTargetRegressor$': dict(types={r'^regressor$': Regressor(),
+                                                r'^transformer$': Transformer()}),
+    r'\.make_column_transformer$': dict(types={r'^transformers$':
+                                               List(Tuple([Transformer(),
+                                                           Enum([String(), Int(), List(String()), List(Int()),
+                                                                 Slice(), Arr(), Callable()])]))},
+                                        ret_type=WrappedModule('Sklearn.Compose.ColumnTransformer'))
 }
 
 scipy_overrides = {r'': dict(types={r'^loc$': Float(), '^scale$': Float()})}

@@ -1,3 +1,20 @@
+let print f x = Format.printf "%a" f x
+let print_py x = Format.printf "%s" (Py.Object.to_string x)
+let print_ndarray = print Sklearn.Arr.pp
+let print_float = Format.printf "%g\n"
+let print_string = Format.printf "%s\n"
+let print_int = Format.printf "%d\n"
+
+let matrix = Sklearn.Arr.Float.matrix
+let vector = Sklearn.Arr.Float.vector
+let matrixi = Sklearn.Arr.Int.matrix
+let vectori = Sklearn.Arr.Int.vector
+let vectors = Sklearn.Arr.String.vector
+
+let option_get = function Some x -> x | None -> invalid_arg "option_get: None"
+
+module Arr = Sklearn.Arr
+
 (* ColumnTransformer *)
 (*
 >>> import numpy as np
@@ -16,21 +33,23 @@ array([[0. , 1. , 0.5, 0.5],
 
 *)
 
-(* TEST TODO
+(* Enum([String(), Int(), List(String()), List(Int()), Slice(), Arr(), Callable()]) *)
 let%expect_test "ColumnTransformer" =
   let open Sklearn.Compose in
-  let ct = ColumnTransformer([("norm1", Normalizer(norm='l1'), (vectori [|0; 1|])),("norm2", Normalizer(norm='l1'), slice ~2 4 ())]) in  
-  let x = .array [[0. 1. 2. 2.] [1. 1. 0. 1.]] np in  
-  print_ndarray @@ # Normalizer scales each row of x to unit norm. A separate scaling;  
-  print_ndarray @@ # is applied for the two first and two last elements of each;  
-  print_ndarray @@ # row independently.;  
-  print_ndarray @@ ColumnTransformer.fit_transform ~x ct;  
+  let ct = ColumnTransformer.create
+      ~transformers:["norm1", Sklearn.Preprocessing.Normalizer.create ~norm:`L1 (), `Is [0;1];
+                     "norm2", Sklearn.Preprocessing.Normalizer.create ~norm:`L1 (), Arr.slice ~i:2 ~j:4 ()]
+      ()
+  in
+  let x = matrix [|[|0.; 1.; 2.; 2.|]; [|1.; 1.; 0.; 1.|]|] in
+  (* Normalizer scales each row of x to unit norm. A separate scaling *)
+  (* is applied for the two first and two last elements of each *)
+  (* row independently. *)
+  print_ndarray @@ ColumnTransformer.fit_transform ~x ct;
   [%expect {|
-      array([[0. , 1. , 0.5, 0.5],      
+      [[0.  1.  0.5 0.5]
+       [0.5 0.5 0.  1. ]]
   |}]
-
-*)
-
 
 
 (* TransformedTargetRegressor *)
@@ -51,26 +70,35 @@ array([2.])
 
 *)
 
-(* TEST TODO
 let%expect_test "TransformedTargetRegressor" =
   let open Sklearn.Compose in
-  let tt = TransformedTargetRegressor(regressor=LinearRegression(),func=np.log, inverse_func=np.exp) in  
-  let x = .arange 4).reshape(-1 ~1 np in  
-  let y = .exp 2 * x).ravel( np in  
-  print TransformedTargetRegressor.pp @@ TransformedTargetRegressor.fit ~x y tt;  
+  let numpy = Py.import "numpy" in
+  let tt = TransformedTargetRegressor.create
+      ~regressor:Sklearn.Linear_model.LinearRegression.(create ())
+      ~func:(Py.Module.get numpy "log") ~inverse_func:(Py.Module.get numpy "exp")
+      ()
+  in
+  let x = Arr.(arange 4 |> reshape ~shape:[|-1; 1|]) in
+  let y = Arr.(exp ((float 2.) * x) |> ravel) in
+  print TransformedTargetRegressor.pp @@ TransformedTargetRegressor.fit ~x ~y tt;
   [%expect {|
-      TransformedTargetRegressor(...)      
-  |}]
-  print_ndarray @@ TransformedTargetRegressor.score ~x y tt;  
+      TransformedTargetRegressor(check_inverse=True, func=<ufunc 'log'>,
+                                 inverse_func=<ufunc 'exp'>,
+                                 regressor=LinearRegression(copy_X=True,
+                                                            fit_intercept=True,
+                                                            n_jobs=None,
+                                                            normalize=False),
+                                 transformer=None)
+  |}];
+  print_float @@ TransformedTargetRegressor.score ~x ~y tt;
   [%expect {|
-      1.0      
-  |}]
-  print_ndarray @@ tt..coef_ regressor_;  
+      1
+  |}];
+  print_ndarray @@ (TransformedTargetRegressor.regressor_ tt
+                    |> fun r -> Sklearn.Linear_model.LinearRegression.(of_pyobject r |> coef_));
   [%expect {|
-      array([2.])      
+      [2.]
   |}]
-
-*)
 
 
 
@@ -94,20 +122,17 @@ array([[ 0.90453403,  1.        ,  0.        ,  0.        ],
 
 *)
 
-(* TEST TODO
-let%expect_test "make_column_selector" =
-  let open Sklearn.Compose in
-  let x = .dataFrame {'city': ['London' 'London' 'Paris' 'Sallisaw'] 'rating': (vectori [|5; 3; 4; 5|])} pd # doctest: +SKIP in  
-  let ct = make_column_transformer((StandardScaler(),make_column_selector ~dtype_include:np.number ()), # rating(OneHotEncoder(),make_column_selector ~dtype_include:object ())) # city in  
-  print_ndarray @@ .fit_transform ~x ct # doctest: +SKIP;  
-  [%expect {|
-      array([[ 0.90453403,  1.        ,  0.        ,  0.        ],      
-             [-1.50755672,  1.        ,  0.        ,  0.        ],      
-             [-0.30151134,  0.        ,  1.        ,  0.        ],      
-  |}]
-
-*)
-
+(*  TODO, needs a pandas wrapper  *)
+(* let%expect_test "make_column_selector" =
+ *   let open Sklearn.Compose in
+ *   let x = .dataFrame {'city': ['London' 'London' 'Paris' 'Sallisaw'] 'rating': (vectori [|5; 3; 4; 5|])} pd # doctest: +SKIP in
+ *   let ct = make_column_transformer((StandardScaler(),make_column_selector ~dtype_include:np.number ()), # rating(OneHotEncoder(),make_column_selector ~dtype_include:object ())) # city in
+ *   print_ndarray @@ .fit_transform ~x ct # doctest: +SKIP;
+ *   [%expect {|
+ *       array([[ 0.90453403,  1.        ,  0.        ,  0.        ],
+ *              [-1.50755672,  1.        ,  0.        ,  0.        ],
+ *              [-0.30151134,  0.        ,  1.        ,  0.        ],
+ *   |}] *)
 
 
 (* make_column_transformer *)
@@ -123,17 +148,23 @@ ColumnTransformer(transformers=[('standardscaler', StandardScaler(...),
 
 *)
 
-(* TEST TODO
 let%expect_test "make_column_transformer" =
   let open Sklearn.Compose in
-  print_ndarray @@ make_column_transformer((StandardScaler(), ['numerical_column']),(OneHotEncoder(), ['categorical_column']));  
+  print ColumnTransformer.pp @@ make_column_transformer
+    [Sklearn.Preprocessing.StandardScaler.(create () |> as_transformer), `Ss ["numerical_column"];
+     Sklearn.Preprocessing.OneHotEncoder.(create () |> as_transformer), `Ss ["categorical_column"]];
   [%expect {|
-      ColumnTransformer(transformers=[('standardscaler', StandardScaler(...),      
-                                       ['numerical_column']),      
-                                      ('onehotencoder', OneHotEncoder(...),      
+      ColumnTransformer(n_jobs=None, remainder='drop', sparse_threshold=0.3,
+                        transformer_weights=None,
+                        transformers=[('standardscaler',
+                                       StandardScaler(copy=True, with_mean=True,
+                                                      with_std=True),
+                                       ['numerical_column']),
+                                      ('onehotencoder',
+                                       OneHotEncoder(categories='auto', drop=None,
+                                                     dtype=<class 'numpy.float64'>,
+                                                     handle_unknown='error',
+                                                     sparse=True),
+                                       ['categorical_column'])],
+                        verbose=False)
   |}]
-
-*)
-
-
-

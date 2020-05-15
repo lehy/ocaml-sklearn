@@ -162,7 +162,9 @@ have already been ported (almost) completely.
 The following examples have been ported completely:
 - [calibration](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/calibration.ml)
 - [cluster](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/cluster.ml)
+- [compose](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/compose.ml)
 - [ensemble](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/ensemble.ml)
+- [impute](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/impute.ml)
 - [manifold](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/manifold.ml)
 - [metrics](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/metrics.ml)
 - [model_selection](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/model_selection.ml)
@@ -174,7 +176,6 @@ The following examples have been ported completely:
 - [tree](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/tree.ml)
 
 The following examples still need to be ported:
-- [compose](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/compose.ml)
 - [covariance](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/covariance.ml)
 - [cross_decomposition](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/cross_decomposition.ml)
 - [datasets](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/datasets.ml)
@@ -183,7 +184,6 @@ The following examples still need to be ported:
 - [feature_extraction](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/feature_extraction.ml)
 - [feature_selection](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/feature_selection.ml)
 - [gaussian_process](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/gaussian_process.ml)
-- [impute](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/impute.ml)
 - [inspection](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/inspection.ml)
 - [isotonic](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/isotonic.ml)
 - [kernel_approximation](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/kernel_approximation.ml)

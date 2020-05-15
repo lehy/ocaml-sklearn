@@ -501,8 +501,8 @@ True
 
 let%expect_test "ParameterGrid" =
   let open Sklearn.Model_selection in
-  let grid = `List [["kernel", `Strings ["linear"]];
-                    ["kernel", `Strings ["rbf"]; "gamma", `Ints [1; 10]]] in
+  let grid = `Grids [["kernel", `Strings ["linear"]];
+                     ["kernel", `Strings ["rbf"]; "gamma", `Ints [1; 10]]] in
   let param_grid = ParameterGrid.create ~param_grid:grid () in
   let iter =  ParameterGrid.iter param_grid in
   Seq.iter (fun dict -> Format.printf "%a\n" Sklearn.Dict.pp dict) iter;
@@ -1031,7 +1031,7 @@ let%expect_test "cross_val_score" =
   print_ndarray @@ Sklearn.Dict.get (module Arr) ~name:"test_score" cv_results;
   [%expect {| [0.33150734 0.08022311 0.03531764] |}];
   let scores = cross_validate ~estimator:lasso ~x ~y ~cv:(`I 3)
-      ~scoring:(`List [`R2; `Neg_mean_squared_error]) ~return_train_score:true ()
+      ~scoring:(`Scores [`R2; `Neg_mean_squared_error]) ~return_train_score:true ()
   in
   print_ndarray @@ Sklearn.Dict.get (module Arr) ~name:"test_neg_mean_squared_error" scores;
   [%expect {| [-3635.51152303 -3573.34242148 -6114.78229547] |}];
