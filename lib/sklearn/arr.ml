@@ -343,6 +343,15 @@ let flatnonzero x =
 let flatten self =
   Py.Module.get_function self "flatten" [||] |> of_pyobject
 
+let ravel x =
+  Py.Module.get_function numpy "ravel" [|to_pyobject x|] |> of_pyobject
+
+let exp x =
+  Py.Module.get_function numpy "exp" [|to_pyobject x|] |> of_pyobject
+
+let log x =
+  Py.Module.get_function numpy "log" [|to_pyobject x|] |> of_pyobject
+
 let iter x =
   Py.Module.get_function builtins "iter" [|to_pyobject x|] |> Py.Iter.to_seq |> Seq.map of_pyobject
 
