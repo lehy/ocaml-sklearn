@@ -1,0 +1,30 @@
+opam-version: "2.0"
+version: "1.18-0.3.0"
+synopsis: "Fundamental scientific computing with Numpy for OCaml."
+description: """
+These are OCaml bindings to Numpy, the fundamental package for scientific computing with Python.
+"""
+maintainer: ["Ronan Le Hy <ronan.lehy@gmail.com>"]
+authors: ["Ronan Le Hy"]
+license: "BSD-3-Clause"
+homepage: "https://github.com/lehy/ocaml-sklearn"
+bug-reports: "https://github.com/lehy/ocaml-sklearn/issues"
+depends: [
+  "dune" {>= "2.4"}
+  "ocaml" {>= "4.07.1"}
+  "pyml" {>= "20200222"}
+]
+build: [
+  ["dune" "subst"] {pinned}
+  [
+    "dune"
+    "build"
+    "-p"
+    name
+    "-j"
+    jobs
+    "@install"
+    "@doc" {with-doc}
+  ]
+]
+dev-repo: "git+https://github.com/lehy/ocaml-sklearn.git"
