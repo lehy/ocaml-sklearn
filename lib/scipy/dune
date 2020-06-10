@@ -1,6 +1,6 @@
 (library
  (public_name scipy)
- (libraries bigarray pyml))
+ (libraries bigarray pyml np))
 
 ;; 58 is due to pyml, not sure what to do about it
 ;; Warning 58: no cmx file was found in path for module Numpy, and its interface was not compiled with -opaque
@@ -14,36 +14,48 @@
 (rule (copy ../common/wrap_utils_common.ml wrap_utils_common.ml))
 
 (rule (targets
-       cluster.ml
-       cluster.mli
-       conftest.ml
-       conftest.mli
-       constants.ml
-       constants.mli
-       fft.ml
-       fft.mli
-       fftpack.ml
-       fftpack.mli
-       integrate.ml
-       integrate.mli
-       interpolate.ml
-       interpolate.mli
-       io.ml
-       io.mli
-       misc.ml
-       misc.mli
-       ndimage.ml
-       ndimage.mli
-       odr.ml
-       odr.mli
-       setup.ml
-       setup.mli
-       signal.ml
-       signal.mli
-       stats.ml
-       stats.mli
+       Cluster.ml
+       Cluster.mli
+       Conftest.ml
+       Conftest.mli
+       Constants.ml
+       Constants.mli
+       Fft.ml
+       Fft.mli
+       Fftpack.ml
+       Fftpack.mli
+       Integrate.ml
+       Integrate.mli
+       Interpolate.ml
+       Interpolate.mli
+       Io.ml
+       Io.mli
+       Linalg.ml
+       Linalg.mli
+       Misc.ml
+       Misc.mli
+       Ndimage.ml
+       Ndimage.mli
+       Odr.ml
+       Odr.mli
+       Optimize.ml
+       Optimize.mli
+       Setup.ml
+       Setup.mli
+       Signal.ml
+       Signal.mli
+       Sparse.ml
+       Sparse.mli
+       Spatial.ml
+       Spatial.mli
+       Special.ml
+       Special.mli
+       Stats.ml
+       Stats.mli
+       Version.ml
+       Version.mli
        wrap_version.ml
-       )
+       skdoc.log)
       (deps ../version.sh ../skdoc.sh ../skdoc.py)
       (action (run bash ../skdoc.sh build-scipy))
       (mode fallback))

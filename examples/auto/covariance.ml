@@ -1,3 +1,22 @@
+module Np = Np.Numpy
+
+let print f x = Format.printf "%a" f x
+
+let print_py x = Format.printf "%s" (Py.Object.to_string x)
+
+let print_ndarray = Np.Obj.print
+
+let print_float = Format.printf "%g\n"
+
+let print_string = Format.printf "%s\n"
+
+let print_int = Format.printf "%d\n"
+
+let matrixi = Np.Ndarray.matrixi
+
+let matrixf = Np.Ndarray.matrixf
+
+
 (* EllipticEnvelope *)
 (*
 >>> import numpy as np
@@ -20,29 +39,25 @@ array([0.0813... , 0.0427...])
 
 *)
 
-(* TEST TODO
-let%expect_test "EllipticEnvelope" =
-  let open Sklearn.Covariance in
-  let true_cov = .array [[.8 .3] [.3 .4]] np in  
-  let x = np..randomState 0).multivariate_normal( ~mean:(vectori [|0; 0|]) ~cov:true_cov ~size:500 random in  
-  let cov = EllipticEnvelope(random_state=0).fit ~x () in  
-  print_ndarray @@ # predict returns 1 for an inlier and -1 for an outlier;  
-  print_ndarray @@ EllipticEnvelope.predict [(vectori [|0; 0|]) (vectori [|3; 3|])] cov;  
-  [%expect {|
-      array([ 1, -1])      
-  |}]
-  print_ndarray @@ EllipticEnvelope.covariance_ cov;  
-  [%expect {|
-      array([[0.7411..., 0.2535...],      
-             [0.2535..., 0.3053...]])      
-  |}]
-  print_ndarray @@ EllipticEnvelope.location_ cov;  
-  [%expect {|
-      array([0.0813... , 0.0427...])      
-  |}]
-
-*)
-
+(* let%expect_test "EllipticEnvelope" =
+ *   let open Sklearn.Covariance in
+ *   let true_cov = [[.8 .3] [.3 .4]] in  
+ *   let x = np..randomState 0).multivariate_normal( ~mean:(vectori [|0; 0|]) ~cov:true_cov ~size:500 random in  
+ *   let cov = EllipticEnvelope(random_state=0).fit ~x () in  
+ *   print_ndarray @@ # predict returns 1 for an inlier and -1 for an outlier;  
+ *   print_ndarray @@ EllipticEnvelope.predict [(vectori [|0; 0|]) (vectori [|3; 3|])] cov;  
+ *   [%expect {|
+ *       array([ 1, -1])      
+ *   |}];
+ *   print_ndarray @@ EllipticEnvelope.covariance_ cov;  
+ *   [%expect {|
+ *       array([[0.7411..., 0.2535...],      
+ *              [0.2535..., 0.3053...]])      
+ *   |}];
+ *   print_ndarray @@ EllipticEnvelope.location_ cov;  
+ *   [%expect {|
+ *       array([0.0813... , 0.0427...])      
+ *   |}] *)
 
 
 (* EmpiricalCovariance *)

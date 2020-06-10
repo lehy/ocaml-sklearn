@@ -1,0 +1,24 @@
+(library
+ (public_name np)
+ (libraries bigarray pyml))
+
+;; 58 is due to pyml, not sure what to do about it
+;; Warning 58: no cmx file was found in path for module Numpy, and its interface was not compiled with -opaque
+(env
+ (dev
+  (flags (:standard -w -58))))
+
+;; No other way atm to share code between scipy and sklearn using a private
+;; library with dune.
+;; https://github.com/ocaml/dune/issues/1017
+(rule (copy ../common/wrap_utils_common.ml wrap_utils_common.ml))
+
+(rule (targets
+       NumpyRaw.ml
+       NumpyRaw.mli
+       wrap_version.ml
+       skdoc.log)
+
+      (deps ../version.sh ../skdoc.sh ../skdoc.py)
+      (action (run bash ../skdoc.sh build-numpy))
+      (mode fallback))

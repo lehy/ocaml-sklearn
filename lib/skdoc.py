@@ -1,13 +1,17 @@
-import regex as re
 import io
 import os
+import abc
 import inspect
 import pkgutil
 import pathlib
+import logging
 import textwrap
 import importlib
 import functools
 import collections
+import regex as re
+
+log = logging.getLogger('skdoc')
 
 
 def ucfirst(s):
@@ -42,6 +46,30 @@ ml_keywords = set(
 def tag(s):
     if not s:
         s = 'T'
+    ops = {
+        '-': 'Minus',
+        '+': 'Plus',
+        ' ': 'Space',
+        '*': 'Mult',
+        '/': 'Div',
+        '<': 'Lt',
+        '>': 'Gt',
+        '==': 'Eq',
+        '<=': 'Lte',
+        '>=': 'Gte',
+        '!=': 'Neq',
+
+        # Note that these could probably more explicit.
+        'r': 'R',
+        'w': 'W',
+        'r+': 'R_plus',
+        'w+': 'W_plus',
+        'rw': 'RW',
+        'a': 'A',
+        'A+': 'A_plus'
+    }
+    if s in ops:
+        return ops[s]
     s = re.sub(r'[^a-zA-Z0-9_]+', '_', s)
     s = re.sub(r'^([^a-zA-Z])', r'T\1', s)
     return ucfirst(s)
@@ -111,684 +139,6 @@ class TypeContext:
         return ret
 
 
-class Type:
-    def visit(self, f):
-        f(self)
-        for child in getattr(self, 'elements', []):
-            f(child)
-
-    def __str__(self):
-        return repr(self)
-
-    def __repr__(self):
-        text = getattr(self, 'text', None)
-        if text is None:
-            text = getattr(self, 'elements', '')
-        return f"{self.__class__.__name__}({text})"
-
-    def __call__(self, context):
-        """This is so that users can put either a Type or a function context
-        -> Type in overrides.
-
-        """
-        return self
-
-    names = []
-
-    ml_type = 'Py.Object.t'
-    wrap = 'Wrap_utils.id'
-
-    ml_type_ret = 'Py.Object.t'
-    unwrap = 'Wrap_utils.id'
-
-    is_type = None
-
-    def tag_name(self):
-        return tag(self.__class__.__name__)
-
-    def tag(self):
-        ta = self.tag_name()
-        t = f"`{ta} of {self.ml_type}"
-        t_ret = f"`{ta} of {self.ml_type_ret}"
-        destruct = f"`{ta} x -> {self.wrap} x"
-        if self.is_type is None:
-            construct = None
-        else:
-            construct = f"if {self.is_type} x then `{ta} ({self.unwrap} x)"
-        return t, t_ret, destruct, construct
-
-    def delegate_to(self, t):
-        self.ml_type = t.ml_type
-        self.ml_type_ret = t.ml_type_ret
-        self.wrap = t.wrap
-        self.unwrap = t.unwrap
-        self.tag = t.tag
-        self.tag_name = t.tag_name
-
-
-class Ignored(Type):
-    names = ['ignored', 'Ignored']
-
-
-class RandomState(Type):
-    names = ['RandomState instance', 'RandomState', 'instance of RandomState']
-
-
-class Bunch(Type):
-    def __init__(self, elements):
-        self.elements = elements
-        self.ml_type = ("< " +
-                        '; '.join(f"{mlid(name)}: {t.ml_type_ret}"
-                                  for name, t in self.elements.items()) + " >")
-        # for now Bunch is only for returning things
-        self.wrap = 'Wrap_utils.id'
-
-        self.ml_type_ret = self.ml_type
-        unwrap_methods = [
-            f'method {mlid(name)} = {t.unwrap} (Py.Object.get_attr_string bunch "{name}" |> Wrap_utils.Option.get)'
-            for name, t in self.elements.items()
-        ]
-        self.unwrap = f'(fun bunch -> object {" ".join(unwrap_methods)} end)'
-
-    def visit(self, f):
-        f(self)
-        for child in self.elements.values():
-            f(child)
-
-
-class UnknownType(Type):
-    def __init__(self, text):
-        self.text = text
-
-    def tag_name(self):
-        return tag(self.text)
-
-
-class StringValue(Type):
-    def __init__(self, text):
-        assert text != 'None'
-        self.text = text.strip("\"'")
-
-    ml_type = 'string'
-    wrap = 'Py.String.of_string'
-
-    ml_type_ret = 'string'
-    unwrap = 'Py.String.to_string'
-
-    def tag(self):
-        ta = tag(self.text)
-        t = f"`{ta}"
-        t_ret = t
-        destruct = f'`{ta} -> {self.wrap} "{self.text}"'
-        construct = None
-        return t, t_ret, destruct, construct
-
-
-class IntValue(Type):
-    def __init__(self, value):
-        self.value = int(value)
-
-    ml_type = 'int'
-    wrap = 'Py.Int.of_int'
-
-    ml_type_ret = 'int'
-    unwrap = 'Py.Int.to_int'
-
-    def tag(self):
-        tags = ['Zero', 'One', 'Two']
-        assert 0 <= self.value < len(tags), (self.value, tags)
-        ta = tags[self.value]
-        t = f"`{ta}"
-        t_ret = t
-        destruct = f'`{ta} -> {self.wrap} {self.value}'
-        construct = None
-        return t, t_ret, destruct, construct
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}({self.value})"
-
-
-class Enum(Type):
-    def can_be_returned(self):
-        for elt in self.elements:
-            if elt.tag()[3] is None:
-                # print(f"WW enum {self} cannot be returned because element {elt} cannot be discriminated")
-                return False
-        return True
-
-    def __init__(self, elements, name=None):
-        # print(f"DD building enum: {elements}")
-        for elt in elements:
-            assert isinstance(elt, Type), elt
-        assert elements, elements
-        self.elements = elements
-        self.ml_type = "[" + ' | '.join([elt.tag()[0]
-                                         for elt in elements]) + "]"
-        wrap_cases = [f"| {elt.tag()[2]}\n" for elt in elements]
-        self.wrap = f"(function\n{''.join(wrap_cases)})"
-
-        if self.can_be_returned():
-            self.ml_type_ret = "[" + ' | '.join(
-                [elt.tag()[1] for elt in elements]) + "]"
-            unwrap_cases = [f"{elt.tag()[3]}" for elt in elements]
-            self.unwrap = '(fun x -> ' + ' else '.join(
-                unwrap_cases
-            ) + ''' else failwith (Printf.sprintf "Sklearn: could not identify type from Python value %s (%s)"
-                                                  (Py.Object.to_string x) (Wrap_utils.type_string x)))'''
-
-        if name is not None:
-            self.tag_name = lambda: name
-
-
-class Optional(Type):
-    def __init__(self, t):
-        # args are wrapped as a enum including `None
-        # returns are wrapped using an option
-        self.t = t
-        if isinstance(t, Enum):
-            self.as_enum = Enum(t.elements + [NoneValue()])
-        else:
-            self.as_enum = Enum([t, NoneValue()])
-        self.ml_type = self.as_enum.ml_type
-        self.wrap = self.as_enum.wrap
-        self.ml_type_ret = f'{self.t.ml_type_ret} option'
-        self.unwrap = f'(fun py -> if Py.is_none py then None else Some ({self.t.unwrap} py))'
-
-    def __repr__(self):
-        return f'{self.__class__.__name__}({self.t})'
-
-
-class Tuple(Type):
-    def __init__(self, elements, names=None):
-        if names is not None:
-            self.names = names
-        self.elements = elements
-        self.ml_type = '(' + ' * '.join(elt.ml_type for elt in elements) + ')'
-        self.ml_type_ret = '(' + ' * '.join(elt.ml_type_ret
-                                            for elt in elements) + ')'
-        unwrap_elts = [
-            f"({elt.unwrap} (Py.Tuple.get x {i}))"
-            for i, elt in enumerate(elements)
-        ]
-        self.unwrap = f"(fun x -> ({', '.join(unwrap_elts)}))"
-        split = '(' + ', '.join([f"ml_{i}"
-                                 for i in range(len(self.elements))]) + ')'
-        wrap_elts = [f"({elt.wrap} ml_{i})" for i, elt in enumerate(elements)]
-        self.wrap = f"(fun {split} -> Py.Tuple.of_list [{'; '.join(wrap_elts)}])"
-        self.is_type = 'Py.Tuple.check'
-
-
-class Int(Type):
-    names = [
-        'int', 'integer', 'integer > 0', 'int with', 'int > 1',
-        'strictly positive integer', 'an integer'
-    ]
-    ml_type = 'int'
-    wrap = 'Py.Int.of_int'
-    ml_type_ret = 'int'
-    unwrap = 'Py.Int.to_int'
-    is_type = 'Wrap_utils.check_int'
-
-    def tag_name(self):
-        return tag("I")
-
-
-class WrappedModule(Type):
-    def __init__(self, module, names=None):
-        if names is not None:
-            self.names = names
-        self.ml_type = f'{module}.t'
-        self.ml_type_ret = f'{module}.t'
-        self.wrap = f'{module}.to_pyobject'
-        self.unwrap = f'{module}.of_pyobject'
-
-
-class Float(Type):
-    names = [
-        'float', 'floating', 'double', 'positive float',
-        'strictly positive float', 'non-negative float', 'numeric',
-        'float (upperlimited by 1.0)', 'float in range', 'number',
-        'numerical value', 'scalar', 'float in [0., 1.]', 'float in',
-        'float between 0 and 1', '0 <= shrinkage <= 1',
-        '0 < support_fraction < 1', 'non-negative real', '0 < double < 1',
-        'float between 0.0 and 1.0'
-    ]
-    ml_type = 'float'
-    wrap = 'Py.Float.of_float'
-    ml_type_ret = 'float'
-    unwrap = 'Py.Float.to_float'
-    is_type = 'Wrap_utils.check_float'
-
-    def tag_name(self):
-        return tag("F")
-
-
-class Bool(Type):
-    names = [
-        'bool', 'boolean', 'Boolean', 'Bool', 'boolean value', 'type boolean'
-    ]
-    ml_type = 'bool'
-    wrap = 'Py.Bool.of_bool'
-    ml_type_ret = 'bool'
-    unwrap = 'Py.Bool.to_bool'
-
-
-class Ndarray(Type):
-    names = []
-    ml_type = 'Sklearn.Ndarray.t'
-    wrap = 'Sklearn.Ndarray.to_pyobject'
-    ml_type_ret = 'Sklearn.Ndarray.t'
-    unwrap = 'Sklearn.Ndarray.of_pyobject'
-    is_type = 'Wrap_utils.check_array'
-
-
-class SparseMatrix(Type):
-    names = []
-    ml_type = 'Sklearn.Csr_matrix.t'
-    wrap = 'Sklearn.Csr_matrix.to_pyobject'
-    ml_type_ret = 'Sklearn.Csr_matrix.t'
-    unwrap = 'Sklearn.Csr_matrix.of_pyobject'
-    is_type = 'Wrap_utils.check_csr_matrix'
-
-
-class Arr(Type):
-    """Handles dense or sparse arrays (ie, union of Ndarray and
-    Csr_matrix/SparseMatrix).
-
-    We wrap all arrays using Arr, except in Csr_matrix (which would
-    cause a dependency cycle).
-
-    """
-    names = [
-        '1D array',
-        '1d array-like',
-        '2D array',
-        '2D ndarray',
-        '2D numpy.ndarray',
-        '3D array',
-        'A collection of strings',
-        'an iterable',
-        'array  or',
-        'array (n_samples]',
-        'array [n_core_samples]',
-        'array like',
-        'array of float',
-        'array of floats',
-        'array of int',
-        'array of integers',
-        'array of shape `shape`'
-        'array of shape `shape`',
-        'array of shape of (n_targets',
-        'array',
-        'array-like of float',
-        'array-like of shape at least 2D',
-        'array-like of shape',
-        'array-like',
-        'array_like',
-        'bool array',
-        'collection of string',
-        'float array with',
-        'float ndarray',
-        'indexable',
-        'int array',
-        'int array-like',
-        'integer ndarray',
-        'iterable',
-        'label indicator array / sparse matrix',
-        'label indicator matrix',
-        'list',
-        'list-like',
-        'matrix',
-        'nd-array',
-        'ndarray of floats',
-        'ndarray',
-        'np.array',
-        'np.matrix',
-        'numeric array-like',
-        'numpy array . Shape depends on ``subset``',
-        'numpy array of float',
-        'numpy array of int',
-        'numpy array',
-        'numpy.matrix',
-        'numpy.ndarray',
-        'record array',
-        'sequence of floats',
-        '{array}',
-        # the sparse matrices
-        '(sparse) array-like',
-        'CSC sparse matrix',
-        'CSC',
-        'CSR matrix with',
-        'CSR matrix',
-        'CSR sparse matrix',
-        'CSR',
-        'scipy csr array',
-        'scipy.sparse matrix',
-        'scipy.sparse',
-        'scipy.sparse.csr_matrix of floats'
-        'scipy.sparse.csr_matrix',
-        'sparse (CSR) matrix',
-        'sparse CSR matrix',
-        'sparse array',
-        'sparse graph in CSR format',
-        'sparse matrix with',
-        'sparse matrix',
-        'sparse-matrix',
-    ]
-    ml_type = 'Sklearn.Arr.t'
-    wrap = 'Sklearn.Arr.to_pyobject'
-    ml_type_ret = 'Sklearn.Arr.t'
-    unwrap = 'Sklearn.Arr.of_pyobject'
-    is_type = 'Arr.check'
-
-
-class Generator(Type):
-    def __init__(self, t):
-        super().__init__()
-        self.t = t
-        self.ml_type = f'{t.ml_type} Seq.t'
-        self.wrap = f'(fun ml -> Seq.map {t.wrap} ml |> Py.Iter.of_seq)'
-        self.ml_type_ret = f'{t.ml_type_ret} Seq.t'
-        self.unwrap = f'(fun py -> Py.Iter.to_seq py |> Seq.map {t.unwrap})'
-        self.is_type = 'Py.Iter.check'
-
-    def tag_name(self):
-        return 'Iter'
-
-
-def ArrGenerator():
-    ret = Generator(Arr())
-    ret.names = ['generator of array']
-    return ret
-
-
-class LossFunction(Type):
-    names = ['LossFunction', 'concrete ``LossFunction``']
-    # ml_type = 'Sklearn.Arr.t -> Sklearn.Arr.t -> float'
-    ml_type_ret = 'Sklearn.Arr.t -> Sklearn.Arr.t -> float'
-    unwrap = '''(fun py -> fun x y -> Py.Callable.to_function py
-       [|Sklearn.Arr.to_pyobject x; Sklearn.Arr.to_pyobject y|] |> Py.Float.to_float)'''
-
-
-class ClassificationReport(Type):
-    # ml_type = '(string * <precision:float; recall:float; f1_score:float; support:float>) list'
-    ml_type_ret = '(string * <precision:float; recall:float; f1_score:float; support:float>) list'
-    unwrap = '''(fun py -> Py.Dict.fold (fun kpy vpy acc -> ((Py.String.to_string kpy), object
-      method precision = Py.Dict.get_item_string vpy "precision" |> Wrap_utils.Option.get |> Py.Float.to_float
-      method recall = Py.Dict.get_item_string vpy "recall" |> Wrap_utils.Option.get |> Py.Float.to_float
-      method f1_score = Py.Dict.get_item_string vpy "f1-score" |> Wrap_utils.Option.get |> Py.Float.to_float
-      method support = Py.Dict.get_item_string vpy "support" |> Wrap_utils.Option.get |> Py.Float.to_float
-    end)::acc) py [])
-    '''
-    is_type = 'Py.Dict.check'
-
-    def tag_name(self):
-        return 'Dict'
-
-
-class Array(Type):
-    def __init__(self, t):
-        self.t = t
-        self.names = []
-        self.ml_type = f"{t.ml_type} array"
-        self.wrap = f'(fun ml -> Py.Array.of_array {t.wrap} (fun _ -> invalid_arg "read-only") ml)'
-        self.ml_type_ret = f"{t.ml_type} array"
-        self.unwrap = f"""(fun py -> let len = Py.Sequence.length py in Array.init len
-          (fun i -> {t.unwrap} (Py.Sequence.get_item py i)))"""
-
-    def __str__(self):
-        return repr(self)
-
-    def __repr__(self):
-        return f"Array[{str(self.t)}]"
-
-
-class ArrPyList(Type):
-    names = [
-        'iterable of iterables', 'list of arrays', 'list of ndarray', 'arrays',
-        'sparse matrices', 'list of array-like'
-    ]
-    ml_type = 'Sklearn.Arr.List.t'
-    ml_type_ret = 'Sklearn.Arr.List.t'
-    wrap = 'Sklearn.Arr.List.to_pyobject'
-    unwrap = 'Sklearn.Arr.List.of_pyobject'
-
-
-class List(Type):
-    def __init__(self, t, names=None):
-        self.t = t
-        if names is not None:
-            self.names = names
-        self.ml_type = f"{t.ml_type} list"
-        self.wrap = f'(fun ml -> Py.List.of_list_map {t.wrap} ml)'
-        self.ml_type_ret = f"{t.ml_type_ret} list"
-        self.unwrap = f"(fun py -> Py.List.to_list_map ({t.unwrap}) py)"
-
-    def tag_name(self):
-        return self.t.tag_name() + 's'
-
-    def __str__(self):
-        return repr(self)
-
-    def __repr__(self):
-        return f"List[{str(self.t)}]"
-
-
-class StarStar(Type):
-    def __init__(self):
-        self.names = []
-        self.ml_type = "(string * Py.Object.t) list"
-
-    def __str__(self):
-        return repr(self)
-
-    def __repr__(self):
-        return "**kwargs"
-
-
-class FloatList(List):
-    def __init__(self):
-        super().__init__(
-            Float(),
-            names=['list of floats', 'list positive floats', 'list of float'])
-
-
-class StringList(Type):
-    names = [
-        'list of strings', 'list of string', 'list/tuple of strings',
-        'tuple of str', 'list of str', 'strings', 'tuple of strings'
-    ]
-    ml_type = 'string list'
-    wrap = '(Py.List.of_list_map Py.String.of_string)'
-    ml_type_ret = 'string list'
-    unwrap = '(Py.List.to_list_map Py.String.to_string)'
-
-
-class String(Type):
-    names = ['str', 'string', 'unicode']
-    ml_type = 'string'
-    wrap = 'Py.String.of_string'
-    ml_type_ret = 'string'
-    unwrap = 'Py.String.to_string'
-    is_type = 'Py.String.check'
-
-    def tag_name(self):
-        return tag("S")
-
-
-class NoneValue(Type):
-    names = ['None', 'none']
-
-    def tag(self):
-        return '`None', '`None', '`None -> Py.none', None
-
-
-class TrueValue(Type):
-    names = ['True', 'true']
-
-    def tag(self):
-        return '`True', '`True', '`True -> Py.Bool.t', None
-
-
-class FalseValue(Type):
-    names = ['False', 'false']
-
-    def tag(self):
-        return '`False', '`False', '`False -> Py.Bool.f', None
-
-
-class BaseType(Type):
-    def __init__(self, name):
-        self.name = name
-        self._tag_name = tag(name.split('.')[-1])
-        self.ml_type = f'[>`{self._tag_name}] Sklearn.Obj.t'
-        self.wrap = f'{name}.to_pyobject'
-        self.ml_type_ret = f'{name}.t'
-        self.unwrap = f'{name}.of_pyobject'
-
-    def tag_name(self):
-        return self._tag_name
-
-    def __repr__(self):
-        return f'{self.__class__.__name__}({self.name})'
-
-
-class CrossValGenerator(BaseType):
-    names = [
-        'cross-validation generator', 'cross-validation splitter',
-        'CV splitter', 'a cross-validator instance'
-    ]
-
-    def __init__(self):
-        super().__init__('Sklearn.Model_selection.BaseCrossValidator')
-
-
-class Estimator(BaseType):
-    names = [
-        'instance BaseEstimator', 'BaseEstimator instance', 'BaseEstimator',
-        'estimator instance', 'instance estimator', 'estimator object',
-        'estimator'
-    ]
-
-    def __init__(self):
-        super().__init__('Sklearn.Base.BaseEstimator')
-
-
-class Regressor(BaseType):
-    names = [
-        'instance RegressorMixin', 'RegressorMixin instance',
-        'regressor instance', 'instance regressor', 'regressor object',
-        'regressor'
-    ]
-
-    def __init__(self):
-        super().__init__('Sklearn.Base.RegressorMixin')
-
-
-class Transformer(BaseType):
-    names = [
-        'instance TransformerMixin', 'TransformerMixin instance',
-        'instance Transformer', 'Transformer instance', 'transformer instance',
-        'instance transformer', 'transformer object', 'transformer'
-    ]
-
-    def __init__(self):
-        super().__init__('Sklearn.Base.TransformerMixin')
-
-
-class ClusterEstimator(BaseType):
-    names = ['instance of sklearn.cluster model', 'sklearn.cluster model']
-
-    def __init__(self):
-        super().__init__('Sklearn.Base.ClusterMixin')
-
-
-class DecisionTreeClassifier(BaseType):
-    names = ['decision tree classifier']
-
-    def __init__(self):
-        super().__init__('Sklearn.Tree.DecisionTreeClassifier')
-
-
-class PyObject(Type):
-    names = ['object']
-
-
-class Self(Type):
-    def __init__(self):
-        self.ml_type = '[> tag] Obj.t'
-        self.ml_type_ret = 't'
-        self.wrap = 'to_pyobject'
-        self.unwrap = 'of_pyobject'
-
-
-class Dtype(Type):
-    names = [
-        'type', 'dtype', 'numpy dtype', 'data-type', 'column dtype',
-        'numpy data type'
-    ]
-    ml_type = 'Sklearn.Arr.Dtype.t'
-    wrap = 'Sklearn.Arr.Dtype.to_pyobject'
-    ml_type_ret = 'Sklearn.Arr.Dtype.t'
-    unwrap = 'Sklearn.Arr.Dtype.of_pyobject'
-
-
-class Dict(Type):
-    # XXX 'dict of numpy (masked) ndarrays' is the format of a
-    # DataFrame, we could have a more appropriate OCaml type for it
-    # maybe, rather than this generic one (which is just a Python
-    # dict)?
-    names = [
-        'dict', 'Dict', 'dictionary', 'mapping of string to any',
-        'dict of numpy (masked) ndarrays', 'dict of numpy ndarrays',
-        'dict of float arrays', 'dictionary of string to any',
-        'dict of string -> object', 'a dict'
-    ]
-    ml_type = 'Sklearn.Dict.t'
-    ml_type_ret = 'Sklearn.Dict.t'
-    wrap = 'Sklearn.Dict.to_pyobject'
-    unwrap = 'Sklearn.Dict.of_pyobject'
-    is_type = 'Py.Dict.check'
-
-
-class ParamGridDict(Type):
-    names = []
-    ml_type = '''(string * Sklearn.Dict.param_grid) list'''
-    wrap = '(fun x -> Sklearn.Dict.(of_param_grid_alist x |> to_pyobject))'
-
-    def tag_name(self):
-        return 'Grid'
-
-
-class ParamDistributionsDict(Type):
-    names = []
-    ml_type = '''(string * Sklearn.Dict.param_distributions) list'''
-    wrap = '(fun x -> Sklearn.Dict.(of_param_distributions_alist x |> to_pyobject))'
-
-    def tag_name(self):
-        return 'Grid'
-
-
-# emitted as a postprocessing of Dict() based on param name/callable
-class DictIntToFloat(Type):
-    names = ['dict int to float']
-    ml_type = '(int * float) list'
-    wrap = '(Py.Dict.of_bindings_map Py.Int.of_int Py.Float.of_float)'
-    is_type = 'Py.Dict.check'
-
-
-class Callable(Type):
-    names = ['callable', 'function']
-
-
-class Slice(Type):
-    names = ['slice']
-    ml_type = 'Sklearn.Wrap_utils.Slice.t'
-    ml_type_ret = 'Sklearn.Wrap_utils.Slice.t'
-    wrap = 'Sklearn.Wrap_utils.Slice.to_pyobject'
-    unwrap = 'Sklearn.Wrap_utils.Slice.of_pyobject'
-
-
 class Registry:
     def __init__(self):
         self.types = collections.defaultdict(list)
@@ -808,7 +158,6 @@ class Registry:
         self.generated_doc_files.append(f)
 
     def add_class(self, klass, module_path):
-        ancestors = inspect.getmro(klass)
         if self.module_path.get(klass, module_path) != module_path:
             # existing = self.module_path[klass]
             # if 'Base' not in existing:
@@ -818,27 +167,20 @@ class Registry:
             pass
         else:
             self.module_path[klass] = module_path
-        for ancestor in ancestors:
-            if ancestor is not klass:
-                ancestor_name = ancestor.__name__.lower()
-                # tweaked for sklearn+scipy
-                if (('base' in ancestor_name or 'mixin' in ancestor_name or
-                     'rv_' in ancestor_name or 'decisiontree' in ancestor_name)
-                        and not ancestor_name.startswith('_')):
-                    # if not ancestor_name.startswith('_'):
-                    self.types[ancestor].append(klass)
-                    self.bases[klass].add(ancestor)
+        for ancestor in interesting_ancestors(klass):
+            self.types[ancestor].append(klass)
+            self.bases[klass].add(ancestor)
 
     def write(self, build_dir):
         pass
 
     def report_generated(self):
         if self.generated_files:
-            print("II generated source files:")
+            log.info("generated source files:")
             for f in sorted(self.generated_files):
                 print(f)
         if self.generated_doc_files:
-            print("II generated doc files:")
+            log.info("generated doc files:")
             for f in sorted(self.generated_doc_files):
                 print(f)
 
@@ -857,11 +199,12 @@ def parse(doc):
     first_line, *lines = lines
     for line in lines:
         indent, line = deindent(line)
-        # print(f"line: '{line}' indent: {indent}")
         if previous_indent is None:
             previous_indent = indent
+        # print(f"line: '{line}' indent: {indent} previous: {previous_indent}")
 
         if not line or indent < previous_indent:
+            # log.debug("-> end paragraph")
             elements.append(Paragraph("\n".join(element)))
             element = []
             previous_indent = None
@@ -869,6 +212,9 @@ def parse(doc):
                 element.append(line)
         elif re.match(r'^-+$', line):
             # print(f'found underline, element: {element}')
+            if not element:
+                log.warning(f"found underline with nothing above:\n{doc}")
+                continue
             block, title = element[:-1], element[-1]
             if block:
                 elements.append(Paragraph("\n".join(block)))
@@ -876,9 +222,11 @@ def parse(doc):
             element = []
             previous_indent = None
         else:
+            # log.debug("append line to existing element")
             element.append(line)
+            previous_indent = indent
     if element:
-        elements.append(element)
+        elements.append(Paragraph("\n".join(element)))
 
     return elements
 
@@ -987,7 +335,7 @@ class ReParser:
 
         enum_c = rf'(?: \{{ (?:{enum_comma} | {enum_semi} | {enum_pipe}) \}})'
 
-        enum = rf'^\s* (?:{string_enum} | {enum_c} | {enum_comma} | {enum_pipe} | {enum_or} | {enum_comma_or}) \s*$'
+        enum = rf'^\s* (?:(?:string, \s*)? either \s+)? (?:{string_enum} | {enum_c} | {enum_comma} | {enum_pipe} | {enum_or} | {enum_comma_or}) \s*$'
         self.string = self._comp(string)
         self.strings = self._comp(strings)
         self.strings_c = self._comp(strings_c)
@@ -997,6 +345,9 @@ class ReParser:
         self.enum_or = self._comp(enum_or)
         self.enum_comma_or = self._comp(enum_comma_or)
         self.enum = self._comp(enum)
+
+        doc_sig = rf'^\s*(?:\w \s* (?:, \s* \w \s*)* = \s*)? ([\w\.]+)({three})'
+        self.doc_sig = self._comp(doc_sig)
 
     def _comp(self, patt):
         return re.compile(patt, flags=re.VERBOSE | re.IGNORECASE)
@@ -1030,7 +381,7 @@ def test_remove_shape():
     for test in tests:
         result = remove_shape(test)
         if result:
-            print(f"EE test fails: '{test}' -> '{result}' (expected '')")
+            log.error(f"test fails: '{test}' -> '{result}' (expected '')")
             success = False
 
     tests_no = [
@@ -1040,7 +391,8 @@ def test_remove_shape():
     for test in tests_no:
         result = remove_shape(test)
         if result != test:
-            print(f"EE test fails: '{test}' -> '{result}' (expected '{test}')")
+            log.error(
+                f"test fails: '{test}' -> '{result}' (expected '{test}')")
             success = False
 
     return success
@@ -1112,99 +464,19 @@ def test_parse_enum():
         ("'linear' | 'poly' | 'rbf' | 'sigmoid' | 'cosine' | 'precomputed'", [
             "'linear'", "'poly'", "'rbf'", "'sigmoid'", "'cosine'",
             "'precomputed'"
-        ])
+        ]), ("string, either '-', '+', or ' '", ["'-'", "'+'", "' '"])
     ]
 
     success = True
     for test, expected in tests:
         elts = parse_enum(test)
         if elts != expected:
-            print(
-                f"EE error in enum test: '{test}' -> {elts} (expected {expected})"
+            log.error(
+                f"error in enum test: '{test}' -> {elts} (expected {expected})"
             )
             success = False
 
     return success
-
-
-estimator_alist = List(
-    Tuple([String(), Estimator()]),
-    names=['list of (str, estimator)', 'list of (str, estimator) tuples'])
-
-
-class BuiltinTypes:
-    def __init__(self, builtins):
-        self._builtins = {}
-        for t in builtins:
-            for name in t.names:
-                assert name not in self._builtins, f"'{name}' is present several times in builtin types"
-                self._builtins[name] = t
-        self._used_names = set()
-
-    def __getitem__(self, k):
-        self._used_names.add(k)
-        return self._builtins[k]
-
-    def report_unused(self):
-        unused = set(self._builtins.keys()).diff(self._used_names)
-        if unused:
-            print("WW some type names were not used:")
-            for name in unused:
-                print("- {name} ({self._builtins[name]})")
-
-
-generic_builtin_types = [
-    Int(),
-    Float(),
-    Bool(),
-    FloatList(),
-    StringList(),
-    SparseMatrix(),
-    String(),
-    Slice(),
-    DictIntToFloat(),
-    NoneValue(),
-    TrueValue(),
-    FalseValue(),
-    PyObject(),
-    Self(),
-    Callable(),
-    Ignored(),
-    Tuple([Int(), Int()], names=['(int, int)']),
-    Tuple([Float(), Float()],
-          names=['pair of floats', '(float, float)', 'pair of floats >= 0']),
-    List(Tuple([Int(), Int()]), names=['list of (int, int)']),
-    RandomState(),
-]
-
-numpy_builtin_types = BuiltinTypes(generic_builtin_types + [
-    Ndarray(),
-])
-
-scipy_builtin_types = BuiltinTypes(generic_builtin_types + [])
-
-sklearn_builtin_types = BuiltinTypes(generic_builtin_types + [
-    Arr(),
-    ArrGenerator(),
-    LossFunction(),
-    ArrPyList(),
-    Dict(),
-    Dtype(),
-    List(Dtype(), names=['list of column dtypes', 'list of types']),
-    CrossValGenerator(),
-    Estimator(),
-    ClusterEstimator(),
-    DecisionTreeClassifier(),
-    WrappedModule('Sklearn.Pipeline.Pipeline', ['Pipeline', 'pipeline']),
-    WrappedModule('Sklearn.Pipeline.FeatureUnion', ['FeatureUnion']),
-    estimator_alist,
-    List(Arr(), names=['list of numpy arrays']),
-    List(Estimator(), names=['list of estimators', 'list of estimator']),
-    List(Regressor(), names=['list of regressors', 'list of regressor']),
-    List(Tuple([String(), Transformer()]),
-         names=['list of (string, transformer) tuples']),
-    Tuple([Arr(), Arr()], names=['tuple of (A, B) ndarrays']),
-])
 
 
 def partition(li, pred):
@@ -1222,20 +494,23 @@ def partition(li, pred):
 # the same class with the same params are considered different?
 # using elt.__class__ is appealing but would break StringValue for instance.
 def remove_duplicates(elts):
-    got = set()
-    ret = []
-    for elt in elts:
-        if elt not in got:
-            ret.append(elt)
-            got.add(elt)
-    return ret
+    return list(set(elts))
+
+
+# got = set()
+# ret = []
+# for elt in elts:
+#     if elt not in got:
+#         ret.append(elt)
+#         got.add(elt)
+# return ret
 
 
 def simplify_arr(enum):
     arr, not_arr = partition(enum.elements,
                              lambda x: isinstance(x, (Arr, Ndarray)))
     sparse, not_arr_not_sparse = partition(
-        not_arr, lambda x: isinstance(x, SparseMatrix))
+        not_arr, lambda x: isinstance(x, (SparseMatrix, CsrMatrix, CscMatrix)))
     if arr and sparse:
         return type(enum)([Arr()] + not_arr_not_sparse)
     else:
@@ -1255,7 +530,8 @@ def simplify_arr_or_float(enum):
 
 
 def simplify_enum(enum):
-    # print(f"DD simplifying enum {enum}")
+    # log.debug(f"simplifying enum %s", enum)
+
     # flatten (once should be enough?)
     elts = []
     for elt in enum.elements:
@@ -1271,7 +547,9 @@ def simplify_enum(enum):
     # There are (probably legitimate) cases where False is accepted
     # but not True!
     if len(false_true) == 2:
-        enum = Enum([Bool()] + not_false_true)
+        bool, not_bool = partition(not_false_true,
+                                   lambda x: isinstance(x, Bool))
+        enum = Enum([Bool()] + not_bool)
 
     none, not_none = partition(enum.elements,
                                lambda x: isinstance(x, NoneValue))
@@ -1285,6 +563,8 @@ def simplify_enum(enum):
     # enum = EnumOption(not_none)
     # enum = type(enum)(not_none + [NoneValue()])
 
+    # log.debug("enum 2: %s", enum)
+
     # Enum(String, StringValue, StringValue) should just be
     # Enum(StringValue, StringValue) since that is (probably) a
     # misparsing of "str, 'l1' or 'l2'"
@@ -1294,6 +574,16 @@ def simplify_enum(enum):
             is_not_string_value[0], String):
         enum = type(enum)(is_string_value)
 
+    # Int|TupleOfInts -> TupleOfInts
+    if len(enum.elements) == 2:
+        a, b = enum.elements
+        if isinstance(a, Int) and isinstance(b, TupleOfInts):
+            return b
+        if isinstance(b, Int) and isinstance(a, TupleOfInts):
+            return a
+
+    # log.debug("enum 3: %s", enum)
+
     enum = type(enum)(remove_duplicates(enum.elements))
 
     # Arr | SparseMatrix == Arr
@@ -1301,6 +591,8 @@ def simplify_enum(enum):
 
     # An Arr.t is able to represent a single Numpy scalar also.
     enum = simplify_arr_or_float(enum)
+
+    # log.debug("enum 4: %s", enum)
 
     # There is no point having more than one Py.Object tag in an enum.
     is_obj, is_not_obj = partition(
@@ -1310,8 +602,10 @@ def simplify_enum(enum):
 
     # A one-element enum is just the element itself.
     if len(enum.elements) == 1:
+        # log.debug("simplified enum: just one element: %s", enum.elements[0])
         return enum.elements[0]
 
+    # log.debug("simplified enum: %s", enum)
     return enum
 
 
@@ -1349,25 +643,120 @@ def maybe_to_string(x):
 def append(container, ctor, *args, **kwargs):
     try:
         elt = ctor(*args, **kwargs)
-    except (NoSignature, OutsideScope, NoDoc, Deprecated, AlreadySeen):
-        # print(
-        #     f"WW append: caught error building {ctor} {maybe_to_string(args)}: {type(e)}"
-        # )
+    except NoSignature as e:
+        f = e.args[0]
+        doc = f.__doc__
+        if doc is None or not doc.startswith('Not implemented'):
+            qn = qualname(f)
+            if qn != '<no name>':
+                log.warning(f"no signature for {qn} ({f})")
+        return
+    except AlreadySeen:
+        return
+    except (OutsideScope, NoDoc, Deprecated) as e:
+        if ctor in [Module, Class]:
+            log.warning(
+                f"append: caught error building {ctor.__name__} {maybe_to_string(args[0])}: {type(e).__name__}"
+            )
         return
     if hasattr(elt, 'ml_name'):
         while elt.ml_name in [getattr(x, 'ml_name', None) for x in container]:
             new_name = elt.ml_name + "'"
-            print(
-                f"WW renaming {elt.ml_name} to {new_name} to prevent name clash"
-            )
+            log.warning(
+                f"renaming {elt.ml_name} to {new_name} to prevent name clash")
             elt.ml_name = new_name
     container.append(elt)
+
+
+# XXX TODO make this immutable if possible
+class Name(abc.ABC):
+    def __init__(self, python_name, parent, ml_name=None):
+        assert parent is None or isinstance(
+            parent, Name), f"parent is not a Name: {type(parent)}"
+        self._parent = parent
+        self._python_name = python_name
+        if ml_name is None:
+            self._ml_name = self.fix_ml(self.python_name())
+        else:
+            self._ml_name = ml_name
+        self._path = list(reversed(self._compute_rev_path()))
+        # assert not self.full_ml_name().startswith('Numpy'), self
+
+    @property
+    def parent(self):
+        return self._parent
+
+    @abc.abstractmethod
+    def fix_ml(self, n):
+        pass
+
+    def python_name(self):
+        return self._python_name
+
+    def ml_name(self):
+        return self.fix_ml(self._ml_name)
+
+    def set_ml_name(self, n):
+        self._ml_name = n
+
+    def ml_name_opt(self):
+        ret = self.ml_name()
+        if ret.endswith('_'):
+            return ret + 'opt'
+        else:
+            return ret + '_opt'
+
+    def _compute_rev_path(self):
+        ret = []
+        x = self
+        while x is not None:
+            ret.append(x)
+            x = x._parent
+        return ret
+
+    def full_python_name(self):
+        return '.'.join(x.python_name() for x in self._path)
+
+    def full_ml_name(self):
+        return '.'.join(x.ml_name() for x in self._path)
+
+    def adjust(self):
+        self._ml_name += "'"
+
+    def apply_overrides(self, overrides):
+        ml = overrides.ml_name(self.full_python_name())
+        if ml is not None:
+            self._ml_name = ml
+
+    def __str__(self):
+        return repr(self)
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self.full_ml_name()}, {self.full_python_name()})'
+
+
+class UpperName(Name):
+    def fix_ml(self, n):
+        return make_module_name(n)
+
+
+class LowerName(Name):
+    def fix_ml(self, n):
+        return mlid(n)
+
+
+# def in_ml_namespace(ns, name):
+#     super_ml_name = name.ml_name
+#     def ml_name():
+#         return ns + '.' + super_ml_name()
+#     name.ml_name = ml_name
+#     return name
 
 
 class Package:
     def __init__(self, pkg, overrides, registry, builtin):
         self.pkg = pkg
-        self.ml_name = make_module_name(self.pkg.__name__)
+        self.name = UpperName(self.pkg.__name__, parent=None)
         self.modules = self._list_modules(pkg, overrides, registry, builtin)
         self.registry = registry
 
@@ -1375,11 +764,11 @@ class Package:
         ret = []
         for mod in pkgutil.iter_modules(pkg.__path__):
             name = mod.name
-            if name.startswith('_'):
+            if name.startswith('_') or name.endswith('_'):
                 continue
-            full_name = f"{pkg.__name__}.{name}"
-            module = importlib.import_module(full_name)
-            ret.append(module)
+            name = UpperName(name, self.name)
+            module = importlib.import_module(name.full_python_name())
+            ret.append((name, module))
         return ret
 
     def _list_modules(self, pkg, overrides, registry, builtin):
@@ -1390,11 +779,11 @@ class Package:
         # this causes terrible duplication.
         for module in modules:
             overrides.add_blacklisted_submodule(module)
-        for module in modules:
+        for name, module in modules:
             append(ret,
                    Module,
+                   name,
                    module,
-                   parent_name=self.ml_name,
                    overrides=overrides,
                    registry=registry,
                    builtin=builtin)
@@ -1404,7 +793,7 @@ class Package:
         return repr(self)
 
     def __repr__(self):
-        ret = f"Package({self.pkg.__name__})[\n"
+        ret = f"Package({self.name.full_python_name()})[\n"
         for mod in self.modules:
             ret += indent(repr(mod) + ",") + "\n"
         ret += "]"
@@ -1416,16 +805,16 @@ class Package:
 
     def write(self, path):
         dire = self.output_dir(path)
-        print(f"II writing package {self.pkg.__name__} to {dire}")
+        log.info(f"writing package {self.name.full_python_name()} to {dire}")
         dire.mkdir(parents=True, exist_ok=True)
         for mod in self.modules:
-            mod.write(dire, self.ml_name)
+            mod.write(dire)
 
     def write_doc(self, path):
         dire = self.output_dir(path)
         dire.mkdir(parents=True, exist_ok=True)
         for mod in self.modules:
-            mod.write_doc(dire, self.ml_name)
+            mod.write_doc(dire)
 
     def write_examples(self, path):
         dire = self.output_dir(path)
@@ -1459,79 +848,81 @@ def write_generated_header(f):
 def fix_naming(elements):
     names = set()
     for elt in elements:
-        if hasattr(elt, 'ml_name'):
-            while elt.ml_name in names:
-                elt.ml_name += "'"
-            names.add(elt.ml_name)
+        if hasattr(elt, 'name'):
+            while elt.name.ml_name() in names:
+                elt.name.adjust()
+            names.add(elt.name.ml_name())
 
 
 class Module:
-    def __init__(self,
-                 module,
-                 parent_name,
-                 overrides,
-                 registry,
-                 builtin,
-                 inside=[]):
+    def __init__(self, name, module, overrides, registry, builtin, inside=[]):
+        assert isinstance(name, UpperName)
+        self.name = name
         # print(f"DD wrapping {module.__name__}")
         # Scipy has the modules exported everywhere. Trying to keep only one copy is hard.
         # Reverting to preventing cycles.
         if module in inside:
             raise AlreadySeen(module)
         inside = [module] + inside
-        self.full_python_name = module.__name__
-        if not overrides.check_scope(self.full_python_name):
-            raise OutsideScope
-        if '.externals.' in self.full_python_name:
-            raise OutsideScope
 
-        self.parent_name = parent_name
-        self.python_name = module.__name__.split('.')[-1]
-        self.ml_name = make_module_name(self.python_name)
-        if parent_name:
-            self.full_ml_name = f"{parent_name}.{self.ml_name}"
-        else:
-            self.full_ml_name = self.ml_name
+        # We pass both the exposed Python name and the builtin module
+        # full name through the scope check.
+        if not overrides.check_scope(name.full_python_name()):
+            raise OutsideScope(name)
+        if not overrides.check_scope(module.__name__):
+            raise OutsideScope(name)
+        if '.externals.' in name.full_python_name():
+            raise OutsideScope(name)
+
         # print(f"building module {self.full_python_name}")
         self.module = module
         self.elements = self._list_elements(module, overrides, registry,
                                             builtin, inside)
         self.registry = registry
         # print(f"DD finished building module {module}")
+        # print(f"DD module {self.full_python_name} exposed as {parent_name}/{python_name}")
 
     def _list_modules_raw(self, module, overrides):
         modules = []
         for name in dir(module):
-            if name.startswith('_'):
+            if name.startswith('_') or name.endswith('_'):
                 continue
             if name in ['test', 'scipy']:  # for scipy
+                continue
+            if (name in [
+                    'core',
+                    'lib',
+                    'compat',
+                    'ctypeslib',
+                    'matrixlib',
+                    'scimath',
+                    'testing',
+                    'records',
+            ] and self.name.full_python_name().startswith('numpy')):
                 continue
             item = getattr(module, name)
             if overrides.is_blacklisted_submodule(item):
                 # print(f"DD blacklisting submodule {qualname}: {item}")
                 continue
             if inspect.ismodule(item):
-                modules.append(item)
+                modules.append((UpperName(name, self.name), item))
         return modules
 
     def _list_elements(self, module, overrides, registry, builtin, inside):
+        # List modules without creating their wrappers, and blacklist
+        # them so that if we find them deeper we don't rewrap them.
         modules_raw = self._list_modules_raw(module, overrides)
         for mod in modules_raw:
             overrides.add_blacklisted_submodule(mod)
         modules = []
-        # Process modules first. We list them all, and blacklist them
-        # so that we don't wrap them again deeper in the hierarchy;
-        # then we wrap them.
-        for mod in modules_raw:
-            parent_name = self.full_ml_name
-            append(modules, Module, mod, parent_name, overrides, registry,
-                   builtin, inside)
 
+        # Create classes and functions first so that we find those at
+        # the root before the copies in the modules below.
         classes = []
         functions = []
         for name in dir(module):
-            qualname = f"{self.full_python_name}.{name}"
-            if name.startswith('_'):
+            # qualname = f"{self.full_python_name}.{name}"
+            if name.startswith('_') or name.endswith('_'):
                 continue
             if name in ['test', 'scipy']:  # for scipy
                 continue
@@ -1539,16 +930,22 @@ class Module:
             # if name == "csr_matrix":
             #     continue
             item = getattr(module, name)
-            parent_name = self.full_ml_name
+            # parent_name = self.full_ml_name
             # print(f"DD wrapping {parent_name}.{name}: {module}")
             if inspect.isclass(item):
-                append(classes, Class, item, parent_name, overrides, registry,
-                       builtin)
+                append(classes, Class, UpperName(name, self.name), item,
+                       overrides, registry, builtin)
             elif callable(item):
-                append(functions, Function, name, qualname, item, overrides,
-                       builtin)
+                append(functions, Function, LowerName(name, self.name), item,
+                       overrides, builtin)
 
-        elements = modules + classes + functions
+        # We list modules, and blacklist them so that we don't wrap
+        # them again deeper in the hierarchy; then we wrap them.
+        for mod_name, mod in modules_raw:
+            append(modules, Module, mod_name, mod, overrides, registry,
+                   builtin, inside)
+
+        elements = classes + modules + functions
         fix_naming(elements)
         return elements
 
@@ -1556,7 +953,7 @@ class Module:
         return repr(self)
 
     def __repr__(self):
-        ret = f"Module({self.full_python_name})[\n"
+        ret = f"Module({self.name.full_python_name()})[\n"
         for elt in self.elements:
             ret += indent(repr(elt) + ",") + "\n"
         ret += "]"
@@ -1571,84 +968,73 @@ class Module:
     def write_header(self, f):
         # if self.has_callables():
         f.write("let () = Wrap_utils.init ();;\n")
-        f.write(
-            f'let __wrap_namespace = Py.import "{self.module.__name__}"\n\n')
+        # Importing the exposed name does not always work, we must
+        # import the name of the actual underlying module. See for
+        # example numpy.char.
+        import_name = self.module.__name__
+        f.write(f'let __wrap_namespace = Py.import "{import_name}"\n\n')
         # else:
         #     f.write(
         #         "(* this module has no callables, skipping init and ns *)\n")
 
-    def write(self, path, module_path):
+    def write(self, path):
         # print(f"DD writing module {self.python_name}")
-        module_path = f"{module_path}.{self.ml_name}"
-        ml = f"{path / self.python_name}.ml"
+        # module_path = f"{module_path}.{self.name.ml_name}"
+        ml = f"{path / self.name.ml_name()}.ml"
         with open(ml, 'w') as f:
             self.registry.add_generated_file(ml)
-            self.write_ml_inside(f, module_path)
-        mli = f"{path / self.python_name}.mli"
+            self.write_ml_inside(f)
+        mli = f"{path / self.name.ml_name()}.mli"
         with open(mli, 'w') as f:
             self.registry.add_generated_file(mli)
-            self.write_mli_inside(f, module_path)
+            self.write_mli_inside(f)
 
-    def write_ml_inside(self, f, module_path):
+    def write_ml_inside(self, f):
         self.write_header(f)
         f.write("let get_py name = Py.Module.get __wrap_namespace name\n")
         for element in self.elements:
-            element.write_to_ml(f, module_path)
+            element.write_to_ml(f)
 
-    def write_mli_inside(self, f, module_path):
+    def write_mli_inside(self, f):
         f.write("""(** Get an attribute of this module as a Py.Object.t.
                    This is useful to pass a Python function to another function. *)\n"""
                 )
         f.write("val get_py : string -> Py.Object.t\n\n")
         for element in self.elements:
-            element.write_to_mli(f, module_path)
+            element.write_to_mli(f)
 
-    def write_doc(self, path, module_path):
-        if module_path:
-            module_path = f"{module_path}.{self.ml_name}"
-        else:
-            module_path = self.ml_name
-        md = f"{path / self.python_name}.md"
+    def write_doc(self, path):
+        md = f"{path / self.name.ml_name()}.md"
         with open(md, 'w') as f:
             self.registry.add_generated_doc_file(md)
             for element in self.elements:
-                element.write_to_md(f, module_path)
+                element.write_to_md(f)
 
     def write_examples(self, path):
-        ml = f"{path / self.python_name}.ml"
+        ml = f"{path / self.name.ml_name()}.ml"
         with open(ml, 'w') as f:
             self.registry.add_generated_file(ml)
             for element in self.elements:
                 element.write_examples_to(f)
 
-    def write_to_ml(self, f, module_path):
-        module_path = f"{module_path}.{self.ml_name}"
-        f.write(f"module {self.ml_name} = struct\n")
-        self.write_ml_inside(f, module_path)
+    def write_to_ml(self, f):
+        f.write(f"module {self.name.ml_name()} = struct\n")
+        self.write_ml_inside(f)
         f.write("\nend\n")
 
-    def write_to_mli(self, f, module_path):
-        module_path = f"{module_path}.{self.ml_name}"
-        f.write(f"module {self.ml_name} : sig\n")
-        self.write_mli_inside(f, module_path)
+    def write_to_mli(self, f):
+        f.write(f"module {self.name.ml_name()} : sig\n")
+        self.write_mli_inside(f)
         f.write("\nend\n\n")
 
-    def write_to_md(self, f, module_path):
-        if module_path:
-            module_path = f"{module_path}.{self.ml_name}"
-        else:
-            module_path = self.ml_name
-        if self.parent_name:
-            full_name = f"{self.parent_name}.{self.ml_name}"
-        else:
-            full_name = self.ml_name
-        full_name = re.sub(r'\.', ".\u200b", full_name)
+    def write_to_md(self, f):
+        full_name = re.sub(r'\.', ".\u200b", self.name.full_ml_name())
         f.write(f"## module {full_name}\n")
         for element in self.elements:
-            element.write_to_md(f, module_path)
+            element.write_to_md(f)
 
     def write_examples_to(self, f):
-        full_name = f"{self.parent_name}.{self.ml_name}"
+        full_name = self.name.full_ml_name()
         f.write(f"(*--------- Examples for module {full_name} ----------*)\n")
         for element in self.elements:
             element.write_examples_to(f)
@@ -1672,31 +1058,44 @@ def caster(x):
 
 # Major Major
 class Class:
-    _seen = set()
+    _seen = {}
 
-    def __init__(self, klass, parent_name, overrides, registry, builtin):
+    def __init__(self, name, klass, overrides, registry, builtin):
+        self.name = name
         # print(f"DD wrapping class {parent_name}.{klass.__name__} {klass} {id(klass)}")
-        klass_key = f"{parent_name}.{klass}"
-        if klass_key in self._seen:
-            # print("DD -> already seen")
+        # klass_key = self.name.full_python_name()
+        klass_key = klass
+        if klass_key in self._seen and len(self._seen[klass_key]) < len(
+                self.name.full_python_name()):
             raise AlreadySeen(klass)
-        # print("DD -> wrapping this class")
-        self._seen.add(klass_key)
+        self._seen[klass_key] = self.name.full_python_name()
+
+        if not overrides.check_scope(self.name.full_python_name()):
+            raise OutsideScope(self.name)
+
         self.klass = klass
-        self.parent_name = parent_name
+
         if inspect.isabstract(klass):
             self.constructor = DummyFunction()
         else:
-            self.constructor = Ctor(self.klass.__name__, self.klass.__name__,
-                                    self.klass, overrides, builtin)
+            try:
+                self.constructor = Ctor(LowerName(name.python_name(), name),
+                                        self.klass, overrides, builtin)
+            except NoSignature:
+                log.warning(
+                    f"no signature for constructor of {self.name.full_python_name()}, disabling ctor"
+                )
+                self.constructor = DummyFunction()
+
         context = TypeContext(klass=self.klass)
         self.elements = self._list_elements(overrides, builtin, context)
-        self.ml_name = make_module_name(self.klass.__name__)
+
         for item in ['deprecated', 'Parallel', 'ABCMeta']:
-            if klass.__name__ == item:
+            if item in self.name.full_python_name():
                 raise OutsideScope(klass)
+
         self.registry = registry
-        registry.add_class(klass, f'{parent_name}.{self.ml_name}')
+        registry.add_class(klass, self.name.full_python_name())
 
     def remove_element(self, elt):
         self.elements = [x for x in self.elements if x is not elt]
@@ -1706,11 +1105,11 @@ class Class:
 
         # Parse attributes first, so that we avoid warning about them
         # when listing methods.
-        attributes = parse_types(self.klass.__doc__,
+        attributes = parse_types(str(self.klass.__doc__),
                                  builtin,
                                  context,
                                  section="Attributes")
-        attributes = overrides.types(self.klass.__name__, attributes,
+        attributes = overrides.types(self.name.full_python_name(), attributes,
                                      context.add(group="attributes"))
 
         # There may be several times the same function behind the same
@@ -1727,7 +1126,7 @@ class Class:
         if proto is None:
             try:
                 proto = self.klass()
-            except FutureWarning:
+            except (FutureWarning, DeprecationWarning):
                 raise Deprecated()
             except Exception:
                 # print(f"WW cannot create proto for {self.klass.__name__}: {e}")
@@ -1739,18 +1138,27 @@ class Class:
                 continue
             # Build our own qualname instead of relying on
             # item.__name__/item.__qualname__, which are unreliable.
-            qualname = f"{self.klass.__name__}.{name}"
-            if name.startswith('_') and name not in [
-                    '__getitem__', '__iter__'
+            # qualname = f"{self.klass.__name__}.{name}"
+            if (name.startswith('_') or name.endswith('_')) and name not in [
+                    '__getitem__', '__setitem__', '__iter__'
             ]:
                 continue
+
             try:
                 item = getattr(proto, name, None)
-            except FutureWarning:
+            except (FutureWarning, DeprecationWarning):
                 # This is deprecated, skip it.
                 continue
+            except (TypeError, ValueError):
+                # Some weird types throw weird errors when you
+                # approach their attributes.
+                continue
+
             if item is None:
                 continue
+
+            item_name = LowerName(name, self.name)
+
             # print(f"evaluating possible method {name}: {item}")
             if callable(item):
                 if inspect.isclass(item):
@@ -1758,13 +1166,12 @@ class Class:
                     continue
                 if is_hashable(item):
                     if item not in callables:
-                        append(elts, Method, name, qualname, item, overrides,
+                        append(elts, Method, item_name, item, overrides,
                                builtin)
                         callables.add(item)
                 else:
-                    append(elts, Method, name, qualname, item, overrides,
-                           builtin)
-            elif overrides.has_complete_spec(qualname):
+                    append(elts, Method, item_name, item, overrides, builtin)
+            elif overrides.has_complete_spec(item_name.full_python_name()):
                 # Some methods show up as properties on the class, and
                 # are present only in some instantiations (for example
                 # predict, inverse_transform on Pipeline). This is a
@@ -1772,46 +1179,40 @@ class Class:
                 # everything.
                 # print(f"II wrapping non-callable method {name}: {item}")
                 try:
-                    elts.append(
-                        Method(name, qualname, item, overrides, builtin))
+                    elts.append(Method(item_name, item, overrides, builtin))
                 except Exception as e:
-                    print(
-                        f"WW method {qualname} has complete override spec but there was an error wrapping it: {e}"
+                    log.warning(
+                        f"method {item_name} has complete override spec but there was an error wrapping it: {e}"
                     )
             elif isinstance(item, property):
-                print(f"WW not wrapping member {qualname}: {item}")
+                log.warning(f"not wrapping property {item_name}: {item}")
             else:
                 pass
 
         for name, ty in attributes.items():
-            append(elts, Attribute, name, ty)
+            append(elts, Attribute, LowerName(name, self.name), ty)
         return elts
 
     def __str__(self):
         return repr(self)
 
     def __repr__(self):
-        ret = f"class({self.klass.__name__})[\n"
+        ret = f"class({self.name.full_python_name()})[\n"
         ret += indent(repr(self.constructor) + ",") + "\n"
         for elt in self.elements:
             ret += indent(repr(elt) + ",") + "\n"
         ret += "]"
         return ret
 
-    def tags(self):
-        tags = [
-            f"`{tag(base.__name__)}"
-            for base in (list(self.registry.bases[self.klass]) + [self.klass])
-        ]
-        tags.append("`Object")
-        return "[" + ' | '.join(sorted(tags)) + "]"
+    def _tags(self):
+        return "[" + ' | '.join(class_tags(self.klass)) + "]"
 
     def self_tag(self):
         return f"`{tag(self.klass.__name__)}"
 
     def write_header(self, f):
         f.write(f"type tag = [{self.self_tag()}]\n")
-        f.write(f"type t = {self.tags()} Obj.t\n")
+        f.write(f"type t = {self._tags()} Obj.t\n")
         f.write("let of_pyobject x = ((Obj.of_pyobject x) : t)\n")
         f.write("let to_pyobject x = Obj.to_pyobject x\n")
         for base in self.registry.bases[self.klass]:
@@ -1820,40 +1221,35 @@ class Class:
                 f"let {caster(base_name)} x = (x :> [`{tag(base_name)}] Obj.t)\n"
             )
 
-    def write(self, path, module_path, ns):
-        module_path = f"{module_path}.{self.ml_name}"
-        name = self.klass.__name__
-        ml = f"{path / name}.ml"
+    def write(self, path, ns):
+        ml = f"{path / self.name.ml_name()}.ml"
         with open(ml, 'w') as f:
             self.registry.add_generated_file(ml)
             f.write("let () = Wrap_utils.init ();;\n")
             f.write(f'let __wrap_namespace = Py.import "{ns}"\n\n')
 
-            self.write_to_ml(f, module_path, wrap=False)
+            self.write_to_ml(f, wrap=False)
 
-        mli = f"{path / name}.mli"
+        mli = f"{path / self.name.ml_name()}.mli"
         with open(mli, 'w') as f:
             self.registry.add_generated_file(mli)
-            self.write_to_mli(f, module_path, wrap=False)
+            self.write_to_mli(f, wrap=False)
 
-    def write_doc(self, path, module_path):
-        module_path = f"{module_path}.{self.ml_name}"
-        name = self.klass.__name__
-        md = f"{path / name}.md"
+    def write_doc(self, path):
+        md = f"{path / self.name.ml_name()}.md"
         with open(md, 'w') as f:
             self.registry.add_generated_doc_file(md)
-            self.constructor.write_to_md(f, module_path)
+            self.constructor.write_to_md(f)
             for element in self.elements:
-                element.write_to_md(f, module_path)
+                element.write_to_md(f)
 
-    def write_to_ml(self, f, module_path, wrap=True):
+    def write_to_ml(self, f, wrap=True):
         if wrap:
-            f.write(f"module {self.ml_name} = struct\n")
-            module_path = f"{module_path}.{self.ml_name}"
+            f.write(f"module {self.name.ml_name()} = struct\n")
         self.write_header(f)
-        self.constructor.write_to_ml(f, module_path)
+        self.constructor.write_to_ml(f)
         for element in self.elements:
-            element.write_to_ml(f, module_path)
+            element.write_to_ml(f)
         f.write(
             "let to_string self = Py.Object.to_string (to_pyobject self)\n")
         f.write('let show self = to_string self\n')
@@ -1863,12 +1259,11 @@ class Class:
         if wrap:
             f.write("\nend\n")
 
-    def write_to_mli(self, f, module_path, wrap=True):
+    def write_to_mli(self, f, wrap=True):
         if wrap:
-            f.write(f"module {self.ml_name} : sig\n")
-            module_path = f"{module_path}.{self.ml_name}"
+            f.write(f"module {self.name.ml_name()} : sig\n")
         f.write(f"type tag = [{self.self_tag()}]\n")
-        f.write(f"type t = {self.tags()} Obj.t\n")
+        f.write(f"type t = {self._tags()} Obj.t\n")
         f.write("val of_pyobject : Py.Object.t -> t\n")
         f.write("val to_pyobject : [> tag] Obj.t -> Py.Object.t\n\n")
         for base in self.registry.bases[self.klass]:
@@ -1876,9 +1271,9 @@ class Class:
             # f.write(f"type BaseTypes.{base_name}.t += {base_name} of t\n")
             f.write(
                 f"val {caster(base_name)} : t -> [`{tag(base_name)}] Obj.t\n")
-        self.constructor.write_to_mli(f, module_path)
+        self.constructor.write_to_mli(f)
         for element in self.elements:
-            element.write_to_mli(f, module_path)
+            element.write_to_mli(f)
         f.write(
             "\n(** Print the object to a human-readable representation. *)\n")
         f.write("val to_string : t -> string\n\n")
@@ -1906,23 +1301,15 @@ class Class:
 {doc}
 """)
 
-    def write_to_md(self, f, module_path):
-        if module_path:
-            module_path = f"{module_path}.{self.ml_name}"
-        else:
-            module_path = self.ml_name
-        if self.parent_name:
-            full_name = f"{self.parent_name}.{self.ml_name}"
-        else:
-            full_name = self.ml_name
-        full_name = re.sub(r'\.', ".\u200b", full_name)
+    def write_to_md(self, f):
+        full_name = re.sub(r'\.', ".\u200b", self.name.full_ml_name())
         f.write(f"## module {full_name}\n")
         f.write("```ocaml\n")
         f.write("type t\n")
         f.write("```\n")
-        self.constructor.write_to_md(f, module_path)
+        self.constructor.write_to_md(f)
         for element in self.elements:
-            element.write_to_md(f, module_path)
+            element.write_to_md(f)
         self._write_fun_md(
             f, 'to_string', 't -> string',
             'Print the object to a human-readable representation.')
@@ -1955,19 +1342,15 @@ def remove_none_from_enum(t):
 
 class Attribute:
     def __init__(self, name, typ):
+        assert isinstance(name, Name)
         self.name = name
-        self.ml_name = mlid(self.name)
         self.typ = remove_none_from_enum(typ)
-        if self.name.endswith('_'):
-            self.ml_name_opt = self.ml_name + 'opt'
-        else:
-            self.ml_name_opt = self.ml_name + '_opt'
 
     def iter_types(self):
         yield self.typ
 
-    def write_to_ml(self, f, module_path):
-        unwrap = _localize(self.typ.unwrap, module_path)
+    def write_to_ml(self, f):
+        unwrap = _localize(self.typ.unwrap, self.name.parent)
         # Not sure whether we should raise or return None if the attribute is not found.
         # Maybe conflating attribute not found with attribute is None is a bad idea?
         #
@@ -1979,37 +1362,37 @@ class Attribute:
         #
         # -> providing both raising + option getters
         f.write(f"""
-let {self.ml_name_opt} self =
-  match Py.Object.get_attr_string (to_pyobject self) "{self.name}" with
-  | None -> failwith "attribute {self.name} not found"
+let {self.name.ml_name_opt()} self =
+  match Py.Object.get_attr_string (to_pyobject self) "{self.name.python_name()}" with
+  | None -> failwith "attribute {self.name.python_name()} not found"
   | Some x -> if Py.is_none x then None else Some ({unwrap} x)
 
-let {self.ml_name} self = match {self.ml_name_opt} self with
+let {self.name.ml_name()} self = match {self.name.ml_name_opt()} self with
   | None -> raise Not_found
   | Some x -> x
 """)
 
-    def write_to_mli(self, f, module_path):
+    def write_to_mli(self, f):
         #  XXX TODO extract doc and put it here
-        ml_type_ret = _localize(self.typ.ml_type_ret, module_path)
+        ml_type_ret = _localize(self.typ.ml_type_ret, self.name.parent)
         f.write(f"""
-(** Attribute {self.name}: get value or raise Not_found if None.*)
-val {self.ml_name} : t -> {ml_type_ret}
+(** Attribute {self.name.python_name()}: get value or raise Not_found if None.*)
+val {self.name.ml_name()} : t -> {ml_type_ret}
 
-(** Attribute {self.name}: get value as an option. *)
-val {self.ml_name_opt} : t -> ({ml_type_ret}) option
+(** Attribute {self.name.python_name()}: get value as an option. *)
+val {self.name.ml_name_opt()} : t -> ({ml_type_ret}) option
 
 """)
 
-    def write_to_md(self, f, module_path):
-        ml_type_ret = _localize(self.typ.ml_type_ret, module_path)
+    def write_to_md(self, f):
+        ml_type_ret = _localize(self.typ.ml_type_ret, self.name.parent)
         f.write(f"""
-### {self.ml_name}
+### {self.name.ml_name()}
 
 ???+ note "attribute"
     ~~~ocaml
-    val {self.ml_name} : t -> {ml_type_ret}
-    val {self.ml_name_opt} : t -> ({ml_type_ret}) option
+    val {self.name.ml_name()} : t -> {ml_type_ret}
+    val {self.name.ml_name_opt()} : t -> ({ml_type_ret}) option
     ~~~
 
     This attribute is documented in `create` above. The first version raises Not_found
@@ -2023,7 +1406,7 @@ val {self.ml_name_opt} : t -> ({ml_type_ret}) option
         return repr(self)
 
     def __repr__(self):
-        return f"Attribute({self.name} : {self.typ})"
+        return f"Attribute({self.name.full_ml_name()} : {self.typ})"
 
 
 def clean_doc(doc):
@@ -2249,6 +1632,973 @@ class Example:
         f.write("\n*)\n\n")
 
 
+class Type:
+    def visit(self, f):
+        f(self)
+        for child in getattr(self, 'elements', []):
+            f(child)
+
+    def __str__(self):
+        return repr(self)
+
+    def __repr__(self):
+        text = getattr(self, 'text', None)
+        if text is None:
+            text = getattr(self, 'elements', '')
+        return f"{self.__class__.__name__}({text})"
+
+    def __call__(self, context):
+        """This is so that users can put either a Type or a function context
+        -> Type in overrides.
+
+        """
+        return self
+
+    names = []
+
+    ml_type = 'Py.Object.t'
+    wrap = 'Wrap_utils.id'
+
+    ml_type_ret = 'Py.Object.t'
+    unwrap = 'Wrap_utils.id'
+
+    is_type = None
+
+    def tag_name(self):
+        return tag(self.__class__.__name__)
+
+    def tag(self):
+        ta = self.tag_name()
+        t = f"`{ta} of {self.ml_type}"
+        t_ret = f"`{ta} of {self.ml_type_ret}"
+        destruct = f"`{ta} x -> {self.wrap} x"
+        if self.is_type is None:
+            construct = None
+        else:
+            construct = f"if {self.is_type} x then `{ta} ({self.unwrap} x)"
+        return t, t_ret, destruct, construct
+
+    def delegate_to(self, t):
+        self.ml_type = t.ml_type
+        self.ml_type_ret = t.ml_type_ret
+        self.wrap = t.wrap
+        self.unwrap = t.unwrap
+        self.tag = t.tag
+        self.tag_name = t.tag_name
+
+    def __hash__(self):
+        hash_me = {}
+        for k, v in vars(self).items():
+            if isinstance(v, list):
+                v = tuple(v)
+            hash_me[k] = v
+        return hash((self.__class__, tuple(hash_me.items())))
+
+    def __eq__(self, other):
+        return hash(self) == hash(other)
+
+
+class Ignored(Type):
+    names = ['ignored', 'Ignored']
+
+
+class RandomState(Type):
+    names = ['RandomState instance', 'RandomState', 'instance of RandomState']
+
+
+class Bunch(Type):
+    def __init__(self, elements):
+        self.elements = elements
+        self.ml_type = ("< " +
+                        '; '.join(f"{mlid(name)}: {t.ml_type_ret}"
+                                  for name, t in self.elements.items()) + " >")
+        # for now Bunch is only for returning things
+        self.wrap = 'Wrap_utils.id'
+
+        self.ml_type_ret = self.ml_type
+        unwrap_methods = [
+            f'method {mlid(name)} = {t.unwrap} (Py.Object.get_attr_string bunch "{name}" |> Wrap_utils.Option.get)'
+            for name, t in self.elements.items()
+        ]
+        self.unwrap = f'(fun bunch -> object {" ".join(unwrap_methods)} end)'
+
+    def visit(self, f):
+        f(self)
+        for child in self.elements.values():
+            f(child)
+
+
+class UnknownType(Type):
+    def __init__(self, text):
+        self.text = text
+
+    def tag_name(self):
+        return tag(self.text)
+
+
+class StringValue(Type):
+    def __init__(self, text):
+        assert text != 'None'
+        self.text = text.strip("\"'")
+
+    ml_type = 'string'
+    wrap = 'Py.String.of_string'
+
+    ml_type_ret = 'string'
+    unwrap = 'Py.String.to_string'
+
+    def tag(self):
+        ta = tag(self.text)
+        t = f"`{ta}"
+        t_ret = t
+        destruct = f'`{ta} -> {self.wrap} "{self.text}"'
+        construct = None
+        return t, t_ret, destruct, construct
+
+
+class IntValue(Type):
+    def __init__(self, value):
+        self.value = int(value)
+
+    ml_type = 'int'
+    wrap = 'Py.Int.of_int'
+
+    ml_type_ret = 'int'
+    unwrap = 'Py.Int.to_int'
+
+    def tag(self):
+        tags = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five']
+        assert 0 <= self.value < len(tags), (self.value, tags)
+        ta = tags[self.value]
+        t = f"`{ta}"
+        t_ret = t
+        destruct = f'`{ta} -> {self.wrap} {self.value}'
+        construct = None
+        return t, t_ret, destruct, construct
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.value})"
+
+
+class Enum(Type):
+    def can_be_returned(self):
+        for elt in self.elements:
+            if elt.tag()[3] is None:
+                # print(f"WW enum {self} cannot be returned because element {elt} cannot be discriminated")
+                return False
+        return True
+
+    def __init__(self, elements, name=None):
+        # print(f"DD building enum: {elements}")
+        for elt in elements:
+            assert isinstance(elt, Type), elt
+        assert elements, elements
+        self.elements = elements
+        self.ml_type = "[" + ' | '.join([elt.tag()[0]
+                                         for elt in elements]) + "]"
+        wrap_cases = [f"| {elt.tag()[2]}\n" for elt in elements]
+        self.wrap = f"(function\n{''.join(wrap_cases)})"
+
+        if self.can_be_returned():
+            self.ml_type_ret = "[" + ' | '.join(
+                [elt.tag()[1] for elt in elements]) + "]"
+            unwrap_cases = [f"{elt.tag()[3]}" for elt in elements]
+            self.unwrap = '(fun x -> ' + ' else '.join(
+                unwrap_cases
+            ) + ''' else failwith (Printf.sprintf "Sklearn: could not identify type from Python value %s (%s)"
+                                                  (Py.Object.to_string x) (Wrap_utils.type_string x)))'''
+
+        if name is not None:
+            self.tag_name = lambda: name
+
+
+class Optional(Type):
+    def __init__(self, t):
+        # args are wrapped as a enum including `None
+        # returns are wrapped using an option
+        self.t = t
+        if isinstance(t, Enum):
+            self.as_enum = Enum(t.elements + [NoneValue()])
+        else:
+            self.as_enum = Enum([t, NoneValue()])
+        self.ml_type = self.as_enum.ml_type
+        self.wrap = self.as_enum.wrap
+        self.ml_type_ret = f'{self.t.ml_type_ret} option'
+        self.unwrap = f'(fun py -> if Py.is_none py then None else Some ({self.t.unwrap} py))'
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self.t})'
+
+
+class Tuple(Type):
+    def __init__(self, elements, names=None):
+        if names is not None:
+            self.names = names
+        self.elements = elements
+        self.ml_type = '(' + ' * '.join(elt.ml_type for elt in elements) + ')'
+        self.ml_type_ret = '(' + ' * '.join(elt.ml_type_ret
+                                            for elt in elements) + ')'
+        unwrap_elts = [
+            f"({elt.unwrap} (Py.Tuple.get x {i}))"
+            for i, elt in enumerate(elements)
+        ]
+        self.unwrap = f"(fun x -> ({', '.join(unwrap_elts)}))"
+        split = '(' + ', '.join([f"ml_{i}"
+                                 for i in range(len(self.elements))]) + ')'
+        wrap_elts = [f"({elt.wrap} ml_{i})" for i, elt in enumerate(elements)]
+        self.wrap = f"(fun {split} -> Py.Tuple.of_list [{'; '.join(wrap_elts)}])"
+        self.is_type = 'Py.Tuple.check'
+
+
+class Int(Type):
+    names = [
+        'int', 'integer', 'integer > 0', 'int with', 'int > 1',
+        'strictly positive integer', 'an integer'
+    ]
+    ml_type = 'int'
+    wrap = 'Py.Int.of_int'
+    ml_type_ret = 'int'
+    unwrap = 'Py.Int.to_int'
+    is_type = 'Wrap_utils.check_int'
+
+    def tag_name(self):
+        return tag("I")
+
+
+class Unit(Type):
+    names = []
+    ml_type = 'unit'
+    wrap = '(fun () -> Py.none)'
+    ml_type_ret = 'unit'
+    unwrap = '(fun _ -> ())'
+    # is_type = 'Wrap_utils.check_int'
+    # def tag_name(self):
+    #     return tag("I")
+
+
+class WrappedModule(Type):
+    def __init__(self, module, names=None):
+        if names is not None:
+            self.names = names
+        self.ml_type = f'{module}.t'
+        self.ml_type_ret = f'{module}.t'
+        self.wrap = f'{module}.to_pyobject'
+        self.unwrap = f'{module}.of_pyobject'
+
+
+class Float(Type):
+    names = [
+        'float', 'floating', 'double', 'positive float',
+        'strictly positive float', 'non-negative float',
+        'float (upperlimited by 1.0)', 'float in range', 'float in [0., 1.]',
+        'float in', 'float between 0 and 1', '0 <= shrinkage <= 1',
+        '0 < support_fraction < 1', 'non-negative real', '0 < double < 1',
+        'float between 0.0 and 1.0'
+    ]
+    ml_type = 'float'
+    wrap = 'Py.Float.of_float'
+    ml_type_ret = 'float'
+    unwrap = 'Py.Float.to_float'
+    is_type = 'Wrap_utils.check_float'
+
+    def tag_name(self):
+        return tag("F")
+
+
+class Bool(Type):
+    names = [
+        'bool', 'boolean', 'Boolean', 'Bool', 'boolean value', 'type boolean'
+    ]
+    ml_type = 'bool'
+    wrap = 'Py.Bool.of_bool'
+    ml_type_ret = 'bool'
+    unwrap = 'Py.Bool.to_bool'
+
+
+class Generator(Type):
+    def __init__(self, t):
+        super().__init__()
+        self.t = t
+        self.ml_type = f'{t.ml_type} Seq.t'
+        self.wrap = f'(fun ml -> Seq.map {t.wrap} ml |> Py.Iter.of_seq)'
+        self.ml_type_ret = f'{t.ml_type_ret} Seq.t'
+        self.unwrap = f'(fun py -> Py.Iter.to_seq py |> Seq.map {t.unwrap})'
+        self.is_type = 'Py.Iter.check'
+
+    def tag_name(self):
+        return 'Iter'
+
+
+def ArrGenerator():
+    ret = Generator(Arr())
+    ret.names = ['generator of array']
+    return ret
+
+
+class LossFunction(Type):
+    names = ['LossFunction', 'concrete ``LossFunction``']
+    # ml_type = 'Sklearn.Arr.t -> Sklearn.Arr.t -> float'
+    ml_type_ret = 'Np.NumpyRaw.Ndarray.t -> Np.NumpyRaw.Ndarray.t -> float'
+    unwrap = '''(fun py -> fun x y -> Py.Callable.to_function py
+       [|Np.NumpyRaw.Ndarray.to_pyobject x; Np.NumpyRaw.Ndarray.to_pyobject y|] |> Py.Float.to_float)'''
+
+
+class ClassificationReport(Type):
+    # ml_type = '(string * <precision:float; recall:float; f1_score:float; support:float>) list'
+    ml_type_ret = '(string * <precision:float; recall:float; f1_score:float; support:float>) list'
+    unwrap = '''(fun py -> Py.Dict.fold (fun kpy vpy acc -> ((Py.String.to_string kpy), object
+      method precision = Py.Dict.get_item_string vpy "precision" |> Wrap_utils.Option.get |> Py.Float.to_float
+      method recall = Py.Dict.get_item_string vpy "recall" |> Wrap_utils.Option.get |> Py.Float.to_float
+      method f1_score = Py.Dict.get_item_string vpy "f1-score" |> Wrap_utils.Option.get |> Py.Float.to_float
+      method support = Py.Dict.get_item_string vpy "support" |> Wrap_utils.Option.get |> Py.Float.to_float
+    end)::acc) py [])
+    '''
+    is_type = 'Py.Dict.check'
+
+    def tag_name(self):
+        return 'Dict'
+
+
+class Array(Type):
+    def __init__(self, t, names=[]):
+        self.t = t
+        self.names = names
+        self.ml_type = f"{t.ml_type} array"
+        self.wrap = f'(fun ml -> Py.Array.of_array {t.wrap} (fun _ -> invalid_arg "read-only") ml)'
+        self.ml_type_ret = f"{t.ml_type} array"
+        self.unwrap = f"""(fun py -> let len = Py.Sequence.length py in Array.init len
+          (fun i -> {t.unwrap} (Py.Sequence.get_item py i)))"""
+
+    def __str__(self):
+        return repr(self)
+
+    def __repr__(self):
+        return f"Array[{str(self.t)}]"
+
+
+class ArrPyList(WrappedModule):
+    def __init__(self):
+        super().__init__('Np.Numpy.Ndarray.List',
+                         names=[
+                             'iterable of iterables', 'list of arrays',
+                             'list of ndarray', 'arrays', 'list of array-like'
+                         ])
+
+
+class SparsePyList(WrappedModule):
+    def __init__(self):
+        super().__init__('Sklearn.SparseMatrixList',
+                         names=[
+                             'sparse matrices',
+                         ])
+
+
+class List(Type):
+    def __init__(self, t, names=None):
+        self.t = t
+        if names is not None:
+            self.names = names
+        self.ml_type = f"{t.ml_type} list"
+        self.wrap = f'(fun ml -> Py.List.of_list_map {t.wrap} ml)'
+        self.ml_type_ret = f"{t.ml_type_ret} list"
+        self.unwrap = f"(fun py -> Py.List.to_list_map ({t.unwrap}) py)"
+
+    def tag_name(self):
+        return self.t.tag_name() + 's'
+
+    def __str__(self):
+        return repr(self)
+
+    def __repr__(self):
+        return f"List[{str(self.t)}]"
+
+class ListAsTuple(Type):
+    """On the ml side, a list. On the Python side, a tuple.
+    """
+    def __init__(self, t, names=None):
+        self.t = t
+        if names is not None:
+            self.names = names
+        self.ml_type = f"{t.ml_type} list"
+        self.wrap = f'(fun ml -> Py.Tuple.of_list_map {t.wrap} ml)'
+        self.ml_type_ret = f"{t.ml_type_ret} list"
+        self.unwrap = f"(fun py -> Py.Tuple.to_list_map ({t.unwrap}) py)"
+
+    def tag_name(self):
+        return self.t.tag_name() + 's'
+
+    def __str__(self):
+        return repr(self)
+
+    def __repr__(self):
+        return f"ListAsTuple[{str(self.t)}]"
+    
+
+class StarStar(Type):
+    def __init__(self):
+        self.names = []
+        self.ml_type = "(string * Py.Object.t) list"
+
+    def __str__(self):
+        return repr(self)
+
+    def __repr__(self):
+        return "**kwargs"
+
+
+class FloatList(List):
+    def __init__(self):
+        super().__init__(
+            Float(),
+            names=['list of floats', 'list positive floats', 'list of float'])
+
+
+class StringList(Type):
+    names = [
+        'list of strings', 'list of string', 'list/tuple of strings',
+        'tuple of str', 'list of str', 'strings', 'tuple of strings'
+    ]
+    ml_type = 'string list'
+    wrap = '(Py.List.of_list_map Py.String.of_string)'
+    ml_type_ret = 'string list'
+    unwrap = '(Py.List.to_list_map Py.String.to_string)'
+
+
+class String(Type):
+    names = ['str', 'string', 'unicode']
+    ml_type = 'string'
+    wrap = 'Py.String.of_string'
+    ml_type_ret = 'string'
+    unwrap = 'Py.String.to_string'
+    is_type = 'Py.String.check'
+
+    def tag_name(self):
+        return tag("S")
+
+
+class Scalar(Enum):
+    names = ['scalar']
+
+    def __init__(self, elements=[Float(), Int(), Bool(), String()]):
+        super().__init__(elements)
+
+
+class Number(Enum):
+    names = ['number', 'numeric', 'numerical value']
+
+    def __init__(self, elements=[Float(), Int()]):
+        super().__init__(elements)
+
+
+class NoneValue(Type):
+    names = ['None', 'none']
+
+    def tag(self):
+        return '`None', '`None', '`None -> Py.none', None
+
+
+class TrueValue(Type):
+    names = ['True', 'true']
+
+    def tag(self):
+        return '`True', '`True', '`True -> Py.Bool.t', None
+
+
+class FalseValue(Type):
+    names = ['False', 'false']
+
+    def tag(self):
+        return '`False', '`False', '`False -> Py.Bool.f', None
+
+
+def interesting_ancestors(klass):
+    ancestors = inspect.getmro(klass)
+    for ancestor in ancestors:
+        if ancestor is not klass:
+            ancestor_name = ancestor.__name__.lower()
+            # tweaked for sklearn+scipy
+            if (('base' in ancestor_name or 'mixin' in ancestor_name
+                 or 'rv_' in ancestor_name or 'decisiontree' in ancestor_name)
+                    and not ancestor_name.startswith('_')):
+                # if not ancestor_name.startswith('_'):
+                yield ancestor
+
+
+def class_tags(klass):
+    import scipy
+    import numpy as np
+    ancestors = interesting_ancestors(klass)
+    tags = set(f"`{tag(base.__name__)}"
+               for base in (list(ancestors) + [klass]))
+    tags.add("`Object")
+    if set([scipy.sparse.spmatrix,
+            np.ndarray]).intersection(inspect.getmro(klass)):
+        tags.add("`ArrayLike")
+    return sorted(tags)
+
+
+class BaseTypeByTag(Type):
+    def __init__(self, tag, inside_np=False):
+        if inside_np:
+            obj = 'Obj'
+        else:
+            obj = 'Np.Obj'
+        self._tag_name = tag
+        self.ml_type = f'[>`{self._tag_name}] {obj}.t'
+        self.wrap = f'{obj}.to_pyobject'
+        self.ml_type_ret = f'[>`{self._tag_name}] {obj}.t'
+        self.unwrap = f'(fun py -> ({obj}.of_pyobject py : {self.ml_type_ret}))'
+
+    def tag_name(self):
+        return self._tag_name
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self._tag_name})'
+
+
+class BaseType(Type):
+    def __init__(self, name, inside_np=False):
+        if inside_np:
+            obj = 'Obj'
+        else:
+            obj = 'Np.Obj'
+        self.name = name
+        self._tag_name = tag(name.split('.')[-1])
+        self.ml_type = f'[>`{self._tag_name}] {obj}.t'
+        self.wrap = f'{obj}.to_pyobject'
+        mo = '.'.join(name.split('.')[:-1])
+        # log.debug(f"import module '{mo}'")
+        module = importlib.import_module(mo)
+        # log.debug(f"eval '{name}'")
+        klass_name = name.split('.')[-1]
+        klass = getattr(module, klass_name)
+        # klass = eval(name)
+        tags = class_tags(klass)
+        self.ml_type_ret = f'[{"|".join(tags)}] {obj}.t'
+        self.unwrap = f'(fun py -> ({obj}.of_pyobject py : {self.ml_type_ret}))'
+
+    def tag_name(self):
+        return self._tag_name
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self.name})'
+
+
+class CsrMatrix(BaseType):
+    names = [
+        'CSR matrix with',
+        'CSR matrix',
+        'CSR sparse matrix',
+        'CSR',
+        'scipy csr array',
+        'scipy.sparse.csr_matrix of floats'
+        'scipy.sparse.csr_matrix',
+        'sparse (CSR) matrix',
+        'sparse CSR matrix',
+        'sparse graph in CSR format',
+    ]
+
+    def __init__(self):
+        import scipy.sparse
+        super().__init__('scipy.sparse.csr_matrix')
+
+
+class CscMatrix(BaseType):
+    names = [
+        'CSC matrix with',
+        'CSC matrix',
+        'CSC sparse matrix',
+        'CSC',
+        'scipy csc array',
+        'scipy.sparse.csc_matrix of floats'
+        'scipy.sparse.csc_matrix',
+        'sparse (CSC) matrix',
+        'sparse CSC matrix',
+        'sparse graph in CSC format',
+    ]
+
+    def __init__(self):
+        import scipy.sparse
+        super().__init__('scipy.sparse.csc_matrix')
+
+
+class SparseMatrix(BaseType):
+    names = [
+        # the sparse matrices
+        '(sparse) array-like',
+        'scipy.sparse matrix',
+        'scipy.sparse',
+        'sparse array',
+        'sparse matrix with',
+        'sparse matrix',
+        'sparse-matrix',
+    ]
+
+    def __init__(self):
+        import scipy.sparse
+        super().__init__('scipy.sparse.spmatrix')
+
+
+class Arr(BaseTypeByTag):
+    names = [
+        '1D array',
+        '1d array-like',
+        '2D array',
+        '2D ndarray',
+        '2D numpy.ndarray',
+        '3D array',
+        'A collection of strings',
+        'an iterable',
+        'array  or',
+        'array (n_samples]',
+        'array [n_core_samples]',
+        'array like',
+        'array of float',
+        'array of floats',
+        'array of int',
+        'array of integers',
+        'array of shape `shape`'
+        'array of shape `shape`',
+        'array of shape of (n_targets',
+        'array',
+        'array-like of float',
+        'array-like of floats',
+        'array-like of shape at least 2D',
+        'array-like of shape',
+        'array-like',
+        'array_like of float',
+        'array_like of floats',
+        'array_like',
+        'bool array',
+        'collection of string',
+        'float array with',
+        'float ndarray',
+        'indexable',
+        'int array',
+        'int array-like',
+        'integer ndarray',
+        'iterable',
+        'label indicator array / sparse matrix',
+        'label indicator matrix',
+        'list',
+        'list-like',
+        'matrix',
+        'nd-array',
+        'ndarray of floats',
+        'ndarray or scalar',
+        'ndarray',
+        'ndarray, see dtype parameter above',
+        'np.array',
+        'np.matrix',
+        'numeric array-like',
+        'numpy array . Shape depends on ``subset``',
+        'numpy array of float',
+        'numpy array of int',
+        'numpy array',
+        'numpy.matrix',
+        'numpy.ndarray',
+        'record array',
+        'sequence of floats',
+        '{array}',
+    ]
+
+    def __init__(self, inside_np=False):
+        super().__init__('ArrayLike', inside_np)
+
+    def tag_name(self):
+        return 'Arr'
+
+    # ml_type = 'Sklearn.Arr.t'
+    # wrap = 'Sklearn.Arr.to_pyobject'
+    # ml_type_ret = 'Sklearn.Arr.t'
+    # unwrap = 'Sklearn.Arr.of_pyobject'
+    # is_type = 'Arr.check'
+    # XXX TODO decide what to do with Arr
+    # as input param, accepting [>`ArrayLike] Np.Obj.t seems the way to go
+    # as output param, it would be nice if it could be used directly without casting to Ndarray, what to do? Keep module Arr?
+    # Many functions in Numpy accept an "array_like", this could be
+    # [>`ArrayLike] probably. It seems any object can be passed to a numpy function accepting an array_like.
+    # def __init__(self):
+    #     obj = 'Np.Obj'
+    #     self._tag_name = 'ArrayLike'
+    #     self.ml_type = f'[>`{self._tag_name}] {obj}.t'
+    #     self.wrap = f'{obj}.to_pyobject'
+    #     self.ml_type_ret = f'[] {obj}.t'
+    #     self.unwrap = f'(fun py -> ({obj}.of_pyobject py : {self.ml_type_ret}))'
+
+
+class Ndarray(BaseType):
+    names = Arr.names
+
+    def __init__(self, inside_np=False):
+        import numpy
+        super().__init__('numpy.ndarray', inside_np)
+
+
+class CrossValGenerator(BaseType):
+    names = [
+        'cross-validation generator', 'cross-validation splitter',
+        'CV splitter', 'a cross-validator instance'
+    ]
+
+    def __init__(self, inside_np=False):
+        import sklearn.model_selection
+        super().__init__('sklearn.model_selection.BaseCrossValidator',
+                         inside_np)
+
+
+class Estimator(BaseType):
+    names = [
+        'instance BaseEstimator', 'BaseEstimator instance', 'BaseEstimator',
+        'estimator instance', 'instance estimator', 'estimator object',
+        'estimator'
+    ]
+
+    def __init__(self, inside_np=False):
+        import sklearn.base
+        super().__init__('sklearn.base.BaseEstimator', inside_np)
+
+
+class Regressor(BaseType):
+    names = [
+        'instance RegressorMixin', 'RegressorMixin instance',
+        'regressor instance', 'instance regressor', 'regressor object',
+        'regressor'
+    ]
+
+    def __init__(self, inside_np=False):
+        import sklearn.base
+        super().__init__('sklearn.base.RegressorMixin', inside_np)
+
+
+class Transformer(BaseType):
+    names = [
+        'instance TransformerMixin', 'TransformerMixin instance',
+        'instance Transformer', 'Transformer instance', 'transformer instance',
+        'instance transformer', 'transformer object', 'transformer'
+    ]
+
+    def __init__(self, inside_np=False):
+        import sklearn.base
+        super().__init__('sklearn.base.TransformerMixin', inside_np)
+
+
+class ClusterEstimator(BaseType):
+    names = ['instance of sklearn.cluster model', 'sklearn.cluster model']
+
+    def __init__(self, inside_np=False):
+        import sklearn.base
+        super().__init__('sklearn.base.ClusterMixin', inside_np)
+
+
+class DecisionTreeClassifier(BaseType):
+    names = ['decision tree classifier']
+
+    def __init__(self, inside_np=False):
+        import sklearn.tree
+        super().__init__('sklearn.tree.DecisionTreeClassifier', inside_np)
+
+
+class PyObject(Type):
+    names = ['object']
+
+
+class Self(Type):
+    def __init__(self):
+        self.ml_type = '[> tag] Obj.t'
+        self.ml_type_ret = 't'
+        self.wrap = 'to_pyobject'
+        self.unwrap = 'of_pyobject'
+
+
+class Dtype(WrappedModule):
+    names = [
+        'type', 'dtype', 'numpy dtype', 'data-type', 'column dtype',
+        'numpy data type'
+    ]
+
+    def __init__(self, inside_np=False):
+        if inside_np:
+            super().__init__('Dtype')
+        else:
+            super().__init__('Np.Dtype')
+        # ml_type = 'Sklearn.Arr.Dtype.t'
+        # wrap = 'Sklearn.Arr.Dtype.to_pyobject'
+        # ml_type_ret = 'Sklearn.Arr.Dtype.t'
+        # unwrap = 'Sklearn.Arr.Dtype.of_pyobject'
+
+
+class Dict(Type):
+    # XXX 'dict of numpy (masked) ndarrays' is the format of a
+    # DataFrame, we could have a more appropriate OCaml type for it
+    # maybe, rather than this generic one (which is just a Python
+    # dict)?
+    names = [
+        'dict', 'Dict', 'dictionary', 'mapping of string to any',
+        'dict of numpy (masked) ndarrays', 'dict of numpy ndarrays',
+        'dict of float arrays', 'dictionary of string to any',
+        'dict of string -> object', 'a dict'
+    ]
+    ml_type = 'Sklearn.Dict.t'
+    ml_type_ret = 'Sklearn.Dict.t'
+    wrap = 'Sklearn.Dict.to_pyobject'
+    unwrap = 'Sklearn.Dict.of_pyobject'
+    is_type = 'Py.Dict.check'
+
+
+class ParamGridDict(Type):
+    names = []
+    ml_type = '''(string * Sklearn.Dict.param_grid) list'''
+    wrap = '(fun x -> Sklearn.Dict.(of_param_grid_alist x |> to_pyobject))'
+
+    def tag_name(self):
+        return 'Grid'
+
+
+class ParamDistributionsDict(Type):
+    names = []
+    ml_type = '''(string * Sklearn.Dict.param_distributions) list'''
+    wrap = '(fun x -> Sklearn.Dict.(of_param_distributions_alist x |> to_pyobject))'
+
+    def tag_name(self):
+        return 'Grid'
+
+
+# emitted as a postprocessing of Dict() based on param name/callable
+class DictIntToFloat(Type):
+    names = ['dict int to float']
+    ml_type = '(int * float) list'
+    wrap = '(Py.Dict.of_bindings_map Py.Int.of_int Py.Float.of_float)'
+    is_type = 'Py.Dict.check'
+
+
+class Callable(Type):
+    names = ['callable', 'function']
+
+
+class Slice(Type):
+    names = ['slice']
+
+    def __init__(self, inside_np=False):
+        if inside_np:
+            ns = "Wrap_utils"
+        else:
+            ns = "Np.Wrap_utils"
+        self.ml_type = f'{ns}.Slice.t'
+        self.ml_type_ret = f'{ns}.Slice.t'
+        self.wrap = f'{ns}.Slice.to_pyobject'
+        self.unwrap = f'{ns}.Slice.of_pyobject'
+
+
+estimator_alist = List(
+    Tuple([String(), Estimator()]),
+    names=['list of (str, estimator)', 'list of (str, estimator) tuples'])
+
+
+class BuiltinTypes:
+    def __init__(self, builtins):
+        self._builtins = {}
+        for t in builtins:
+            for name in t.names:
+                assert name not in self._builtins, f"'{name}' is present several times in builtin types"
+                self._builtins[name] = t
+        self._used_names = set()
+
+    def __getitem__(self, k):
+        self._used_names.add(k)
+        return self._builtins[k]
+
+    def report_unused(self):
+        unused = set(self._builtins.keys()).diff(self._used_names)
+        if unused:
+            log.warning("some type names were not used:")
+            for name in unused:
+                log.warning("- {name} ({self._builtins[name]})")
+
+
+class TupleOfInts(Type):
+    """A tuple of ints is exposed as int list on input, and int array on
+    output (more convenient for shapes).
+
+    """
+    names = ['tuple of ints']
+    li = ListAsTuple(Int())
+    arr = Array(Int())
+    wrap = li.wrap
+    ml_type = li.ml_type
+    unwrap = arr.unwrap
+    ml_type_ret = arr.ml_type_ret
+
+
+generic_builtin_types = [
+    Int(),
+    Float(),
+    Bool(),
+    Scalar(),
+    Number(),
+    FloatList(),
+    StringList(),
+    SparseMatrix(),
+    String(),
+    DictIntToFloat(),
+    NoneValue(),
+    TrueValue(),
+    FalseValue(),
+    PyObject(),
+    Self(),
+    Callable(),
+    Ignored(),
+    List(Int(), names=['sequence of ints']),
+    Tuple([Int(), Int()], names=['(int, int)']),
+    Tuple([Float(), Float()],
+          names=['pair of floats', '(float, float)', 'pair of floats >= 0']),
+    List(Tuple([Int(), Int()]), names=['list of (int, int)']),
+    RandomState(),
+    TupleOfInts(),
+]
+
+numpy_builtin_types = BuiltinTypes(generic_builtin_types + [
+    Ndarray(inside_np=True),
+    Dtype(inside_np=True),
+    Slice(inside_np=True),
+    List(Ndarray(inside_np=True), names=['sequence of ndarrays'])
+])
+
+scipy_builtin_types = BuiltinTypes(generic_builtin_types + [
+    Ndarray(),
+    Dtype(),
+    Slice(),
+    List(Ndarray(), names=['sequence of ndarrays'])
+])
+
+sklearn_builtin_types = BuiltinTypes(generic_builtin_types + [
+    Arr(),
+    ArrGenerator(),
+    LossFunction(),
+    ArrPyList(),
+    SparsePyList(),
+    Dict(),
+    Dtype(),
+    Slice(),
+    List(Dtype(), names=['list of column dtypes', 'list of types']),
+    CrossValGenerator(),
+    Estimator(),
+    ClusterEstimator(),
+    DecisionTreeClassifier(),
+    WrappedModule('Sklearn.Pipeline.Pipeline', ['Pipeline', 'pipeline']),
+    WrappedModule('Sklearn.Pipeline.FeatureUnion', ['FeatureUnion']),
+    estimator_alist,
+    List(Arr(), names=['list of numpy arrays']),
+    List(Estimator(), names=['list of estimators', 'list of estimator']),
+    List(Regressor(), names=['list of regressors', 'list of regressor']),
+    List(Tuple([String(), Transformer()]),
+         names=['list of (string, transformer) tuples']),
+    Tuple([Arr(), Arr()], names=['tuple of (A, B) ndarrays']),
+    CsrMatrix(),
+    CscMatrix()
+])
+
+
 def qualname(obj):
     try:
         return obj.__qualname__
@@ -2292,8 +2642,8 @@ def make_return_type(type_dict):
             if isinstance(v, Arr):
                 return ArrGenerator()
             elif not isinstance(v, Generator) and not isinstance(v, PyObject):
-                print(
-                    f"WW yielded value is not a generator ({v}), forcing type to Py.Object.t"
+                log.warning(
+                    f"yielded value is not a generator ({v}), forcing type to Py.Object.t"
                 )
                 return PyObject()
             else:
@@ -2317,36 +2667,51 @@ class NoSignature(Exception):
     pass
 
 
-def _localize(t, module_path):
+def _localize(t, parent_name):
     """Attempt to localize a type or expression by removing the necessary
     parts of paths. Working on strings is inherently flawed, the right
     way to do this would be to pass the module path to the things that
     generate t, so that they can generate clean types and
     expressions. Anyway, seems to work in practice.
 
+    TODO: move this to Name?
     """
-    path_elts = module_path.split('.')
+    if parent_name is None:
+        return t
+
+    path_elts = parent_name.full_ml_name().split('.')
     ret = t
 
+    # assert not parent_name.full_ml_name().startswith('Numpy'), parent_name
+
     for i in range(len(path_elts), 0, -1):
-        path = r'\.'.join(path_elts[:i]) + r'\.'
+        path = r'\b' + r'\.'.join(path_elts[:i]) + r'\.'
         ret = re.sub(path, '', ret)
 
     # if "Csr_matrix" in t:
-    #     print(f"localize: {t} / {module_path} -> {ret}")
+    # if 'Np' in t:
+    # print(f"DD localize: {t} / {parent_name} -> {ret}")
     return ret
 
 
 class Parameter:
-    def __init__(self, python_name, ty, parameter):
-        self.python_name = python_name
-        self.ml_name = mlid(self.python_name)
+    def __init__(self, name, ty, parameter):
+        self.name = name
         self.ty = ty
         self.parameter = parameter
         self.fixed_value = None
+        self.no_name = False
         # If the default value is None, no need to have it as an option in the type.
         if self.parameter.default is None:
             self.ty = remove_none_from_enum(self.ty)
+
+    def remove_name(self):
+        if self.has_default():
+            log.warning(
+                "cannot remove name for param {self.name.full_python_name()}: param has a default"
+            )
+            return
+        self.no_name = True
 
     def __str__(self):
         return repr(self)
@@ -2366,7 +2731,7 @@ class Parameter:
         if self.has_default():
             default = f'={self.parameter.default}'
 
-        return f"{mark}{self.python_name}{default}{fixed} : {self.ty}"
+        return f"{mark}{self.name.ml_name()}{default}{fixed} : {self.ty}"
 
     def _has_fixed_value(self):
         return self.fixed_value is not None
@@ -2377,19 +2742,28 @@ class Parameter:
     def is_star_star(self):
         return self.parameter.kind == inspect.Parameter.VAR_KEYWORD
 
+    def is_positional_only(self):
+        return self.parameter.kind == inspect.Parameter.POSITIONAL_ONLY
+
     def is_named(self):
-        return not (self.ml_name in ['self'] or self.is_star())
+        if self.no_name:
+            return False
+        if self.has_default():
+            return True
+        # if self.is_positional_only():
+        #     return False
+        return not (self.name.ml_name() in ['self'] or self.is_star())
 
     def has_default(self):
         return ((self.parameter.default is not inspect.Parameter.empty)
                 or self.is_star_star())
 
-    def sig(self, module_path):
+    def sig(self):
         if self._has_fixed_value():
             return None
-        ml_type = _localize(self.ty.ml_type, module_path)
+        ml_type = _localize(self.ty.ml_type, self.name.parent)
         if self.is_named():
-            spec = f"{self.ml_name}:{ml_type}"
+            spec = f"{self.name.ml_name()}:{ml_type}"
             if self.has_default():
                 spec = f"?{spec}"
             return spec
@@ -2399,21 +2773,21 @@ class Parameter:
     def decl(self):
         if self._has_fixed_value():
             return None
-        spec = f"{self.ml_name}"
+        spec = f"{self.name.ml_name()}"
         if self.has_default():
             spec = f"?{spec}"
         elif self.is_named():
             spec = f"~{spec}"
         return spec
 
-    def call(self, module_path):
+    def call(self):
         """Return a tuple:
         - None or (name, value getter)
         - None or *args param name
         - None or **kwargs param name
         """
 
-        ty_wrap = _localize(self.ty.wrap, module_path)
+        ty_wrap = _localize(self.ty.wrap, self.name.parent)
 
         if ty_wrap == 'Wrap_utils.id':
             pipe_ty_wrap = ''
@@ -2424,23 +2798,36 @@ class Parameter:
             wrap = f'Some({self.fixed_value} {pipe_ty_wrap})'
         elif self.has_default():
             if ty_wrap == 'Wrap_utils.id':
-                wrap = self.ml_name
+                wrap = self.name.ml_name()
             else:
-                wrap = f'Wrap_utils.Option.map {self.ml_name} {ty_wrap}'
+                wrap = f'Wrap_utils.Option.map {self.name.ml_name()} {ty_wrap}'
         else:
-            wrap = f'Some({self.ml_name} {pipe_ty_wrap})'
+            wrap = f'Some({self.name.ml_name()} {pipe_ty_wrap})'
 
-        kv = (self.python_name, wrap)
+        kv = (self.name.python_name(), wrap)
 
         pos_arg = None
         if self.is_star():
-            ty_t_wrap = _localize(self.ty.t.wrap, module_path)
-            pos_arg = f"(Wrap_utils.pos_arg {ty_t_wrap} {self.ml_name})"
+            ty_t_wrap = _localize(self.ty.t.wrap, self.name.parent)
+            pos_arg = f"(List.map {ty_t_wrap} {self.name.ml_name()})"
+            # pos_arg = f"(Wrap_utils.pos_arg {ty_t_wrap} {self.name.ml_name()})"
+            kv = None
+
+        if self.is_positional_only():
+            # assert not self.has_default(), self
+            assert not self._has_fixed_value(), self
+            if self.has_default():
+                # XXX this is dangerous, we should probably assert
+                # somewhere that if this is None there is no other
+                # positional arg coming afer it (at runtime ?)
+                pos_arg = f"(match {self.name.ml_name()} with None -> [] | Some x -> [x {pipe_ty_wrap}])"
+            else:
+                pos_arg = f"[{self.name.ml_name()} {pipe_ty_wrap}]"
             kv = None
 
         kw_arg = None
         if self.is_star_star():
-            kw_arg = f"(match {self.ml_name} with None -> [] | Some x -> x)"
+            kw_arg = f"(match {self.name.ml_name()} with None -> [] | Some x -> x)"
             kv = None
 
         return kv, pos_arg, kw_arg
@@ -2453,16 +2840,19 @@ class DummyUnitParameter:
     def is_named(self):
         return False
 
+    def remove_name(self):
+        pass
+
     def has_default(self):
         return False
 
-    def sig(self, module_path):
+    def sig(self):
         return 'unit'
 
     def decl(self):
         return '()'
 
-    def call(self, module_path):
+    def call(self):
         return None, None, None
 
     def __str__(self):
@@ -2474,8 +2864,11 @@ class DummyUnitParameter:
 
 class SelfParameter:
     def __init__(self):
-        self.python_name = 'self'
+        # self.python_name = 'self'
         self.ty = Self()
+
+    def remove_name(self):
+        pass
 
     def is_named(self):
         return False
@@ -2483,13 +2876,13 @@ class SelfParameter:
     def has_default(self):
         return False
 
-    def sig(self, module_path):
+    def sig(self):
         return self.ty.ml_type
 
     def decl(self):
         return 'self'
 
-    def call(self, module_path):
+    def call(self):
         return None, None, None
 
     def __str__(self):
@@ -2500,14 +2893,15 @@ class SelfParameter:
 
 
 class Return:
-    def __init__(self, ty):
+    def __init__(self, ty, name):
+        self.name = name
         self.ty = ty
 
-    def sig(self, module_path):
-        return _localize(self.ty.ml_type_ret, module_path)
+    def sig(self):
+        return _localize(self.ty.ml_type_ret, self.name.parent)
 
-    def call(self, module_path):
-        return _localize(self.ty.unwrap, module_path)
+    def call(self):
+        return _localize(self.ty.unwrap, self.name.parent)
 
     def __str__(self):
         return repr(self)
@@ -2517,12 +2911,10 @@ class Return:
 
 
 class Wrapper:
-    def __init__(self, python_name, ml_name, doc, parameters, ret, doc_type,
-                 namespace):
+    def __init__(self, name, doc, parameters, ret, doc_type, namespace):
+        self.name = name
         self.parameters = self._fix_parameters(parameters)
         self.ret = ret
-        self.python_name = python_name
-        self.ml_name = ml_name
         self.doc = clean_doc(doc)
         self.doc_type = doc_type
         self.namespace = namespace
@@ -2532,11 +2924,14 @@ class Wrapper:
         at the end if needed.
 
         """
+        if len(parameters) == 1 and not parameters[0].has_default():
+            parameters[0].remove_name()
+
         named, not_named = partition(parameters, lambda x: x.is_named())
         with_default, no_default = partition(named, lambda x: x.has_default())
         parameters = with_default + no_default + not_named
         if not not_named:
-            # we have only named params with a default
+            # we have only named params
             parameters.append(DummyUnitParameter())
         return parameters
 
@@ -2544,19 +2939,17 @@ class Wrapper:
         elements = filter(lambda x: x is not None, elements)
         return sep.join(elements)
 
-    def mli(self, module_path, doc=True):
-        sig = self._join_not_none(
-            ' -> ', [x.sig(module_path)
-                     for x in self.parameters] + [self.ret.sig(module_path)])
+    def mli(self, doc=True):
+        sig = self._join_not_none(' -> ', [x.sig() for x in self.parameters] +
+                                  [self.ret.sig()])
         if doc:
-            return f"val {self.ml_name} : {sig}\n(**\n{self.doc}\n*)\n\n"
+            return f"val {self.name.ml_name()} : {sig}\n(**\n{self.doc}\n*)\n\n"
         else:
-            return f"val {self.ml_name} : {sig}\n"
+            return f"val {self.name.ml_name()} : {sig}\n"
 
-    def md(self, module_path):
-        sig = self._join_not_none(
-            " ->\n", [x.sig(module_path)
-                      for x in self.parameters] + [self.ret.sig(module_path)])
+    def md(self):
+        sig = self._join_not_none(" ->\n", [x.sig() for x in self.parameters] +
+                                  [self.ret.sig()])
         sig = indent(sig, 6)
         if self.doc is None:
             doc = ''
@@ -2564,37 +2957,34 @@ class Wrapper:
             doc = format_md_doc(self.doc)
         doc = indent(doc)
         return f"""
-### {self.ml_name}
+### {self.name.ml_name()}
 
 ???+ note "{self.doc_type}"
     ~~~ocaml
-    val {self.ml_name} :
+    val {self.name.ml_name()} :
 {sig}
     ~~~
 
 {doc}
 """
 
-    def _pos_args(self, module_path):
-        pos_args = None
+    def _pos_args(self):
+        pos_args = []
         for param in self.parameters:
-            kv, pos, kw = param.call(module_path)
-
+            kv, pos, kw = param.call()
             if pos is not None:
-                assert pos_args is None, \
-                    f"function has several *args: {pos_args}, {pos}"
-                pos_args = pos
+                pos_args.append(pos)
 
-        if pos_args is None:
-            pos_args = '[||]'
+        if not pos_args:
+            return '[||]'
+        else:
+            return f'(Array.of_list @@ List.concat [{";".join(pos_args)}])'
 
-        return pos_args
-
-    def _kw_args(self, module_path):
+    def _kw_args(self):
         pairs = []
         kwargs = None
         for param in self.parameters:
-            kv, _pos, kw = param.call(module_path)
+            kv, _pos, kw = param.call()
             if kv is not None:
                 k, v = kv
                 pairs.append(f'("{k}", {v})')
@@ -2612,21 +3002,21 @@ class Wrapper:
                 ret = '[]'
         return ret
 
-    def ml(self, module_path):
+    def ml(self):
         arg_decl = self._join_not_none(' ',
                                        [x.decl() for x in self.parameters])
-        pos_args = self._pos_args(module_path)
-        kw_args = self._kw_args(module_path)
+        pos_args = self._pos_args()
+        kw_args = self._kw_args()
 
-        ret_call = self.ret.call(module_path)
+        ret_call = self.ret.call()
         if ret_call == 'Wrap_utils.id':
             pipe_ret_call = ''
         else:
             pipe_ret_call = f'|> {ret_call}'
 
         ret = f"""\
-                  let {self.ml_name} {arg_decl} =
-                     Py.Module.get_function_with_keywords {self.namespace} "{self.python_name}"
+                  let {self.name.ml_name()} {arg_decl} =
+                     Py.Module.get_function_with_keywords {self.namespace} "{self.name.python_name()}"
                        {pos_args}
                        {kw_args}
                        {pipe_ret_call}
@@ -2696,8 +3086,8 @@ def parse_type(t, builtin, context):
         return IntValue(t)
     else:
         if t and t not in _types_not_parsed:
-            print(f"WW failed to parse type: '{t}', context follows")
-            print(context)
+            log.warning(f"failed to parse type: '{t}', context follows")
+            log.warning(context)
             _types_not_parsed.add(t)
         return UnknownType(t)
 
@@ -2734,10 +3124,10 @@ def parse_types(doc, builtin, context, section='Parameters'):
                 continue
 
             if not type_string:
-                print(
-                    f"WW no type string found for '{param_name}' in '{m.group(2)}', context follows"
+                log.warning(
+                    f"no type string found for '{param_name}' in '{m.group(2)}', context follows"
                 )
-                print(context)
+                log.warning(context)
                 continue
 
             ty = parse_type(type_string,
@@ -2748,8 +3138,8 @@ def parse_types(doc, builtin, context, section='Parameters'):
             ret[param_name] = ty
 
         except Exception as e:
-            print(f"!!!!!!!!!!!!! error processing element: {element}")
-            print(e)
+            log.error(f"error processing element: {element}")
+            log.exception(e)
             raise
 
     if not ret and section == 'Returns':
@@ -2790,7 +3180,7 @@ def parse_bunch_fetch(elements, builtin, context):
 def parse_bunch_load(elements, context):
     text = ' '.join(e.text for e in elements)
     attributes = re.findall(r"'([^']+)'", text)
-    print(attributes)
+    # log.debug(attributes)
     types = dict(data=Arr(),
                  target=Arr(),
                  data_filename=String(),
@@ -2815,29 +3205,128 @@ def parse_bunch(doc, builtin, context, section='Returns'):
         return parse_bunch_fetch(elements, builtin, context)
 
 
+def dummy_ufunc(x, /, out=None, where=True):
+    pass
+
+
+ufunc_signature = inspect.signature(dummy_ufunc)
+
+
+def doc_signature(f):
+    """Attempt to parse the signature of a function at the beginning of
+    its documentation. Useful for many numpy functions.
+
+    """
+    doc = inspect.getdoc(f)
+    if not doc:
+        # print(f"DD doc_signature: no doc for {qualname(f)}")
+        return None
+    m = re.search(re_parser.doc_sig, doc)
+    if m is None:
+        # if not doc.startswith("Not implemented"):
+        #     doc_first = "\n".join(doc.split("\n")[:1])
+        #     log.debug(
+        #       f'doc_signature: no signature found for {qualname(f)} in doc {doc_first}...'
+        #     )
+        return None
+    name = m.group(1)
+    args = m.group(2)
+    args = re.sub(r'\s+', ' ', args)
+
+    replacements = {
+        '(d0, d1, ..., dn)': '(d)',
+        '(a1, a2, ...)': '(a)',
+    }
+    args = replacements.get(args, args)
+
+    dummy_s = f"def __dummy_f_doc_sig{args}: pass"
+    # globs = dict()
+    locs = dict()
+    # print(f"DD doc sig: exec {dummy_s}")
+    orig_dummy = dummy_s
+    dummy_s = re.sub(r'<no value>', 'None', dummy_s)
+    dummy_s = re.sub(r'\[, start\[, end\]\]', ', start=None, end=None',
+                     dummy_s)
+    dummy_s = re.sub(r'\[x, y\]', 'x=None, y=None', dummy_s)
+    dummy_s = re.sub(r',\],', r'],', dummy_s)
+    dummy_s = re.sub(r'\[(\s*,?\s*)(\w+)(\s*,?\s*)\]', r'\1\2=None\3', dummy_s)
+    dummy_s = re.sub(r'\(a1, a2, \.\.\.\)', 'a', dummy_s)
+    dummy_s = re.sub(r'dtype=(np\.\w+)', 'dtype="\1"', dummy_s)
+
+    # Reordering should not break the bindings, since we pass all
+    # arguments as named.
+    dummy_s = re.sub(r'start=None, stop,', 'stop, start=None,', dummy_s)
+    try:
+        exec(dummy_s, globals(), locs)  # , globs, locs)
+    except Exception as e:
+        log.warning(
+            f"doc_sig: could not parse synthetic sig for {name}: '{dummy_s}' ({orig_dummy})"
+        )
+        return None
+    dummy = locs['__dummy_f_doc_sig']
+    sig = inspect.signature(dummy)
+
+    if hasattr(f, '__self__'):
+        assert list(sig.parameters.values())[0].name != 'self'
+    elif len(name.split('.')) > 1:
+        # The doc is like a.cumsum(b, c): it is most probably an
+        # instance method. Add self since the function does not have a
+        # __self__ attribute.
+        self_param = inspect.Parameter('self',
+                                       inspect.Parameter.POSITIONAL_OR_KEYWORD)
+        new_params = [self_param] + list(sig.parameters.values())
+        sig = sig.replace(parameters=new_params)
+    # print(f"DD dummy doc sig function: {dummy}: {sig}")
+    return sig
+
+
+def signature(f):
+    try:
+        if hasattr(f, '_parse_args'):
+            # Signature the scipy way.
+            return inspect.signature(f._parse_args)
+        else:
+            return inspect.signature(f)
+    except ValueError:
+        import numpy
+        if isinstance(f, numpy.ufunc):
+            return ufunc_signature
+        else:
+            try:
+                doc_sig = doc_signature(f)
+            except Exception as e:
+                log.warning(f"doc_signature() raised an exception: {e}")
+                raise NoSignature(f)
+
+            if doc_sig is not None:
+                return doc_sig
+            else:
+                raise NoSignature(f)
+
+
 class Function:
     def __init__(self,
-                 python_name,
-                 qualname,
+                 name,
                  function,
                  overrides,
                  builtin,
                  namespace='__wrap_namespace'):
+        self.name = name
+        self.name.apply_overrides(overrides)
+
         self.overrides = overrides
         self.function = function
-        self.python_name = python_name
-        self.qualname = qualname
-        self.context = TypeContext(function=function,
-                                   function_qualname=qualname)
+        self.context = TypeContext(
+            function=function, function_qualname=self.name.full_python_name())
         doc = inspect.getdoc(function)
-        raw_doc = getattr(function, '__doc__', '')
-        signature = self._signature()
-        fixed_values = overrides.fixed_values(self.qualname)
-        parameters = self._build_parameters(signature, raw_doc, fixed_values,
+        raw_doc = str(getattr(function, '__doc__', ''))
+        sig = self._signature()
+        fixed_values = overrides.fixed_values(self.name.full_python_name())
+        parameters = self._build_parameters(sig, raw_doc, fixed_values,
                                             builtin, self.context)
-        ret = self._build_ret(signature, raw_doc, fixed_values, builtin)
-        self.wrapper = Wrapper(python_name, self._ml_name(python_name), doc,
-                               parameters, ret, "function", namespace)
+        ret = self._build_ret(sig, raw_doc, fixed_values, builtin)
+        self.wrapper = Wrapper(name, doc, parameters, ret, "function",
+                               namespace)
         overrides.notice_function(self)
 
     def iter_types(self):
@@ -2845,32 +3334,25 @@ class Function:
             yield param.ty
         yield self.wrapper.ret.ty
 
-    def _ml_name(self, python_name):
-        # warning: all overrides are resolved based on the function
-        # qualname, not python_name (which may in some rare cases be
-        # different)
-        ml = self.overrides.ml_name(self.qualname)
-        if ml is not None:
-            return ml
-        return mlid(python_name)
+    # def _ml_name(self):
+    #     return self.name.ml_name()
+    #     # warning: all overrides are resolved based on the function
+    #     # qualname, not python_name (which may in some rare cases be
+    #     # different)
+    #     ml = self.overrides.ml_name(self.name.full_python_name())
+    #     if ml is not None:
+    #         return ml
+    #     return mlid(python_name)
 
     def _signature(self):
-        sig = self.overrides.signature(self.qualname)
+        sig = self.overrides.signature(self.name.full_python_name())
         if sig is not None:
             return sig
-        try:
-            if hasattr(self.function, '_parse_args'):
-                # Signature the scipy way.
-                return inspect.signature(self.function._parse_args)
-            else:
-                return inspect.signature(self.function)
-        except ValueError:
-            raise NoSignature(self.function)
+        return signature(self.function)
 
-    def _build_parameters(self, signature, doc, fixed_values, builtin,
-                          context):
+    def _build_parameters(self, sig, doc, fixed_values, builtin, context):
         context = context.add(group="params")
-        param_types = self.overrides.param_types(self.qualname)
+        param_types = self.overrides.param_types(self.name.full_python_name())
         if param_types is None:
             param_types = parse_types(doc,
                                       builtin,
@@ -2879,87 +3361,95 @@ class Function:
             # Make sure all params are in param_types, so that the
             # overrides trigger (even in case the params were not
             # found parsing the doc).
-            for k in signature.parameters.keys():
+            for k in sig.parameters.keys():
                 if k not in param_types:
                     param_types[k] = UnknownType(
                         f"{k} not found in parsed types {list(param_types.keys())}"
                     )
-            param_types = self.overrides.types(self.qualname, param_types,
-                                               context)
+            param_types = self.overrides.types(self.name.full_python_name(),
+                                               param_types, context)
 
         parameters = []
         # Some functions in Scipy have both an n and an N parameter,
         # which are both mapped to n in OCaml. Detect and fix it.
         seen_ml_names = set()
-        for python_name, parameter in signature.parameters.items():
+        for python_name, parameter in sig.parameters.items():
             ty = param_types[python_name]
-            param = Parameter(python_name, ty, parameter)
-            while param.ml_name in seen_ml_names:
-                param.ml_name += "'"
-            seen_ml_names.add(param.ml_name)
+            param = Parameter(LowerName(python_name, self.name), ty, parameter)
+            while param.name.ml_name() in seen_ml_names:
+                param.name.adjust()
+            seen_ml_names.add(param.name.ml_name())
             if python_name in fixed_values:
                 param.fixed_value = fixed_values[python_name][0]
             if param.is_star_star():
                 if not isinstance(param.ty, UnknownType):
-                    print(
-                        f"WW overriding {param} to have type (string * Py.Object.t) list"
+                    log.warning(
+                        f"overriding {param} to have type (string * Py.Object.t) list"
                     )
                 param.ty = StarStar()
             if param.is_star():
                 if not isinstance(param.ty, List):
                     if not isinstance(param.ty, UnknownType):
-                        print(
-                            f"WW overriding {param} to have type List(PyObject())"
+                        log.warning(
+                            f"overriding {param} to have type List(PyObject())"
                         )
                     param.ty = List(PyObject())
 
             parameters.append(param)
+
+        self.overrides.parameters(parameters)
+
         return parameters
 
-    def _build_ret(self, signature, doc, fixed_values, builtin):
+    def _build_ret(self, sig, doc, fixed_values, builtin):
         context = self.context.add(group="ret")
-        ret_type = self.overrides.ret_type(self.qualname, context)
-        if ret_type is None:
-            if self.overrides.returns_bunch(self.qualname):
-                ret_type = parse_bunch(doc,
-                                       builtin,
-                                       context=context,
-                                       section='Returns')
-            else:
-                ret_type_elements = parse_types(doc,
-                                                builtin,
-                                                context,
-                                                section='Returns')
 
-                for k, v in fixed_values.items():
-                    if v[1] and k in ret_type_elements:
-                        del ret_type_elements[k]
-                ret_type = make_return_type(ret_type_elements)
+        if self.overrides.returns_bunch(self.name.full_python_name()):
+            ret_type = parse_bunch(doc,
+                                   builtin,
+                                   context=context,
+                                   section='Returns')
+        else:
+            ret_type_elements = parse_types(doc,
+                                            builtin,
+                                            context,
+                                            section='Returns')
 
-        return Return(ret_type)
+            for k, v in fixed_values.items():
+                if v[1] and k in ret_type_elements:
+                    del ret_type_elements[k]
+            ret_type = make_return_type(ret_type_elements)
 
-    def ml(self, module_path):
-        return self.wrapper.ml(module_path)
+        over_ret_type = self.overrides.ret_type(
+            self.name.full_python_name(), context.add(auto_type=ret_type))
 
-    def mli(self, module_path, doc=True):
-        return self.wrapper.mli(module_path, doc=doc)
+        if over_ret_type is not None:
+            ret_type = over_ret_type
 
-    def md(self, module_path):
-        return self.wrapper.md(module_path)
+        return Return(ret_type, self.name)
+
+    def ml(self):
+        return self.wrapper.ml()
+
+    def mli(self, doc=True):
+        return self.wrapper.mli(doc=doc)
+
+    def md(self):
+        return self.wrapper.md()
 
     def examples(self):
         f = io.StringIO()
         write_examples(f, self.function)
         return f.getvalue()
 
-    def write_to_ml(self, f, module_path):
-        f.write(self.ml(module_path))
+    def write_to_ml(self, f):
+        f.write(self.ml())
 
-    def write_to_mli(self, f, module_path):
-        f.write(self.mli(module_path))
+    def write_to_mli(self, f):
+        f.write(self.mli())
 
-    def write_to_md(self, f, module_path):
-        f.write(self.md(module_path))
+    def write_to_md(self, f):
+        f.write(self.md())
 
     def write_examples_to(self, f):
         write_examples(f, self.function)
@@ -2968,11 +3458,11 @@ class Function:
         return repr(self)
 
     def __repr__(self):
-        ret = f"{type(self).__name__} {self.wrapper.python_name}{self._signature()}:\n"
+        ret = f"{type(self).__name__} {self.wrapper.name.full_python_name()}{self._signature()}:\n"
         for param in self.wrapper.parameters:
             ret += f"    {param} ->\n"
         ret += f"    {self.wrapper.ret}\n"
-        ret += f"  {self.mli('Sklearn', doc=False)}"
+        ret += f"  {self.mli(doc=False)}"
         # ret += f"  {self.ml('Sklearn')}"
         return ret
 
@@ -2998,9 +3488,8 @@ class DummyFunction:
 
 
 class Method(Function):
-    def __init__(self, python_name, qualname, function, overrides, builtin):
-        super().__init__(python_name,
-                         qualname,
+    def __init__(self, name, function, overrides, builtin):
+        super().__init__(name,
                          function,
                          overrides,
                          builtin,
@@ -3010,31 +3499,32 @@ class Method(Function):
     def _build_parameters(self, *args, **kwargs):
         super_params = super()._build_parameters(*args, **kwargs)
         if getattr(self.function, '__self__', None) is None and (
-                not super_params or super_params[0].python_name != 'self'):
-            print(
-                f'WW ignoring method, arg 1 != self: {self.qualname}{self._signature()}'
+                not super_params
+                or super_params[0].name.python_name() != 'self'):
+            log.warning(
+                f'ignoring method {self.name.full_python_name()}, arg 1 != self: {self._signature()}'
             )
             raise OutsideScope(self.function)
-        params = [x for x in super_params if x.python_name != 'self']
+        params = [x for x in super_params if x.name.python_name() != 'self']
         params.append(SelfParameter())
         return params
 
 
 class Ctor(Function):
-    def __init__(self, python_name, qualname, function, overrides, builtin):
-        super().__init__(python_name,
-                         qualname,
+    def __init__(self, name, function, overrides, builtin):
+        super().__init__(name,
                          function,
                          overrides,
                          builtin,
                          namespace='__wrap_namespace')
         self.wrapper.doc_type = "constructor and attributes"
+        self.name.set_ml_name('create')
 
     def _build_ret(self, _signature, _doc, _fixed_values, _builtin):
-        return Return(Self())
+        return Return(Self(), self.name)
 
-    def _ml_name(self, _python_name):
-        return 'create'
+    # def _ml_name(self, _python_name):
+    #     return 'create'
 
 
 def re_compile(regex):
@@ -3043,7 +3533,7 @@ def re_compile(regex):
     try:
         return re.compile(regex)
     except re.error as e:
-        print(f"error compiling regex {regex}: {e}")
+        log.error(f"error compiling regex {regex}: {e}")
         raise
 
 
@@ -3052,10 +3542,10 @@ def compile_dict_keys(dic):
 
 
 class Overrides:
-    def __init__(self, overrides, score=r''):
+    def __init__(self, overrides, scope=r''):
         self.overrides = self._compile_regexes(overrides)
         self.triggered = set()
-        self.scope = score
+        self.scope = re.compile(scope)
         self._on_function = []
         self._blacklisted_submodules = []
 
@@ -3077,11 +3567,14 @@ class Overrides:
             try:
                 cb(f)
             except Exception as e:
-                print(f"WW {f}: on_function callback raised an exception: {e}")
+                log.warning(
+                    f"{f}: on_function callback raised an exception: {e}")
                 raise
 
     def check_scope(self, full_python_name):
-        return re.match(self.scope, full_python_name)
+        ret = re.match(self.scope, full_python_name) is not None
+        # print(f"DD check scope {full_python_name} / {self.scope.pattern}: {ret}")
+        return ret
 
     def _compile_regexes(self, overrides):
         overrides = compile_dict_keys(overrides)
@@ -3121,6 +3614,13 @@ class Overrides:
             except KeyError:
                 pass
         return None
+
+    def parameters(self, parameters):
+        for param in parameters:
+            for dic in self._iter_function_matches(
+                    param.name.full_python_name(), 'parameters'):
+                if not dic.get('name', True):
+                    param.remove_name()
 
     def param_types(self, qualname):
         ret = []
@@ -3183,7 +3683,7 @@ class Overrides:
             if k not in self.triggered:
                 not_triggered.add(k)
         if not_triggered:
-            print(f"WW overrides: keys not triggered: {not_triggered}")
+            log.warning(f"overrides: keys not triggered: {not_triggered}")
 
 
 def dummy_train_test_split(*arrays,
@@ -3223,10 +3723,11 @@ def map_enum(t, f):
 
 def scoring_param(context):
     import sklearn.metrics
-    print(list(sklearn.metrics.SCORERS.keys()))
+    # log.debug(list(sklearn.metrics.SCORERS.keys()))
     scoring = Enum([StringValue(x) for x in sklearn.metrics.SCORERS.keys()])
     scoring.tag_name = lambda: "Score"
-    print(f"DD scoring context:\n{context}")
+
+    # log.debug(f"scoring context:\n{context}")
 
     def to_scoring(t):
         if isinstance(t, String):
@@ -3348,7 +3849,7 @@ sklearn_overrides = {
             r'^(base_)?estimator$': Estimator(),
             r'scoring': scoring_param,
             r'labels_': if_unknown(Arr()),
-            r'^decision_tree$': if_unknown(BaseType('Sklearn.Tree.BaseDecisionTree')),
+            r'^decision_tree$': if_unknown(BaseType('sklearn.tree.BaseDecisionTree')),
         }),
     r'power_transform$':
     dict(types={
@@ -3424,6 +3925,76 @@ sklearn_overrides = {
 scipy_overrides = {r'': dict(types={r'^loc$': Float(), '^scale$': Float()})}
 
 
+def zeros_sig():
+    import numpy as np
+    sig = inspect.signature(np.ones)
+    params = sig.parameters.copy()
+    params['shape'] = params['shape'].replace(
+        default=inspect.Parameter.empty,
+        kind=inspect.Parameter.POSITIONAL_OR_KEYWORD)
+    params.move_to_end('shape', last=False)
+    sig = sig.replace(parameters=params.values())
+    return sig
+
+
+def fix_ufunc_ret(context):
+    import numpy as np
+    if isinstance(context.function, np.ufunc) and isinstance(
+            context.auto_type, (PyObject, UnknownType)):
+        return Ndarray(inside_np=True)
+    else:
+        return context.auto_type
+
+
+def dummy_seed(seed):
+    pass
+
+
+seed_sig = inspect.signature(dummy_seed)
+
+
+def dummy_randn(*d):
+    pass
+
+
+randn_sig = inspect.signature(dummy_randn)
+
+np_overrides = {
+    r'':
+    dict(types={r'^(?:shape|newshape)$': List(Int)}),
+    r'^numpy.[^.]+$':
+    dict(ret_type=fix_ufunc_ret),
+    r'\.(?:a|shape|x)$':
+    dict(name=False),
+    r'^(?:ones|zeros)$':
+    dict(signature=zeros_sig()),
+    r'ndarray\.__getitem__$':
+    dict(ml_name='get',
+         types={
+             r'key': WrappedModule('Wrap_utils.Index'),
+             'value': Self()
+         },
+         ret_type=Self()),
+    r'ndarray\.__setitem__$':
+    dict(ml_name='set',
+         types={
+             r'key': WrappedModule('Wrap_utils.Index'),
+             'value': Self()
+         },
+         ret_type=Unit()),
+    r'^numpy\.random\.seed$':
+    dict(signature=seed_sig, param_types=dict(seed=Int()), ret_type=Unit()),
+    r'^numpy\.random\.randn$':
+    dict(signature=randn_sig,
+         param_types=dict(d=List(Int())),
+         ret_type=Ndarray(inside_np=True)),
+    r'^numpy\.random\.random_sample$':
+    dict(ret_type=Ndarray(inside_np=True)),
+    r'^numpy\.random\.':
+    dict(types={r'^size$': List(Int())}),
+}
+
+
 def write_version(package, build_dir, registry):
     import sklearn.utils
     full_version = sklearn.utils.validation.LooseVersion(
@@ -3440,12 +4011,13 @@ def write_version(package, build_dir, registry):
 def scipy_on_function(f):
     import scipy.stats.distributions
     # print(f"DD calling scipy callback on {f.qualname}")
-    if f.qualname.startswith('scipy.stats'):
-        gen = f'{f.python_name}_gen'
+    if f.name.full_python_name().startswith('scipy.stats'):
+        gen = f'{f.name.python_name()}_gen'
         # print(f"DD testing for hasattr {gen}")
         if hasattr(scipy.stats.distributions, gen):
-            f.wrapper.ret.ty = WrappedModule(
-                f'Scipy.Stats.Distributions.{make_module_name(gen)}')
+            # f.wrapper.ret.ty = WrappedModule(
+            #     f'Scipy.Stats.Distributions.{make_module_name(gen)}')
+            f.wrapper.ret.ty = BaseType(f'scipy.stats.distributions.{gen}')
             # print(f"DD adjusted return type on {f}")
 
 
@@ -3454,17 +4026,19 @@ def main():
     # catch them in order not to wrap them.
     import warnings
     warnings.simplefilter('error', FutureWarning)
+    warnings.simplefilter('error', DeprecationWarning)
 
     build_dir = pathlib.Path('.')
     # build_dir.mkdir(parents=True, exist_ok=True)
 
     import sys
     if len(sys.argv) <= 1:
-        print("skdoc.py: no argument passed, not doing anything")
+        log.warning("skdoc.py: no argument passed, not doing anything")
         return
 
     mode = sys.argv[1]
     if mode == "build-sklearn":
+        # TODO: reference Numpy as Np.Numpy
         import sklearn
         over = Overrides(sklearn_overrides, r'sklearn(\..+)?')
         registry = Registry()
@@ -3473,29 +4047,38 @@ def main():
         pkg.write(build_dir)
         # Write this one separately, no sense having it in metrics and
         # it causes cross dep problems.
-        csr_matrix = Class(sklearn.metrics.pairwise.csr_matrix, "Sklearn",
-                           over, registry, builtin)
+        # csr_matrix = Class(UpperName('sklearn.metrics.pairwise.csr_matrix', None),
+        #                    sklearn.metrics.pairwise.csr_matrix,
+        #                    over, registry, builtin)
         # Remove all Csr_matrix methods that cause a dependence on Sklearn.Arr, since
         # they cause a dependency cycle.
-        remove_me = set()
-        for elt in csr_matrix.elements:
-            for ty in elt.iter_types():
-                if isinstance(ty, (Arr, Dtype, Generator)):
-                    remove_me.add(elt)
-                elif isinstance(ty, Enum):
-                    for t in ty.elements:
-                        if isinstance(t, (Arr, Dtype, Generator)):
-                            remove_me.add(elt)
-        for elt in remove_me:
-            # print(f"Csr_matrix: removing {elt}")
-            csr_matrix.remove_element(elt)
-        csr_matrix.write(build_dir, "Sklearn", ns="sklearn.metrics.pairwise")
+        # remove_me = set()
+        # for elt in csr_matrix.elements:
+        #     for ty in elt.iter_types():
+        #         if isinstance(ty, (Arr, Dtype, Generator)):
+        #             remove_me.add(elt)
+        #         elif isinstance(ty, Enum):
+        #             for t in ty.elements:
+        #                 if isinstance(t, (Arr, Dtype, Generator)):
+        #                     remove_me.add(elt)
+        # for elt in remove_me:
+        #     # print(f"Csr_matrix: removing {elt}")
+        #     csr_matrix.remove_element(elt)
+        # csr_matrix.write(build_dir, "Sklearn", ns="sklearn.metrics.pairwise")
         write_version(sklearn, build_dir, registry)
+
+        # import numpy
+        # numpy_over = Overrides({}, r'^numpy(\..+)?')
+        # pkg = Module(UpperName('numpy', None), numpy, over, registry,
+        #              numpy_builtin_types)
+        # pkg.write(build_dir)
+        # TODO: version
 
         registry.write(build_dir)
         registry.report_generated()
 
     elif mode == "build-scipy":
+        # TODO: reference Numpy as Np.Numpy
         builtin = scipy_builtin_types
         import scipy
         over = Overrides(scipy_overrides, r'scipy(\..+)?')
@@ -3510,9 +4093,16 @@ def main():
     elif mode == "build-numpy":
         builtin = numpy_builtin_types
         import numpy
-        over = Overrides({}, r'numpy(\..+)?')
+
+        over = Overrides(
+            np_overrides,
+            r'^(?!.*\bchararray\b.*)(?!numpy\.dtype)numpy(\..+)?')
         registry = Registry()
-        pkg = Package(numpy, over, registry, builtin)
+        # pkg = Module(in_ml_namespace('Np', UpperName('numpy', None)), numpy, over,
+        #              registry, builtin)
+        pkg = Module(UpperName('numpy', parent=None, ml_name='NumpyRaw'),
+                     numpy, over, registry, builtin)
+        # pkg = Package(numpy, over, registry, builtin)
         pkg.write(build_dir)
         write_version(numpy, build_dir, registry)
         registry.write(build_dir)
@@ -3527,7 +4117,7 @@ def main():
         builtin = sklearn_builtin_types
         pkg = Package(sklearn, over, registry, builtin)
         path = pathlib.Path('./_build/examples/auto/')
-        print(f"extracting examples to {path}")
+        log.info(f"extracting examples to {path}")
         pkg.write_examples(path)
 
     over.report_not_triggered()
@@ -3537,4 +4127,5 @@ assert test_remove_shape(), "some remove_shape() tests failed"
 assert test_parse_enum(), "some parse_enum() tests failed"
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG, filename='skdoc.log')
     main()

@@ -1,11 +1,8 @@
+module Np = Np.Numpy
+
 let print f x = Format.printf "%a" f x
 let print_py x = Format.printf "%s" (Py.Object.to_string x)
-let print_ndarray = print Sklearn.Arr.pp
-
-let matrix = Sklearn.Arr.Float.matrix
-let vector = Sklearn.Arr.Float.vector
-let matrixi = Sklearn.Arr.Int.matrix
-let vectori = Sklearn.Arr.Int.vector
+let print_ndarray = print Np.Ndarray.pp
 
 (* AdaBoostClassifier *)
 (*
@@ -40,7 +37,7 @@ let%expect_test "AdaBoostClassifier" =
   [%expect {|
       [0.28 0.42 0.14 0.16]
   |}];
-  print_ndarray @@ AdaBoostClassifier.predict ~x:(matrixi [|[|0; 0; 0; 0|]|]) clf;
+  print_ndarray @@ AdaBoostClassifier.predict ~x:(Np.matrixi [|[|0; 0; 0; 0|]|]) clf;
   [%expect {|
       [1]
   |}];
@@ -81,7 +78,7 @@ let%expect_test "AdaBoostRegressor" =
   [%expect {|
         [0.27885832 0.71092234 0.00654703 0.00367231]
      |}];
-  print_ndarray @@ AdaBoostRegressor.predict ~x:(matrixi [|[|0; 0; 0; 0|]|]) regr;
+  print_ndarray @@ AdaBoostRegressor.predict ~x:(Np.matrixi [|[|0; 0; 0; 0|]|]) regr;
   [%expect {|
         [4.79722349]
      |}];
@@ -121,7 +118,7 @@ let%expect_test "BaggingClassifier" =
                                  ~n_estimators:10 ~random_state:0 ()
                                |> fit ~x ~y)
   in
-  print_ndarray @@ BaggingClassifier.predict ~x:(matrixi [|[|0; 0; 0; 0|]|]) clf;
+  print_ndarray @@ BaggingClassifier.predict ~x:(Np.matrixi [|[|0; 0; 0; 0|]|]) clf;
   [%expect {|
       [1]
    |}]
@@ -150,7 +147,7 @@ let%expect_test "BaggingRegressor" =
                                  ~n_estimators:10 ~random_state:0 ()
                                |> fit ~x ~y)
   in
-  print_ndarray @@ BaggingRegressor.predict ~x:(matrixi [|[|0; 0; 0; 0|]|]) regr;
+  print_ndarray @@ BaggingRegressor.predict ~x:(Np.matrixi [|[|0; 0; 0; 0|]|]) regr;
   [%expect {|
       [-2.87202411]
    |}]
@@ -184,7 +181,7 @@ let%expect_test "ExtraTreesClassifier" =
                            n_jobs=None, oob_score=False, random_state=0, verbose=0,
                            warm_start=False)
    |}];
-  print_ndarray @@ ExtraTreesClassifier.predict ~x:(matrixi [|[|0; 0; 0; 0|]|]) clf;
+  print_ndarray @@ ExtraTreesClassifier.predict ~x:(Np.matrixi [|[|0; 0; 0; 0|]|]) clf;
   [%expect {|
       [1]
    |}]
@@ -202,9 +199,9 @@ let%expect_test "ExtraTreesClassifier" =
 
 let%expect_test "IsolationForest" =
   let open Sklearn.Ensemble in
-  let x = matrix [|[|-1.1|]; [|0.3|]; [|0.5|]; [|100.|]|] in
+  let x = Np.matrixf [|[|-1.1|]; [|0.3|]; [|0.5|]; [|100.|]|] in
   let clf = IsolationForest.(create ~random_state:0 () |> fit ~x) in
-  print_ndarray @@ IsolationForest.predict ~x:(matrix [|[|0.1|]; [|0.|]; [|90.|]|]) clf;
+  print_ndarray @@ IsolationForest.predict ~x:(Np.matrixf [|[|0.1|]; [|0.|]; [|90.|]|]) clf;
   [%expect {| [ 1  1 -1] |}]
 
 
@@ -244,7 +241,7 @@ let%expect_test "RandomForestClassifier" =
   [%expect {|
       [0.14205973 0.76664038 0.0282433  0.06305659]
    |}];
-  print_ndarray @@ RandomForestClassifier.predict ~x:(matrixi [|[|0; 0; 0; 0|]|]) clf;
+  print_ndarray @@ RandomForestClassifier.predict ~x:(Np.matrixi [|[|0; 0; 0; 0|]|]) clf;
   [%expect {|
       [1]
    |}]
@@ -284,7 +281,7 @@ let%expect_test "RandomForestRegressor" =
   [%expect {|
       [0.18146984 0.81473937 0.00145312 0.00233767]
    |}];
-  print_ndarray @@ RandomForestRegressor.predict ~x:(matrixi [|[|0; 0; 0; 0|]|]) regr;
+  print_ndarray @@ RandomForestRegressor.predict ~x:(Np.matrixi [|[|0; 0; 0; 0|]|]) regr;
   [%expect {|
       [-8.32987858]
    |}]
@@ -423,8 +420,8 @@ let%expect_test "VotingClassifier" =
   let clf1 = LogisticRegression.(create ~multi_class:`Multinomial ~random_state:1 () |> as_estimator) in
   let clf2 = RandomForestClassifier.(create ~n_estimators:50 ~random_state:1 () |> as_estimator) in
   let clf3 = GaussianNB.(create () |> as_estimator) in
-  let x = matrixi [|[|-1; -1|]; [|-2; -1|]; [|-3; -2|]; [|1; 1|]; [|2; 1|]; [|3; 2|]|] in
-  let y = vectori [|1; 1; 1; 2; 2; 2|] in
+  let x = Np.matrixi [|[|-1; -1|]; [|-2; -1|]; [|-3; -2|]; [|1; 1|]; [|2; 1|]; [|3; 2|]|] in
+  let y = Np.vectori [|1; 1; 1; 2; 2; 2|] in
   let eclf1 = VotingClassifier.create ~estimators:["lr", clf1; "rf", clf2; "gnb", clf3] ~voting:`Hard () in
   let eclf1 = VotingClassifier.fit eclf1 ~x ~y in
   print_ndarray @@ VotingClassifier.predict ~x eclf1;
@@ -443,14 +440,14 @@ let%expect_test "VotingClassifier" =
       [1 1 1 2 2 2]
    |}];
   let eclf3 = VotingClassifier.create ~estimators:["lr", clf1; "rf", clf2; "gnb", clf3]
-      ~voting:`Soft ~weights:(vectori [|2;1;1|]) ~flatten_transform:true ()
+      ~voting:`Soft ~weights:(Np.vectori [|2;1;1|]) ~flatten_transform:true ()
   in
   let eclf3 = VotingClassifier.fit eclf3 ~x ~y in
   print_ndarray @@ VotingClassifier.predict eclf3 ~x;
   [%expect {|
       [1 1 1 2 2 2]
    |}];
-  Sklearn.Arr.(VotingClassifier.transform eclf3 ~x |> shape |> Int.vector |> print pp);
+  Np.(VotingClassifier.transform eclf3 ~x |> shape |> vectori |> print pp);
   [%expect {| [6 6] |}]
 
 
@@ -474,8 +471,8 @@ let%expect_test "VotingRegressor" =
   let open Sklearn.Linear_model in
   let r1 = LinearRegression.(create () |> as_estimator) in
   let r2 = RandomForestRegressor.(create ~n_estimators:10 ~random_state:1 () |> as_estimator) in
-  let x = matrixi [|[|1; 1|]; [|2; 4|]; [|3; 9|]; [|4; 16|]; [|5; 25|]; [|6; 36|]|] in
-  let y = vectori [|2; 6; 12; 20; 30; 42|] in
+  let x = Np.matrixi [|[|1; 1|]; [|2; 4|]; [|3; 9|]; [|4; 16|]; [|5; 25|]; [|6; 36|]|] in
+  let y = Np.vectori [|2; 6; 12; 20; 30; 42|] in
   let er = VotingRegressor.create ~estimators:["lr", r1;
                                                "rf", r2] () in
   print_ndarray @@ VotingRegressor.(fit ~x ~y er |> predict ~x);
@@ -754,7 +751,7 @@ array([ 19.2,  40. ,  42.8])
 
 let%expect_test "mquantiles" =
   let open Sklearn.Ensemble in
-  let a = vectori [|6; 47; 49; 15; 42; 41; 7; 39; 43; 40; 36;|] in
+  let a = Np.vectori [|6; 47; 49; 15; 42; 41; 7; 39; 43; 40; 36;|] in
   print_ndarray @@ Partial_dependence.mquantiles ~a ();
   [%expect {|
       [19.2 40.  42.8]
@@ -782,7 +779,7 @@ let%expect_test "mquantiles" =
 
 let%expect_test "mquantiles" =
    let open Sklearn.Ensemble in
-   let data = matrixi [|[| 6; 7; 1|]; [| 47; 15; 2|]; [| 49; 36; 3|]; [| 15; 39; 4|];
+   let data = Np.matrixi [|[| 6; 7; 1|]; [| 47; 15; 2|]; [| 49; 36; 3|]; [| 15; 39; 4|];
                         [| 42; 40; -999|]; [| 41; 41; -999|]; [| 7; -999; -999|]; [| 39; -999; -999|];
                         [| 43; -999; -999|]; [| 40; -999; -999|]; [| 36; -999; -999|]|]
    in
@@ -806,9 +803,9 @@ let%expect_test "mquantiles" =
 
 let%expect_test "mquantiles" =
   let open Sklearn.Ensemble in
-  let data = matrixi [|[| 6; 7; 1|]; [| 47; 15; 2|]; [| 49; 36; 3|]; [| 15; 39; 4|];
-                       [| 42; 40; -999|]; [| 41; 41; -999|]; [| 7; -999; -999|]; [| 39; -999; -999|];
-                       [| 43; -999; -999|]; [| 40; -999; -999|]; [| 36; -999; -999|]|]
+  let data = Np.matrixi [|[| 6; 7; 1|]; [| 47; 15; 2|]; [| 49; 36; 3|]; [| 15; 39; 4|];
+                          [| 42; 40; -999|]; [| 41; 41; -999|]; [| 7; -999; -999|]; [| 39; -999; -999|];
+                          [| 43; -999; -999|]; [| 40; -999; -999|]; [| 36; -999; -999|]|]
   in
   print_ndarray data;
   [%expect {|
@@ -824,7 +821,7 @@ let%expect_test "mquantiles" =
      [  40 -999 -999]
      [  36 -999 -999]]
    |}];
-  Sklearn.Arr.(set ~i:[slice (); `I 2] ~v:(int ~-999) data);
+  Np.(Ndarray.set ~key:[slice (); `I 2] ~value:(int ~-999) data);
   print_ndarray data;
   [%expect {|
     [[   6    7 -999]

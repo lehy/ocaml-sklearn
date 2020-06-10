@@ -1,15 +1,8 @@
+module Np = Np.Numpy
+
 let print f x = Format.printf "%a" f x
 let print_py x = Format.printf "%s" (Py.Object.to_string x)
-let print_ndarray = print Sklearn.Arr.pp
-
-let matrix = Sklearn.Arr.Float.matrix
-let vector = Sklearn.Arr.Float.vector
-let matrixi = Sklearn.Arr.Int.matrix
-let vectori = Sklearn.Arr.Int.vector
-
-let get x = match x with
-  | None -> failwith "Option.get"
-  | Some x -> x
+let print_ndarray = print Np.Ndarray.pp
 
 (* Parallel *)
 (*
@@ -228,7 +221,7 @@ let%expect_test "FeatureUnion" =
       ~transformer_list:["pca", Sklearn.Decomposition.PCA.(create ~n_components:(`I 1) () |> as_transformer);
                          "svd", Sklearn.Decomposition.TruncatedSVD.(create ~n_components:2 () |> as_transformer)] ()
   in
-  let x = matrix [|[|0.; 1.; 3.|]; [|2.; 2.; 5.|]|] in
+  let x = Np.matrixf [|[|0.; 1.; 3.|]; [|2.; 2.; 5.|]|] in
   print_ndarray @@ FeatureUnion.fit_transform union ~x;
   [%expect {|
     [[ 1.5         3.03954967  0.87243213]
@@ -287,13 +280,13 @@ let%expect_test "complex_pipeline" =
     [False False  True  True False False  True  True False  True False  True
       True False  True False  True  True False False] |}];
   (*  anova_svm.names_steps.anova: not wrapping that, won't be easier than the above  *)
-  let sub_pipeline = Pipeline.get_item anova_svm ~ind:(Arr.slice ~j:1 ()) |> Pipeline.of_pyobject in
+  let sub_pipeline = Pipeline.get_item anova_svm ~ind:(Np.slice ~j:1 ()) |> Pipeline.of_pyobject in
   let svc = Pipeline.get_item anova_svm ~ind:(`I (-1)) |> Svm.SVC.of_pyobject in
   let coef = Svm.SVC.coef_ svc in
-  Sklearn.Arr.(shape coef |> Int.vector |> print pp);
+  Np.(shape coef |> vectori |> print pp);
   [%expect {| [ 1 10] |}];
-  Arr.(Pipeline.inverse_transform sub_pipeline ~x:coef
-       |> shape |> Int.vector |> print pp);
+  Np.(Pipeline.inverse_transform sub_pipeline ~x:coef
+       |> shape |> vectori |> print pp);
   [%expect {| [ 1 20] |}]
   
 (* >>> from sklearn import svm

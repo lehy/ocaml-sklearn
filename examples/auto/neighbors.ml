@@ -1,3 +1,17 @@
+module Np = Np.Numpy
+
+let print f x = Format.printf "%a" f x
+
+let print_py x = Format.printf "%s" (Py.Object.to_string x)
+
+let print_ndarray = Np.Obj.print
+
+let print_float = Format.printf "%g\n"
+
+let print_string = Format.printf "%s\n"
+
+let print_int = Format.printf "%d\n"
+
 (* KNeighborsClassifier *)
 (*
 >>> X = [[0], [1], [2], [3]]
@@ -14,22 +28,9 @@ KNeighborsClassifier(...)
 
 *)
 
-let print f x = Format.printf "%a" f x
-let print_py x = Format.printf "%s" (Py.Object.to_string x)
-let print_ndarray = print Sklearn.Arr.pp
-
-let matrix = Sklearn.Arr.Float.matrix
-let vector = Sklearn.Arr.Float.vector
-let matrixi = Sklearn.Arr.Int.matrix
-let vectori = Sklearn.Arr.Int.vector
-
-let get x = match x with
-  | None -> failwith "Option.get"
-  | Some x -> x
-
 let%expect_test "KNeighborsClassifier" =
-    let x = matrix [|[|0.|]; [|1.|]; [|2.|]; [|3.|]|] in
-    let y = vector [|0.; 0.; 1.; 1.|] in
+    let x = Np.matrixf [|[|0.|]; [|1.|]; [|2.|]; [|3.|]|] in
+    let y = Np.vectorf [|0.; 0.; 1.; 1.|] in
     let open Sklearn.Neighbors in
     let neigh = KNeighborsClassifier.create ~n_neighbors:3 () in
     print KNeighborsClassifier.pp @@ KNeighborsClassifier.fit neigh ~x:(`Arr x) ~y;
@@ -38,11 +39,11 @@ let%expect_test "KNeighborsClassifier" =
                                  metric_params=None, n_jobs=None, n_neighbors=3, p=2,
                                  weights='uniform')
     |}];
-    print_ndarray @@ KNeighborsClassifier.predict neigh ~x:(matrix [|[|1.1|]|]);
+    print_ndarray @@ KNeighborsClassifier.predict neigh ~x:(Np.matrixf [|[|1.1|]|]);
     [%expect {|
             [0.]
     |}];
-    print_ndarray @@ KNeighborsClassifier.predict_proba neigh ~x:(matrix [|[|0.9|]|]);
+    print_ndarray @@ KNeighborsClassifier.predict_proba neigh ~x:(Np.matrixf [|[|0.9|]|]);
     [%expect {|
             [[0.66666667 0.33333333]]
     |}]
@@ -62,7 +63,7 @@ NearestNeighbors(n_neighbors=1)
 *)
 
 let%expect_test "KNeighborsMixin.kneighbors" =
-  let samples = matrix [|[|0.; 0.; 0.|]; [|0.; 0.5; 0.|]; [|1.; 1.; 0.5|]|] in
+  let samples = Np.matrixf [|[|0.; 0.; 0.|]; [|0.; 0.5; 0.|]; [|1.; 1.; 0.5|]|] in
   let open Sklearn.Neighbors in
   let neigh = NearestNeighbors.create ~n_neighbors:1 () in
   print NearestNeighbors.pp @@ NearestNeighbors.fit neigh ~x:(`Arr samples);
@@ -71,8 +72,8 @@ let%expect_test "KNeighborsMixin.kneighbors" =
                              metric_params=None, n_jobs=None, n_neighbors=1, p=2,
                              radius=1.0)
     |}];
-  let neigh_dist, neigh_ind = NearestNeighbors.kneighbors neigh ~x:(matrix [|[|1.; 1.; 1.|]|]) in
-  Format.printf "(%a, %a)" Sklearn.Arr.pp neigh_dist Sklearn.Arr.pp neigh_ind;
+  let neigh_dist, neigh_ind = NearestNeighbors.kneighbors neigh ~x:(Np.matrixf [|[|1.; 1.; 1.|]|]) in
+  Format.printf "(%a, %a)" Np.pp neigh_dist Np.pp neigh_ind;
   [%expect {|
             ([[0.5]], [[2]])
     |}]
@@ -94,7 +95,7 @@ array([[1., 0., 1.],
 *)
 
 let%expect_test "KNeighborsMixin.kneighbors_graph" =
-  let x = matrix [|[|0.|]; [|3.|]; [|1.|]|] in
+  let x = Np.matrixf [|[|0.|]; [|3.|]; [|1.|]|] in
   let open Sklearn.Neighbors in
   let neigh = NearestNeighbors.create ~n_neighbors:2 () in
   print NearestNeighbors.pp @@ NearestNeighbors.fit neigh ~x:(`Arr x);
@@ -104,7 +105,7 @@ let%expect_test "KNeighborsMixin.kneighbors_graph" =
                              radius=1.0)
     |}];
   let a = NearestNeighbors.kneighbors_graph neigh ~x in
-  Sklearn.Arr.pp Format.std_formatter @@ a;
+  Scipy.Sparse.Csr_matrix.pp Format.std_formatter @@ a;
   [%expect {|
             (0, 0)	1.0
             (0, 2)	1.0
@@ -113,7 +114,7 @@ let%expect_test "KNeighborsMixin.kneighbors_graph" =
             (2, 2)	1.0
             (2, 0)	1.0
     |}];
-  print Sklearn.Arr.pp @@ Sklearn.Arr.todense a;
+  print Np.pp @@ Scipy.Sparse.Csr_matrix.todense a;
   [%expect {|
             [[1. 0. 1.]
              [0. 1. 1.]
@@ -135,8 +136,8 @@ KNeighborsRegressor(...)
 *)
 
 let%expect_test "KNeighborsRegressor" =
-    let x = matrix [|[|0.|]; [|1.|]; [|2.|]; [|3.|]|] in
-    let y = vector [|0.; 0.; 1.; 1.|] in
+    let x = Np.matrixf [|[|0.|]; [|1.|]; [|2.|]; [|3.|]|] in
+    let y = Np.vectorf [|0.; 0.; 1.; 1.|] in
     let open Sklearn.Neighbors in
     let neigh = KNeighborsRegressor.create ~n_neighbors:2 () in
     print KNeighborsRegressor.pp @@ KNeighborsRegressor.fit neigh ~x:(`Arr x) ~y;
@@ -145,7 +146,7 @@ let%expect_test "KNeighborsRegressor" =
                                 metric_params=None, n_jobs=None, n_neighbors=2, p=2,
                                 weights='uniform')
     |}];
-    print_ndarray @@ KNeighborsRegressor.predict neigh ~x:(matrix [|[|1.5|]|]);
+    print_ndarray @@ KNeighborsRegressor.predict neigh ~x:(Np.matrixf [|[|1.5|]|]);
     [%expect {|
             [0.5]
     |}]
@@ -168,9 +169,9 @@ array([ -0.9821...,  -1.0370..., -73.3697...,  -0.9821...])
 
 let%expect_test "LocalOutlierFactor" =
   let open Sklearn.Neighbors in
-  let x = matrix [|[|-1.1|]; [|0.2|]; [|101.1|]; [|0.3|]|] in
+  let x = Np.matrixf [|[|-1.1|]; [|0.2|]; [|101.1|]; [|0.3|]|] in
   let clf = LocalOutlierFactor.create ~n_neighbors:2 () in
-  print Sklearn.Arr.pp @@ LocalOutlierFactor.fit_predict clf ~x;
+  print Np.pp @@ LocalOutlierFactor.fit_predict clf ~x;
   [%expect {|
             [ 1  1 -1  1]
     |}];
@@ -200,14 +201,14 @@ NearestCentroid()
 
 let%expect_test "NearestCentroid" =
   let open Sklearn.Neighbors in
-  let x = matrix [|[|-1.; -1.|]; [|-2.; -1.|]; [|-3.; -2.|]; [|1.; 1.|]; [|2.; 1.|]; [|3.; 2.|]|] in
-  let y = vectori [|1; 1; 1; 2; 2; 2|] in
+  let x = Np.matrixf [|[|-1.; -1.|]; [|-2.; -1.|]; [|-3.; -2.|]; [|1.; 1.|]; [|2.; 1.|]; [|3.; 2.|]|] in
+  let y = Np.vectori [|1; 1; 1; 2; 2; 2|] in
   let clf = NearestCentroid.create () in
   print NearestCentroid.pp @@ NearestCentroid.fit clf ~x ~y;
   [%expect {|
             NearestCentroid(metric='euclidean', shrink_threshold=None)
     |}];
-  print Sklearn.Arr.pp @@ NearestCentroid.predict clf ~x:(matrix [|[|-0.8; -1.|]|]);
+  print Np.pp @@ NearestCentroid.predict clf ~x:(Np.matrixf [|[|-0.8; -1.|]|]);
   [%expect {|
             [1]
     |}]
@@ -231,7 +232,7 @@ NearestNeighbors(radius=1.6)
 *)
 
 let%expect_test "RadiusNeighborsMixin.radius_neighbors" =
-    let samples = matrix [|[|0.; 0.; 0.|]; [|0.; 0.5; 0.|]; [|1.; 1.; 0.5|]|] in
+    let samples = Np.matrixf [|[|0.; 0.; 0.|]; [|0.; 0.5; 0.|]; [|1.; 1.; 0.5|]|] in
     let open Sklearn.Neighbors in
     let neigh = NearestNeighbors.create ~radius:1.6 () in
     print NearestNeighbors.pp @@ NearestNeighbors.fit neigh ~x:(`Arr samples);
@@ -240,12 +241,12 @@ let%expect_test "RadiusNeighborsMixin.radius_neighbors" =
                              metric_params=None, n_jobs=None, n_neighbors=5, p=2,
                              radius=1.6)
     |}];
-    let dist, ind = NearestNeighbors.radius_neighbors neigh ~x:(matrix [|[|1.; 1.; 1.|]|]) in
-    print Sklearn.Arr.List.pp @@ dist;
+    let dist, ind = NearestNeighbors.radius_neighbors neigh ~x:(Np.matrixf [|[|1.; 1.; 1.|]|]) in
+    print Np.Ndarray.List.pp @@ dist;
     [%expect {|
             [array([1.5, 0.5])]
     |}];
-    print Sklearn.Arr.List.pp @@ ind;
+    print Np.Ndarray.List.pp @@ ind;
     [%expect {|
             [array([1, 2])]
     |}]
@@ -267,7 +268,7 @@ array([[1., 0., 1.],
 *)
 
 let%expect_test "RadiusNeighborsMixin.radius_neighbors_graph" =
-  let x = matrix [|[|0.|]; [|3.|]; [|1.|]|] in
+  let x = Np.matrixf [|[|0.|]; [|3.|]; [|1.|]|] in
   let open Sklearn.Neighbors in
   let neigh = NearestNeighbors.create ~radius:1.5 () in
   print NearestNeighbors.pp @@ NearestNeighbors.fit neigh ~x:(`Arr x);
@@ -277,7 +278,7 @@ let%expect_test "RadiusNeighborsMixin.radius_neighbors_graph" =
                              radius=1.5)
     |}];
   let a = NearestNeighbors.radius_neighbors_graph neigh ~x in
-  Sklearn.Arr.pp Format.std_formatter @@ Sklearn.Arr.todense a;
+  Np.pp Format.std_formatter @@ Scipy.Sparse.Csr_matrix.todense a;
   [%expect {|
             [[1. 0. 1.]
              [0. 1. 0.]
@@ -366,8 +367,8 @@ RadiusNeighborsClassifier(...)
 *)
 
 let%expect_test "RadiusNeighborsClassifier" =
-   let x = matrixi [|[|0|]; [|1|]; [|2|]; [|3|]|] in
-   let y = vectori [|0; 0; 1; 1|] in
+   let x = Np.matrixi [|[|0|]; [|1|]; [|2|]; [|3|]|] in
+   let y = Np.vectori [|0; 0; 1; 1|] in
    let open Sklearn.Neighbors in
    let neigh = RadiusNeighborsClassifier.create ~radius:1.0 () in
    print RadiusNeighborsClassifier.pp @@ RadiusNeighborsClassifier.fit neigh ~x:(`Arr x) ~y;
@@ -376,11 +377,11 @@ let%expect_test "RadiusNeighborsClassifier" =
                                       metric_params=None, n_jobs=None, outlier_label=None,
                                       p=2, radius=1.0, weights='uniform')
     |}];
-   print_ndarray @@ RadiusNeighborsClassifier.predict neigh ~x:(matrix [|[|1.5|]|]);
+   print_ndarray @@ RadiusNeighborsClassifier.predict neigh ~x:(Np.matrixf [|[|1.5|]|]);
    [%expect {|
             [0]
     |}];
-   print_ndarray @@ RadiusNeighborsClassifier.predict_proba neigh ~x:(matrix [|[|1.0|]|]);
+   print_ndarray @@ RadiusNeighborsClassifier.predict_proba neigh ~x:(Np.matrixf [|[|1.0|]|]);
    [%expect {|
             [[0.66666667 0.33333333]]
     |}]
@@ -401,8 +402,8 @@ RadiusNeighborsRegressor(...)
 *)
 
 let%expect_test "RadiusNeighborsRegressor" =
-  let x = matrixi [|[|0|]; [|1|]; [|2|]; [|3|]|] in
-  let y = vectori [|0; 0; 1; 1|] in
+  let x = Np.matrixi [|[|0|]; [|1|]; [|2|]; [|3|]|] in
+  let y = Np.vectori [|0; 0; 1; 1|] in
   let open Sklearn.Neighbors in
   let neigh = RadiusNeighborsRegressor.create ~radius:1.0 () in
   print RadiusNeighborsRegressor.pp @@ RadiusNeighborsRegressor.fit neigh ~x:(`Arr x) ~y;
@@ -411,7 +412,7 @@ let%expect_test "RadiusNeighborsRegressor" =
                                      metric_params=None, n_jobs=None, p=2, radius=1.0,
                                      weights='uniform')
     |}];
-  print_ndarray @@ RadiusNeighborsRegressor.predict neigh ~x:(matrix [|[|1.5|]|]);
+  print_ndarray @@ RadiusNeighborsRegressor.predict neigh ~x:(Np.matrixf [|[|1.5|]|]);
   [%expect {|
             [0.5]
     |}]
@@ -431,12 +432,12 @@ array([[1., 0., 1.],
 *)
 
 let%expect_test "kneighbors_graph" =
-  let x = matrixi [|[|0|]; [|3|]; [|1|]|] in
+  let x = Np.matrixi [|[|0|]; [|3|]; [|1|]|] in
   let a =
     Sklearn.Neighbors.kneighbors_graph ~x:(`Arr x) ~n_neighbors:2
       ~mode:`Connectivity ~include_self:(`Bool true) ()
   in
-  Sklearn.Arr.pp Format.std_formatter @@ Sklearn.Arr.todense a;
+  Np.pp Format.std_formatter @@ Scipy.Sparse.Csr_matrix.todense a;
   [%expect {|
             [[1. 0. 1.]
              [0. 1. 1.]
@@ -459,11 +460,11 @@ array([[1., 0., 1.],
 *)
 
 let%expect_test "radius_neighbors_graph" =
-  let x = matrixi [|[|0|]; [|3|]; [|1|]|] in
+  let x = Np.matrixi [|[|0|]; [|3|]; [|1|]|] in
   let a = Sklearn.Neighbors.radius_neighbors_graph ~x:(`Arr x) ~radius:1.5
       ~mode:`Connectivity ~include_self:(`Bool true) ()
   in
-  Sklearn.Arr.pp Format.std_formatter @@ Sklearn.Arr.todense a;
+  Np.pp Format.std_formatter @@ Scipy.Sparse.Csr_matrix.todense a;
   [%expect {|
             [[1. 0. 1.]
              [0. 1. 0.]

@@ -75,6 +75,7 @@ module BaseTypes() = struct
 end
 
 (*  call this to print the Python part of a traceback when Py.E is caught  *)
+(*  XXX this crashes :(, I think it has worked at some point?  *)
 let print_python_traceback () =
   let _ = Py.Run.eval ~start: Py.File "import traceback" in
   match Py.Err.fetched () with
@@ -88,10 +89,10 @@ let print_python_traceback () =
    directly instead of going through an array (but we would need to
    create the keword args as a PyObject dict also, so we can use
    Py.Callable.to_function_as_tuple_and_dict) *)
-let pos_arg f arg_list =
-  let arr = Array.make (List.length arg_list) Py.none in
-  let _ = List.fold_left (fun i e -> arr.(i) <- f e; succ i) 0 arg_list in
-  arr
+(* let pos_arg f arg_list =
+ *   let arr = Array.make (List.length arg_list) Py.none in
+ *   let _ = List.fold_left (fun i e -> arr.(i) <- f e; succ i) 0 arg_list in
+ *   arr *)
 
 module Slice = struct
   type t = Py.Object.t

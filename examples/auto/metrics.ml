@@ -1,16 +1,16 @@
+module Np = Np.Numpy
+
 let print f x = Format.printf "%a" f x
+
 let print_py x = Format.printf "%s" (Py.Object.to_string x)
-let print_ndarray = print Sklearn.Arr.pp
+
+let print_ndarray = Np.Obj.print
+
 let print_float = Format.printf "%g\n"
+
 let print_string = Format.printf "%s\n"
 
-let matrix = Sklearn.Arr.Float.matrix
-let vector = Sklearn.Arr.Float.vector
-let matrixi = Sklearn.Arr.Int.matrix
-let vectori = Sklearn.Arr.Int.vector
-let vectors = Sklearn.Arr.String.vector
-
-let option_get = function Some x -> x | None -> invalid_arg "option_get: None"
+let print_int = Format.printf "%d\n"
 
 (* RocCurveDisplay *)
 (*
@@ -28,8 +28,8 @@ let option_get = function Some x -> x | None -> invalid_arg "option_get: None"
 
 let%expect_test "RocCurveDisplay" =
   let open Sklearn.Metrics in
-  let y = vectori [|0; 0; 1; 1|] in
-  let pred = vector [|0.1; 0.4; 0.35; 0.8|] in
+  let y = Np.vectori [|0; 0; 1; 1|] in
+  let pred = Np.vectorf [|0.1; 0.4; 0.35; 0.8|] in
   let fpr, tpr, _thresholds = roc_curve ~y_true:y ~y_score:pred () in
   print_ndarray fpr;
   [%expect {| [0.  0.  0.5 0.5 1. ] |}];
@@ -66,8 +66,8 @@ let%expect_test "RocCurveDisplay" =
 
 let%expect_test "accuracy_score" =
   let open Sklearn.Metrics in
-  let y_pred = vectori [|0; 2; 1; 3|] in
-  let y_true = vectori [|0; 1; 2; 3|] in
+  let y_pred = Np.vectori [|0; 2; 1; 3|] in
+  let y_true = Np.vectori [|0; 1; 2; 3|] in
   Format.printf "%g\n" @@ accuracy_score ~y_true ~y_pred ();
   [%expect {|
       0.5
@@ -88,7 +88,7 @@ let%expect_test "accuracy_score" =
 let%expect_test "accuracy_score" =
   let open Sklearn.Metrics in
   Format.printf "%g\n" @@
-  accuracy_score ~y_true:(matrixi [|[|0; 1|]; [|1; 1|]|]) ~y_pred:(Sklearn.Arr.ones [2; 2]) ();
+  accuracy_score ~y_true:(Np.matrixi [|[|0; 1|]; [|1; 1|]|]) ~y_pred:(Np.ones [2; 2]) ();
   [%expect {| 0.5 |}]
 
 (* auc *)
@@ -105,8 +105,8 @@ let%expect_test "accuracy_score" =
 
 let%expect_test "auc" =
   let open Sklearn.Metrics in
-  let y = vectori [|1; 1; 2; 2|] in
-  let pred = vector [|0.1; 0.4; 0.35; 0.8|] in
+  let y = Np.vectori [|1; 1; 2; 2|] in
+  let pred = Np.vectorf [|0.1; 0.4; 0.35; 0.8|] in
   let fpr, tpr, _thresholds = roc_curve ~y_true:y ~y_score:pred ~pos_label:(`I 2) () in
   Format.printf "%g\n" @@ auc ~x:fpr ~y:tpr ();
   [%expect {|
@@ -126,8 +126,8 @@ let%expect_test "auc" =
 
 let%expect_test "average_precision_score" =
   let open Sklearn.Metrics in
-  let y_true = vectori [|0; 0; 1; 1|] in
-  let y_score = vector [|0.1; 0.4; 0.35; 0.8|]in
+  let y_true = Np.vectori [|0; 0; 1; 1|] in
+  let y_score = Np.vectorf [|0.1; 0.4; 0.35; 0.8|]in
   Printf.printf "%g" @@ average_precision_score ~y_true ~y_score ();
   [%expect {|
       0.833333
@@ -145,8 +145,8 @@ let%expect_test "average_precision_score" =
 
 let%expect_test "balanced_accuracy_score" =
   let open Sklearn.Metrics in
-  let y_true = vectori [|0; 1; 0; 0; 1; 0|] in
-  let y_pred = vectori [|0; 1; 0; 0; 0; 1|] in
+  let y_true = Np.vectori [|0; 1; 0; 0; 1; 0|] in
+  let y_pred = Np.vectori [|0; 1; 0; 0; 0; 1|] in
   Format.printf "%g" @@ balanced_accuracy_score ~y_true ~y_pred ();
   [%expect {| 0.625 |}]
 
@@ -171,14 +171,14 @@ let%expect_test "balanced_accuracy_score" =
 
 let%expect_test "brier_score_loss" =
   let open Sklearn.Metrics in
-  let y_true = vectori [|0; 1; 1; 0|] in
-  let y_true_categorical = vectors [|"spam"; "ham"; "ham"; "spam"|] in
-  let y_prob = vector [|0.1; 0.9; 0.8; 0.3|] in
+  let y_true = Np.vectori [|0; 1; 1; 0|] in
+  let y_true_categorical = Np.vectors [|"spam"; "ham"; "ham"; "spam"|] in
+  let y_prob = Np.vectorf [|0.1; 0.9; 0.8; 0.3|] in
   Printf.printf "%g" @@ brier_score_loss ~y_true ~y_prob ();
   [%expect {|
       0.0375
   |}];
-  print_float @@ brier_score_loss ~y_true ~y_prob:Sklearn.Arr.((int 1)-y_prob) ~pos_label:(`I 0) ();
+  print_float @@ brier_score_loss ~y_true ~y_prob:Np.((int 1)-y_prob) ~pos_label:(`I 0) ();
   [%expect {|
       0.0375
   |}];
@@ -186,7 +186,7 @@ let%expect_test "brier_score_loss" =
   [%expect {|
       0.0375
   |}];
-  print_float @@ brier_score_loss ~y_true ~y_prob:Sklearn.Arr.(y_prob > float 0.5) ();
+  print_float @@ brier_score_loss ~y_true ~y_prob:Np.(y_prob > float 0.5) ();
   [%expect {|
       0
   |}]
@@ -236,9 +236,9 @@ let print_report report =
 
 let%expect_test "classification_report" =
   let open Sklearn.Metrics in
-  let y_true = vectori [|0; 1; 2; 2; 2|] in
-  let y_pred = vectori [|0; 0; 2; 2; 1|] in
-  let target_names = vectors [|"class 0"; "class 1"; "class 2"|] in
+  let y_true = Np.vectori [|0; 1; 2; 2; 2|] in
+  let y_pred = Np.vectori [|0; 0; 2; 2; 1|] in
+  let target_names = Np.vectors [|"class 0"; "class 1"; "class 2"|] in
   begin match classification_report ~y_true ~y_pred ~target_names () with
     | `Dict _ -> assert false
     | `S report -> print_endline report
@@ -254,9 +254,9 @@ let%expect_test "classification_report" =
          macro avg       0.50      0.56      0.49         5
       weighted avg       0.70      0.60      0.61         5
   |}];
-  let y_pred = vectori [|1; 1; 0|] in
-  let y_true = vectori [|1; 1; 1|] in
-  begin match classification_report ~y_true ~y_pred ~labels:(vectori [|1; 2; 3|]) () with
+  let y_pred = Np.vectori [|1; 1; 0|] in
+  let y_true = Np.vectori [|1; 1; 1|] in
+  begin match classification_report ~y_true ~y_pred ~labels:(Np.vectori [|1; 2; 3|]) () with
     | `Dict _ -> assert false
     | `S report -> print_endline report
   end;
@@ -271,7 +271,7 @@ let%expect_test "classification_report" =
          macro avg       0.33      0.22      0.27         3
       weighted avg       1.00      0.67      0.80         3
   |}];
-  begin match classification_report ~output_dict:true ~y_true ~y_pred ~labels:(vectori [|1; 2; 3|]) () with
+  begin match classification_report ~output_dict:true ~y_true ~y_pred ~labels:(Np.vectori [|1; 2; 3|]) () with
     | `Dict report -> print_report report
     | `S _ -> assert false
   end;
@@ -300,8 +300,8 @@ array([[2, 0, 0],
 
 let%expect_test "confusion_matrix" =
   let open Sklearn.Metrics in
-  let y_true = vectori [|2; 0; 2; 2; 0; 1|] in
-  let y_pred = vectori [|0; 0; 2; 2; 0; 2|] in
+  let y_true = Np.vectori [|2; 0; 2; 2; 0; 1|] in
+  let y_pred = Np.vectori [|0; 0; 2; 2; 0; 2|] in
   print_ndarray @@ confusion_matrix ~y_true ~y_pred ();
   [%expect {|
       [[2 0 0]
@@ -323,9 +323,9 @@ array([[2, 0, 0],
 
 let%expect_test "confusion_matrix" =
   let open Sklearn.Metrics in
-  let y_true = vectors [|"cat"; "ant"; "cat"; "cat"; "ant"; "bird"|] in
-  let y_pred = vectors [|"ant"; "ant"; "cat"; "cat"; "ant"; "cat"|] in
-  print_ndarray @@ confusion_matrix ~y_true ~y_pred ~labels:(vectors [|"ant"; "bird"; "cat"|]) ();
+  let y_true = Np.vectors [|"cat"; "ant"; "cat"; "cat"; "ant"; "bird"|] in
+  let y_pred = Np.vectors [|"ant"; "ant"; "cat"; "cat"; "ant"; "cat"|] in
+  print_ndarray @@ confusion_matrix ~y_true ~y_pred ~labels:(Np.vectors [|"ant"; "bird"; "cat"|]) ();
   [%expect {|
       [[2 0 0]
        [0 0 1]
@@ -341,9 +341,9 @@ let%expect_test "confusion_matrix" =
 
 let%expect_test "confusion_matrix" =
   let open Sklearn.Metrics in
-  let conf = confusion_matrix ~y_true:(vectori [|0; 1; 0; 1|]) ~y_pred:(vectori [|1; 1; 1; 0|]) () in
+  let conf = confusion_matrix ~y_true:(Np.vectori [|0; 1; 0; 1|]) ~y_pred:(Np.vectori [|1; 1; 1; 0|]) () in
   let [@ocaml.warning "-8"] [|tn; fp; fn; tp|] =
-    conf |> Sklearn.Arr.to_int_array
+    conf |> Np.Ndarray.to_int_array
   in
   print_ndarray conf;
   [%expect {|
@@ -383,9 +383,9 @@ let%expect_test "confusion_matrix" =
 let%expect_test "dcg_score" =
   let open Sklearn.Metrics in
   (* we have groud-truth relevance of some answers to a query *)
-  let true_relevance = matrixi [|[|10; 0; 0; 1; 5|]|] in
+  let true_relevance = Np.matrixi [|[|10; 0; 0; 1; 5|]|] in
   (* we predict scores for the answers *)
-  let scores = matrix [|[|0.1; 0.2; 0.3; 4.; 70.|]|] in
+  let scores = Np.matrixf [|[|0.1; 0.2; 0.3; 4.; 70.|]|] in
   print_float @@ dcg_score ~y_true:true_relevance ~y_score:scores ();
   [%expect {|
       9.49946
@@ -396,7 +396,7 @@ let%expect_test "dcg_score" =
       5.63093
   |}];
   (* now we have some ties in our prediction *)
-  let scores = matrixi [|[|1; 0; 0; 0; 1|]|] in
+  let scores = Np.matrixi [|[|1; 0; 0; 0; 1|]|] in
   (* by default ties are averaged, so here we get the average true *)
   (* relevance of our top predictions: (10 + 5) / 2 = 7.5 *)
   print_float @@ dcg_score ~y_true:true_relevance ~y_score:scores ~k:1 ();
@@ -427,7 +427,7 @@ array([[1.        ],
 
 let%expect_test "euclidean_distances" =
   let open Sklearn.Metrics in
-  let x = matrixi [|[|0; 1|]; [|1; 1|]|] in
+  let x = Np.matrixi [|[|0; 1|]; [|1; 1|]|] in
   (* distance between rows of x *)
   print_ndarray @@ euclidean_distances ~x ~y:x ();
   [%expect {|
@@ -435,7 +435,7 @@ let%expect_test "euclidean_distances" =
        [1. 0.]]
   |}];
   (* get distance to origin *)
-  print_ndarray @@ euclidean_distances ~x ~y:(matrixi [|[|0; 0|]|]) ();
+  print_ndarray @@ euclidean_distances ~x ~y:(Np.matrixi [|[|0; 0|]|]) ();
   [%expect {|
       [[1.        ]
        [1.41421356]]
@@ -457,14 +457,14 @@ let%expect_test "euclidean_distances" =
 
 let%expect_test "explained_variance_score" =
   let open Sklearn.Metrics in
-  let y_true = vector [|3.; -0.5; 2.; 7.|] in
-  let y_pred = vector [|2.5; 0.0; 2.; 8.|] in
+  let y_true = Np.vectorf [|3.; -0.5; 2.; 7.|] in
+  let y_pred = Np.vectorf [|2.5; 0.0; 2.; 8.|] in
   print_ndarray @@ explained_variance_score ~y_true ~y_pred ();
   [%expect {|
       0.9571734475374732
   |}];
-  let y_true = matrix [|[|0.5; 1.|]; [|-1.; 1.|]; [|7.; -6.|]|] in
-  let y_pred = matrixi [|[|0; 2|]; [|-1; 2|]; [|8; -5|]|] in
+  let y_true = Np.matrixf [|[|0.5; 1.|]; [|-1.; 1.|]; [|7.; -6.|]|] in
+  let y_pred = Np.matrixi [|[|0; 2|]; [|-1; 2|]; [|8; -5|]|] in
   print_ndarray @@ explained_variance_score ~y_true ~y_pred ~multioutput:`Uniform_average ();
   [%expect {| 0.9838709677419355 |}]
 
@@ -490,8 +490,8 @@ array([0.8, 0. , 0. ])
 
 let%expect_test "f1_score" =
   let open Sklearn.Metrics in
-  let y_true = vectori [|0; 1; 2; 0; 1; 2|] in
-  let y_pred = vectori [|0; 2; 1; 0; 0; 1|] in
+  let y_true = Np.vectori [|0; 1; 2; 0; 1; 2|] in
+  let y_pred = Np.vectori [|0; 2; 1; 0; 0; 1|] in
   print_ndarray @@ f1_score ~y_true ~y_pred ~average:`Macro ();
   [%expect {|
       0.26666666666666666
@@ -508,8 +508,8 @@ let%expect_test "f1_score" =
   [%expect {|
       [0.8 0.  0. ]
   |}];
-  let y_true = vectori [|0; 0; 0; 0; 0; 0|] in
-  let y_pred = vectori [|0; 0; 0; 0; 0; 0|] in
+  let y_true = Np.vectori [|0; 0; 0; 0; 0; 0|] in
+  let y_pred = Np.vectori [|0; 0; 0; 0; 0; 0|] in
   print_ndarray @@ f1_score ~y_true ~y_pred ~zero_division:`One ();
   [%expect {|
       1.0
@@ -534,8 +534,8 @@ array([0.71..., 0.        , 0.        ])
 
 let%expect_test "fbeta_score" =
   let open Sklearn.Metrics in
-  let y_true = vectori [|0; 1; 2; 0; 1; 2|] in
-  let y_pred = vectori [|0; 2; 1; 0; 0; 1|] in
+  let y_true = Np.vectori [|0; 1; 2; 0; 1; 2|] in
+  let y_pred = Np.vectori [|0; 2; 1; 0; 0; 1|] in
   print_ndarray @@ fbeta_score ~y_true ~y_pred ~average:`Macro ~beta:0.5 ();
   [%expect {|
       0.23809523809523805
@@ -566,8 +566,8 @@ let%expect_test "fbeta_score" =
 
 let%expect_test "hamming_loss" =
   let open Sklearn.Metrics in
-  let y_pred = vectori [|1; 2; 3; 4|] in
-  let y_true = vectori [|2; 2; 3; 4|] in
+  let y_pred = Np.vectori [|1; 2; 3; 4|] in
+  let y_true = Np.vectori [|2; 2; 3; 4|] in
   print_float @@ hamming_loss ~y_true ~y_pred ();
   [%expect {|
       0.25
@@ -583,7 +583,7 @@ let%expect_test "hamming_loss" =
 
 let%expect_test "hamming_loss" =
   let open Sklearn.Metrics in
-  print_float @@ hamming_loss ~y_true:(matrixi [|[|0; 1|]; [|1; 1|]|]) ~y_pred:(Sklearn.Arr.zeros [2; 2]) ();
+  print_float @@ hamming_loss ~y_true:(Np.matrixi [|[|0; 1|]; [|1; 1|]|]) ~y_pred:(Np.zeros [2; 2]) ();
   [%expect {| 0.75 |}]
 
 
@@ -607,8 +607,8 @@ array([-2.18...,  2.36...,  0.09...])
 let%expect_test "hinge_loss" =
   let open Sklearn.Metrics in
   let open Sklearn.Svm in
-  let x = matrixi [|[|0|]; [|1|]|] in
-  let y = vectori [|-1; 1|] in
+  let x = Np.matrixi [|[|0|]; [|1|]|] in
+  let y = Np.vectori [|-1; 1|] in
   let est = LinearSVC.create ~random_state:0 () in
   print LinearSVC.pp @@ LinearSVC.fit ~x ~y est;
   [%expect {|
@@ -617,12 +617,12 @@ let%expect_test "hinge_loss" =
                 multi_class='ovr', penalty='l2', random_state=0, tol=0.0001,
                 verbose=0)
   |}];
-  let pred_decision = LinearSVC.decision_function ~x:(matrix [|[|-2.|]; [|3.|]; [|0.5|]|]) est in
+  let pred_decision = LinearSVC.decision_function ~x:(Np.matrixf [|[|-2.|]; [|3.|]; [|0.5|]|]) est in
   print_ndarray @@ pred_decision;
   [%expect {|
       [-2.18177944  2.36355888  0.09088972]
   |}];
-  print_float @@ hinge_loss ~y_true:(vectori [|-1; 1; 1|]) ~pred_decision ();
+  print_float @@ hinge_loss ~y_true:(Np.vectori [|-1; 1; 1|]) ~pred_decision ();
   [%expect {|
       0.303037
   |}]
@@ -646,9 +646,9 @@ LinearSVC()
 let%expect_test "hinge_loss" =
   let open Sklearn.Metrics in
   let open Sklearn.Svm in
-  let x = matrixi [|[|0|]; [|1|]; [|2|]; [|3|]|] in
-  let y = vectori [|0; 1; 2; 3|] in
-  let labels = vectori [|0; 1; 2; 3|] in
+  let x = Np.matrixi [|[|0|]; [|1|]; [|2|]; [|3|]|] in
+  let y = Np.vectori [|0; 1; 2; 3|] in
+  let labels = Np.vectori [|0; 1; 2; 3|] in
   let est = LinearSVC.create ~random_state:0 () in
   print LinearSVC.pp @@ LinearSVC.fit ~x ~y est;
   [%expect {|
@@ -657,8 +657,8 @@ let%expect_test "hinge_loss" =
                 multi_class='ovr', penalty='l2', random_state=0, tol=0.0001,
                 verbose=0)
   |}];
-  let pred_decision = LinearSVC.decision_function ~x:(matrixi [|[|-1|]; [|2|]; [|3|]|]) est in
-  let y_true = vectori [|0; 2; 3|] in
+  let pred_decision = LinearSVC.decision_function ~x:(Np.matrixi [|[|-1|]; [|2|]; [|3|]|]) est in
+  let y_true = Np.vectori [|0; 2; 3|] in
   print_float @@ hinge_loss ~y_true ~pred_decision ~labels ();
   [%expect {| 0.564119 |}]
 
@@ -684,9 +684,9 @@ array([0.5, 0.5, 1. ])
 
 let%expect_test "jaccard_score" =
   let open Sklearn.Metrics in
-  let y_true = matrixi [|[|0; 1; 1|]; [|1; 1; 0|]|] in
-  let y_pred = matrixi [|[|1; 1; 1|]; [|1; 0; 0|]|] in
-  print_ndarray @@ jaccard_score ~y_true:(Sklearn.Arr.get ~i:[`I 0] y_true) ~y_pred:(Sklearn.Arr.get ~i:[`I 0] y_pred) (); 
+  let y_true = Np.matrixi [|[|0; 1; 1|]; [|1; 1; 0|]|] in
+  let y_pred = Np.matrixi [|[|1; 1; 1|]; [|1; 0; 0|]|] in
+  print_ndarray @@ jaccard_score ~y_true:(Np.Ndarray.get ~key:[`I 0] y_true) ~y_pred:(Np.Ndarray.get ~key:[`I 0] y_pred) (); 
   [%expect {|
       0.6666666666666666
    |}];
@@ -714,8 +714,8 @@ let%expect_test "jaccard_score" =
 
 let%expect_test "jaccard_score" =
   let open Sklearn.Metrics in
-  let y_pred = vectori [|0; 2; 1; 2|] in
-  let y_true = vectori [|0; 1; 2; 2|] in
+  let y_pred = Np.vectori [|0; 2; 1; 2|] in
+  let y_true = Np.vectori [|0; 1; 2; 2|] in
   print_ndarray @@ jaccard_score ~y_true ~y_pred ~average:`None ();
   [%expect {| [1.         0.         0.33333333] |}]
 
@@ -732,8 +732,8 @@ let%expect_test "jaccard_score" =
 
 let%expect_test "label_ranking_average_precision_score" =
   let open Sklearn.Metrics in
-  let y_true = matrixi [|[|1; 0; 0|]; [|0; 0; 1|]|] in
-  let y_score = matrix [|[|0.75; 0.5; 1.|]; [|1.; 0.2; 0.1|]|] in
+  let y_true = Np.matrixi [|[|1; 0; 0|]; [|0; 0; 1|]|] in
+  let y_score = Np.matrixf [|[|0.75; 0.5; 1.|]; [|1.; 0.2; 0.1|]|] in
   print_float @@ label_ranking_average_precision_score ~y_true ~y_score ();
   [%expect {| 0.416667 |}]
 
@@ -750,8 +750,8 @@ let%expect_test "label_ranking_average_precision_score" =
 let%expect_test "log_loss" =
   let open Sklearn.Metrics in
   print_float @@ log_loss
-    ~y_true:(vectors [|"spam"; "ham"; "ham"; "spam"|])
-    ~y_pred:(matrix [|[|0.1; 0.9|]; [|0.9; 0.1|]; [|0.8; 0.2|]; [|0.35; 0.65|]|]) ();
+    ~y_true:(Np.vectors [|"spam"; "ham"; "ham"; "spam"|])
+    ~y_pred:(Np.matrixf [|[|0.1; 0.9|]; [|0.9; 0.1|]; [|0.8; 0.2|]; [|0.35; 0.65|]|]) ();
   [%expect {|
       0.216162
   |}]
@@ -784,8 +784,8 @@ let%expect_test "make_scorer" =
   in
   print Sklearn.Model_selection.GridSearchCV.pp @@
   Sklearn.Model_selection.GridSearchCV.fit
-    ~x:(matrixi [|[|1;2|]; [|3;4|]; [|5;6|]; [|7;8|]; [|9;10|]; [|11;12|]|])
-    ~y:(vectori [|0; 1; 1; 0; 0; 1|]) grid;
+    ~x:(Np.matrixi [|[|1;2|]; [|3;4|]; [|5;6|]; [|7;8|]; [|9;10|]; [|11;12|]|])
+    ~y:(Np.vectori [|0; 1; 1; 0; 0; 1|]) grid;
   [%expect {|
      GridSearchCV(cv=2, error_score=nan,
                   estimator=LinearSVC(C=1.0, class_weight=None, dual=True,
@@ -835,8 +835,8 @@ let%expect_test "make_scorer" =
 
 let%expect_test "matthews_corrcoef" =
   let open Sklearn.Metrics in
-  let y_true = vectori [|+1; +1; +1; -1|] in
-  let y_pred = vectori [|+1; -1; +1; +1|] in
+  let y_true = Np.vectori [|+1; +1; +1; -1|] in
+  let y_pred = Np.vectori [|+1; -1; +1; +1|] in
   print_float @@ matthews_corrcoef ~y_true ~y_pred ();
   [%expect {| -0.333333 |}]
 
@@ -852,8 +852,8 @@ let%expect_test "matthews_corrcoef" =
 
 let%expect_test "max_error" =
   let open Sklearn.Metrics in
-  let y_true = vectori [|3; 2; 7; 1|] in
-  let y_pred = vectori [|4; 2; 7; 1|] in
+  let y_true = Np.vectori [|3; 2; 7; 1|] in
+  let y_pred = Np.vectori [|4; 2; 7; 1|] in
   print_float @@ max_error ~y_true ~y_pred ();
   [%expect {| 1 |}]
 
@@ -877,14 +877,14 @@ array([0.5, 1. ])
 
 let%expect_test "mean_absolute_error" =
   let open Sklearn.Metrics in
-  let y_true = vector [|3.; -0.5; 2.; 7.|] in
-  let y_pred = vector [|2.5; 0.0; 2.; 8.|] in
+  let y_true = Np.vectorf [|3.; -0.5; 2.; 7.|] in
+  let y_pred = Np.vectorf [|2.5; 0.0; 2.; 8.|] in
   print_ndarray @@ mean_absolute_error ~y_true ~y_pred ();
   [%expect {|
       0.5
    |}];
-  let y_true = matrix [|[|0.5; 1.|]; [|-1.; 1.|]; [|7.; -6.|]|] in
-  let y_pred = matrixi [|[|0; 2|]; [|-1; 2|]; [|8; -5|]|] in
+  let y_true = Np.matrixf [|[|0.5; 1.|]; [|-1.; 1.|]; [|7.; -6.|]|] in
+  let y_pred = Np.matrixi [|[|0; 2|]; [|-1; 2|]; [|8; -5|]|] in
   print_ndarray @@ mean_absolute_error ~y_true ~y_pred ();
   [%expect {|
       0.75
@@ -893,7 +893,7 @@ let%expect_test "mean_absolute_error" =
   [%expect {|
       [0.5 1. ]
    |}];
-  print_ndarray @@ mean_absolute_error ~y_true ~y_pred ~multioutput:(`Arr (vector [|0.3; 0.7|])) ();
+  print_ndarray @@ mean_absolute_error ~y_true ~y_pred ~multioutput:(`Arr (Np.vectorf [|0.3; 0.7|])) ();
   [%expect {| 0.85 |}]
 
 
@@ -908,8 +908,8 @@ let%expect_test "mean_absolute_error" =
 
 let%expect_test "mean_gamma_deviance" =
   let open Sklearn.Metrics in
-  let y_true = vector [|2.; 0.5; 1.; 4.|] in
-  let y_pred = vector [|0.5; 0.5; 2.; 2.|] in
+  let y_true = Np.vectorf [|2.; 0.5; 1.; 4.|] in
+  let y_pred = Np.vectorf [|0.5; 0.5; 2.; 2.|] in
   print_float @@ mean_gamma_deviance ~y_true ~y_pred ();
   [%expect {| 1.05685 |}]
 
@@ -925,8 +925,8 @@ let%expect_test "mean_gamma_deviance" =
 
 let%expect_test "mean_poisson_deviance" =
   let open Sklearn.Metrics in
-  let y_true = vectori [|2; 0; 1; 4|] in
-  let y_pred = vector [|0.5; 0.5; 2.; 2.|] in
+  let y_true = Np.vectori [|2; 0; 1; 4|] in
+  let y_pred = Np.vectorf [|0.5; 0.5; 2.; 2.|] in
   print_float @@ mean_poisson_deviance ~y_true ~y_pred ();
   [%expect {| 1.42602 |}]
 
@@ -954,20 +954,20 @@ array([0.41666667, 1.        ])
 
 let%expect_test "mean_squared_error" =
   let open Sklearn.Metrics in
-  let y_true = vector [|3.; -0.5; 2.; 7.|] in
-  let y_pred = vector [|2.5; 0.0; 2.; 8.|] in
+  let y_true = Np.vectorf [|3.; -0.5; 2.; 7.|] in
+  let y_pred = Np.vectorf [|2.5; 0.0; 2.; 8.|] in
   print_ndarray @@ mean_squared_error ~y_true ~y_pred ();
   [%expect {|
       0.375
    |}];
-  let y_true = vector [|3.; -0.5; 2.; 7.|] in
-  let y_pred = vector [|2.5; 0.0; 2.; 8.|] in
+  let y_true = Np.vectorf [|3.; -0.5; 2.; 7.|] in
+  let y_pred = Np.vectorf [|2.5; 0.0; 2.; 8.|] in
   print_ndarray @@ mean_squared_error ~y_true ~y_pred ~squared:false ();
   [%expect {|
       0.6123724356957945
    |}];
-  let y_true = matrix  [|[|0.5; 1.|]; [|-1.; 1.|]; [|7.;  -6.|]|] in
-  let y_pred = matrixi [|[|0;   2 |]; [|-1;  2 |]; [|8;   -5 |]|] in
+  let y_true = Np.matrixf  [|[|0.5; 1.|]; [|-1.; 1.|]; [|7.;  -6.|]|] in
+  let y_pred = Np.matrixi [|[|0;   2 |]; [|-1;  2 |]; [|8;   -5 |]|] in
   print_ndarray @@ mean_squared_error ~y_true ~y_pred ();
   [%expect {|
       0.7083333333333334
@@ -976,7 +976,7 @@ let%expect_test "mean_squared_error" =
   [%expect {|
       [0.41666667 1.        ]
    |}];
-  print_ndarray @@ mean_squared_error ~y_true ~y_pred ~multioutput:(`Arr (vector [|0.3; 0.7|])) ();
+  print_ndarray @@ mean_squared_error ~y_true ~y_pred ~multioutput:(`Arr (Np.vectorf [|0.3; 0.7|])) ();
   [%expect {| 0.825 |}]
 
 
@@ -999,14 +999,14 @@ array([0.00462428, 0.08377444])
 
 let%expect_test "mean_squared_log_error" =
   let open Sklearn.Metrics in
-  let y_true = vector [|3.; 5.; 2.5; 7.|] in
-  let y_pred = vector [|2.5; 5.; 4.; 8.|] in
+  let y_true = Np.vectorf [|3.; 5.; 2.5; 7.|] in
+  let y_pred = Np.vectorf [|2.5; 5.; 4.; 8.|] in
   print_ndarray @@ mean_squared_log_error ~y_true ~y_pred ();
   [%expect {|
       0.03973012298459379
    |}];
-  let y_true = matrix [|[|0.5; 1.|]; [|1.; 2.|]; [|7.; 6.|]|] in
-  let y_pred = matrix [|[|0.5; 2.|]; [|1.; 2.5|]; [|8.; 8.|]|] in
+  let y_true = Np.matrixf [|[|0.5; 1.|]; [|1.; 2.|]; [|7.; 6.|]|] in
+  let y_pred = Np.matrixf [|[|0.5; 2.|]; [|1.; 2.5|]; [|8.; 8.|]|] in
   print_ndarray @@ mean_squared_log_error ~y_true ~y_pred ();
   [%expect {|
       0.044199361889160516
@@ -1015,7 +1015,7 @@ let%expect_test "mean_squared_log_error" =
   [%expect {|
       [0.00462428 0.08377444]
    |}];
-  print_ndarray @@ mean_squared_log_error ~y_true ~y_pred ~multioutput:(`Arr (vector [|0.3; 0.7|])) ();
+  print_ndarray @@ mean_squared_log_error ~y_true ~y_pred ~multioutput:(`Arr (Np.vectorf [|0.3; 0.7|])) ();
   [%expect {| 0.06002939417970032 |}]
 
 
@@ -1030,8 +1030,8 @@ let%expect_test "mean_squared_log_error" =
 
 let%expect_test "mean_tweedie_deviance" =
   let open Sklearn.Metrics in
-  let y_true = vectori [|2; 0; 1; 4|] in
-  let y_pred = vector [|0.5; 0.5; 2.; 2.|] in
+  let y_true = Np.vectori [|2; 0; 1; 4|] in
+  let y_pred = Np.vectorf [|0.5; 0.5; 2.; 2.|] in
   print_float @@ mean_tweedie_deviance ~y_true ~y_pred ~power:1. ();
   [%expect {| 1.42602 |}]
 
@@ -1055,14 +1055,14 @@ array([0.5, 1. ])
 
 let%expect_test "median_absolute_error" =
   let open Sklearn.Metrics in
-  let y_true = vector [|3.; -0.5; 2.; 7.|] in
-  let y_pred = vector [|2.5; 0.0; 2.; 8.|] in
+  let y_true = Np.vectorf [|3.; -0.5; 2.; 7.|] in
+  let y_pred = Np.vectorf [|2.5; 0.0; 2.; 8.|] in
   print_ndarray @@ median_absolute_error ~y_true ~y_pred ();
   [%expect {|
       0.5
    |}];
-  let y_true = matrix [|[|0.5; 1.|]; [|-1.; 1.|]; [|7.; -6.|]|] in
-  let y_pred = matrixi [|[|0; 2|]; [|-1; 2|]; [|8; -5|]|] in
+  let y_true = Np.matrixf [|[|0.5; 1.|]; [|-1.; 1.|]; [|7.; -6.|]|] in
+  let y_pred = Np.matrixi [|[|0; 2|]; [|-1; 2|]; [|8; -5|]|] in
   print_ndarray @@ median_absolute_error ~y_true ~y_pred ();
   [%expect {|
       0.75
@@ -1071,7 +1071,7 @@ let%expect_test "median_absolute_error" =
   [%expect {|
       [0.5 1. ]
    |}];
-  print_ndarray @@ median_absolute_error ~y_true ~y_pred ~multioutput:(`Arr (vector [|0.3; 0.7|])) ();
+  print_ndarray @@ median_absolute_error ~y_true ~y_pred ~multioutput:(`Arr (Np.vectorf [|0.3; 0.7|])) ();
   [%expect {| 0.85 |}]
 
 
@@ -1097,8 +1097,8 @@ array([[[1, 0],
 
 let%expect_test "multilabel_confusion_matrix" =
   let open Sklearn.Metrics in
-  let y_true = matrixi [|[|1; 0; 1|]; [|0; 1; 0|]|] in
-  let y_pred = matrixi [|[|1; 0; 0|]; [|0; 1; 1|]|] in
+  let y_true = Np.matrixi [|[|1; 0; 1|]; [|0; 1; 0|]|] in
+  let y_pred = Np.matrixi [|[|1; 0; 0|]; [|0; 1; 1|]|] in
   print_ndarray @@ multilabel_confusion_matrix ~y_true ~y_pred ();
   [%expect {|
       [[[1 0]
@@ -1129,9 +1129,9 @@ array([[[3, 1],
 
 let%expect_test "multilabel_confusion_matrix" =
   let open Sklearn.Metrics in
-  let y_true = vectors [|"cat"; "ant"; "cat"; "cat"; "ant"; "bird"|] in
-  let y_pred = vectors [|"ant"; "ant"; "cat"; "cat"; "ant"; "cat"|] in
-  print_ndarray @@ multilabel_confusion_matrix ~y_true ~y_pred ~labels:(vectors [|"ant"; "bird"; "cat"|]) ();
+  let y_true = Np.vectors [|"cat"; "ant"; "cat"; "cat"; "ant"; "bird"|] in
+  let y_pred = Np.vectors [|"ant"; "ant"; "cat"; "cat"; "ant"; "cat"|] in
+  print_ndarray @@ multilabel_confusion_matrix ~y_true ~y_pred ~labels:(Np.vectors [|"ant"; "bird"; "cat"|]) ();
   [%expect {|
       [[[3 1]
         [0 2]]
@@ -1157,7 +1157,7 @@ array([[0.        , 1.41421356],
 
 let%expect_test "nan_euclidean_distances" =
   let open Sklearn.Metrics in
-  let x = matrix [|[|0.; 1.|]; [|1.; nan|]|] in
+  let x = Np.matrixf [|[|0.; 1.|]; [|1.; nan|]|] in
   print_ndarray @@ nan_euclidean_distances ~x ~y:x () (* distance between rows of x *);
   [%expect {|
       [[0.         1.41421356]
@@ -1176,9 +1176,9 @@ array([[1.        ],
 
 let%expect_test "nan_euclidean_distances" =
   let open Sklearn.Metrics in
-  let x = matrix [|[|0.; 1.|]; [|1.; nan|]|] in
+  let x = Np.matrixf [|[|0.; 1.|]; [|1.; nan|]|] in
   (* get distance to origin *)
-  print_ndarray @@ nan_euclidean_distances ~x ~y:(matrixi [|[|0; 0|]|]) ();
+  print_ndarray @@ nan_euclidean_distances ~x ~y:(Np.matrixi [|[|0; 0|]|]) ();
   [%expect {|
       [[1.        ]
        [1.41421356]]
@@ -1221,14 +1221,14 @@ let%expect_test "nan_euclidean_distances" =
 let%expect_test "ndcg_score" =
   let open Sklearn.Metrics in
   (*  we have groud-truth relevance of some answers to a query:; *)
-  let true_relevance = matrixi [|[|10; 0; 0; 1; 5|]|] in
+  let true_relevance = Np.matrixi [|[|10; 0; 0; 1; 5|]|] in
   (*  we predict some scores (relevance) for the answers; *)
-  let scores = matrix [|[|0.1; 0.2; 0.3; 4.; 70.|]|] in
+  let scores = Np.matrixf [|[|0.1; 0.2; 0.3; 4.; 70.|]|] in
   print_float @@ ndcg_score ~y_true:true_relevance ~y_score:scores ();
   [%expect {|
       0.695694
    |}];
-  let scores = matrix [|[|0.05; 1.1; 1.; 0.5; 0.0|]|] in
+  let scores = Np.matrixf [|[|0.05; 1.1; 1.; 0.5; 0.0|]|] in
   print_float @@ ndcg_score ~y_true:true_relevance ~y_score:scores ();
   [%expect {|
       0.49368
@@ -1245,7 +1245,7 @@ let%expect_test "ndcg_score" =
       1
    |}];
   (*  now we have some ties in our prediction; *)
-  let scores = matrixi [|[|1; 0; 0; 0; 1|]|] in
+  let scores = Np.matrixi [|[|1; 0; 0; 0; 1|]|] in
   (*  by default ties are averaged, so here we get the average (normalized); *)
   (*  true relevance of our top predictions: (10 / 10 + 5 / 10) / 2 = .75; *)
   print_float @@ ndcg_score ~y_true:true_relevance ~y_score:scores ~k:1 ();
@@ -1278,13 +1278,13 @@ array([[    0.        , 11099.54035582],
 
 let%expect_test "haversine_distances" =
   let open Sklearn.Metrics.Pairwise in
-  let radians deg = Sklearn.Arr.(deg * (float Stdlib.Float.pi) / (float 180.)) in
-  let bsas = vector [|-34.83333; -58.5166646|] in
-  let paris = vector [|49.0083899664; 2.53844117956|] in
+  let radians deg = Np.(deg * (float Stdlib.Float.pi) / (float 180.)) in
+  let bsas = Np.vectorf [|-34.83333; -58.5166646|] in
+  let paris = Np.vectorf [|49.0083899664; 2.53844117956|] in
   let bsas_in_radians = radians bsas in
   let paris_in_radians = radians paris in
-  let result = haversine_distances ~x:(Sklearn.Arr.vstack [bsas_in_radians; paris_in_radians]) () in
-  print_ndarray @@ Sklearn.Arr.(result * (float 6371000.) / (float 1000.)) (* multiply by Earth radius to get kilometers *);
+  let result = haversine_distances ~x:(Np.vstack [bsas_in_radians; paris_in_radians]) () in
+  print_ndarray @@ Np.(result * (float 6371000.) / (float 1000.)) (* multiply by Earth radius to get kilometers *);
   [%expect {|
       [[    0.         11099.54035582]
        [11099.54035582     0.        ]]
@@ -1343,7 +1343,7 @@ True
 (*
    let%expect_test "isspmatrix" =
    let open Sklearn.Metrics in
-   print_ndarray @@ isspmatrix(csr_matrix((matrixi [|[|5|]|])));
+   print_ndarray @@ isspmatrix(csr_matrix((Np.matrixi [|[|5|]|])));
    [%expect {|
       True
    |}]
@@ -1392,25 +1392,25 @@ array([[1., 1.],
 
 let%expect_test "manhattan_distances" =
   let open Sklearn.Metrics.Pairwise in
-  print_ndarray @@ manhattan_distances ~x:(matrixi [|[|3|]|]) ~y:(matrixi [|[|3|]|]) ();
+  print_ndarray @@ manhattan_distances ~x:(Np.matrixi [|[|3|]|]) ~y:(Np.matrixi [|[|3|]|]) ();
   [%expect {|
       [[0.]]
    |}];
-  print_ndarray @@ manhattan_distances ~x:(matrixi [|[|3|]|]) ~y:(matrixi [|[|2|]|]) ();
+  print_ndarray @@ manhattan_distances ~x:(Np.matrixi [|[|3|]|]) ~y:(Np.matrixi [|[|2|]|]) ();
   [%expect {|
       [[1.]]
    |}];
-  print_ndarray @@ manhattan_distances ~x:(matrixi [|[|2|]|]) ~y:(matrixi [|[|3|]|]) ();
+  print_ndarray @@ manhattan_distances ~x:(Np.matrixi [|[|2|]|]) ~y:(Np.matrixi [|[|3|]|]) ();
   [%expect {|
       [[1.]]
    |}];
-  print_ndarray @@ manhattan_distances ~x:(matrixi [|[|1; 2|]; [|3; 4|]|]) ~y:(matrixi [|[|1; 2|]; [|0; 3|]|]) ();
+  print_ndarray @@ manhattan_distances ~x:(Np.matrixi [|[|1; 2|]; [|3; 4|]|]) ~y:(Np.matrixi [|[|1; 2|]; [|0; 3|]|]) ();
   [%expect {|
       [[0. 2.]
        [4. 4.]]
    |}];
-  let x = Sklearn.Arr.ones [1; 2] in
-  let y = Sklearn.Arr.full ~shape:[2; 2] (`F 2.) in
+  let x = Np.ones [1; 2] in
+  let y = Np.full [2; 2] ~fill_value:(`F 2.) in
   print_ndarray @@ manhattan_distances ~x ~y ~sum_over_features:false ();
   [%expect {|
       [[1. 1.]
@@ -1430,8 +1430,8 @@ array([0., 1.])
 
 let%expect_test "paired_distances" =
   let open Sklearn.Metrics.Pairwise in
-  let x = matrixi [|[|0; 1|]; [|1; 1|]|] in
-  let y = matrixi [|[|0; 1|]; [|2; 1|]|] in
+  let x = Np.matrixi [|[|0; 1|]; [|1; 1|]|] in
+  let y = Np.matrixi [|[|0; 1|]; [|2; 1|]|] in
   print_ndarray @@ paired_distances ~x ~y ();
   [%expect {|
       [0. 1.]
@@ -1461,8 +1461,8 @@ let next_exn seq =
 
 let%expect_test "pairwise_distances_chunked" =
   let open Sklearn.Metrics in
-  Sklearn.Arr.Random.seed 0;
-  let x = Sklearn.Arr.Random.random_sample [5; 3] in
+  Np.Random.seed 0;
+  let x = Np.Random.random_sample ~size:[5; 3] () in
   let d_chunk, _ = next_exn @@ pairwise_distances_chunked ~x () in
   print_ndarray @@ d_chunk;
   [%expect {|
@@ -1492,23 +1492,23 @@ array([0.039..., 0.        , 0.        , 0.039..., 0.        ])
 
 let%expect_test "pairwise_distances_chunked" =
   let open Sklearn.Metrics.Pairwise in
-  let module Arr = Sklearn.Arr in
   let r = 0.2 in
   let reduce_func d_chunk =
-    let neigh = Arr.iter d_chunk |> Seq.fold_left (fun acc row ->
-        Arr.List.append acc Arr.(flatnonzero (row < (float r)));
+    let open Np in
+    let neigh = Ndarray.iter d_chunk |> Seq.fold_left (fun acc row ->
+        Np.Ndarray.List.append acc (flatnonzero (row < (float r)));
         acc
-      ) (Arr.List.create ())
+      ) (Ndarray.List.create ())
     in
-    let avg_dist = Arr.(d_chunk * (d_chunk < (float r)) |> mean ~axis:[1]) in
+    let avg_dist = d_chunk * (d_chunk < (float r)) |> mean ~axis:[1] in
     neigh, avg_dist
   in
-  Sklearn.Arr.Random.seed 0;
-  let x = Sklearn.Arr.Random.random_sample [5; 3] in
+  Np.Random.seed 0;
+  let x = Np.Random.random_sample ~size:[5; 3] () in
   let gen = pairwise_distances_chunked ~x () in
   let gen = Seq.map reduce_func gen in
   let (neigh, avg_dist), _ = next_exn gen in
-  print Sklearn.Arr.List.pp neigh;
+  print Np.Ndarray.List.pp neigh;
   [%expect {|
       [array([0, 3]), array([1]), array([2]), array([0, 3]), array([4])]
    |}];
@@ -1538,27 +1538,28 @@ let%expect_test "pairwise_distances_chunked" =
 
 let chunk_mapi ~f seq =
   let i = ref 0 in
-  Seq.map (fun x -> let ret = f x !i in i := !i + (Sklearn.Arr.shape x).(0); ret) seq
+  Seq.map (fun x -> let ret = f x !i in i := !i + (Np.shape x).(0); ret) seq
 
 let%expect_test "pairwise_distances_chunked" =
   let open Sklearn.Metrics in
   let module Arr = Sklearn.Arr in
-  let r = vector [|0.2; 0.4; 0.4; 0.3; 0.1|] in
+  let r = Np.vectorf [|0.2; 0.4; 0.4; 0.3; 0.1|] in
   let reduce_func d_chunk i =
-    let neigh, _ = Arr.iter d_chunk |> Seq.fold_left (fun (acc, i) row ->
-        Arr.List.append acc Arr.(flatnonzero (row < (get ~i:[`I i] r)));
+    let open Np in
+    let neigh, _ = Ndarray.iter d_chunk |> Seq.fold_left (fun (acc, i) row ->
+        Ndarray.List.append acc (flatnonzero (row < (Ndarray.get ~key:[`I i] r)));
         acc, succ i
-      ) (Arr.List.create (), i)
+      ) (Ndarray.List.create (), i)
     in
     neigh
   in
-  Sklearn.Arr.Random.seed 0;
-  let x = Sklearn.Arr.Random.random_sample [5; 3] in
+  Np.Random.seed 0;
+  let x = Np.Random.random_sample ~size:[5; 3] () in
 
   let gen = pairwise_distances_chunked ~x () in
   let gen = chunk_mapi ~f:reduce_func gen in
 
-  print Sklearn.Arr.List.pp (fst @@ next_exn gen);
+  print Np.Ndarray.List.pp (fst @@ next_exn gen);
   [%expect {|
       [array([0, 3]), array([0, 1]), array([2]), array([0, 3]), array([4])]
    |}];
@@ -1566,12 +1567,12 @@ let%expect_test "pairwise_distances_chunked" =
   let gen = pairwise_distances_chunked ~x ~working_memory:0 () in
   let gen = chunk_mapi ~f:reduce_func gen in
   let neigh, gen = next_exn gen in
-  print Sklearn.Arr.List.pp neigh;
+  print Np.Ndarray.List.pp neigh;
   [%expect {|
       [array([0, 3])]
    |}];
   let neigh, _gen = next_exn gen in
-  print Sklearn.Arr.List.pp neigh;
+  print Np.Ndarray.List.pp neigh;
   [%expect {|
       [array([0, 1])]
    |}]
@@ -1628,8 +1629,8 @@ array([1. , 0.5, 0.5, 0. ])
 
 let%expect_test "precision_recall_curve" =
   let open Sklearn.Metrics in
-  let y_true = vectori [|0; 0; 1; 1|] in
-  let y_scores = vector [|0.1; 0.4; 0.35; 0.8|] in
+  let y_true = Np.vectori [|0; 0; 1; 1|] in
+  let y_scores = Np.vectorf [|0.1; 0.4; 0.35; 0.8|] in
   let precision, recall, thresholds = precision_recall_curve ~y_true ~probas_pred:y_scores () in
   print_ndarray precision;
   [%expect {|
@@ -1662,14 +1663,14 @@ let print_tuple4 x =
   let module Arr = Sklearn.Arr in
   match x with
   | (a, b, c, None) ->
-    Format.printf "(%a, %a, %a, None)" Arr.pp a Arr.pp b Arr.pp c
+    Format.printf "(%a, %a, %a, None)" Np.pp a Np.pp b Np.pp c
   | (a, b, c, Some d) ->
-    Format.printf "(%a, %a, %a, %a)" Arr.pp a Arr.pp b Arr.pp c Arr.pp d
+    Format.printf "(%a, %a, %a, %a)" Np.pp a Np.pp b Np.pp c Np.pp d
 
 let%expect_test "precision_recall_fscore_support" =
   let open Sklearn.Metrics in
-  let y_true = vectors [|"cat"; "dog"; "pig"; "cat"; "dog"; "pig"|] in
-  let y_pred = vectors [|"cat"; "pig"; "dog"; "cat"; "cat"; "dog"|] in
+  let y_true = Np.vectors [|"cat"; "dog"; "pig"; "cat"; "dog"; "pig"|] in
+  let y_pred = Np.vectors [|"cat"; "pig"; "dog"; "cat"; "cat"; "dog"|] in
   print_tuple4 @@ precision_recall_fscore_support ~y_true ~y_pred ~average:`Macro ();
   [%expect {|
       (0.2222222222222222, 0.3333333333333333, 0.26666666666666666, None)
@@ -1696,9 +1697,9 @@ let%expect_test "precision_recall_fscore_support" =
 
 let%expect_test "precision_recall_fscore_support" =
   let open Sklearn.Metrics in
-  let y_true = vectors [|"cat"; "dog"; "pig"; "cat"; "dog"; "pig"|] in
-  let y_pred = vectors [|"cat"; "pig"; "dog"; "cat"; "cat"; "dog"|] in
-  print_tuple4 @@ precision_recall_fscore_support ~y_true ~y_pred ~labels:(vectors [|"pig"; "dog"; "cat"|]) ();
+  let y_true = Np.vectors [|"cat"; "dog"; "pig"; "cat"; "dog"; "pig"|] in
+  let y_pred = Np.vectors [|"cat"; "pig"; "dog"; "cat"; "cat"; "dog"|] in
+  print_tuple4 @@ precision_recall_fscore_support ~y_true ~y_pred ~labels:(Np.vectors [|"pig"; "dog"; "cat"|]) ();
   [%expect {|
       ([0.         0.         0.66666667], [0. 0. 1.], [0.  0.  0.8], [2 2 2])
    |}]
@@ -1727,8 +1728,8 @@ array([0.33..., 1.        , 1.        ])
 
 let%expect_test "precision_score" =
   let open Sklearn.Metrics in
-  let y_true = vectori [|0; 1; 2; 0; 1; 2|] in
-  let y_pred = vectori [|0; 2; 1; 0; 0; 1|] in
+  let y_true = Np.vectori [|0; 1; 2; 0; 1; 2|] in
+  let y_pred = Np.vectori [|0; 2; 1; 0; 0; 1|] in
   print_ndarray @@ precision_score ~y_true ~y_pred ~average:`Macro ();
   [%expect {|
       0.2222222222222222
@@ -1745,7 +1746,7 @@ let%expect_test "precision_score" =
   [%expect {|
       [0.66666667 0.         0.        ]
    |}];
-  let y_pred = vectori [|0; 0; 0; 0; 0; 0|] in
+  let y_pred = Np.vectori [|0; 0; 0; 0; 0; 0|] in
   print_ndarray @@ precision_score ~y_true ~y_pred ~average:`None ();
   [%expect {|
       [0.33333333 0.         0.        ]
@@ -1784,32 +1785,32 @@ let%expect_test "precision_score" =
 
 let%expect_test "r2_score" =
   let open Sklearn.Metrics in
-  let y_true = vector [|3.; -0.5; 2.; 7.|] in
-  let y_pred = vector [|2.5; 0.0; 2.; 8.|] in
+  let y_true = Np.vectorf [|3.; -0.5; 2.; 7.|] in
+  let y_pred = Np.vectorf [|2.5; 0.0; 2.; 8.|] in
   print_ndarray @@ r2_score ~y_true ~y_pred ();
   [%expect {|
       0.9486081370449679
    |}];
-  let y_true = (matrix [|[|0.5; 1.|]; [|-1.; 1.|]; [|7.; -6.|]|]) in
-  let y_pred = (matrixi [|[|0; 2|]; [|-1; 2|]; [|8; -5|]|]) in
+  let y_true = (Np.matrixf [|[|0.5; 1.|]; [|-1.; 1.|]; [|7.; -6.|]|]) in
+  let y_pred = (Np.matrixi [|[|0; 2|]; [|-1; 2|]; [|8; -5|]|]) in
   print_ndarray @@ r2_score ~y_true ~y_pred ~multioutput:`Variance_weighted ();
   [%expect {|
       0.9382566585956417
    |}];
-  let y_true = vectori [|1; 2; 3|] in
-  let y_pred = vectori [|1; 2; 3|] in
+  let y_true = Np.vectori [|1; 2; 3|] in
+  let y_pred = Np.vectori [|1; 2; 3|] in
   print_ndarray @@ r2_score ~y_true ~y_pred ();
   [%expect {|
       1.0
    |}];
-  let y_true = vectori [|1; 2; 3|] in
-  let y_pred = vectori [|2; 2; 2|] in
+  let y_true = Np.vectori [|1; 2; 3|] in
+  let y_pred = Np.vectori [|2; 2; 2|] in
   print_ndarray @@ r2_score ~y_true ~y_pred ();
   [%expect {|
       0.0
    |}];
-  let y_true = vectori [|1; 2; 3|] in
-  let y_pred = vectori [|3; 2; 1|] in
+  let y_true = Np.vectori [|1; 2; 3|] in
+  let y_pred = Np.vectori [|3; 2; 1|] in
   print_ndarray @@ r2_score ~y_true ~y_pred ();
   [%expect {| -3.0 |}]
 
@@ -1837,8 +1838,8 @@ array([0.5, 1. , 1. ])
 
 let%expect_test "recall_score" =
   let open Sklearn.Metrics in
-  let y_true = vectori [|0; 1; 2; 0; 1; 2|] in
-  let y_pred = vectori [|0; 2; 1; 0; 0; 1|] in
+  let y_true = Np.vectori [|0; 1; 2; 0; 1; 2|] in
+  let y_pred = Np.vectori [|0; 2; 1; 0; 0; 1|] in
   print_ndarray @@ recall_score ~y_true ~y_pred ~average:`Macro ();
   [%expect {|
       0.3333333333333333
@@ -1855,7 +1856,7 @@ let%expect_test "recall_score" =
   [%expect {|
       [1. 0. 0.]
    |}];
-  let y_true = vectori [|0; 0; 0; 0; 0; 0|] in
+  let y_true = Np.vectori [|0; 0; 0; 0; 0; 0|] in
   print_ndarray @@ recall_score ~y_true ~y_pred ~average:`None ();
   [%expect {|
       [0.5 0.  0. ]
@@ -1877,8 +1878,8 @@ let%expect_test "recall_score" =
 
 let%expect_test "roc_auc_score" =
   let open Sklearn.Metrics in
-  let y_true = vectori [|0; 0; 1; 1|] in
-  let y_score = vector [|0.1; 0.4; 0.35; 0.8|] in
+  let y_true = Np.vectori [|0; 0; 1; 1|] in
+  let y_score = Np.vectorf [|0.1; 0.4; 0.35; 0.8|] in
   print_float @@ roc_auc_score ~y_true ~y_score ();
   [%expect {| 0.75 |}]
 
@@ -1900,8 +1901,8 @@ array([0. , 0.5, 0.5, 1. , 1. ])
 
 let%expect_test "roc_curve" =
   let open Sklearn.Metrics in
-  let y = vectori [|1; 1; 2; 2|] in
-  let scores = vector [|0.1; 0.4; 0.35; 0.8|] in
+  let y = Np.vectori [|1; 1; 2; 2|] in
+  let scores = Np.vectorf [|0.1; 0.4; 0.35; 0.8|] in
   let fpr, tpr, thresholds = roc_curve ~y_true:y ~y_score:scores ~pos_label:(`I 2) () in
   print_ndarray fpr;
   [%expect {|
@@ -1933,8 +1934,8 @@ let print_zol x = match x with
 
 let%expect_test "zero_one_loss" =
   let open Sklearn.Metrics in
-  let y_pred = vectori [|1; 2; 3; 4|] in
-  let y_true = vectori [|2; 2; 3; 4|] in
+  let y_pred = Np.vectori [|1; 2; 3; 4|] in
+  let y_true = Np.vectori [|2; 2; 3; 4|] in
   print_zol @@ zero_one_loss ~y_true ~y_pred ();
   [%expect {|
       0.25
@@ -1955,5 +1956,5 @@ let%expect_test "zero_one_loss" =
 let%expect_test "zero_one_loss" =
   let open Sklearn.Metrics in
   let module Arr = Sklearn.Arr in
-  print_zol @@ zero_one_loss ~y_true:(matrixi [|[|0; 1|]; [|1; 1|]|]) ~y_pred:(Arr.ones [2;2]) ();
+  print_zol @@ zero_one_loss ~y_true:(Np.matrixi [|[|0; 1|]; [|1; 1|]|]) ~y_pred:(Np.ones [2;2]) ();
   [%expect {| 0.5 |}]

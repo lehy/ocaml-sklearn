@@ -1,17 +1,16 @@
+module Np = Np.Numpy
+
 let print f x = Format.printf "%a" f x
+
 let print_py x = Format.printf "%s" (Py.Object.to_string x)
-let print_ndarray = print Sklearn.Arr.pp
+
+let print_ndarray = Np.Obj.print
+
 let print_float = Format.printf "%g\n"
+
 let print_string = Format.printf "%s\n"
+
 let print_int = Format.printf "%d\n"
-
-let matrix = Sklearn.Arr.Float.matrix
-let vector = Sklearn.Arr.Float.vector
-let matrixi = Sklearn.Arr.Int.matrix
-let vectori = Sklearn.Arr.Int.vector
-let vectors = Sklearn.Arr.String.vector
-
-let option_get = function Some x -> x | None -> invalid_arg "option_get: None"
 
 module Arr = Sklearn.Arr
 
@@ -31,7 +30,7 @@ array([[1. , 2. , 4. ],
 
 let%expect_test "KNNImputer" =
   let open Sklearn.Impute in
-  let x = matrix [|[|1.; 2.; nan|]; [|3.; 4.; 3.|]; [|nan; 6.; 5.|]; [|8.; 8.; 7.|]|] in
+  let x = Np.Ndarray.matrixf [|[|1.; 2.; nan|]; [|3.; 4.; 3.|]; [|nan; 6.; 5.|]; [|8.; 8.; 7.|]|] in
   let imputer = KNNImputer.create ~n_neighbors:2 () in
   print_ndarray @@ KNNImputer.fit_transform ~x imputer;
   [%expect {|
@@ -64,8 +63,8 @@ array([[False,  True],
 
 let%expect_test "MissingIndicator" =
   let open Sklearn.Impute in
-  let x1 = matrix [|[|nan; 1.; 3.|]; [|4.; 0.; nan|]; [|8.; 1.; 0.|]|] in
-  let x2 = matrix [|[|5.; 1.; nan|]; [|nan; 2.; 3.|]; [|2.; 4.; 0.|]|] in
+  let x1 = Np.matrixf [|[|nan; 1.; 3.|]; [|4.; 0.; nan|]; [|8.; 1.; 0.|]|] in
+  let x2 = Np.matrixf [|[|5.; 1.; nan|]; [|nan; 2.; 3.|]; [|2.; 4.; 0.|]|] in
   let indicator = MissingIndicator.create () in
   print MissingIndicator.pp @@ MissingIndicator.fit ~x:x1 indicator;
   [%expect {|
@@ -99,12 +98,12 @@ SimpleImputer()
 let%expect_test "SimpleImputer" =
   let open Sklearn.Impute in
   let imp_mean = SimpleImputer.create ~missing_values:(`F nan) ~strategy:`Mean () in
-  print SimpleImputer.pp @@ SimpleImputer.fit ~x:(matrix [|[|7.; 2.; 3.|]; [|4.; nan; 6.|]; [|10.; 5.; 9.|]|]) imp_mean;
+  print SimpleImputer.pp @@ SimpleImputer.fit ~x:(Np.matrixf [|[|7.; 2.; 3.|]; [|4.; nan; 6.|]; [|10.; 5.; 9.|]|]) imp_mean;
   [%expect {|
       SimpleImputer(add_indicator=False, copy=True, fill_value=None,
                     missing_values=nan, strategy='mean', verbose=0)
   |}];
-  let x = matrix [|[|nan; 2.; 3.|]; [|4.; nan; 6.|]; [|10.; nan; 9.|]|] in
+  let x = Np.matrixf [|[|nan; 2.; 3.|]; [|4.; nan; 6.|]; [|10.; nan; 9.|]|] in
   print_ndarray @@ SimpleImputer.transform ~x imp_mean;
   [%expect {|
       [[ 7.   2.   3. ]

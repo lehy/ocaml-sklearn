@@ -1,19 +1,20 @@
+module Np = Np.Numpy
+
 let print f x = Format.printf "%a" f x
+
 let print_py x = Format.printf "%s" (Py.Object.to_string x)
-let print_ndarray = print Sklearn.Arr.pp
+
+let print_ndarray = Np.Obj.print
+
 let print_float = Format.printf "%g\n"
+
 let print_string = Format.printf "%s\n"
+
 let print_int = Format.printf "%d\n"
 
-let matrix = Sklearn.Arr.Float.matrix
-let vector = Sklearn.Arr.Float.vector
-let matrixi = Sklearn.Arr.Int.matrix
-let vectori = Sklearn.Arr.Int.vector
-let vectors = Sklearn.Arr.String.vector
+let matrixi = Np.Ndarray.matrixi
 
-let option_get = function Some x -> x | None -> invalid_arg "option_get: None"
-
-module Arr = Sklearn.Arr
+let matrixf = Np.Ndarray.matrixf
 
 (* ColumnTransformer *)
 (*
@@ -38,10 +39,10 @@ let%expect_test "ColumnTransformer" =
   let open Sklearn.Compose in
   let ct = ColumnTransformer.create
       ~transformers:["norm1", Sklearn.Preprocessing.Normalizer.create ~norm:`L1 (), `Is [0;1];
-                     "norm2", Sklearn.Preprocessing.Normalizer.create ~norm:`L1 (), Arr.slice ~i:2 ~j:4 ()]
+                     "norm2", Sklearn.Preprocessing.Normalizer.create ~norm:`L1 (), Np.slice ~i:2 ~j:4 ()]
       ()
   in
-  let x = matrix [|[|0.; 1.; 2.; 2.|]; [|1.; 1.; 0.; 1.|]|] in
+  let x = Np.Ndarray.matrixf [|[|0.; 1.; 2.; 2.|]; [|1.; 1.; 0.; 1.|]|] in
   (* Normalizer scales each row of x to unit norm. A separate scaling *)
   (* is applied for the two first and two last elements of each *)
   (* row independently. *)
@@ -72,14 +73,16 @@ array([2.])
 
 let%expect_test "TransformedTargetRegressor" =
   let open Sklearn.Compose in
-  let numpy = Py.import "numpy" in
   let tt = TransformedTargetRegressor.create
       ~regressor:Sklearn.Linear_model.LinearRegression.(create ())
-      ~func:(Py.Module.get numpy "log") ~inverse_func:(Py.Module.get numpy "exp")
+      ~func:(Np.get_py "log") ~inverse_func:(Np.get_py "exp")
       ()
   in
-  let x = Arr.(arange 4 |> reshape ~shape:[|-1; 1|]) in
-  let y = Arr.(exp ((float 2.) * x) |> ravel) in
+  [%expect {||}];
+  let x = Np.(arange (`I 4) |> reshape ~newshape:[-1; 1]) in
+  [%expect {||}];
+  let y = Np.(exp ((float 2.) * x) |> ravel) in
+  [%expect {||}];
   print TransformedTargetRegressor.pp @@ TransformedTargetRegressor.fit ~x ~y tt;
   [%expect {|
       TransformedTargetRegressor(check_inverse=True, func=<ufunc 'log'>,
@@ -97,6 +100,7 @@ let%expect_test "TransformedTargetRegressor" =
   print_ndarray @@ (TransformedTargetRegressor.regressor_ tt
                     |> fun r -> Sklearn.Linear_model.LinearRegression.(of_pyobject r |> coef_));
   [%expect {|
+
       [2.]
   |}]
 

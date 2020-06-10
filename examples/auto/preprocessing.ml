@@ -1,16 +1,16 @@
+module Np = Np.Numpy
+
 let print f x = Format.printf "%a" f x
+
 let print_py x = Format.printf "%s" (Py.Object.to_string x)
-let print_ndarray = print Sklearn.Arr.pp
 
-let matrix = Sklearn.Arr.Float.matrix
-let vector = Sklearn.Arr.Float.vector
-let matrixi = Sklearn.Arr.Int.matrix
-let vectori = Sklearn.Arr.Int.vector
-let vectors = Sklearn.Arr.String.vector
+let print_ndarray = Np.Obj.print
 
-let get x = match x with
-  | None -> failwith "Option.get"
-  | Some x -> x
+let print_float = Format.printf "%g\n"
+
+let print_string = Format.printf "%s\n"
+
+let print_int = Format.printf "%d\n"
 
 (* Binarizer *)
 (*
@@ -31,7 +31,7 @@ array([[1., 0., 1.],
 
 let%expect_test "Binarizer" =
   let open Sklearn.Preprocessing in
-  let x = matrix [|[| 1.; -1.;  2.|];[| 2.;  0.;  0.|];[| 0.;  1.; -1.|]|] in
+  let x = Np.matrixf [|[| 1.; -1.;  2.|];[| 2.;  0.;  0.|];[| 0.;  1.; -1.|]|] in
   let transformer = Binarizer.(create () |> fit ~x) in  (* fit does nothing.     *)
   print Binarizer.pp transformer;
   [%expect {|
@@ -60,7 +60,7 @@ array([[0.       , 0.6931...],
 let%expect_test "FunctionTransformer" =
   let open Sklearn.Preprocessing in
   let transformer = FunctionTransformer.create np.log1p () in  
-  let x = matrixi [|[|0; 1|]; [|2; 3|]|] in  
+  let x = Np.matrixi [|[|0; 1|]; [|2; 3|]|] in  
   print_ndarray @@ FunctionTransformer.transform ~x transformer;  
   [%expect {|
       array([[0.       , 0.6931...],      
@@ -201,7 +201,7 @@ array([[ 0., 0., 0., 0.],
 
 let%expect_test "KBinsDiscretizer" =
   let open Sklearn.Preprocessing in
-  let x = matrix [|[|-2.; 1.; -4.; -1.|]; [|-1.; 2.; -3.; -0.5|]; [| 0.; 3.; -2.;  0.5|]; [| 1.; 4.; -1.; 2.|]|] in
+  let x = Np.matrixf [|[|-2.; 1.; -4.; -1.|]; [|-1.; 2.; -3.; -0.5|]; [| 0.; 3.; -2.;  0.5|]; [| 1.; 4.; -1.; 2.|]|] in
   let est = KBinsDiscretizer.create ~n_bins:(`I 3) ~encode:`Ordinal ~strategy:`Uniform () in
   print KBinsDiscretizer.pp @@ KBinsDiscretizer.fit est ~x;
   [%expect {|
@@ -233,9 +233,9 @@ array([[1, 0, 0, 0],
 *)
 
 let%expect_test "LabelBinarizer" =
-  let open Sklearn.Preprocessing in
+  let open Sklearn.Calibration in
   let lb = LabelBinarizer.create () in
-  print LabelBinarizer.pp @@ LabelBinarizer.fit lb ~y:(vectori [|1; 2; 6; 4; 2|]);
+  print LabelBinarizer.pp @@ LabelBinarizer.fit lb ~y:(Np.vectori [|1; 2; 6; 4; 2|]);
   [%expect {|
             LabelBinarizer(neg_label=0, pos_label=1, sparse_output=False)
     |}];
@@ -243,7 +243,7 @@ let%expect_test "LabelBinarizer" =
   [%expect {|
             [1 2 4 6]
     |}];
-  print_ndarray @@ LabelBinarizer.transform lb ~y:(vectori [|1; 6|]);
+  print_ndarray @@ LabelBinarizer.transform lb ~y:(Np.vectori [|1; 6|]);
   [%expect {|
             [[1 0 0 0]
              [0 0 0 1]]
@@ -264,9 +264,9 @@ array([[1],
 *)
 
 let%expect_test "LabelBinarizer" =
-  let open Sklearn.Preprocessing in
+  let open Sklearn.Calibration in
   let lb = LabelBinarizer.create () in
-  print_ndarray @@ LabelBinarizer.fit_transform lb ~y:(vectors [|"yes"; "no"; "no"; "yes"|]);
+  print_ndarray @@ LabelBinarizer.fit_transform lb ~y:(Np.vectors [|"yes"; "no"; "no"; "yes"|]);
   [%expect {|
             [[1]
              [0]
@@ -291,9 +291,9 @@ array([[1, 0, 0],
 *)
 
 let%expect_test "LabelBinarizer" =
-  let open Sklearn.Preprocessing in
+  let open Sklearn.Calibration in
   let lb = LabelBinarizer.create () in
-  print LabelBinarizer.pp @@ LabelBinarizer.fit lb ~y:(matrixi ([|[|0; 1; 1|]; [|1; 0; 0|]|]));
+  print LabelBinarizer.pp @@ LabelBinarizer.fit lb ~y:(Np.matrixi ([|[|0; 1; 1|]; [|1; 0; 0|]|]));
   [%expect {|
             LabelBinarizer(neg_label=0, pos_label=1, sparse_output=False)
     |}];
@@ -301,7 +301,7 @@ let%expect_test "LabelBinarizer" =
   [%expect {|
             [0 1 2]
     |}];
-  print_ndarray @@ LabelBinarizer.transform lb ~y:(vectori [|0; 1; 2; 1|]);
+  print_ndarray @@ LabelBinarizer.transform lb ~y:(Np.vectori [|0; 1; 2; 1|]);
   [%expect {|
             [[1 0 0]
              [0 1 0]
@@ -327,9 +327,9 @@ array([1, 1, 2, 6])
 *)
 
 let%expect_test "LabelEncoder" =
-  let open Sklearn.Preprocessing in
+  let open Sklearn.Calibration in
   let le = LabelEncoder.create () in
-  print LabelEncoder.pp @@ LabelEncoder.fit le ~y:(vectori [|1; 2; 2; 6|]);
+  print LabelEncoder.pp @@ LabelEncoder.fit le ~y:(Np.vectori [|1; 2; 2; 6|]);
   [%expect {|
             LabelEncoder()
     |}];
@@ -337,11 +337,11 @@ let%expect_test "LabelEncoder" =
   [%expect {|
             [1 2 6]
     |}];
-  print_ndarray @@ LabelEncoder.transform le ~y:(vectori [|1; 1; 2; 6|]);
+  print_ndarray @@ LabelEncoder.transform le ~y:(Np.vectori [|1; 1; 2; 6|]);
   [%expect {|
             [0 0 1 2]
     |}];
-  print_ndarray @@ LabelEncoder.inverse_transform le ~y:(vectori [|0; 0; 1; 2|]);
+  print_ndarray @@ LabelEncoder.inverse_transform le ~y:(Np.vectori [|0; 0; 1; 2|]);
   [%expect {|
             [1 1 2 6]
     |}]
@@ -363,9 +363,9 @@ array([2, 2, 1]...)
 *)
 
 let%expect_test "LabelEncoder" =
-  let open Sklearn.Preprocessing in
+  let open Sklearn.Calibration in
   let le = LabelEncoder.create () in
-  print LabelEncoder.pp @@ LabelEncoder.fit le ~y:(vectors [|"paris"; "paris"; "tokyo"; "amsterdam"|]);
+  print LabelEncoder.pp @@ LabelEncoder.fit le ~y:(Np.vectors [|"paris"; "paris"; "tokyo"; "amsterdam"|]);
   [%expect {|
             LabelEncoder()
     |}];
@@ -373,11 +373,11 @@ let%expect_test "LabelEncoder" =
   [%expect {|
             ['amsterdam' 'paris' 'tokyo']
     |}];
-  print_ndarray @@ LabelEncoder.transform le ~y:(vectors [|"tokyo"; "tokyo"; "paris"|]);
+  print_ndarray @@ LabelEncoder.transform le ~y:(Np.vectors [|"tokyo"; "tokyo"; "paris"|]);
   [%expect {|
             [2 2 1]
     |}];
-  print_ndarray @@ LabelEncoder.inverse_transform le ~y:(vectori [|2; 2; 1|]);
+  print_ndarray @@ LabelEncoder.inverse_transform le ~y:(Np.vectori [|2; 2; 1|]);
   [%expect {|
             ['tokyo' 'tokyo' 'paris']
     |}]
@@ -403,7 +403,7 @@ array([[ 0.5, -1. ,  1. ],
 
 let%expect_test "MaxAbsScaler" =
   let open Sklearn.Preprocessing in
-  let x = matrix [|[| 1.; -1.;  2.|];[| 2.;  0.;  0.|];[| 0.;  1.; -1.|]|] in
+  let x = Np.matrixf [|[| 1.; -1.;  2.|];[| 2.;  0.;  0.|];[| 0.;  1.; -1.|]|] in
   let transformer = MaxAbsScaler.(create () |> fit ~x) in
   print MaxAbsScaler.pp transformer;
   [%expect {|
@@ -439,7 +439,7 @@ MinMaxScaler()
 
 let%expect_test "MinMaxScaler" =
   let open Sklearn.Preprocessing in
-  let data = matrix [|[|-1.; 2.|]; [|-0.5; 6.|]; [|0.; 10.|]; [|1.; 18.|]|] in
+  let data = Np.matrixf [|[|-1.; 2.|]; [|-0.5; 6.|]; [|0.; 10.|]; [|1.; 18.|]|] in
   let scaler = MinMaxScaler.create () in
   print MinMaxScaler.pp @@ MinMaxScaler.fit scaler ~x:data;
   [%expect {|
@@ -456,7 +456,7 @@ let%expect_test "MinMaxScaler" =
              [0.5  0.5 ]
              [1.   1.  ]]
     |}];
-  print_ndarray @@ MinMaxScaler.transform scaler ~x:(matrixi [|[|2; 2|]|]);
+  print_ndarray @@ MinMaxScaler.transform scaler ~x:(Np.matrixi [|[|2; 2|]|]);
   [%expect {|
             [[1.5 0. ]]
     |}]
@@ -479,7 +479,7 @@ let%expect_test "MultiLabelBinarizer" =
   let open Sklearn.Preprocessing in
   let mlb = MultiLabelBinarizer.create () in
   (* arg could be List(Ndarray()) ? *)
-  print_ndarray @@ MultiLabelBinarizer.fit_transform mlb ~y:(Sklearn.Arr.Int.vectors [[|1; 2|]; [|3|]]);
+  print_ndarray @@ MultiLabelBinarizer.fit_transform mlb ~y:(Np.Ndarray.List.vectori [[|1; 2|]; [|3|]]);
   [%expect {|
             [[1 1 0]
              [0 0 1]]
@@ -504,7 +504,7 @@ let%expect_test "MultiLabelBinarizer" =
   let open Sklearn.Preprocessing in
   let mlb = MultiLabelBinarizer.create () in
   print_ndarray @@ MultiLabelBinarizer.fit_transform mlb
-    ~y:(Sklearn.Arr.String.vectors [[|"sci-fi"; "thriller"|]; [|"comedy"|]]);
+    ~y:(Np.Ndarray.List.vectors [[|"sci-fi"; "thriller"|]; [|"comedy"|]]);
   [%expect {|
             [[0 1 1]
              [1 0 0]]
@@ -572,7 +572,7 @@ let%expect_test "MultiLabelBinarizer" =
   let open Sklearn.Preprocessing in
   let mlb = MultiLabelBinarizer.create () in
   print MultiLabelBinarizer.pp @@ MultiLabelBinarizer.fit mlb
-    ~y:(Sklearn.Arr.String.vectors [[|"sci-fi"; "thriller"; "comedy"|]]);
+    ~y:(Np.Ndarray.List.vectors [[|"sci-fi"; "thriller"; "comedy"|]]);
   [%expect {|
             MultiLabelBinarizer(classes=None, sparse_output=False)
     |}];
@@ -600,7 +600,7 @@ array([[0.8, 0.2, 0.4, 0.4],
 
 let%expect_test "Normalizer" =
   let open Sklearn.Preprocessing in
-  let x = matrixi [|[|4; 1; 2; 2|]; [|1; 3; 9; 3|]; [|5; 7; 5; 1|]|] in
+  let x = Np.matrixi [|[|4; 1; 2; 2|]; [|1; 3; 9; 3|]; [|5; 7; 5; 1|]|] in
   let transformer = Normalizer.(create () |> fit ~x) in  (* fit does nothing *)
   print Normalizer.pp transformer;
   [%expect {|
@@ -644,7 +644,7 @@ array([[0., 0., 0.],
 let%expect_test "OneHotEncoder" =
   let open Sklearn.Preprocessing in
   let enc = OneHotEncoder.create ~handle_unknown:'ignore' () in  
-  let x = (matrixi [|[|'Male'; 1|]; [|'Female'; 3|]; [|'Female'; 2|]|]) in  
+  let x = (Np.matrixi [|[|'Male'; 1|]; [|'Female'; 3|]; [|'Female'; 2|]|]) in  
   print OneHotEncoder.pp @@ OneHotEncoder.fit ~x enc;  
   [%expect {|
       OneHotEncoder(handle_unknown='ignore')      
@@ -653,12 +653,12 @@ let%expect_test "OneHotEncoder" =
   [%expect {|
       [array(['Female', 'Male'], dtype=object), array([1, 2, 3], dtype=object)]      
   |}]
-  print_ndarray @@ OneHotEncoder.transform (matrixi [|[|'Female'; 1|]; [|'Male'; 4|]|])).toarray( enc;  
+  print_ndarray @@ OneHotEncoder.transform (Np.matrixi [|[|'Female'; 1|]; [|'Male'; 4|]|])).toarray( enc;  
   [%expect {|
       array([[1., 0., 1., 0., 0.],      
              [0., 1., 0., 0., 0.]])      
   |}]
-  print_ndarray @@ OneHotEncoder.inverse_transform (matrixi [|[|0; 1; 1; 0; 0|]; [|0; 0; 0; 1; 0|]|]) enc;  
+  print_ndarray @@ OneHotEncoder.inverse_transform (Np.matrixi [|[|0; 1; 1; 0; 0|]; [|0; 0; 0; 1; 0|]|]) enc;  
   [%expect {|
       array([['Male', 1],      
              [None, 2]], dtype=object)      
@@ -673,7 +673,7 @@ let%expect_test "OneHotEncoder" =
   [%expect {|
       [array(['Female', 'Male'], dtype=object), array([1, 2, 3], dtype=object)]      
   |}]
-  print_ndarray @@ OneHotEncoder.transform (matrixi [|[|'Female'; 1|]; [|'Male'; 2|]|])).toarray( drop_enc;  
+  print_ndarray @@ OneHotEncoder.transform (Np.matrixi [|[|'Female'; 1|]; [|'Male'; 2|]|])).toarray( drop_enc;  
   [%expect {|
       array([[0., 0., 0.],      
   |}]
@@ -701,9 +701,9 @@ array([[0., 2.],
 let%expect_test "OrdinalEncoder" =
   let open Sklearn.Preprocessing in
   let enc = OrdinalEncoder.create () in
-  let x = Sklearn.Arr.Object.matrix [|[|`S "Male";   `I 1|];
-                                      [|`S "Female"; `I 3|];
-                                      [|`S "Female"; `I 2|]|] in
+  let x = Np.Ndarray.matrixo [|[|`S "Male";   `I 1|];
+                               [|`S "Female"; `I 3|];
+                               [|`S "Female"; `I 2|]|] in
   print_ndarray x;
   [%expect {|
     [['Male' 1]
@@ -713,13 +713,13 @@ let%expect_test "OrdinalEncoder" =
   [%expect {|
             OrdinalEncoder(categories='auto', dtype=<class 'numpy.float64'>)
     |}];
-  print Sklearn.Arr.List.pp @@ OrdinalEncoder.categories_ enc;
+  print Np.Ndarray.List.pp @@ OrdinalEncoder.categories_ enc;
   [%expect {|
             [array(['Female', 'Male'], dtype=object), array([1, 2, 3], dtype=object)]
     |}];
   print_ndarray @@ OrdinalEncoder.transform enc
-    ~x:(Sklearn.Arr.Object.matrix [|[|`S "Female"; `I 3|];
-                                    [|`S "Male"; `I 1|]|]);
+    ~x:(Np.Ndarray.matrixo [|[|`S "Female"; `I 3|];
+                             [|`S "Male"; `I 1|]|]);
   [%expect {|
             [[0. 2.]
              [1. 0.]]
@@ -739,7 +739,7 @@ array([['Male', 1],
 (* TEST TODO
 let%expect_test "OrdinalEncoder" =
   let open Sklearn.Preprocessing in
-  print_ndarray @@ .inverse_transform (matrixi [|[|1; 0|]; [|0; 1|]|]) enc;  
+  print_ndarray @@ .inverse_transform (Np.matrixi [|[|1; 0|]; [|0; 1|]|]) enc;  
   [%expect {|
       array([['Male', 1],      
   |}]
@@ -773,7 +773,7 @@ array([[ 1.,  0.,  1.,  0.],
 
 let%expect_test "PolynomialFeatures" =
   let open Sklearn.Preprocessing in
-  let x =  Sklearn.Arr.(arange 6 |> reshape ~shape:[|3; 2|]) in
+  let x =  Np.(arange (`I 6) |> reshape ~newshape:[3; 2]) in
   print_ndarray x;
   [%expect {|
             [[0 1]
@@ -816,7 +816,7 @@ PowerTransformer()
 let%expect_test "PowerTransformer" =
   let open Sklearn.Preprocessing in
   let pt = PowerTransformer.create () in
-  let data = matrixi [|[|1; 2|]; [|3; 2|]; [|4; 5|]|] in
+  let data = Np.matrixi [|[|1; 2|]; [|3; 2|]; [|4; 5|]|] in
   print PowerTransformer.pp @@ PowerTransformer.fit pt ~x:data;
   [%expect {|
             PowerTransformer(copy=True, method='yeo-johnson', standardize=True)
@@ -846,38 +846,42 @@ array([...])
 
 *)
 
+let protect f =
+  try f ()
+  with exc -> Format.printf "caught error!\n%!"; Py.Err.print_ex 42; Py.Err.print (); raise exc
+
 let%expect_test "QuantileTransformer" =
   let open Sklearn.Preprocessing in
-  let module Matrix = Owl.Dense.Matrix.D in
-  Owl_stats_prng.init 0;
-  let x = Matrix.(gaussian ~mu:0.5 ~sigma:0.25 25 1 |> sort) |> Sklearn.Arr.of_bigarray in
-  let qt = QuantileTransformer.create ~n_quantiles:10 ~random_state:0 () in
-  print_ndarray @@ QuantileTransformer.fit_transform qt ~x;
+  Np.Random.seed 0;
+  let x = Np.(Random.normal ~loc:(`F 0.5) ~scale:(`F 0.25) ~size:[25; 1] () |> sort ~axis:(`I 0)) in
+  (* let qt = QuantileTransformer.create ~n_quantiles:10 ~random_state:0 () in *)
+  let qt = protect (QuantileTransformer.create ~n_quantiles:10 ~random_state:0) in
+  print_ndarray @@ protect (fun () -> QuantileTransformer.fit_transform qt ~x);
   [%expect {|
             [[0.        ]
-             [0.0465588 ]
-             [0.07236635]
-             [0.13435383]
-             [0.19038255]
-             [0.20744256]
-             [0.27077313]
-             [0.3072948 ]
+             [0.09871873]
+             [0.10643612]
+             [0.11754671]
+             [0.21017437]
+             [0.21945445]
+             [0.23498666]
+             [0.32443642]
              [0.33333333]
-             [0.40459044]
-             [0.4263402 ]
-             [0.46393428]
-             [0.52235714]
-             [0.54881137]
-             [0.59860807]
-             [0.60721673]
+             [0.41360794]
+             [0.42339464]
+             [0.46257841]
+             [0.47112236]
+             [0.49834237]
+             [0.59986536]
+             [0.63390302]
              [0.66666667]
-             [0.69638456]
-             [0.74844166]
-             [0.78237337]
-             [0.80823856]
-             [0.86774379]
-             [0.90414956]
-             [0.95992288]
+             [0.68873101]
+             [0.69611125]
+             [0.81280699]
+             [0.82160354]
+             [0.88126439]
+             [0.90516028]
+             [0.99319435]
              [1.        ]]
     |}]
 
@@ -901,7 +905,7 @@ array([[ 0. , -2. ,  0. ],
 
 let%expect_test "RobustScaler" =
   let open Sklearn.Preprocessing in
-  let x = matrix [|[| 1.; -2.;  2.|];
+  let x = Np.matrixf [|[| 1.; -2.;  2.|];
                    [| -2.;  1.;  3.|];
                    [| 4.;  1.; -2.|]|]
   in
@@ -941,7 +945,7 @@ StandardScaler()
 
 let%expect_test "StandardScaler" =
   let open Sklearn.Preprocessing in
-  let data = matrixi [|[|0; 0|]; [|0; 0|]; [|1; 1|]; [|1; 1|]|] in
+  let data = Np.matrixi [|[|0; 0|]; [|0; 0|]; [|1; 1|]; [|1; 1|]|] in
   let scaler = StandardScaler.create () in
   print StandardScaler.pp @@ StandardScaler.fit scaler ~x:data;
   [%expect {|
@@ -958,7 +962,7 @@ let%expect_test "StandardScaler" =
              [ 1.  1.]
              [ 1.  1.]]
     |}];
-  print_ndarray @@ StandardScaler.transform scaler ~x:(matrixi [|[|2; 2|]|]);
+  print_ndarray @@ StandardScaler.transform scaler ~x:(Np.matrixi [|[|2; 2|]|]);
   [%expect {|
             [[3. 3.]]
     |}]
@@ -974,7 +978,7 @@ array([[1., 0., 1.],
 (* TEST TODO
 let%expect_test "add_dummy_feature" =
   let open Sklearn.Preprocessing in
-  print_ndarray @@ add_dummy_feature((matrixi [|[|0; 1|]; [|1; 0|]|]));  
+  print_ndarray @@ add_dummy_feature((Np.matrixi [|[|0; 1|]; [|1; 0|]|]));  
   [%expect {|
       array([[1., 0., 1.],      
   |}]
@@ -993,7 +997,7 @@ array([[1, 0, 0, 0],
 
 let%expect_test "label_binarize" =
   let open Sklearn.Preprocessing in
-  print_ndarray @@ label_binarize ~y:(vectori [|1; 6|]) ~classes:(vectori [|1; 2; 4; 6|]) ();
+  print_ndarray @@ label_binarize ~y:(Np.vectori [|1; 6|]) ~classes:(Np.vectori [|1; 2; 4; 6|]) ();
   [%expect {|
             [[1 0 0 0]
              [0 0 0 1]]
@@ -1011,7 +1015,7 @@ array([[1, 0, 0, 0],
 
 let%expect_test "label_binarize" =
   let open Sklearn.Preprocessing in
-  print_ndarray @@ label_binarize ~y:(vectori [|1; 6|]) ~classes:(vectori [|1; 6; 4; 2|]) ();
+  print_ndarray @@ label_binarize ~y:(Np.vectori [|1; 6|]) ~classes:(Np.vectori [|1; 6; 4; 2|]) ();
   [%expect {|
             [[1 0 0 0]
              [0 1 0 0]]
@@ -1031,7 +1035,7 @@ array([[1],
 
 let%expect_test "label_binarize" =
   let open Sklearn.Preprocessing in
-  print_ndarray @@ label_binarize ~y:(vectors [|"yes"; "no"; "no"; "yes"|]) ~classes:(vectors [|"no"; "yes"|]) ();
+  print_ndarray @@ label_binarize ~y:(Np.vectors [|"yes"; "no"; "no"; "yes"|]) ~classes:(Np.vectors [|"no"; "yes"|]) ();
   [%expect {|
             [[1]
              [0]
@@ -1055,7 +1059,7 @@ let%expect_test "label_binarize" =
 
 let%expect_test "power_transform" =
   let open Sklearn.Preprocessing in
-  let data = matrixi [|[|1; 2|]; [|3; 2|]; [|4; 5|]|] in
+  let data = Np.matrixi [|[|1; 2|]; [|3; 2|]; [|4; 5|]|] in
   print_ndarray @@ power_transform ~x:data ~method_:`Box_cox ();
   [%expect {|
             [[-1.33269291 -0.70710678]
@@ -1078,34 +1082,33 @@ array([...])
 
 let%expect_test "quantile_transform" =
   let open Sklearn.Preprocessing in
-  let module Matrix = Owl.Dense.Matrix.D in
-  Owl_stats_prng.init 0;
-  let x = Matrix.(gaussian ~mu:0.5 ~sigma:0.25 25 1 |> sort) |> Sklearn.Arr.of_bigarray in
+  Np.Random.seed 0;
+  let x = Np.(Random.normal ~loc:(`F 0.5) ~scale:(`F 0.25) ~size:[25; 1] () |> sort ~axis:(`I 0)) in
   print_ndarray @@ quantile_transform ~x ~n_quantiles:10 ~random_state:0 ~copy:true ();
   [%expect {|
             [[0.        ]
-             [0.0465588 ]
-             [0.07236635]
-             [0.13435383]
-             [0.19038255]
-             [0.20744256]
-             [0.27077313]
-             [0.3072948 ]
+             [0.09871873]
+             [0.10643612]
+             [0.11754671]
+             [0.21017437]
+             [0.21945445]
+             [0.23498666]
+             [0.32443642]
              [0.33333333]
-             [0.40459044]
-             [0.4263402 ]
-             [0.46393428]
-             [0.52235714]
-             [0.54881137]
-             [0.59860807]
-             [0.60721673]
+             [0.41360794]
+             [0.42339464]
+             [0.46257841]
+             [0.47112236]
+             [0.49834237]
+             [0.59986536]
+             [0.63390302]
              [0.66666667]
-             [0.69638456]
-             [0.74844166]
-             [0.78237337]
-             [0.80823856]
-             [0.86774379]
-             [0.90414956]
-             [0.95992288]
+             [0.68873101]
+             [0.69611125]
+             [0.81280699]
+             [0.82160354]
+             [0.88126439]
+             [0.90516028]
+             [0.99319435]
              [1.        ]]
     |}]

@@ -1,5 +1,5 @@
 (library
  (name examples)
  (inline_tests)
- (libraries sklearn)
+ (libraries sklearn np)
  (preprocess (pps ppx_expect)))

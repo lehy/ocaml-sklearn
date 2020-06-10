@@ -1,17 +1,16 @@
+module Np = Np.Numpy
+
 let print f x = Format.printf "%a" f x
+
 let print_py x = Format.printf "%s" (Py.Object.to_string x)
-let print_ndarray = print Sklearn.Arr.pp
+
+let print_ndarray = Np.Obj.print
+
 let print_float = Format.printf "%g\n"
+
 let print_string = Format.printf "%s\n"
+
 let print_int = Format.printf "%d\n"
-
-let matrix = Sklearn.Arr.Float.matrix
-let vector = Sklearn.Arr.Float.vector
-let matrixi = Sklearn.Arr.Int.matrix
-let vectori = Sklearn.Arr.Int.vector
-let vectors = Sklearn.Arr.String.vector
-
-let option_get = function Some x -> x | None -> invalid_arg "option_get: None"
 
 (* DecisionTreeClassifier *)
 (*
