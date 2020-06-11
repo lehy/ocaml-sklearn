@@ -1,4 +1,4 @@
-include Wrap_utils_common
+include Np.Wrap_utils_common
 
 let init () =
   init "scipy" Wrap_version.version

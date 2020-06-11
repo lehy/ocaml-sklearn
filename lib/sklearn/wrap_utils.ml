@@ -1,4 +1,4 @@
-include Wrap_utils_common
+include Np.Wrap_utils_common
 
 let init () =
   init "sklearn" Wrap_version.version

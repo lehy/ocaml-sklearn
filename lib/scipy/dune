@@ -8,11 +8,6 @@
  (dev
   (flags (:standard -w -58))))
 
-;; No other way atm to share code between scipy and sklearn using a private
-;; library with dune.
-;; https://github.com/ocaml/dune/issues/1017
-(rule (copy ../common/wrap_utils_common.ml wrap_utils_common.ml))
-
 (rule (targets
        Cluster.ml
        Cluster.mli
