@@ -32,4 +32,4 @@ ot ${i}i, no doc will be generated for this file"
     done
 done
 
-mkdocs build
+mkdocs --verbose build

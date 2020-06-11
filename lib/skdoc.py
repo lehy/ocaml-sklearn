@@ -4092,12 +4092,30 @@ def scipy_filter(full_python_name, element):
 def scipy_pkg():
     builtin = scipy_builtin_types
     import scipy
-    over = Overrides(scipy_overrides, r'^(?!scipy\.[^.]+\.linalg)scipy(\..+)?')
+    over = Overrides(scipy_overrides, r'^scipy(\..+)?')
     over.add_filter(scipy_filter)
     over.on_function(scipy_on_function)
     registry = Registry()
     pkg = Package(scipy, over, registry, builtin)
     return pkg
+
+def numpy_filter(full_python_name, element):
+    import numpy
+    # Most of these have key.__name__ == value, but not all.
+    once = {
+        numpy.fft: 'numpy.fft',
+        numpy.fft.helper: 'numpy.fft.helper',
+        numpy.polynomial.polyutils: 'numpy.polynomial.polyutils',
+        numpy.linalg: 'numpy.linalg',
+        numpy.linalg.linalg: 'numpy.linalg.linalg',
+        numpy.linalg.lapack_lite: 'numpy.linalg.lapack_lite',
+    }
+    wanted_name = once.get(element, None)
+    if wanted_name is not None:
+        return wanted_name == full_python_name
+    if element.__name__.startswith('numpy.core'):
+        return False
+    return True
 
 
 def numpy_pkg():
@@ -4107,6 +4125,7 @@ def numpy_pkg():
     over = Overrides(
         np_overrides,
         r'^(?!.*\bchararray\b.*)(?!numpy\.dtype)numpy(\..+)?')
+    over.add_filter(numpy_filter)
     registry = Registry()
     # pkg = Module(in_ml_namespace('Np', UpperName('numpy', None)), numpy, over,
     #              registry, builtin)
