@@ -22,7 +22,6 @@ depends: [
   "scipy" {= "sp1.4-0.3.0"}
 ]
 build: [
-  ["dune" "subst"] {pinned}
   [
     "dune"
     "build"
