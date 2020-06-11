@@ -8,6 +8,7 @@ theme:
     accent: 'indigo'
   features:
     - instant
+    - tabs
 markdown_extensions:
   - admonition
   - pymdownx.superfences
@@ -17,9 +18,10 @@ markdown_extensions:
       guess_lang: false
   - toc:
       permalink: true
-      toc_depth: "2-3"
+      toc_depth: "2"
 plugins:
-  - search
+  - search:
+      prebuild_index: True  
 extra_javascript:
   - 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML'
 repo_name: lehy/ocaml-sklearn
