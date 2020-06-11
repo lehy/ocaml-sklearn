@@ -1,5 +1,5 @@
 opam-version: "2.0"
-version: "1.4-0.3.0"
+version: "sp1.4-0.3.0"
 synopsis: "SciPy scientific computing library for OCaml"
 description: """
 These are OCaml bindings to the SciPy Python library.
