@@ -146,13 +146,17 @@ class Registry:
         self.bases = collections.defaultdict(set)
         self.generated_files = []
         self.generated_doc_files = []
-
+        self.elements = collections.defaultdict(list)
+        
+    def add(self, name, element):
+        self.elements[element].append(name)
+        
     def add_generated_file(self, f):
         f = pathlib.Path(f)
         assert f not in self.generated_files, f"source file already generated: {f}"
         self.generated_files.append(f)
 
-    def add_generated_doc_files(self, f):
+    def add_generated_doc_file(self, f):
         f = pathlib.Path(f)
         assert f not in self.generated_doc_files, f"doc file already generated: {f}"
         self.generated_doc_files.append(f)
@@ -175,6 +179,13 @@ class Registry:
         pass
 
     def report_generated(self):
+        for element, names in self.elements.items():
+            if len(names) > 1:
+                ename = getattr(element, '__name__', maybe_to_string(element))
+                log.warning(f"{ename} was emitted under several names:")
+                for name in names:
+                    log.warning(f"- {name.full_python_name()} / {name.full_ml_name()}")
+
         if self.generated_files:
             log.info("generated source files:")
             for f in sorted(self.generated_files):
@@ -335,7 +346,7 @@ class ReParser:
 
         enum_c = rf'(?: \{{ (?:{enum_comma} | {enum_semi} | {enum_pipe}) \}})'
 
-        enum = rf'^\s* (?:(?:string, \s*)? either \s+)? (?:{string_enum} | {enum_c} | {enum_comma} | {enum_pipe} | {enum_or} | {enum_comma_or}) \s*$'
+        enum = rf'^\s* (?:(?:string, \s*)? either \s+)? (?:{string_enum} | {enum_c} | {enum_comma} | {enum_pipe} | {enum_or} | {enum_comma_or}) \s*$'  # noqa e501
         self.string = self._comp(string)
         self.strings = self._comp(strings)
         self.strings_c = self._comp(strings_c)
@@ -759,6 +770,7 @@ class Package:
         self.name = UpperName(self.pkg.__name__, parent=None)
         self.modules = self._list_modules(pkg, overrides, registry, builtin)
         self.registry = registry
+        self.overrides = overrides
 
     def _list_module_raw(self, pkg):
         ret = []
@@ -858,7 +870,6 @@ class Module:
     def __init__(self, name, module, overrides, registry, builtin, inside=[]):
         assert isinstance(name, UpperName)
         self.name = name
-        # print(f"DD wrapping {module.__name__}")
         # Scipy has the modules exported everywhere. Trying to keep only one copy is hard.
         # Reverting to preventing cycles.
         if module in inside:
@@ -874,13 +885,13 @@ class Module:
         if '.externals.' in name.full_python_name():
             raise OutsideScope(name)
 
-        # print(f"building module {self.full_python_name}")
+        registry.add(name, module)
+        
         self.module = module
         self.elements = self._list_elements(module, overrides, registry,
                                             builtin, inside)
         self.registry = registry
-        # print(f"DD finished building module {module}")
-        # print(f"DD module {self.full_python_name} exposed as {parent_name}/{python_name}")
+        self.overrides = overrides
 
     def _list_modules_raw(self, module, overrides):
         modules = []
@@ -937,7 +948,7 @@ class Module:
                        overrides, registry, builtin)
             elif callable(item):
                 append(functions, Function, LowerName(name, self.name), item,
-                       overrides, builtin)
+                       overrides, registry, builtin)
 
         # We list modules, and blacklist them so that we don't wrap
         # them again deeper in the hierarchy; then we wrap them.
@@ -988,7 +999,7 @@ class Module:
         with open(mli, 'w') as f:
             self.registry.add_generated_file(mli)
             self.write_mli_inside(f)
-
+            
     def write_ml_inside(self, f):
         self.write_header(f)
         f.write("let get_py name = Py.Module.get __wrap_namespace name\n")
@@ -1073,6 +1084,8 @@ class Class:
         if not overrides.check_scope(self.name.full_python_name()):
             raise OutsideScope(self.name)
 
+        registry.add(name, klass)
+        
         self.klass = klass
 
         if inspect.isabstract(klass):
@@ -1080,7 +1093,7 @@ class Class:
         else:
             try:
                 self.constructor = Ctor(LowerName(name.python_name(), name),
-                                        self.klass, overrides, builtin)
+                                        self.klass, overrides, registry, builtin)
             except NoSignature:
                 log.warning(
                     f"no signature for constructor of {self.name.full_python_name()}, disabling ctor"
@@ -1088,7 +1101,7 @@ class Class:
                 self.constructor = DummyFunction()
 
         context = TypeContext(klass=self.klass)
-        self.elements = self._list_elements(overrides, builtin, context)
+        self.elements = self._list_elements(overrides, registry, builtin, context)
 
         for item in ['deprecated', 'Parallel', 'ABCMeta']:
             if item in self.name.full_python_name():
@@ -1100,7 +1113,7 @@ class Class:
     def remove_element(self, elt):
         self.elements = [x for x in self.elements if x is not elt]
 
-    def _list_elements(self, overrides, builtin, context):
+    def _list_elements(self, overrides, registry, builtin, context):
         elts = []
 
         # Parse attributes first, so that we avoid warning about them
@@ -1167,10 +1180,10 @@ class Class:
                 if is_hashable(item):
                     if item not in callables:
                         append(elts, Method, item_name, item, overrides,
-                               builtin)
+                               registry, builtin)
                         callables.add(item)
                 else:
-                    append(elts, Method, item_name, item, overrides, builtin)
+                    append(elts, Method, item_name, item, overrides, registry, builtin)
             elif overrides.has_complete_spec(item_name.full_python_name()):
                 # Some methods show up as properties on the class, and
                 # are present only in some instantiations (for example
@@ -1179,7 +1192,7 @@ class Class:
                 # everything.
                 # print(f"II wrapping non-callable method {name}: {item}")
                 try:
-                    elts.append(Method(item_name, item, overrides, builtin))
+                    elts.append(Method(item_name, item, overrides, registry, builtin))
                 except Exception as e:
                     log.warning(
                         f"method {item_name} has complete override spec but there was an error wrapping it: {e}"
@@ -2012,6 +2025,7 @@ class List(Type):
     def __repr__(self):
         return f"List[{str(self.t)}]"
 
+
 class ListAsTuple(Type):
     """On the ml side, a list. On the Python side, a tuple.
     """
@@ -2032,7 +2046,7 @@ class ListAsTuple(Type):
 
     def __repr__(self):
         return f"ListAsTuple[{str(self.t)}]"
-    
+
 
 class StarStar(Type):
     def __init__(self):
@@ -2199,7 +2213,7 @@ class CsrMatrix(BaseType):
     ]
 
     def __init__(self):
-        import scipy.sparse
+        import scipy.sparse  # noqa f401
         super().__init__('scipy.sparse.csr_matrix')
 
 
@@ -2218,7 +2232,7 @@ class CscMatrix(BaseType):
     ]
 
     def __init__(self):
-        import scipy.sparse
+        import scipy.sparse  # noqa f401
         super().__init__('scipy.sparse.csc_matrix')
 
 
@@ -2235,7 +2249,7 @@ class SparseMatrix(BaseType):
     ]
 
     def __init__(self):
-        import scipy.sparse
+        import scipy.sparse  # noqa f401
         super().__init__('scipy.sparse.spmatrix')
 
 
@@ -2308,30 +2322,12 @@ class Arr(BaseTypeByTag):
     def tag_name(self):
         return 'Arr'
 
-    # ml_type = 'Sklearn.Arr.t'
-    # wrap = 'Sklearn.Arr.to_pyobject'
-    # ml_type_ret = 'Sklearn.Arr.t'
-    # unwrap = 'Sklearn.Arr.of_pyobject'
-    # is_type = 'Arr.check'
-    # XXX TODO decide what to do with Arr
-    # as input param, accepting [>`ArrayLike] Np.Obj.t seems the way to go
-    # as output param, it would be nice if it could be used directly without casting to Ndarray, what to do? Keep module Arr?
-    # Many functions in Numpy accept an "array_like", this could be
-    # [>`ArrayLike] probably. It seems any object can be passed to a numpy function accepting an array_like.
-    # def __init__(self):
-    #     obj = 'Np.Obj'
-    #     self._tag_name = 'ArrayLike'
-    #     self.ml_type = f'[>`{self._tag_name}] {obj}.t'
-    #     self.wrap = f'{obj}.to_pyobject'
-    #     self.ml_type_ret = f'[] {obj}.t'
-    #     self.unwrap = f'(fun py -> ({obj}.of_pyobject py : {self.ml_type_ret}))'
-
 
 class Ndarray(BaseType):
     names = Arr.names
 
     def __init__(self, inside_np=False):
-        import numpy
+        import numpy  # noqa f401
         super().__init__('numpy.ndarray', inside_np)
 
 
@@ -2342,7 +2338,7 @@ class CrossValGenerator(BaseType):
     ]
 
     def __init__(self, inside_np=False):
-        import sklearn.model_selection
+        import sklearn.model_selection  # noqa f401
         super().__init__('sklearn.model_selection.BaseCrossValidator',
                          inside_np)
 
@@ -2355,7 +2351,7 @@ class Estimator(BaseType):
     ]
 
     def __init__(self, inside_np=False):
-        import sklearn.base
+        import sklearn.base  # noqa f401
         super().__init__('sklearn.base.BaseEstimator', inside_np)
 
 
@@ -2367,7 +2363,7 @@ class Regressor(BaseType):
     ]
 
     def __init__(self, inside_np=False):
-        import sklearn.base
+        import sklearn.base  # noqa f401
         super().__init__('sklearn.base.RegressorMixin', inside_np)
 
 
@@ -2379,7 +2375,7 @@ class Transformer(BaseType):
     ]
 
     def __init__(self, inside_np=False):
-        import sklearn.base
+        import sklearn.base  # noqa f401
         super().__init__('sklearn.base.TransformerMixin', inside_np)
 
 
@@ -2387,7 +2383,7 @@ class ClusterEstimator(BaseType):
     names = ['instance of sklearn.cluster model', 'sklearn.cluster model']
 
     def __init__(self, inside_np=False):
-        import sklearn.base
+        import sklearn.base  # noqa f401
         super().__init__('sklearn.base.ClusterMixin', inside_np)
 
 
@@ -2395,7 +2391,7 @@ class DecisionTreeClassifier(BaseType):
     names = ['decision tree classifier']
 
     def __init__(self, inside_np=False):
-        import sklearn.tree
+        import sklearn.tree  # noqa f401
         super().__init__('sklearn.tree.DecisionTreeClassifier', inside_np)
 
 
@@ -3257,8 +3253,8 @@ def doc_signature(f):
     # arguments as named.
     dummy_s = re.sub(r'start=None, stop,', 'stop, start=None,', dummy_s)
     try:
-        exec(dummy_s, globals(), locs)  # , globs, locs)
-    except Exception as e:
+        exec(dummy_s, globals(), locs)
+    except Exception:
         log.warning(
             f"doc_sig: could not parse synthetic sig for {name}: '{dummy_s}' ({orig_dummy})"
         )
@@ -3309,11 +3305,14 @@ class Function:
                  name,
                  function,
                  overrides,
+                 registry,
                  builtin,
                  namespace='__wrap_namespace'):
         self.name = name
         self.name.apply_overrides(overrides)
 
+        registry.add(self.name, function)
+        
         self.overrides = overrides
         self.function = function
         self.context = TypeContext(
@@ -3488,10 +3487,11 @@ class DummyFunction:
 
 
 class Method(Function):
-    def __init__(self, name, function, overrides, builtin):
+    def __init__(self, name, function, overrides, registry, builtin):
         super().__init__(name,
                          function,
                          overrides,
+                         registry,
                          builtin,
                          namespace='(to_pyobject self)')
         self.wrapper.doc_type = "method"
@@ -3511,10 +3511,11 @@ class Method(Function):
 
 
 class Ctor(Function):
-    def __init__(self, name, function, overrides, builtin):
+    def __init__(self, name, function, overrides, registry, builtin):
         super().__init__(name,
                          function,
                          overrides,
+                         registry,
                          builtin,
                          namespace='__wrap_namespace')
         self.wrapper.doc_type = "constructor and attributes"
@@ -4021,6 +4022,52 @@ def scipy_on_function(f):
             # print(f"DD adjusted return type on {f}")
 
 
+def sklearn_pkg():
+    import sklearn
+    over = Overrides(sklearn_overrides, r'^sklearn(\..+)?')
+    registry = Registry()
+    builtin = sklearn_builtin_types
+    pkg = Package(sklearn, over, registry, builtin)
+    return pkg
+
+
+def scipy_pkg():
+    builtin = scipy_builtin_types
+    import scipy
+    over = Overrides(scipy_overrides, r'^scipy(\..+)?')
+    over.on_function(scipy_on_function)
+    registry = Registry()
+    pkg = Package(scipy, over, registry, builtin)
+    return pkg
+
+
+def numpy_pkg():
+    builtin = numpy_builtin_types
+    import numpy
+
+    over = Overrides(
+        np_overrides,
+        r'^(?!.*\bchararray\b.*)(?!numpy\.dtype)numpy(\..+)?')
+    registry = Registry()
+    # pkg = Module(in_ml_namespace('Np', UpperName('numpy', None)), numpy, over,
+    #              registry, builtin)
+    pkg = Module(UpperName('numpy', parent=None, ml_name='NumpyRaw'),
+                 numpy, over, registry, builtin)
+    return pkg
+
+
+def write(pkg, path):
+    pkg.write(path)
+    try:
+        py = pkg.pkg
+    except AttributeError:
+        py = pkg.module
+    write_version(py, path, pkg.registry)
+    pkg.registry.write(path)
+    pkg.overrides.report_not_triggered()
+    pkg.registry.report_generated()
+
+
 def main():
     # There are FutureWarnings about deprecated items. We want to
     # catch them in order not to wrap them.
@@ -4036,91 +4083,29 @@ def main():
         log.warning("skdoc.py: no argument passed, not doing anything")
         return
 
+    pkg_maker = dict(sklearn=sklearn_pkg, scipy=scipy_pkg, numpy=numpy_pkg)
+
     mode = sys.argv[1]
-    if mode == "build-sklearn":
-        # TODO: reference Numpy as Np.Numpy
-        import sklearn
-        over = Overrides(sklearn_overrides, r'sklearn(\..+)?')
-        registry = Registry()
-        builtin = sklearn_builtin_types
-        pkg = Package(sklearn, over, registry, builtin)
-        pkg.write(build_dir)
-        # Write this one separately, no sense having it in metrics and
-        # it causes cross dep problems.
-        # csr_matrix = Class(UpperName('sklearn.metrics.pairwise.csr_matrix', None),
-        #                    sklearn.metrics.pairwise.csr_matrix,
-        #                    over, registry, builtin)
-        # Remove all Csr_matrix methods that cause a dependence on Sklearn.Arr, since
-        # they cause a dependency cycle.
-        # remove_me = set()
-        # for elt in csr_matrix.elements:
-        #     for ty in elt.iter_types():
-        #         if isinstance(ty, (Arr, Dtype, Generator)):
-        #             remove_me.add(elt)
-        #         elif isinstance(ty, Enum):
-        #             for t in ty.elements:
-        #                 if isinstance(t, (Arr, Dtype, Generator)):
-        #                     remove_me.add(elt)
-        # for elt in remove_me:
-        #     # print(f"Csr_matrix: removing {elt}")
-        #     csr_matrix.remove_element(elt)
-        # csr_matrix.write(build_dir, "Sklearn", ns="sklearn.metrics.pairwise")
-        write_version(sklearn, build_dir, registry)
+    pkg_name = sys.argv[2]
 
-        # import numpy
-        # numpy_over = Overrides({}, r'^numpy(\..+)?')
-        # pkg = Module(UpperName('numpy', None), numpy, over, registry,
-        #              numpy_builtin_types)
-        # pkg.write(build_dir)
-        # TODO: version
+    assert pkg_name in pkg_maker, (f"unknown package {pkg_name}, available: {sorted(pkg_maker.keys())}")
+    pkg = pkg_maker[pkg_name]()
 
-        registry.write(build_dir)
-        registry.report_generated()
-
-    elif mode == "build-scipy":
-        # TODO: reference Numpy as Np.Numpy
-        builtin = scipy_builtin_types
-        import scipy
-        over = Overrides(scipy_overrides, r'scipy(\..+)?')
-        over.on_function(scipy_on_function)
-        registry = Registry()
-        pkg = Package(scipy, over, registry, builtin)
-        pkg.write(build_dir)
-        write_version(scipy, build_dir, registry)
-        registry.write(build_dir)
-        registry.report_generated()
-
-    elif mode == "build-numpy":
-        builtin = numpy_builtin_types
-        import numpy
-
-        over = Overrides(
-            np_overrides,
-            r'^(?!.*\bchararray\b.*)(?!numpy\.dtype)numpy(\..+)?')
-        registry = Registry()
-        # pkg = Module(in_ml_namespace('Np', UpperName('numpy', None)), numpy, over,
-        #              registry, builtin)
-        pkg = Module(UpperName('numpy', parent=None, ml_name='NumpyRaw'),
-                     numpy, over, registry, builtin)
-        # pkg = Package(numpy, over, registry, builtin)
-        pkg.write(build_dir)
-        write_version(numpy, build_dir, registry)
-        registry.write(build_dir)
-        registry.report_generated()
+    if mode == "build":
+        write(pkg, build_dir)
 
     elif mode == "doc":
-        builtin = sklearn_builtin_types
-        pkg = Package(sklearn, over, registry, builtin)
-        pkg.write_doc(pathlib.Path('./doc'))
+        doc_dir = pathlib.Path(sys.argv[3])
+        pkg.write_doc(doc_dir)
 
     elif mode == "examples":
-        builtin = sklearn_builtin_types
-        pkg = Package(sklearn, over, registry, builtin)
+        pkg = sklearn_pkg()
         path = pathlib.Path('./_build/examples/auto/')
         log.info(f"extracting examples to {path}")
         pkg.write_examples(path)
 
-    over.report_not_triggered()
+    else:
+        log.error(f"unknown mode {mode}, available: build, doc, examples")
 
 
 assert test_remove_shape(), "some remove_shape() tests failed"

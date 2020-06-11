@@ -9,12 +9,27 @@ ROOT=$(realpath $(dirname "$0"))/..
 DOC_DIR="$ROOT/doc"
 HTML_DOC_DIR="$ROOT/html_doc"
 rm -rf "$DOC_DIR" "$HTML_DOC_DIR"
-mkdir -p "$DOC_DIR" "$HTML_DOC_DIR"
+mkdir -p "$DOC_DIR"/{np,scipy,sklearn} "$HTML_DOC_DIR"
 
-"$ROOT/lib/skdoc.sh" doc
+"$ROOT/lib/skdoc.sh" doc numpy "$DOC_DIR"/np
+"$ROOT/lib/skdoc.sh" doc scipy "$DOC_DIR"/scipy
+"$ROOT/lib/skdoc.sh" doc sklearn "$DOC_DIR"/sklearn
 "$ROOT/lib/replace-variables.sh" "$ROOT/README.md" "$DOC_DIR/README.md"
-for i in ndarray.mli PyList.mli version.mli; do
-    "$ROOT/lib/mli2md" < "$ROOT/lib/$i" > "$DOC_DIR/$i"
+for i in np scipy sklearn; do
+    if test -r "$ROOT/$i/README.md"; then
+        "$ROOT/lib/replace-variables.sh" "$ROOT/$i/README.md" "$DOC_DIR/$i/README.md"
+    fi
+done
+for PROJECT in np scipy sklearn; do
+    for i in "$ROOT/lib/$PROJECT"/*.ml; do
+        if test \! -r "${i}i"; then
+            echo "$0:$i:0: exists but n
+ot ${i}i, no doc will be generated for this file"
+        fi
+    done
+    for i in "$ROOT/lib/$PROJECT"/*.mli; do
+        "$ROOT/lib/mli2md" < "$i" > "$DOC_DIR/$PROJECT/$(basename $i .mli).md"
+    done
 done
 
 mkdocs build

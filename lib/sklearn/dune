@@ -102,5 +102,5 @@
        skdoc.log)
 
       (deps ../version.sh ../skdoc.sh ../skdoc.py)
-      (action (run bash ../skdoc.sh build-sklearn))
+      (action (run bash ../skdoc.sh build sklearn))
       (mode fallback))

@@ -57,5 +57,5 @@
        wrap_version.ml
        skdoc.log)
       (deps ../version.sh ../skdoc.sh ../skdoc.py)
-      (action (run bash ../skdoc.sh build-scipy))
+      (action (run bash ../skdoc.sh build scipy))
       (mode fallback))

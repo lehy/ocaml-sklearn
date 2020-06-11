@@ -20,5 +20,5 @@
        skdoc.log)
 
       (deps ../version.sh ../skdoc.sh ../skdoc.py)
-      (action (run bash ../skdoc.sh build-numpy))
+      (action (run bash ../skdoc.sh build numpy))
       (mode fallback))
