@@ -11,22 +11,24 @@ If you are not familiar with scikit-learn, consult its Python [getting
 started documentation](https://scikit-learn.org/stable/getting_started.html)
 and [user guide](https://scikit-learn.org/stable/user_guide.html).
 
-**This is a preview. The current OCaml API is not complete. Some functions may be hard or
-impossible to use. Also, the existing API is not stable, it may change
-to accomodate more functionality or make things easier to use.**
+As of version 0.22-0.3.0, most classes and functions from scikit-learn
+and Numpy should be usable. Many examples have been ported from Python
+to OCaml successfully (see below). However, the APIs have not yet
+proved stable and will probably evolve in the next releases.
 
 ## Example : support vector regression with RBF kernel
 
-```ocaml
+~~~ocaml
+module Np = Np.Numpy
 let n_samples, n_features = 10, 5 in
-Random.init 0;
-let y = Sklearn.Arr.of_bigarray @@ Owl.Arr.uniform [|n_samples|] in
-let x = Sklearn.Arr.of_bigarray @@ Owl.Dense.Matrix.D.uniform n_samples n_features in
+Np.Random.seed 0;
+let y = Np.Random.uniform ~size:[n_samples] () in
+let x = Np.Random.uniform ~size:[n_samples; n_features] () in
 let open Sklearn.Svm in
 let clf = SVR.create ~c:1.0 ~epsilon:0.2 () in
 Format.printf "%a\n" SVR.pp @@ SVR.fit clf ~x ~y;
-Format.printf "%a\n" Sklearn.Arr.pp @@ SVR.support_vectors_ clf;;
-```
+Format.printf "%a\n" Np.pp @@ SVR.support_vectors_ clf;;
+~~~
 
 This outputs:
 ```
@@ -85,7 +87,6 @@ source .venv/bin/activate
 ./my_ocaml_program.exe
 ```
 
-
 ## API
 
 We attempt to bind all of scikit-learn's APIs. However, not all of the
@@ -98,25 +99,19 @@ Python class `sklearn.svm.SVC` can be found in OCaml module
 `SVC` and functions corresponding to the Python methods and
 attributes.
 
-Most data is passed in and out of sklearn through module `Arr`. An
-`Arr.t` can contain any `Numpy` or `Scipy` array-like, including
-`ndarray` and `csr_matrix`.
+Most data is passed in and out of sklearn through module `Ndarray` (in
+module [`Np.Np.Numpy`](np/Numpy.md)).
 
-You should generally build a dense array using the constructors in `Arr`:
+You should generally build a dense array using the constructors in `Np.Numpy`:
 
 ~~~ocaml
-let x = Arr.Float.matrix [|[| 1; 2 |]; [| 3; 4 |]|]
+module Np = Np.Numpy
+let x = Np.matrixi [|[| 1; 2 |]; [| 3; 4 |]|]
 ~~~
 
-`Arr` currently covers a subset of `Numpy` functionality (added as
-needed depending on tests and time).
-
-One way to build an `Arr.t` is to use `Owl`'s functions to construct a
-bigarray and then use `Arr.of_bigarray`. Data is shared between the
-bigarray and the `Arr.t`.
-
-To get data out of an `Arr.t`, use `to_int_array`, `to_float_array` or
-`to_bigarray`.
+To get data out of an `Ndarray`, use `to_int_array`, `to_float_array`
+or `to_string_array` (all of these return a flattened copy of the
+data, and will raise an exception if the data type is wrong).
 
 Attributes are exposed read-only, each with two getters: one that
 raises Not_found if the attribute is None, and the other that returns
@@ -128,9 +123,9 @@ objects.
 Arguments taking string values are converted (in most cases) to
 polymorphic variants.
 
-Each module has a conversion function to `Py.Object.t`, so that you
-can always escape and use `pyml` directly if the API provided here is
-incomplete.
+Each module has a conversion function to `Py.Object.t` (called
+`to_pyobject`), so that you can always escape and use `pyml` directly
+if the API provided here is incomplete.
 
 No attempt is made to expose features marked as deprecated.
 
@@ -147,6 +142,7 @@ The requirements for developing (not using) the bindings are in file
 `requirements-dev.txt`. Install it using:
 
 ~~~sh
+# sudo apt install python3-venv
 python3 -mvenv .venv
 source .venv/bin/activate
 pip install -r requirements-dev.txt
@@ -160,9 +156,7 @@ dune runtest
 
 The tests are in `examples/auto`. They are based on examples extracted
 from the Python documentation. A good way to develop is to pick one of
-the files and start porting examples. One can refer to
-`examples/auto/svm.ml` or `examples/auto/pipeline.ml`, whose examples
-have already been ported (almost) completely.
+the files and start porting examples.
 
 The following examples have been ported completely:
 - [calibration](https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/calibration.ml)
