@@ -179,12 +179,16 @@ class Registry:
         pass
 
     def report_generated(self):
+        multiple = []
         for element, names in self.elements.items():
             if len(names) > 1:
-                ename = getattr(element, '__name__', maybe_to_string(element))
-                log.warning(f"{ename} was emitted under several names:")
-                for name in names:
-                    log.warning(f"- {name.full_python_name()} / {name.full_ml_name()}")
+                multiple.append((len(names), element, names))
+        multiple.sort(key=lambda x: x[0])
+        for num, element, names in multiple:
+            ename = getattr(element, '__name__', maybe_to_string(element))
+            log.warning(f"skdoc.py:0:{type(element).__name__} {ename}: was emitted under {num} names:")
+            for name in names:
+                log.warning(f"- {name.full_python_name()} / {name.full_ml_name()}")
 
         if self.generated_files:
             log.info("generated source files:")
@@ -878,9 +882,9 @@ class Module:
 
         # We pass both the exposed Python name and the builtin module
         # full name through the scope check.
-        if not overrides.check_scope(name.full_python_name()):
+        if not overrides.check_scope(name.full_python_name(), module):
             raise OutsideScope(name)
-        if not overrides.check_scope(module.__name__):
+        if not overrides.check_scope(module.__name__, module):
             raise OutsideScope(name)
         if '.externals.' in name.full_python_name():
             raise OutsideScope(name)
@@ -1081,7 +1085,7 @@ class Class:
             raise AlreadySeen(klass)
         self._seen[klass_key] = self.name.full_python_name()
 
-        if not overrides.check_scope(self.name.full_python_name()):
+        if not overrides.check_scope(self.name.full_python_name(), klass):
             raise OutsideScope(self.name)
 
         registry.add(name, klass)
@@ -3549,7 +3553,8 @@ class Overrides:
         self.scope = re.compile(scope)
         self._on_function = []
         self._blacklisted_submodules = []
-
+        self._filters = []
+        
     def is_blacklisted_submodule(self, m):
         for x in self._blacklisted_submodules:
             if x is m:
@@ -3572,10 +3577,17 @@ class Overrides:
                     f"{f}: on_function callback raised an exception: {e}")
                 raise
 
-    def check_scope(self, full_python_name):
-        ret = re.match(self.scope, full_python_name) is not None
+    def add_filter(self, f):
+        self._filters.append(f)
+            
+    def check_scope(self, full_python_name, element):
+        if re.match(self.scope, full_python_name) is None:
+            return False
+        for f in self._filters:
+            if not f(full_python_name, element):
+                return False
         # print(f"DD check scope {full_python_name} / {self.scope.pattern}: {ret}")
-        return ret
+        return True
 
     def _compile_regexes(self, overrides):
         overrides = compile_dict_keys(overrides)
@@ -4031,10 +4043,57 @@ def sklearn_pkg():
     return pkg
 
 
+def scipy_filter(full_python_name, element):
+    import scipy
+    # Oh scipy...
+    # Most of these have key.__name__ == value, but not all.
+    once = {
+        scipy.fftpack.convolve: 'scipy.fftpack.convolve',
+        scipy.integrate.lsoda: 'scipy.integrate.lsoda',
+        scipy.integrate.odepack: 'scipy.integrate.odepack',
+        scipy.integrate.quadpack: 'scipy.integrate.quadpack',
+        scipy.integrate.vode: 'scipy.integrate.vode',
+        scipy.integrate: 'scipy.integrate',
+        scipy.interpolate.dfitpack: 'scipy.interpolate.dfitpack',
+        scipy.interpolate.fitpack: 'scipy.interpolate.fitpack',
+        scipy.interpolate: 'scipy.interpolate',
+        scipy.io.byteordercodes: 'scipy.io.byteordercodes',
+        scipy.io.matlab.mio5_params: 'scipy.io.matlab.mio5_params',
+        scipy.io.matlab.miobase: 'scipy.io.matlab.miobase',
+        scipy.linalg.decomp: 'scipy.linalg.decomp',
+        scipy.linalg.decomp_svd: 'scipy.linalg.decomp_svd',
+        scipy.linalg: "scipy.linalg",
+        scipy.ndimage.filters: 'scipy.ndimage.filters',
+        scipy.ndimage.measurements: 'scipy.ndimage.measurements',
+        scipy.ndimage.morphology: 'scipy.ndimage.morphology',
+        scipy.optimize.minpack2: 'scipy.optimize.minpack2',
+        scipy.optimize.moduleTNC: 'scipy.optimize.moduleTNC',
+        scipy.optimize: "scipy.optimize",
+        scipy.signal.signaltools: 'scipy.signal.signaltools',
+        scipy.signal.sigtools: 'scipy.signal.sigtools',
+        scipy.spatial.distance: 'scipy.spatial.distance',
+        scipy.spatial.qhull: 'scipy.spatial.qhull',
+        scipy.special.specfun: "scipy.special.specfun",
+        scipy.special: "scipy.special",
+        scipy.stats.distributions: "scipy.stats.distributions",
+        scipy.stats.mstats_basic: 'scipy.stats.mstats_basic',
+        scipy.stats.mvn: 'scipy.stats.mvn',
+        scipy.stats.statlib: 'scipy.stats.statlib',
+        scipy.stats.stats: 'scipy.stats.stats',
+    }
+    wanted_name = once.get(element, None)
+    if wanted_name is not None:
+        return wanted_name == full_python_name
+    if element in [scipy._lib.doccer]:
+        return False
+    return True
+
+
 def scipy_pkg():
     builtin = scipy_builtin_types
     import scipy
-    over = Overrides(scipy_overrides, r'^scipy(\..+)?')
+    over = Overrides(scipy_overrides, r'^(?!scipy\.[^.]+\.linalg)scipy(\..+)?')
+    over.add_filter(scipy_filter)
     over.on_function(scipy_on_function)
     registry = Registry()
     pkg = Package(scipy, over, registry, builtin)
