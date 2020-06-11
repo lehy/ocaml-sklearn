@@ -9,3 +9,4 @@ _disabled
 compile_commands.json
 doc/
 html_doc/
+skdoc.log
