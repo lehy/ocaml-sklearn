@@ -10,6 +10,8 @@ include Wrap_utils
 module Ndarray = struct
   include NumpyRaw.Ndarray
 
+  type ndarray = t
+  
   let raw_array ?dtype ?copy ?order ?subok ?ndmin object_ =
     Py.Module.get_function_with_keywords Types.numpy "array" [||]
       (Wrap_utils.keyword_args
@@ -143,8 +145,6 @@ end
 include Ops
 
 let pp fmt x = Ndarray.pp fmt x
-
-type index = Wrap_utils.Index.Element.t
 
 let py_of_number = function
   | `F x -> Py.Float.of_float x

@@ -119,5 +119,5 @@ module Slice = struct
     create_py (py_of_tag i) (py_of_tag j) (py_of_tag step)
 
   let create_options ?i ?j ?step () =
-    create_py (py_of_option i) (py_of_option j) (py_of_option step)
+    create_py (py_of_option i) (py_of_option j) (py_of_option step) |> of_pyobject
 end
