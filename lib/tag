@@ -12,15 +12,29 @@ ROOT=$(realpath $(dirname "$0"))/..
 
 source "$ROOT/lib/version.sh"
 
-OPAM_VERSION="$(egrep '^version' "$ROOT/sklearn.opam")"
-if [[ "$OPAM_VERSION" != "version: \"$OCAML_SKLEARN_FULL_VERSION\"" ]]; then
+SKLEARN_OPAM_VERSION="$(egrep '^version' "$ROOT/sklearn.opam")"
+if [[ "$SKLEARN_OPAM_VERSION" != "version: \"$OCAML_SKLEARN_FULL_VERSION\"" ]]; then
     echo "The version in $ROOT/sklearn.opam is wrong ($OPAM_VERSION), set it to $OCAML_SKLEARN_FULL_VERSION"
     exit 1
 fi
 
-TAG="$OCAML_SKLEARN_FULL_VERSION"
-BRANCH="$SKLEARN_BASIC_VERSION"
-echo "Attempting to tag version $TAG on branch $BRANCH."
+SCIPY_OPAM_VERSION="$(egrep '^version' "$ROOT/scipy.opam")"
+if [[ "$SCIPY_OPAM_VERSION" != "version: \"$OCAML_SCIPY_FULL_VERSION\"" ]]; then
+    echo "The version in $ROOT/scipy.opam is wrong ($OPAM_VERSION), set it to $OCAML_SCIPY_FULL_VERSION"
+    exit 1
+fi
+
+NUMPY_OPAM_VERSION="$(egrep '^version' "$ROOT/numpy.opam")"
+if [[ "$NUMPY_OPAM_VERSION" != "version: \"$OCAML_NUMPY_FULL_VERSION\"" ]]; then
+    echo "The version in $ROOT/numpy.opam is wrong ($OPAM_VERSION), set it to $OCAML_NUMPY_FULL_VERSION"
+    exit 1
+fi
+
+
+TAGS="$OCAML_SKLEARN_FULL_VERSION $OCAML_SCIPY_FULL_VERSION $OCAML_NUMPY_FULL_VERSION"
+# BRANCH="$SKLEARN_BASIC_VERSION"
+BRANCH="$OCAML_SKDOC_VERSION"
+echo "Attempting to tag versions $TAGS on branch $BRANCH."
 
 if [[ $(git status -s) ]]; then
     echo "There are some uncommitted changes, finish them:"
@@ -60,11 +74,15 @@ git checkout "$BRANCH"
 
 git merge master -m 'merge from master'
 
-cp "$ROOT/_build/default/lib/"*.{ml,mli} "$ROOT/lib/"
-git add "$ROOT"/lib/*.{ml,mli} "$ROOT/sklearn.opam" "$ROOT/examples/notebooks/rendered/"*.ipynb
-git diff-index --quiet HEAD || git commit -m 'add generated files to release branch'
+for PKG in np scipy sklearn; do
+    cp "$ROOT/_build/default/lib/$PKG/"*.{ml,mli} "$ROOT/lib/$PKG/"
+    git add "$ROOT/lib/$PKG/"*.{ml,mli} "$ROOT/$PKG.opam" "$ROOT/examples/notebooks/rendered/"*.ipynb
+    git diff-index --quiet HEAD || git commit -m 'add generated files to release branch'
+done
 
-git tag -a "$TAG" -m "Tag release $TAG."
+for TAG in $TAGS; do
+    git tag -a "$TAG" -m "Tag release $TAG."
+done
 
 # Come back to where we were.
 git checkout "$INITIAL_BRANCH"
