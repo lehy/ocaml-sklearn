@@ -54,18 +54,28 @@ opam install sklearn
 
 ## Finding Python's scikit-learn at runtime
 
-At runtime, ocaml-sklearn expects to load the right version of
-Python's scikit-learn. One way to do that is to create a virtualenv,
-install scikit-learn version %%SKLEARN_FULL_VERSION%% inside, and run
+You do not need a Python installation when compiling your OCaml
+program using ocaml-sklearn. However, when running, your program will
+need to load the sklearn, numpy and scipy Python libraries, so these
+must be installed where the OCaml program is deployed.
+
+A version of ocaml-sklearn is tied to a version of Python's
+scikit-learn, numpy and scipy. For instance, a version of ocaml-sklearn for Python's
+scikit-learn 0.22.2 will refuse to initialize (by throwing an
+exception) if scikit-learn's version is not 0.22 (it can however be
+0.22.1, 0.22.2 or 0.22.2.post1).
+
+One way to make sure you run with the right versions is to create a
+virtualenv, install scikit-learn the Python packages inside, and run
 your OCaml program in the activated virtualenv.
 
-Do this once to create the virtualenv in `.venv` and install
-scikit-learn inside:
+Do this once to create the virtualenv in directory `.venv` and install
+scikit-learn, numpy and scipy inside:
 
 ```sh
 python3 -mvenv .venv
 source .venv/bin/activate
-pip install scikit-learn==%%SKLEARN_FULL_VERSION%% pytest
+pip install scikit-learn==%%SKLEARN_FULL_VERSION%% numpy==%%NUMPY_FULL_VERSION%% scipy==%%SCIPY_FULL_VERSION%% pytest
 ```
 
 Then run your compiled OCaml program inside the virtualenv:
@@ -75,11 +85,6 @@ source .venv/bin/activate
 ./my_ocaml_program.exe
 ```
 
-A version of ocaml-sklearn is tied to a version of Python's
-sklearn. For instance, a version of ocaml-sklearn for Python's
-scikit-learn 0.22.2 will refuse to initialize (by throwing an
-exception) if scikit-learn's version is not 0.22 (it can be 0.22.1,
-0.22.2 or 0.22.2.post1).
 
 ## API
 
