@@ -75,7 +75,7 @@ git checkout "$BRANCH"
 git merge master -m 'merge from master'
 
 for PKG in np scipy sklearn; do
-    cp "$ROOT/_build/default/lib/$PKG/"*.{ml,mli} "$ROOT/lib/$PKG/"
+    cp "$ROOT/_build/default/lib/$PKG/"*.{ml,mli} skdoc.log "$ROOT/lib/$PKG/"
     git add "$ROOT/lib/$PKG/"*.{ml,mli} "$ROOT/$PKG.opam" "$ROOT/examples/notebooks/rendered/"*.ipynb
     git diff-index --quiet HEAD || git commit -m 'add generated files to release branch'
 done
