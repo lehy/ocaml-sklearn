@@ -17,7 +17,7 @@ depends: [
   "dune" {>= "2.4"}
   "ocaml" {>= "4.07.1"}
   "pyml" {>= "20200222"}
-  "np" {= "1.18-0.3.0"}
+  "np" {= "np1.18-0.3.0"}
 ]
 build: [
   ["dune" "subst"] {pinned}
