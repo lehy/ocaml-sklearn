@@ -1,13 +1,14 @@
 flake8
 ghp-import
-jedi
 ipython
+jedi
+jupyter
+jupyterlab
 matplotlib
 mkdocs
 mkdocs-material
 mkdocs-pymdownx-material-extras
+pytest
 regex
 scikit-learn
-pytest
 yapf
-
