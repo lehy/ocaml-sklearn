@@ -307,6 +307,33 @@
     Development notes
   </a>
   
+    <nav class="md-nav" aria-label="Development notes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#python-requirements" class="md-nav__link">
+    Python requirements
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-tests" class="md-nav__link">
+    Running tests
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generating-documentation" class="md-nav__link">
+    Generating documentation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1345,6 +1372,33 @@
     Development notes
   </a>
   
+    <nav class="md-nav" aria-label="Development notes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#python-requirements" class="md-nav__link">
+    Python requirements
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-tests" class="md-nav__link">
+    Running tests
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generating-documentation" class="md-nav__link">
+    Generating documentation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1480,7 +1534,7 @@ if the API provided here is incomplete.</p>
 <code>lib/skdoc.py</code>) that loads up sklearn and uses introspection to
 generate bindings based on <code>pyml</code>. To determine types, it parses
 scikit-learn's documentation.</p>
-<h3>Python requirements</h3>
+<h3 id="python-requirements">Python requirements<a class="headerlink" href="#python-requirements" title="Permanent link">&para;</a></h3>
 <p>The requirements for developing (not using) the bindings are in file
 <code>requirements-dev.txt</code>. Install it using:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># sudo apt install python3-venv</span>
@@ -1489,7 +1543,7 @@ python3 -mvenv .venv
 pip install -r requirements-dev.txt
 </code></pre></div>
 
-<h3>Running tests</h3>
+<h3 id="running-tests">Running tests<a class="headerlink" href="#running-tests" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>dune runtest
 </code></pre></div>
 
@@ -1530,7 +1584,7 @@ the files and start porting examples.</p>
 - <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/random_projection.ml">random_projection</a>
 - <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/semi_supervised.ml">semi_supervised</a>
 - <a href="https://github.com/lehy/ocaml-sklearn/blob/master/examples/auto/utils.ml">utils</a></p>
-<h3>Generating documentation</h3>
+<h3 id="generating-documentation">Generating documentation<a class="headerlink" href="#generating-documentation" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>lib/build-doc
 </code></pre></div>
 
