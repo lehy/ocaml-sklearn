@@ -28,7 +28,9 @@ ot ${i}i, no doc will be generated for this file"
         fi
     done
     for i in "$ROOT/lib/$PROJECT"/*.mli; do
-        "$ROOT/lib/mli2md" < "$i" > "$DOC_DIR/$PROJECT/$(basename $i .mli).md"
+        if test ! -r "$DOC_DIR/$PROJECT/$(basename $i .mli).md"; then
+            "$ROOT/lib/mli2md" < "$i" > "$DOC_DIR/$PROJECT/$(basename $i .mli).md"
+        fi
     done
 done
 
