@@ -1,0 +1,2461 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.2.3">
+    
+    
+      
+        <title>Dummy - OCaml scikit-learn interface</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6e35a1a6.min.css">
+      
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.a46bcfb3.min.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#3f51b5">
+      
+    
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#parameters" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="OCaml scikit-learn interface" class="md-header-nav__button md-logo" aria-label="OCaml scikit-learn interface">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            OCaml scikit-learn interface
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Dummy
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/lehy/ocaml-sklearn/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    lehy/ocaml-sklearn
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+          
+
+  
+
+<nav class="md-tabs md-tabs--active" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  <li class="md-tabs__item">
+    
+      <a href="../.." class="md-tabs__link">
+        Home
+      </a>
+    
+  </li>
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../np/" class="md-tabs__link">
+          Np
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../scipy/" class="md-tabs__link">
+          Scipy
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../Base/" class="md-tabs__link md-tabs__link--active">
+          Sklearn
+        </a>
+      
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="OCaml scikit-learn interface" class="md-nav__button md-logo" aria-label="OCaml scikit-learn interface">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    OCaml scikit-learn interface
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/lehy/ocaml-sklearn/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    lehy/ocaml-sklearn
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+    
+    <label class="md-nav__link" for="nav-2">
+      Np
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Np" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Np
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/" title="Numpy for OCaml" class="md-nav__link">
+      Numpy for OCaml
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/Numpy/" title="Numpy" class="md-nav__link">
+      Numpy
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/NumpyRaw/" title="NumpyRaw" class="md-nav__link">
+      NumpyRaw
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/PyList/" title="PyList" class="md-nav__link">
+      PyList
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/dtype/" title="Dtype" class="md-nav__link">
+      Dtype
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/obj/" title="Obj" class="md-nav__link">
+      Obj
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      Scipy
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Scipy" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Scipy
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/" title="SciPy library for OCaml" class="md-nav__link">
+      SciPy library for OCaml
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Cluster/" title="Cluster" class="md-nav__link">
+      Cluster
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Conftest/" title="Conftest" class="md-nav__link">
+      Conftest
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Constants/" title="Constants" class="md-nav__link">
+      Constants
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Fft/" title="Fft" class="md-nav__link">
+      Fft
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Fftpack/" title="Fftpack" class="md-nav__link">
+      Fftpack
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Integrate/" title="Integrate" class="md-nav__link">
+      Integrate
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Interpolate/" title="Interpolate" class="md-nav__link">
+      Interpolate
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Io/" title="Io" class="md-nav__link">
+      Io
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Linalg/" title="Linalg" class="md-nav__link">
+      Linalg
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Misc/" title="Misc" class="md-nav__link">
+      Misc
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Ndimage/" title="Ndimage" class="md-nav__link">
+      Ndimage
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Odr/" title="Odr" class="md-nav__link">
+      Odr
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Optimize/" title="Optimize" class="md-nav__link">
+      Optimize
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Setup/" title="Setup" class="md-nav__link">
+      Setup
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Signal/" title="Signal" class="md-nav__link">
+      Signal
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Sparse/" title="Sparse" class="md-nav__link">
+      Sparse
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Spatial/" title="Spatial" class="md-nav__link">
+      Spatial
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Special/" title="Special" class="md-nav__link">
+      Special
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Stats/" title="Stats" class="md-nav__link">
+      Stats
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Version/" title="Version" class="md-nav__link">
+      Version
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/wrap_version/" title="Wrap version" class="md-nav__link">
+      Wrap version
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" checked>
+    
+    <label class="md-nav__link" for="nav-4">
+      Sklearn
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Sklearn" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Sklearn
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Base/" title="Base" class="md-nav__link">
+      Base
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Calibration/" title="Calibration" class="md-nav__link">
+      Calibration
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Cluster/" title="Cluster" class="md-nav__link">
+      Cluster
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Compose/" title="Compose" class="md-nav__link">
+      Compose
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Conftest/" title="Conftest" class="md-nav__link">
+      Conftest
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Covariance/" title="Covariance" class="md-nav__link">
+      Covariance
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Cross_decomposition/" title="Cross decomposition" class="md-nav__link">
+      Cross decomposition
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Datasets/" title="Datasets" class="md-nav__link">
+      Datasets
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Decomposition/" title="Decomposition" class="md-nav__link">
+      Decomposition
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Discriminant_analysis/" title="Discriminant analysis" class="md-nav__link">
+      Discriminant analysis
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Dummy
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
+        </span>
+      </label>
+    
+    <a href="./" title="Dummy" class="md-nav__link md-nav__link--active">
+      Dummy
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#attributes" class="md-nav__link">
+    Attributes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_1" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_2" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_1" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_3" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_2" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_4" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_3" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_5" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_4" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_6" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_5" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_7" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_6" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_8" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#attributes_1" class="md-nav__link">
+    Attributes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_1" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_9" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_7" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_10" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_8" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_11" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_9" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_12" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_10" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_13" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_11" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_14" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_12" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_15" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_16" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_13" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#raises" class="md-nav__link">
+    Raises
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_17" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_18" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_14" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Ensemble/" title="Ensemble" class="md-nav__link">
+      Ensemble
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Exceptions/" title="Exceptions" class="md-nav__link">
+      Exceptions
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Experimental/" title="Experimental" class="md-nav__link">
+      Experimental
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Externals/" title="Externals" class="md-nav__link">
+      Externals
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Feature_extraction/" title="Feature extraction" class="md-nav__link">
+      Feature extraction
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Feature_selection/" title="Feature selection" class="md-nav__link">
+      Feature selection
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Gaussian_process/" title="Gaussian process" class="md-nav__link">
+      Gaussian process
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Impute/" title="Impute" class="md-nav__link">
+      Impute
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Inspection/" title="Inspection" class="md-nav__link">
+      Inspection
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Isotonic/" title="Isotonic" class="md-nav__link">
+      Isotonic
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Kernel_approximation/" title="Kernel approximation" class="md-nav__link">
+      Kernel approximation
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Kernel_ridge/" title="Kernel ridge" class="md-nav__link">
+      Kernel ridge
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Linear_model/" title="Linear model" class="md-nav__link">
+      Linear model
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Manifold/" title="Manifold" class="md-nav__link">
+      Manifold
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Metrics/" title="Metrics" class="md-nav__link">
+      Metrics
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Mixture/" title="Mixture" class="md-nav__link">
+      Mixture
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Model_selection/" title="Model selection" class="md-nav__link">
+      Model selection
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Multiclass/" title="Multiclass" class="md-nav__link">
+      Multiclass
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Multioutput/" title="Multioutput" class="md-nav__link">
+      Multioutput
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Naive_bayes/" title="Naive bayes" class="md-nav__link">
+      Naive bayes
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Neighbors/" title="Neighbors" class="md-nav__link">
+      Neighbors
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Neural_network/" title="Neural network" class="md-nav__link">
+      Neural network
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Pipeline/" title="Pipeline" class="md-nav__link">
+      Pipeline
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Preprocessing/" title="Preprocessing" class="md-nav__link">
+      Preprocessing
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Random_projection/" title="Random projection" class="md-nav__link">
+      Random projection
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Semi_supervised/" title="Semi supervised" class="md-nav__link">
+      Semi supervised
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Setup/" title="Setup" class="md-nav__link">
+      Setup
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Svm/" title="Svm" class="md-nav__link">
+      Svm
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Tests/" title="Tests" class="md-nav__link">
+      Tests
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Tree/" title="Tree" class="md-nav__link">
+      Tree
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Utils/" title="Utils" class="md-nav__link">
+      Utils
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../arr/" title="Arr" class="md-nav__link">
+      Arr
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../dict/" title="Dict" class="md-nav__link">
+      Dict
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../wrap_version/" title="Wrap version" class="md-nav__link">
+      Wrap version
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#attributes" class="md-nav__link">
+    Attributes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_1" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_2" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_1" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_3" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_2" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_4" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_3" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_5" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_4" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_6" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_5" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_7" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_6" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_8" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#attributes_1" class="md-nav__link">
+    Attributes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_1" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_9" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_7" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_10" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_8" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_11" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_9" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_12" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_10" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_13" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_11" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_14" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_12" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_15" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_16" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_13" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#raises" class="md-nav__link">
+    Raises
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_17" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_18" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_14" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/lehy/ocaml-sklearn/edit/master/docs/sklearn/Dummy.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                  
+                
+                
+                  <h1>Dummy</h1>
+                
+                <p>Get an attribute of this module as a Py.Object.t.
+This is useful to pass a Python function to another function.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_py</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+
+<span class="k">module</span> <span class="nc">DummyClassifier</span> <span class="o">:</span> <span class="k">sig</span>
+<span class="k">type</span> <span class="n">tag</span> <span class="o">=</span> <span class="o">[`</span><span class="nc">DummyClassifier</span><span class="o">]</span>
+<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="o">[`</span><span class="nc">BaseEstimator</span> <span class="o">|</span> <span class="o">`</span><span class="nc">ClassifierMixin</span> <span class="o">|</span> <span class="o">`</span><span class="nc">DummyClassifier</span> <span class="o">|</span> <span class="o">`</span><span class="nc">MultiOutputMixin</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">of_pyobject</span> <span class="o">:</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
+<span class="k">val</span> <span class="n">to_pyobject</span> <span class="o">:</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+
+<span class="k">val</span> <span class="n">as_classifier</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ClassifierMixin</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">as_multi_output</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">MultiOutputMixin</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">as_estimator</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">BaseEstimator</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">create</span> <span class="o">:</span> <span class="o">?</span><span class="n">strategy</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">random_state</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">constant</span><span class="o">:[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="n">t</span>
+</code></pre></div>
+
+<p>DummyClassifier is a classifier that makes predictions using simple rules.</p>
+<p>This classifier is useful as a simple baseline to compare with other
+(real) classifiers. Do not use it for real problems.</p>
+<p>Read more in the :ref:<code>User Guide &lt;dummy_estimators&gt;</code>.</p>
+<p>.. versionadded:: 0.13</p>
+<h2 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h2>
+<p>strategy : str, default='stratified'
+Strategy to use to generate predictions.</p>
+<ul>
+<li>'stratified': generates predictions by respecting the training
+set's class distribution.</li>
+<li>'most_frequent': always predicts the most frequent label in the
+training set.</li>
+<li>'prior': always predicts the class that maximizes the class prior
+(like 'most_frequent') and <code>predict_proba</code> returns the class prior.</li>
+<li>'uniform': generates predictions uniformly at random.</li>
+<li>'constant': always predicts a constant label that is provided by
+the user. This is useful for metrics that evaluate a non-majority
+class</li>
+</ul>
+<p>.. versionchanged:: 0.22
+The default value of <code>strategy</code> will change to 'prior' in version
+0.24. Starting from version 0.22, a warning will be raised if
+<code>strategy</code> is not explicitly set.</p>
+<p>.. versionadded:: 0.17
+Dummy Classifier now supports prior fitting strategy using
+parameter <em>prior</em>.</p>
+<p>random_state : int, RandomState instance or None, optional, default=None
+If int, random_state is the seed used by the random number generator;
+If RandomState instance, random_state is the random number generator;
+If None, the random number generator is the RandomState instance used
+by <code>np.random</code>.</p>
+<p>constant : int or str or array-like of shape (n_outputs,)
+The explicit constant as predicted by the 'constant' strategy. This
+parameter is useful only for the 'constant' strategy.</p>
+<h2 id="attributes">Attributes<a class="headerlink" href="#attributes" title="Permanent link">&para;</a></h2>
+<p>classes_ : array or list of array of shape (n_classes,)
+Class labels for each output.</p>
+<p>n_classes_ : array or list of array of shape (n_classes,)
+Number of label for each output.</p>
+<p>class_prior_ : array or list of array of shape (n_classes,)
+Probability of each class for each output.</p>
+<p>n_outputs_ : int,
+Number of outputs.</p>
+<p>sparse_output_ : bool,
+True if the array returned from predict is to be in sparse CSC format.
+Is automatically set to True if the input y is passed in sparse format.</p>
+<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>import numpy as np
+from sklearn.dummy import DummyClassifier
+X = np.array([-1, 1, 1, 1])
+y = np.array([0, 1, 1, 1])
+dummy_clf = DummyClassifier(strategy='most_frequent')
+dummy_clf.fit(X, y)
+DummyClassifier(strategy='most_frequent')
+dummy_clf.predict(X)
+array([1, 1, 1, 1])
+dummy_clf.score(X, y)
+0.75</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span> <span class="o">?</span><span class="n">sample_weight</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">y</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
+</code></pre></div>
+
+<p>Fit the random classifier.</p>
+<h2 id="parameters_1">Parameters<a class="headerlink" href="#parameters_1" title="Permanent link">&para;</a></h2>
+<p>X : {array-like, object with finite length or shape}
+Training data, requires length = n_samples</p>
+<p>y : array-like of shape (n_samples,) or (n_samples, n_outputs)
+Target values.</p>
+<p>sample_weight : array-like of shape (n_samples,), default=None
+Sample weights.</p>
+<h2 id="returns">Returns<a class="headerlink" href="#returns" title="Permanent link">&para;</a></h2>
+<p>self : object</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span> <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Get parameters for this estimator.</p>
+<h2 id="parameters_2">Parameters<a class="headerlink" href="#parameters_2" title="Permanent link">&para;</a></h2>
+<p>deep : bool, default=True
+If True, will return the parameters for this estimator and
+contained subobjects that are estimators.</p>
+<h2 id="returns_1">Returns<a class="headerlink" href="#returns_1" title="Permanent link">&para;</a></h2>
+<p>params : mapping of string to any
+Parameter names mapped to their values.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict</span> <span class="o">:</span> <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Perform classification on test vectors X.</p>
+<h2 id="parameters_3">Parameters<a class="headerlink" href="#parameters_3" title="Permanent link">&para;</a></h2>
+<p>X : {array-like, object with finite length or shape}
+Training data, requires length = n_samples</p>
+<h2 id="returns_2">Returns<a class="headerlink" href="#returns_2" title="Permanent link">&para;</a></h2>
+<p>y : array-like of shape (n_samples,) or (n_samples, n_outputs)
+Predicted target values for X.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict_log_proba</span> <span class="o">:</span> <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Return log probability estimates for the test vectors X.</p>
+<h2 id="parameters_4">Parameters<a class="headerlink" href="#parameters_4" title="Permanent link">&para;</a></h2>
+<p>X : {array-like, object with finite length or shape}
+Training data, requires length = n_samples</p>
+<h2 id="returns_3">Returns<a class="headerlink" href="#returns_3" title="Permanent link">&para;</a></h2>
+<p>P : array-like or list of array-like of shape (n_samples, n_classes)
+Returns the log probability of the sample for each class in
+the model, where classes are ordered arithmetically for each
+output.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict_proba</span> <span class="o">:</span> <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Return probability estimates for the test vectors X.</p>
+<h2 id="parameters_5">Parameters<a class="headerlink" href="#parameters_5" title="Permanent link">&para;</a></h2>
+<p>X : {array-like, object with finite length or shape}
+Training data, requires length = n_samples</p>
+<h2 id="returns_4">Returns<a class="headerlink" href="#returns_4" title="Permanent link">&para;</a></h2>
+<p>P : array-like or list of array-lke of shape (n_samples, n_classes)
+Returns the probability of the sample for each class in
+the model, where classes are ordered arithmetically, for each
+output.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score</span> <span class="o">:</span> <span class="o">?</span><span class="n">sample_weight</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">:[`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="n">y</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+</code></pre></div>
+
+<p>Returns the mean accuracy on the given test data and labels.</p>
+<p>In multi-label classification, this is the subset accuracy
+which is a harsh metric since you require for each sample that
+each label set be correctly predicted.</p>
+<h2 id="parameters_6">Parameters<a class="headerlink" href="#parameters_6" title="Permanent link">&para;</a></h2>
+<p>X : {array-like, None}
+Test samples with shape = (n_samples, n_features) or
+None. Passing None as test samples gives the same result
+as passing real test samples, since DummyClassifier
+operates independently of the sampled observations.</p>
+<p>y : array-like of shape (n_samples,) or (n_samples, n_outputs)
+True labels for X.</p>
+<p>sample_weight : array-like of shape (n_samples,), default=None
+Sample weights.</p>
+<h2 id="returns_5">Returns<a class="headerlink" href="#returns_5" title="Permanent link">&para;</a></h2>
+<p>score : float
+Mean accuracy of self.predict(X) wrt. y.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_params</span> <span class="o">:</span> <span class="o">?</span><span class="n">params</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
+</code></pre></div>
+
+<p>Set the parameters of this estimator.</p>
+<p>The method works on simple estimators as well as on nested objects
+(such as pipelines). The latter have parameters of the form
+<code>&lt;component&gt;__&lt;parameter&gt;</code> so that it's possible to update each
+component of a nested object.</p>
+<h2 id="parameters_7">Parameters<a class="headerlink" href="#parameters_7" title="Permanent link">&para;</a></h2>
+<p>**params : dict
+Estimator parameters.</p>
+<h2 id="returns_6">Returns<a class="headerlink" href="#returns_6" title="Permanent link">&para;</a></h2>
+<p>self : object
+Estimator instance.</p>
+<p>Attribute classes_: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">classes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Attribute classes_: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">classes_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Attribute n_classes_: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_classes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Attribute n_classes_: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_classes_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Attribute class_prior_: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">class_prior_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Attribute class_prior_: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">class_prior_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Attribute n_outputs_: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_outputs_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+</code></pre></div>
+
+<p>Attribute n_outputs_: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_outputs_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Attribute sparse_output_: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sparse_output_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
+</code></pre></div>
+
+<p>Attribute sparse_output_: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sparse_output_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">bool</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Pretty-print the object to a formatter.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span> <span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">[@@</span><span class="n">ocaml</span><span class="o">.</span><span class="n">toplevel_printer</span><span class="o">]</span>
+
+
+
+<span class="k">module</span> <span class="nc">DummyRegressor</span> <span class="o">:</span> <span class="k">sig</span>
+<span class="k">type</span> <span class="n">tag</span> <span class="o">=</span> <span class="o">[`</span><span class="nc">DummyRegressor</span><span class="o">]</span>
+<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="o">[`</span><span class="nc">BaseEstimator</span> <span class="o">|</span> <span class="o">`</span><span class="nc">DummyRegressor</span> <span class="o">|</span> <span class="o">`</span><span class="nc">MultiOutputMixin</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Object</span> <span class="o">|</span> <span class="o">`</span><span class="nc">RegressorMixin</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">of_pyobject</span> <span class="o">:</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
+<span class="k">val</span> <span class="n">to_pyobject</span> <span class="o">:</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+
+<span class="k">val</span> <span class="n">as_regressor</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">RegressorMixin</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">as_multi_output</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">MultiOutputMixin</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">as_estimator</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">BaseEstimator</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">create</span> <span class="o">:</span> <span class="o">?</span><span class="n">strategy</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">constant</span><span class="o">:[`</span><span class="nc">F</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">quantile</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="n">t</span>
+</code></pre></div>
+
+<p>DummyRegressor is a regressor that makes predictions using
+simple rules.</p>
+<p>This regressor is useful as a simple baseline to compare with other
+(real) regressors. Do not use it for real problems.</p>
+<p>Read more in the :ref:<code>User Guide &lt;dummy_estimators&gt;</code>.</p>
+<p>.. versionadded:: 0.13</p>
+<h2 id="parameters_8">Parameters<a class="headerlink" href="#parameters_8" title="Permanent link">&para;</a></h2>
+<p>strategy : str
+Strategy to use to generate predictions.</p>
+<ul>
+<li>'mean': always predicts the mean of the training set</li>
+<li>'median': always predicts the median of the training set</li>
+<li>'quantile': always predicts a specified quantile of the training set,
+provided with the quantile parameter.</li>
+<li>'constant': always predicts a constant value that is provided by
+the user.</li>
+</ul>
+<p>constant : int or float or array-like of shape (n_outputs,)
+The explicit constant as predicted by the 'constant' strategy. This
+parameter is useful only for the 'constant' strategy.</p>
+<p>quantile : float in [0.0, 1.0]
+The quantile to predict using the 'quantile' strategy. A quantile of
+0.5 corresponds to the median, while 0.0 to the minimum and 1.0 to the
+maximum.</p>
+<h2 id="attributes_1">Attributes<a class="headerlink" href="#attributes_1" title="Permanent link">&para;</a></h2>
+<p>constant_ : array, shape (1, n_outputs)
+Mean or median or quantile of the training targets or constant value
+given by the user.</p>
+<p>n_outputs_ : int,
+Number of outputs.</p>
+<h2 id="examples_1">Examples<a class="headerlink" href="#examples_1" title="Permanent link">&para;</a></h2>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>import numpy as np
+from sklearn.dummy import DummyRegressor
+X = np.array([1.0, 2.0, 3.0, 4.0])
+y = np.array([2.0, 3.0, 5.0, 10.0])
+dummy_regr = DummyRegressor(strategy='mean')
+dummy_regr.fit(X, y)
+DummyRegressor()
+dummy_regr.predict(X)
+array([5., 5., 5., 5.])
+dummy_regr.score(X, y)
+0.0</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span> <span class="o">?</span><span class="n">sample_weight</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">y</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
+</code></pre></div>
+
+<p>Fit the random regressor.</p>
+<h2 id="parameters_9">Parameters<a class="headerlink" href="#parameters_9" title="Permanent link">&para;</a></h2>
+<p>X : {array-like, object with finite length or shape}
+Training data, requires length = n_samples</p>
+<p>y : array-like of shape (n_samples,) or (n_samples, n_outputs)
+Target values.</p>
+<p>sample_weight : array-like of shape (n_samples,), default=None
+Sample weights.</p>
+<h2 id="returns_7">Returns<a class="headerlink" href="#returns_7" title="Permanent link">&para;</a></h2>
+<p>self : object</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span> <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Get parameters for this estimator.</p>
+<h2 id="parameters_10">Parameters<a class="headerlink" href="#parameters_10" title="Permanent link">&para;</a></h2>
+<p>deep : bool, default=True
+If True, will return the parameters for this estimator and
+contained subobjects that are estimators.</p>
+<h2 id="returns_8">Returns<a class="headerlink" href="#returns_8" title="Permanent link">&para;</a></h2>
+<p>params : mapping of string to any
+Parameter names mapped to their values.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict</span> <span class="o">:</span> <span class="o">?</span><span class="n">return_std</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Perform classification on test vectors X.</p>
+<h2 id="parameters_11">Parameters<a class="headerlink" href="#parameters_11" title="Permanent link">&para;</a></h2>
+<p>X : {array-like, object with finite length or shape}
+Training data, requires length = n_samples</p>
+<p>return_std : boolean, optional
+Whether to return the standard deviation of posterior prediction.
+All zeros in this case.</p>
+<h2 id="returns_9">Returns<a class="headerlink" href="#returns_9" title="Permanent link">&para;</a></h2>
+<p>y : array-like of shape (n_samples,) or (n_samples, n_outputs)
+Predicted target values for X.</p>
+<p>y_std : array-like of shape (n_samples,) or (n_samples, n_outputs)
+Standard deviation of predictive distribution of query points.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score</span> <span class="o">:</span> <span class="o">?</span><span class="n">sample_weight</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">:[`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="n">y</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+</code></pre></div>
+
+<p>Returns the coefficient of determination R^2 of the prediction.</p>
+<p>The coefficient R^2 is defined as (1 - u/v), where u is the residual
+sum of squares ((y_true - y_pred) <strong> 2).sum() and v is the total
+sum of squares ((y_true - y_true.mean()) </strong> 2).sum().
+The best possible score is 1.0 and it can be negative (because the
+model can be arbitrarily worse). A constant model that always
+predicts the expected value of y, disregarding the input features,
+would get a R^2 score of 0.0.</p>
+<h2 id="parameters_12">Parameters<a class="headerlink" href="#parameters_12" title="Permanent link">&para;</a></h2>
+<p>X : {array-like, None}
+Test samples with shape = (n_samples, n_features) or None.
+For some estimators this may be a
+precomputed kernel matrix instead, shape = (n_samples,
+n_samples_fitted], where n_samples_fitted is the number of
+samples used in the fitting for the estimator.
+Passing None as test samples gives the same result
+as passing real test samples, since DummyRegressor
+operates independently of the sampled observations.</p>
+<p>y : array-like of shape (n_samples,) or (n_samples, n_outputs)
+True values for X.</p>
+<p>sample_weight : array-like of shape (n_samples,), default=None
+Sample weights.</p>
+<h2 id="returns_10">Returns<a class="headerlink" href="#returns_10" title="Permanent link">&para;</a></h2>
+<p>score : float
+R^2 of self.predict(X) wrt. y.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_params</span> <span class="o">:</span> <span class="o">?</span><span class="n">params</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
+</code></pre></div>
+
+<p>Set the parameters of this estimator.</p>
+<p>The method works on simple estimators as well as on nested objects
+(such as pipelines). The latter have parameters of the form
+<code>&lt;component&gt;__&lt;parameter&gt;</code> so that it's possible to update each
+component of a nested object.</p>
+<h2 id="parameters_13">Parameters<a class="headerlink" href="#parameters_13" title="Permanent link">&para;</a></h2>
+<p>**params : dict
+Estimator parameters.</p>
+<h2 id="returns_11">Returns<a class="headerlink" href="#returns_11" title="Permanent link">&para;</a></h2>
+<p>self : object
+Estimator instance.</p>
+<p>Attribute constant_: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">constant_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Attribute constant_: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">constant_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Attribute n_outputs_: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_outputs_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+</code></pre></div>
+
+<p>Attribute n_outputs_: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_outputs_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Pretty-print the object to a formatter.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span> <span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">[@@</span><span class="n">ocaml</span><span class="o">.</span><span class="n">toplevel_printer</span><span class="o">]</span>
+
+
+
+<span class="k">val</span> <span class="n">check_array</span> <span class="o">:</span> <span class="o">?</span><span class="n">accept_sparse</span><span class="o">:[`</span><span class="nc">StringList</span> <span class="k">of</span> <span class="kt">string</span> <span class="kt">list</span> <span class="o">|</span> <span class="o">`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Bool</span> <span class="k">of</span> <span class="kt">bool</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">accept_large_sparse</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">dtype</span><span class="o">:[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Dtype</span> <span class="k">of</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Dtype</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Dtypes</span> <span class="k">of</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Dtype</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">order</span><span class="o">:[`</span><span class="nc">F</span> <span class="o">|</span> <span class="o">`</span><span class="nc">C</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">copy</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">force_all_finite</span><span class="o">:[`</span><span class="nc">Allow_nan</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Bool</span> <span class="k">of</span> <span class="kt">bool</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">ensure_2d</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">allow_nd</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">ensure_min_samples</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">ensure_min_features</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">warn_on_dtype</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">estimator</span><span class="o">:[&gt;`</span><span class="nc">BaseEstimator</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">array</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Input validation on an array, list, sparse matrix or similar.</p>
+<p>By default, the input is checked to be a non-empty 2D array containing
+only finite values. If the dtype of the array is object, attempt
+converting to float, raising on failure.</p>
+<h2 id="parameters_14">Parameters<a class="headerlink" href="#parameters_14" title="Permanent link">&para;</a></h2>
+<p>array : object
+Input object to check / convert.</p>
+<p>accept_sparse : string, boolean or list/tuple of strings (default=False)
+String[s] representing allowed sparse matrix formats, such as 'csc',
+'csr', etc. If the input is sparse but not in the allowed format,
+it will be converted to the first listed format. True allows the input
+to be any format. False means that a sparse matrix input will
+raise an error.</p>
+<p>accept_large_sparse : bool (default=True)
+If a CSR, CSC, COO or BSR sparse matrix is supplied and accepted by
+accept_sparse, accept_large_sparse=False will cause it to be accepted
+only if its indices are stored with a 32-bit dtype.</p>
+<p>.. versionadded:: 0.20</p>
+<p>dtype : string, type, list of types or None (default='numeric')
+Data type of result. If None, the dtype of the input is preserved.
+If 'numeric', dtype is preserved unless array.dtype is object.
+If dtype is a list of types, conversion on the first type is only
+performed if the dtype of the input is not in the list.</p>
+<p>order : 'F', 'C' or None (default=None)
+Whether an array will be forced to be fortran or c-style.
+When order is None (default), then if copy=False, nothing is ensured
+about the memory layout of the output array; otherwise (copy=True)
+the memory layout of the returned array is kept as close as possible
+to the original array.</p>
+<p>copy : boolean (default=False)
+Whether a forced copy will be triggered. If copy=False, a copy might
+be triggered by a conversion.</p>
+<p>force_all_finite : boolean or 'allow-nan', (default=True)
+Whether to raise an error on np.inf and np.nan in array. The
+possibilities are:</p>
+<ul>
+<li>True: Force all values of array to be finite.</li>
+<li>False: accept both np.inf and np.nan in array.</li>
+<li>'allow-nan': accept only np.nan values in array. Values cannot
+be infinite.</li>
+</ul>
+<p>For object dtyped data, only np.nan is checked and not np.inf.</p>
+<p>.. versionadded:: 0.20
+<code>force_all_finite</code> accepts the string <code>'allow-nan'</code>.</p>
+<p>ensure_2d : boolean (default=True)
+Whether to raise a value error if array is not 2D.</p>
+<p>allow_nd : boolean (default=False)
+Whether to allow array.ndim &gt; 2.</p>
+<p>ensure_min_samples : int (default=1)
+Make sure that the array has a minimum number of samples in its first
+axis (rows for a 2D array). Setting to 0 disables this check.</p>
+<p>ensure_min_features : int (default=1)
+Make sure that the 2D array has some minimum number of features
+(columns). The default value of 1 rejects empty datasets.
+This check is only enforced when the input data has effectively 2
+dimensions or is originally 1D and <code>ensure_2d</code> is True. Setting to 0
+disables this check.</p>
+<p>warn_on_dtype : boolean or None, optional (default=None)
+Raise DataConversionWarning if the dtype of the input data structure
+does not match the requested dtype, causing a memory copy.</p>
+<p>.. deprecated:: 0.21
+<code>warn_on_dtype</code> is deprecated in version 0.21 and will be
+removed in 0.23.</p>
+<p>estimator : str or estimator instance (default=None)
+If passed, include the name of the estimator in warning messages.</p>
+<h2 id="returns_12">Returns<a class="headerlink" href="#returns_12" title="Permanent link">&para;</a></h2>
+<p>array_converted : object
+The converted and validated array.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">check_consistent_length</span> <span class="o">:</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Check that all arrays have consistent first dimensions.</p>
+<p>Checks whether all objects in arrays have the same shape or length.</p>
+<h2 id="parameters_15">Parameters<a class="headerlink" href="#parameters_15" title="Permanent link">&para;</a></h2>
+<p>*arrays : list or tuple of input objects.
+Objects that will be checked for consistent length.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">check_is_fitted</span> <span class="o">:</span> <span class="o">?</span><span class="n">attributes</span><span class="o">:[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">StringList</span> <span class="k">of</span> <span class="kt">string</span> <span class="kt">list</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">msg</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">all_or_any</span><span class="o">:[`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="n">estimator</span><span class="o">:[&gt;`</span><span class="nc">BaseEstimator</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Perform is_fitted validation for estimator.</p>
+<p>Checks if the estimator is fitted by verifying the presence of
+fitted attributes (ending with a trailing underscore) and otherwise
+raises a NotFittedError with the given message.</p>
+<p>This utility is meant to be used internally by estimators themselves,
+typically in their own predict / transform methods.</p>
+<h2 id="parameters_16">Parameters<a class="headerlink" href="#parameters_16" title="Permanent link">&para;</a></h2>
+<p>estimator : estimator instance.
+estimator instance for which the check is performed.</p>
+<p>attributes : str, list or tuple of str, default=None
+Attribute name(s) given as string or a list/tuple of strings
+Eg.: <code>['coef_', 'estimator_', ...], 'coef_'</code></p>
+<p>If <code>None</code>, <code>estimator</code> is considered fitted if there exist an
+attribute that ends with a underscore and does not start with double
+underscore.</p>
+<p>msg : string
+The default error message is, 'This %(name)s instance is not fitted
+yet. Call 'fit' with appropriate arguments before using this
+estimator.'</p>
+<p>For custom messages if '%(name)s' is present in the message string,
+it is substituted for the estimator name.</p>
+<p>Eg. : 'Estimator, %(name)s, must be fitted before sparsifying'.</p>
+<p>all_or_any : callable, {all, any}, default all
+Specify whether all or any of the given attributes must exist.</p>
+<h2 id="returns_13">Returns<a class="headerlink" href="#returns_13" title="Permanent link">&para;</a></h2>
+<p>None</p>
+<h2 id="raises">Raises<a class="headerlink" href="#raises" title="Permanent link">&para;</a></h2>
+<p>NotFittedError
+If the attributes are not found.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">check_random_state</span> <span class="o">:</span> <span class="o">[`</span><span class="nc">Optional</span> <span class="k">of</span> <span class="o">[`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">|</span> <span class="o">`</span><span class="nc">RandomState</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Turn seed into a np.random.RandomState instance</p>
+<h2 id="parameters_17">Parameters<a class="headerlink" href="#parameters_17" title="Permanent link">&para;</a></h2>
+<p>seed : None | int | instance of RandomState
+If seed is None, return the RandomState singleton used by np.random.
+If seed is an int, return a new RandomState instance seeded with seed.
+If seed is already a RandomState instance, return it.
+Otherwise raise ValueError.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">class_distribution</span> <span class="o">:</span> <span class="o">?</span><span class="n">sample_weight</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">y</span><span class="o">:[`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Sparse_matrix_of_size</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span>
+</code></pre></div>
+
+<p>Compute class priors from multioutput-multiclass target data</p>
+<h2 id="parameters_18">Parameters<a class="headerlink" href="#parameters_18" title="Permanent link">&para;</a></h2>
+<p>y : array like or sparse matrix of size (n_samples, n_outputs)
+The labels for each example.</p>
+<p>sample_weight : array-like of shape (n_samples,), default=None
+Sample weights.</p>
+<h2 id="returns_14">Returns<a class="headerlink" href="#returns_14" title="Permanent link">&para;</a></h2>
+<p>classes : list of size n_outputs of arrays of size (n_classes,)
+List of classes for each column.</p>
+<p>n_classes : list of integers of size n_outputs
+Number of classes in each column</p>
+<p>class_prior : list of size n_outputs of arrays of size (n_classes,)
+Class distribution of each column.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../Discriminant_analysis/" title="Discriminant analysis" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Discriminant analysis
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../Ensemble/" title="Ensemble" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Ensemble
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.d710d30a.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a45f732b.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: ["instant", "tabs"],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.c03f0417.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      
+    
+  </body>
+</html>

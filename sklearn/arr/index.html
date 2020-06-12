@@ -1,0 +1,1775 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.2.3">
+    
+    
+      
+        <title>Arr - OCaml scikit-learn interface</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6e35a1a6.min.css">
+      
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.a46bcfb3.min.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#3f51b5">
+      
+    
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="OCaml scikit-learn interface" class="md-header-nav__button md-logo" aria-label="OCaml scikit-learn interface">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            OCaml scikit-learn interface
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Arr
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/lehy/ocaml-sklearn/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    lehy/ocaml-sklearn
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+          
+
+  
+
+<nav class="md-tabs md-tabs--active" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  <li class="md-tabs__item">
+    
+      <a href="../.." class="md-tabs__link">
+        Home
+      </a>
+    
+  </li>
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../np/" class="md-tabs__link">
+          Np
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../scipy/" class="md-tabs__link">
+          Scipy
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../Base/" class="md-tabs__link md-tabs__link--active">
+          Sklearn
+        </a>
+      
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="OCaml scikit-learn interface" class="md-nav__button md-logo" aria-label="OCaml scikit-learn interface">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    OCaml scikit-learn interface
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/lehy/ocaml-sklearn/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    lehy/ocaml-sklearn
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+    
+    <label class="md-nav__link" for="nav-2">
+      Np
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Np" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Np
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/" title="Numpy for OCaml" class="md-nav__link">
+      Numpy for OCaml
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/Numpy/" title="Numpy" class="md-nav__link">
+      Numpy
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/NumpyRaw/" title="NumpyRaw" class="md-nav__link">
+      NumpyRaw
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/PyList/" title="PyList" class="md-nav__link">
+      PyList
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/dtype/" title="Dtype" class="md-nav__link">
+      Dtype
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/obj/" title="Obj" class="md-nav__link">
+      Obj
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      Scipy
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Scipy" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Scipy
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/" title="SciPy library for OCaml" class="md-nav__link">
+      SciPy library for OCaml
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Cluster/" title="Cluster" class="md-nav__link">
+      Cluster
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Conftest/" title="Conftest" class="md-nav__link">
+      Conftest
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Constants/" title="Constants" class="md-nav__link">
+      Constants
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Fft/" title="Fft" class="md-nav__link">
+      Fft
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Fftpack/" title="Fftpack" class="md-nav__link">
+      Fftpack
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Integrate/" title="Integrate" class="md-nav__link">
+      Integrate
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Interpolate/" title="Interpolate" class="md-nav__link">
+      Interpolate
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Io/" title="Io" class="md-nav__link">
+      Io
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Linalg/" title="Linalg" class="md-nav__link">
+      Linalg
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Misc/" title="Misc" class="md-nav__link">
+      Misc
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Ndimage/" title="Ndimage" class="md-nav__link">
+      Ndimage
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Odr/" title="Odr" class="md-nav__link">
+      Odr
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Optimize/" title="Optimize" class="md-nav__link">
+      Optimize
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Setup/" title="Setup" class="md-nav__link">
+      Setup
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Signal/" title="Signal" class="md-nav__link">
+      Signal
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Sparse/" title="Sparse" class="md-nav__link">
+      Sparse
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Spatial/" title="Spatial" class="md-nav__link">
+      Spatial
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Special/" title="Special" class="md-nav__link">
+      Special
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Stats/" title="Stats" class="md-nav__link">
+      Stats
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/Version/" title="Version" class="md-nav__link">
+      Version
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../scipy/wrap_version/" title="Wrap version" class="md-nav__link">
+      Wrap version
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" checked>
+    
+    <label class="md-nav__link" for="nav-4">
+      Sklearn
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Sklearn" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Sklearn
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Base/" title="Base" class="md-nav__link">
+      Base
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Calibration/" title="Calibration" class="md-nav__link">
+      Calibration
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Cluster/" title="Cluster" class="md-nav__link">
+      Cluster
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Compose/" title="Compose" class="md-nav__link">
+      Compose
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Conftest/" title="Conftest" class="md-nav__link">
+      Conftest
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Covariance/" title="Covariance" class="md-nav__link">
+      Covariance
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Cross_decomposition/" title="Cross decomposition" class="md-nav__link">
+      Cross decomposition
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Datasets/" title="Datasets" class="md-nav__link">
+      Datasets
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Decomposition/" title="Decomposition" class="md-nav__link">
+      Decomposition
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Discriminant_analysis/" title="Discriminant analysis" class="md-nav__link">
+      Discriminant analysis
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Dummy/" title="Dummy" class="md-nav__link">
+      Dummy
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Ensemble/" title="Ensemble" class="md-nav__link">
+      Ensemble
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Exceptions/" title="Exceptions" class="md-nav__link">
+      Exceptions
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Experimental/" title="Experimental" class="md-nav__link">
+      Experimental
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Externals/" title="Externals" class="md-nav__link">
+      Externals
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Feature_extraction/" title="Feature extraction" class="md-nav__link">
+      Feature extraction
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Feature_selection/" title="Feature selection" class="md-nav__link">
+      Feature selection
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Gaussian_process/" title="Gaussian process" class="md-nav__link">
+      Gaussian process
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Impute/" title="Impute" class="md-nav__link">
+      Impute
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Inspection/" title="Inspection" class="md-nav__link">
+      Inspection
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Isotonic/" title="Isotonic" class="md-nav__link">
+      Isotonic
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Kernel_approximation/" title="Kernel approximation" class="md-nav__link">
+      Kernel approximation
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Kernel_ridge/" title="Kernel ridge" class="md-nav__link">
+      Kernel ridge
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Linear_model/" title="Linear model" class="md-nav__link">
+      Linear model
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Manifold/" title="Manifold" class="md-nav__link">
+      Manifold
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Metrics/" title="Metrics" class="md-nav__link">
+      Metrics
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Mixture/" title="Mixture" class="md-nav__link">
+      Mixture
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Model_selection/" title="Model selection" class="md-nav__link">
+      Model selection
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Multiclass/" title="Multiclass" class="md-nav__link">
+      Multiclass
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Multioutput/" title="Multioutput" class="md-nav__link">
+      Multioutput
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Naive_bayes/" title="Naive bayes" class="md-nav__link">
+      Naive bayes
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Neighbors/" title="Neighbors" class="md-nav__link">
+      Neighbors
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Neural_network/" title="Neural network" class="md-nav__link">
+      Neural network
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Pipeline/" title="Pipeline" class="md-nav__link">
+      Pipeline
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Preprocessing/" title="Preprocessing" class="md-nav__link">
+      Preprocessing
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Random_projection/" title="Random projection" class="md-nav__link">
+      Random projection
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Semi_supervised/" title="Semi supervised" class="md-nav__link">
+      Semi supervised
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Setup/" title="Setup" class="md-nav__link">
+      Setup
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Svm/" title="Svm" class="md-nav__link">
+      Svm
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Tests/" title="Tests" class="md-nav__link">
+      Tests
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Tree/" title="Tree" class="md-nav__link">
+      Tree
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Utils/" title="Utils" class="md-nav__link">
+      Utils
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+    <a href="./" title="Arr" class="md-nav__link md-nav__link--active">
+      Arr
+    </a>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../dict/" title="Dict" class="md-nav__link">
+      Dict
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../wrap_version/" title="Wrap version" class="md-nav__link">
+      Wrap version
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/lehy/ocaml-sklearn/edit/master/docs/sklearn/arr.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                  
+                
+                
+                  <h1>Arr</h1>
+                
+                <div class="highlight"><pre><span></span><code><span class="c">(* (\**</span>
+<span class="c">*    This represents a Numpy array. In most cases it is a dense</span>
+<span class="c">*    ndarray. But it max also be a sparse matrix (as built using</span>
+<span class="c">*    Csr_matrix, or as returned by scikit-learn).  *\)</span>
+<span class="c">*</span>
+<span class="c">* type t</span>
+<span class="c">*</span>
+<span class="c">* (\** ### show</span>
+<span class="c">*</span>
+<span class="c">*     Pretty-print an Array into a string. *\)</span>
+<span class="c">* val show : t -&gt; string</span>
+<span class="c">*</span>
+<span class="c">* (\** ### pp</span>
+<span class="c">*</span>
+<span class="c">*     Pretty-print the Array.  *\)</span>
+<span class="c">* val pp : Format.formatter -&gt; t -&gt; unit [@@ocaml.toplevel_printer]</span>
+<span class="c">*</span>
+<span class="c">* (\** ### of_csr_matrix</span>
+<span class="c">*</span>
+<span class="c">*     Build an Array.t from a Csr_matrix.t. Data is shared. *\)</span>
+<span class="c">* val of_csr_matrix : Csr_matrix.t -&gt; t</span>
+<span class="c">*</span>
+<span class="c">* (\** ### of_bigarray</span>
+<span class="c">*</span>
+<span class="c">*     Build an Array from a bigarray. *\)</span>
+<span class="c">* val of_bigarray : (&#39;a, &#39;b, &#39;c) Bigarray.Genarray.t -&gt; t</span>
+<span class="c">*</span>
+<span class="c">* val to_int_array : t -&gt; int array</span>
+<span class="c">* val to_float_array : t -&gt; float array</span>
+<span class="c">* val to_string_array : t -&gt; string array</span>
+<span class="c">* val to_string_list : t -&gt; string list</span>
+<span class="c">*</span>
+<span class="c">* (\** ## module Array.List</span>
+<span class="c">*</span>
+<span class="c">*     This is a Python list of Arrays. This is `Sklearn.PyList.Make(Sklearn.Array)`. *\)</span>
+<span class="c">* module List : PyList.S with type elt := t</span>
+<span class="c">*</span>
+<span class="c">* module Dtype : sig</span>
+<span class="c">*   type t = [`Object | `S of string]</span>
+<span class="c">*   val to_pyobject : t -&gt; Py.Object.t</span>
+<span class="c">*   val of_pyobject : Py.Object.t -&gt; t</span>
+<span class="c">* end</span>
+<span class="c">*</span>
+<span class="c">* (\** ### shape</span>
+<span class="c">*</span>
+<span class="c">*     Shape (dimensions) of an Arr. *\)</span>
+<span class="c">* val shape : t -&gt; int array</span>
+<span class="c">*</span>
+<span class="c">* val reshape : shape:int array -&gt; t -&gt; t</span>
+<span class="c">*</span>
+<span class="c">* (\** ### arange</span>
+<span class="c">*</span>
+<span class="c">*     ~~~python</span>
+<span class="c">*     arange([start,] stop[, step,], dtype=None)</span>
+<span class="c">*     ~~~</span>
+<span class="c">*</span>
+<span class="c">*     Return evenly spaced values within a given interval.</span>
+<span class="c">*</span>
+<span class="c">*     Values are generated within the half-open interval ``[start, stop)``</span>
+<span class="c">*     (in other words, the interval including `start` but excluding `stop`).</span>
+<span class="c">*     For integer arguments the function is equivalent to the Python built-in</span>
+<span class="c">*     `range` function, but returns an ndarray rather than a list.</span>
+<span class="c">*</span>
+<span class="c">*     When using a non-integer step, such as 0.1, the results will often not</span>
+<span class="c">*     be consistent.  It is better to use `numpy.linspace` for these cases.</span>
+<span class="c">*</span>
+<span class="c">*     #### Parameters</span>
+<span class="c">*</span>
+<span class="c">*     ???+ info &quot;start : number, optional&quot;</span>
+<span class="c">*         Start of interval.  The interval includes this value.  The default</span>
+<span class="c">*         start value is 0.</span>
+<span class="c">*</span>
+<span class="c">*     ???+ &quot;stop : number&quot;</span>
+<span class="c">*         End of interval.  The interval does not include this value, except</span>
+<span class="c">*         in some cases where `step` is not an integer and floating point</span>
+<span class="c">*         round-off affects the length of `out`.</span>
+<span class="c">*</span>
+<span class="c">*     ???+ info &quot;step : number, optional&quot;</span>
+<span class="c">*         Spacing between values.  For any output `out`, this is the distance</span>
+<span class="c">*         between two adjacent values, ``out[i+1] - out[i]``.  The default</span>
+<span class="c">*         step size is 1.  If `step` is specified as a position argument,</span>
+<span class="c">*         `start` must also be given.</span>
+<span class="c">*</span>
+<span class="c">*     ???+ info &quot;dtype : dtype&quot;</span>
+<span class="c">*         The type of the output array.  If `dtype` is not given, infer the data</span>
+<span class="c">*         type from the other input arguments.</span>
+<span class="c">*</span>
+<span class="c">*     #### Returns</span>
+<span class="c">*</span>
+<span class="c">*     ???+ info &quot;arange : ndarray&quot;</span>
+<span class="c">*         Array of evenly spaced values.</span>
+<span class="c">*</span>
+<span class="c">*     For floating point arguments, the length of the result is</span>
+<span class="c">*     ``ceil((stop - start)/step)``.  Because of floating point overflow,</span>
+<span class="c">*     this rule may result in the last element of `out` being greater</span>
+<span class="c">*     than `stop`.</span>
+<span class="c">*</span>
+<span class="c">*     #### See Also</span>
+<span class="c">*</span>
+<span class="c">*     numpy.linspace : Evenly spaced numbers with careful handling of endpoints.</span>
+<span class="c">*</span>
+<span class="c">*     numpy.ogrid: Arrays of evenly spaced numbers in N-dimensions.</span>
+<span class="c">*</span>
+<span class="c">*     numpy.mgrid: Grid-shaped arrays of evenly spaced numbers in N-dimensions.</span>
+<span class="c">*</span>
+<span class="c">*     #### Examples</span>
+<span class="c">*</span>
+<span class="c">*     ~~~python</span>
+<span class="c">*     &gt;&gt;&gt; np.arange(3)</span>
+<span class="c">*     array([0, 1, 2])</span>
+<span class="c">*     &gt;&gt;&gt; np.arange(3.0)</span>
+<span class="c">*     array([ 0.,  1.,  2.])</span>
+<span class="c">*     &gt;&gt;&gt; np.arange(3,7)</span>
+<span class="c">*     array([3, 4, 5, 6])</span>
+<span class="c">*     &gt;&gt;&gt; np.arange(3,7,2)</span>
+<span class="c">*     array([3, 5])</span>
+<span class="c">*     ~~~</span>
+<span class="c">* *\)</span>
+<span class="c">* val arange : ?start : int -&gt; ?step : int -&gt; int -&gt; t</span>
+<span class="c">*</span>
+<span class="c">* val min : t -&gt; float</span>
+<span class="c">* val max : t -&gt; float</span>
+<span class="c">*</span>
+<span class="c">* val argsort : t -&gt; t</span>
+<span class="c">*</span>
+<span class="c">* val sort : t -&gt; t</span>
+<span class="c">*</span>
+<span class="c">* val ones : ?dtype : Dtype.t -&gt; int list -&gt; t</span>
+<span class="c">* val zeros : ?dtype : Dtype.t -&gt; int list -&gt; t</span>
+<span class="c">*</span>
+<span class="c">* val get_int : i:int list -&gt; t -&gt; int</span>
+<span class="c">* val get_float : i:int list -&gt; t -&gt; float</span>
+<span class="c">* val get_string : i:int list -&gt; t -&gt; string</span>
+<span class="c">*</span>
+<span class="c">* val slice : ?i : int -&gt; ?j : int -&gt; ?step : int -&gt; unit -&gt; [&gt; `Slice of Wrap_utils.Slice.t]</span>
+<span class="c">* val get : i:[`I of int | `Slice of Wrap_utils.Slice.t | `Arr of t | `Newaxis | `Ellipsis] list -&gt; t -&gt; t</span>
+<span class="c">* val set : i:[`I of int | `Slice of Wrap_utils.Slice.t | `Arr of t | `Newaxis | `Ellipsis] list -&gt; v:t -&gt; t -&gt; unit</span>
+<span class="c">*</span>
+<span class="c">* val int : int -&gt; t</span>
+<span class="c">* val float : float -&gt; t</span>
+<span class="c">* val bool : bool -&gt; t</span>
+<span class="c">* val string : string -&gt; t</span>
+<span class="c">*</span>
+<span class="c">* val ( - ) : t -&gt; t -&gt; t</span>
+<span class="c">* val ( + ) : t -&gt; t -&gt; t</span>
+<span class="c">* val ( * ) : t -&gt; t -&gt; t</span>
+<span class="c">* val ( / ) : t -&gt; t -&gt; t</span>
+<span class="c">* val ( &gt; ) : t -&gt; t -&gt; t</span>
+<span class="c">* val ( &gt;= ) : t -&gt; t -&gt; t</span>
+<span class="c">* val ( &lt; ) : t -&gt; t -&gt; t</span>
+<span class="c">* val ( &lt;= ) : t -&gt; t -&gt; t</span>
+<span class="c">* val ( = ) : t -&gt; t -&gt; t</span>
+<span class="c">* val ( != ) : t -&gt; t -&gt; t</span>
+<span class="c">*</span>
+<span class="c">* (\** ## module Array.Float</span>
+<span class="c">*</span>
+<span class="c">*     Build a dense Array containing floats. *\)</span>
+<span class="c">* module Float : sig</span>
+<span class="c">*</span>
+<span class="c">*   (\** ### vector</span>
+<span class="c">*</span>
+<span class="c">*       Build a vector from an OCaml float array. *\)</span>
+<span class="c">*   val vector : float array -&gt; t</span>
+<span class="c">*</span>
+<span class="c">*   (\** ### matrix</span>
+<span class="c">*</span>
+<span class="c">*       Build a dense matrix from an OCaml float array array. *\)</span>
+<span class="c">*   val matrix : float array array -&gt; t</span>
+<span class="c">*</span>
+<span class="c">*   (\** ### of_bigarray</span>
+<span class="c">*</span>
+<span class="c">*       Build a dense tensor from a bigarray. The data is not copied,</span>
+<span class="c">*       and is shared between the bigarray and the Pyhon Array. You</span>
+<span class="c">*       may find Owl useful for building the bigarray. *\)</span>
+<span class="c">*   val of_bigarray : (float, Bigarray.float64_elt, Bigarray.c_layout) Bigarray.Genarray.t -&gt; t</span>
+<span class="c">*</span>
+<span class="c">*   (\** ### to_bigarray</span>
+<span class="c">*</span>
+<span class="c">*       Build a bigarray that shares the same data as the</span>
+<span class="c">*       Arr. Raises an exception if the Arr has the wrong dtype</span>
+<span class="c">*       or layout, or if the Arr is not an ndarray. *\)</span>
+<span class="c">*   val to_bigarray : t -&gt; (float, Bigarray.float64_elt, Bigarray.c_layout) Bigarray.Genarray.t</span>
+<span class="c">*</span>
+<span class="c">*   (\** ### matrices</span>
+<span class="c">*</span>
+<span class="c">*       Build a Python list of Arrays, with each Array being a</span>
+<span class="c">*       matrix initialized from an OCaml float array array. *\)</span>
+<span class="c">*   val matrices : float array array list -&gt; List.t</span>
+<span class="c">*</span>
+<span class="c">*   (\** ### vectors</span>
+<span class="c">*</span>
+<span class="c">*       Build a Python list of Arrays, with each Array being a</span>
+<span class="c">*       vector initialized from an OCaml float array. *\)</span>
+<span class="c">*   val vectors : float array list -&gt; List.t</span>
+<span class="c">* end</span>
+<span class="c">*</span>
+<span class="c">* (\** ## module Array.Int</span>
+<span class="c">*</span>
+<span class="c">*     Build a dense Array containing integers. The</span>
+<span class="c">*     integers are actually stored as nativeints inside the Array. *\)</span>
+<span class="c">* module Int : sig</span>
+<span class="c">*</span>
+<span class="c">*   (\** ### vector</span>
+<span class="c">*</span>
+<span class="c">*       Build a vector from an OCaml int array. *\)</span>
+<span class="c">*   val vector : int array -&gt; t</span>
+<span class="c">*</span>
+<span class="c">*   (\** ### matrix</span>
+<span class="c">*</span>
+<span class="c">*       Build a dense matrix from an OCaml int array array. *\)</span>
+<span class="c">*   val matrix : int array array -&gt; t</span>
+<span class="c">*</span>
+<span class="c">*   (\** ### of_bigarray</span>
+<span class="c">*</span>
+<span class="c">*       Build a dense tensor from a bigarray. The data is not copied,</span>
+<span class="c">*       and is shared between the bigarray and the Pyhon Array. You</span>
+<span class="c">*       may find Owl useful for building the bigarray. *\)</span>
+<span class="c">*   val of_bigarray : (nativeint, Bigarray.nativeint_elt, Bigarray.c_layout) Bigarray.Genarray.t -&gt; t</span>
+<span class="c">*</span>
+<span class="c">*   (\** ### to_bigarray</span>
+<span class="c">*</span>
+<span class="c">*       Build a bigarray that shares the same data as the</span>
+<span class="c">*       Ndarray. Raises an exception if the Ndarray has the wrong dtype</span>
+<span class="c">*       or layout, or if the Arr is not an ndarray. *\)</span>
+<span class="c">*   val to_bigarray : t -&gt; (nativeint, Bigarray.nativeint_elt, Bigarray.c_layout) Bigarray.Genarray.t</span>
+<span class="c">*</span>
+<span class="c">*   (\** ### matrices</span>
+<span class="c">*</span>
+<span class="c">*       Build a Python list of Arrays, with each Array being a</span>
+<span class="c">*       matrix initialized from an OCaml int array array. *\)</span>
+<span class="c">*   val matrices : int array array list -&gt; List.t</span>
+<span class="c">*</span>
+<span class="c">*   (\** ### vectors</span>
+<span class="c">*</span>
+<span class="c">*       Build a Python list of Arrays, with each Array being a</span>
+<span class="c">*       vector initialized from an OCaml int array. *\)</span>
+<span class="c">*   val vectors : int array list -&gt; List.t</span>
+<span class="c">* end</span>
+<span class="c">*</span>
+<span class="c">* (\** ## module Array.String</span>
+<span class="c">*</span>
+<span class="c">*     Build an Array containing strings. *\)</span>
+<span class="c">* module String : sig</span>
+<span class="c">*   val of_list : string list -&gt; t</span>
+<span class="c">*</span>
+<span class="c">*   (\** ### vector</span>
+<span class="c">*</span>
+<span class="c">*       Build a vector from an OCaml string array.</span>
+<span class="c">*</span>
+<span class="c">*       Example :</span>
+<span class="c">*</span>
+<span class="c">*       ~~~ocaml</span>
+<span class="c">*       let x = Array.String.vector [|&quot;a&quot;; &quot;answer&quot;|]</span>
+<span class="c">*       ~~~</span>
+<span class="c">*   *\)</span>
+<span class="c">*   val vector : string array -&gt; t</span>
+<span class="c">*</span>
+<span class="c">*   (\** ### matrix</span>
+<span class="c">*</span>
+<span class="c">*       Build a matrix from an OCaml array of arrays.</span>
+<span class="c">*</span>
+<span class="c">*       Example :</span>
+<span class="c">*</span>
+<span class="c">*       ~~~ocaml</span>
+<span class="c">*       let x = Array.String.matrix [| [|&quot;a&quot;; &quot;answer&quot;|]; [|&quot;b&quot;; `&quot;lala&quot;|] |]</span>
+<span class="c">*       ~~~</span>
+<span class="c">*   *\)</span>
+<span class="c">*   val matrix : string array array -&gt; t</span>
+<span class="c">*</span>
+<span class="c">*   (\** ### vectors</span>
+<span class="c">*</span>
+<span class="c">*       Build a Python list of Arrays, with each Array being a</span>
+<span class="c">*       vector initialized from an OCaml string array.</span>
+<span class="c">*</span>
+<span class="c">*       Example :</span>
+<span class="c">*</span>
+<span class="c">*       ~~~ocaml</span>
+<span class="c">*       let x = Array.String.matrix [| [|&quot;a&quot;|]; [|&quot;b&quot;; `&quot;lala&quot;; &quot;d&quot;|] |]</span>
+<span class="c">*       ~~~</span>
+<span class="c">*   *\)</span>
+<span class="c">*   val vectors : string array list -&gt; List.t</span>
+<span class="c">* end</span>
+<span class="c">*</span>
+<span class="c">* (\** ## module Arr.Object</span>
+<span class="c">*</span>
+<span class="c">*     Build an Arr containing mixed ints, floats or strings. *\)</span>
+<span class="c">* module Object : sig</span>
+<span class="c">*   (\**</span>
+<span class="c">*      The type of an element: int (`I), float (`F) or string (`S).</span>
+<span class="c">*   *\)</span>
+<span class="c">*   type elt = [`I of int | `F of float | `S of string | `Arr of t]</span>
+<span class="c">*</span>
+<span class="c">*   (\** ### vector</span>
+<span class="c">*</span>
+<span class="c">*       Build a vector from an OCaml array.</span>
+<span class="c">*</span>
+<span class="c">*       Example :</span>
+<span class="c">*</span>
+<span class="c">*       ~~~ocaml</span>
+<span class="c">*       let x = Arr.Object.vector [| `I 42; `S &quot;answer&quot;; `F 12.3 |]</span>
+<span class="c">*       ~~~</span>
+<span class="c">*   *\)</span>
+<span class="c">*   val vector : elt array -&gt; t</span>
+<span class="c">*</span>
+<span class="c">*   (\** ### matrix</span>
+<span class="c">*</span>
+<span class="c">*       Build a matrix from an OCaml array of arrays.</span>
+<span class="c">*</span>
+<span class="c">*       Example :</span>
+<span class="c">*</span>
+<span class="c">*       ~~~ocaml</span>
+<span class="c">*       let x = Arr.Object.matrix [| [|`I 42; `S &quot;answer&quot;|]; [|`I 43; `S &quot;lala&quot;|] |]</span>
+<span class="c">*       ~~~</span>
+<span class="c">*   *\)</span>
+<span class="c">*   val matrix : elt array array -&gt; t</span>
+<span class="c">* end</span>
+<span class="c">*</span>
+<span class="c">* (\** ### to_pyobject</span>
+<span class="c">*</span>
+<span class="c">*     Convert the Array to a Py.Object.t. *\)</span>
+<span class="c">* val to_pyobject : t -&gt; Py.Object.t</span>
+<span class="c">*</span>
+<span class="c">* (\** ### of_pyobject</span>
+<span class="c">*</span>
+<span class="c">*     Build an Array from a Py.Object.t.  *\)</span>
+<span class="c">* val of_pyobject : Py.Object.t -&gt; t</span>
+<span class="c">*</span>
+<span class="c">* val argmax : ?axis:[`Zero | `One | `PyObject of Py.Object.t] -&gt; ?out:Py.Object.t -&gt; t -&gt; [`Arr of t | `I of int]</span>
+<span class="c">* (\**</span>
+<span class="c">*    Return indices of maximum elements along an axis.</span>
+<span class="c">*</span>
+<span class="c">*    Implicit zero elements are also taken into account. If there are</span>
+<span class="c">*    several maximum values, the index of the first occurrence is returned.</span>
+<span class="c">*</span>
+<span class="c">*    Parameters</span>
+<span class="c">*    ----------</span>
+<span class="c">*    axis : {-2, -1, 0, 1, None}, optional</span>
+<span class="c">*     Axis along which the argmax is computed. If None (default), index</span>
+<span class="c">*     of the maximum element in the flatten data is returned.</span>
+<span class="c">*    out : None, optional</span>
+<span class="c">*     This argument is in the signature *solely* for NumPy</span>
+<span class="c">*     compatibility reasons. Do not pass in anything except for</span>
+<span class="c">*     the default value, as this argument is not used.</span>
+<span class="c">*</span>
+<span class="c">*    Returns</span>
+<span class="c">*    -------</span>
+<span class="c">*    ind : numpy.matrix or int</span>
+<span class="c">*     Indices of maximum elements. If matrix, its size along `axis` is 1.</span>
+<span class="c">* *\)</span>
+<span class="c">*</span>
+<span class="c">* val argmin : ?axis:[`Zero | `One | `PyObject of Py.Object.t] -&gt; ?out:Py.Object.t -&gt; t -&gt; [`Arr of t | `I of int]</span>
+<span class="c">* (\**</span>
+<span class="c">*    Return indices of minimum elements along an axis.</span>
+<span class="c">*</span>
+<span class="c">*    Implicit zero elements are also taken into account. If there are</span>
+<span class="c">*    several minimum values, the index of the first occurrence is returned.</span>
+<span class="c">*</span>
+<span class="c">*    Parameters</span>
+<span class="c">*    ----------</span>
+<span class="c">*    axis : {-2, -1, 0, 1, None}, optional</span>
+<span class="c">*     Axis along which the argmin is computed. If None (default), index</span>
+<span class="c">*     of the minimum element in the flatten data is returned.</span>
+<span class="c">*    out : None, optional</span>
+<span class="c">*     This argument is in the signature *solely* for NumPy</span>
+<span class="c">*     compatibility reasons. Do not pass in anything except for</span>
+<span class="c">*     the default value, as this argument is not used.</span>
+<span class="c">*</span>
+<span class="c">*    Returns</span>
+<span class="c">*    -------</span>
+<span class="c">*    ind : numpy.matrix or int</span>
+<span class="c">*     Indices of minimum elements. If matrix, its size along `axis` is 1.</span>
+<span class="c">* *\)</span>
+<span class="c">*</span>
+<span class="c">* val mean : ?axis:int list -&gt; ?dtype:Dtype.t -&gt; ?out:t -&gt; ?keepdims:bool -&gt; t -&gt; t</span>
+<span class="c">*</span>
+<span class="c">* val sum : ?axis:int -&gt; ?dtype:Py.Object.t -&gt; ?out:t -&gt; t -&gt; t</span>
+<span class="c">* (\**</span>
+<span class="c">*    Sum the matrix elements over a given axis.</span>
+<span class="c">*</span>
+<span class="c">*    Parameters</span>
+<span class="c">*    ----------</span>
+<span class="c">*    axis : {-2, -1, 0, 1, None} optional</span>
+<span class="c">*     Axis along which the sum is computed. The default is to</span>
+<span class="c">*     compute the sum of all the matrix elements, returning a scalar</span>
+<span class="c">*     (i.e. `axis` = `None`).</span>
+<span class="c">*    dtype : dtype, optional</span>
+<span class="c">*     The type of the returned matrix and of the accumulator in which</span>
+<span class="c">*     the elements are summed.  The dtype of `a` is used by default</span>
+<span class="c">*     unless `a` has an integer dtype of less precision than the default</span>
+<span class="c">*     platform integer.  In that case, if `a` is signed then the platform</span>
+<span class="c">*     integer is used while if `a` is unsigned then an unsigned integer</span>
+<span class="c">*     of the same precision as the platform integer is used.</span>
+<span class="c">*</span>
+<span class="c">*     .. versionadded:: 0.18.0</span>
+<span class="c">*</span>
+<span class="c">*    out : np.matrix, optional</span>
+<span class="c">*     Alternative output matrix in which to place the result. It must</span>
+<span class="c">*     have the same shape as the expected output, but the type of the</span>
+<span class="c">*     output values will be cast if necessary.</span>
+<span class="c">*</span>
+<span class="c">*     .. versionadded:: 0.18.0</span>
+<span class="c">*</span>
+<span class="c">*    Returns</span>
+<span class="c">*    -------</span>
+<span class="c">*    sum_along_axis : np.matrix</span>
+<span class="c">*     A matrix with the same shape as `self`, with the specified</span>
+<span class="c">*     axis removed.</span>
+<span class="c">*</span>
+<span class="c">*    See Also</span>
+<span class="c">*    --------</span>
+<span class="c">*    numpy.matrix.sum : NumPy&#39;s implementation of &#39;sum&#39; for matrices</span>
+<span class="c">* *\)</span>
+<span class="c">*</span>
+<span class="c">* val asarray : ?dtype:Dtype.t -&gt; t -&gt; t</span>
+<span class="c">* val asanyarray : ?dtype:Dtype.t -&gt; t -&gt; t</span>
+<span class="c">* val ascontiguousarray : ?dtype:Dtype.t -&gt; t -&gt; t</span>
+<span class="c">* val asfarray : ?dtype:Dtype.t -&gt; t -&gt; t</span>
+<span class="c">* val asarray_chkfinite : ?dtype:Dtype.t -&gt; t -&gt; t</span>
+<span class="c">*</span>
+<span class="c">* val toarray : t -&gt; t</span>
+<span class="c">* val todense : t -&gt; t</span>
+<span class="c">*</span>
+<span class="c">* val vstack : t list -&gt; t</span>
+<span class="c">* val hstack : t list -&gt; t</span>
+<span class="c">* val dstack : t list -&gt; t</span>
+<span class="c">*</span>
+<span class="c">* val full : ?dtype:Dtype.t -&gt; shape:int list -&gt; Object.elt -&gt; t</span>
+<span class="c">*</span>
+<span class="c">* val flatnonzero : t -&gt; t</span>
+<span class="c">*</span>
+<span class="c">* val flatten : t -&gt; t</span>
+<span class="c">* val ravel : t -&gt; t</span>
+<span class="c">*</span>
+<span class="c">* val iter : t -&gt; t Seq.t</span>
+<span class="c">*</span>
+<span class="c">* module Random : sig</span>
+<span class="c">*   val seed : int -&gt; unit</span>
+<span class="c">*   val random_sample : int list -&gt; t</span>
+<span class="c">* end</span>
+<span class="c">*</span>
+<span class="c">* val check : Py.Object.t -&gt; bool</span>
+<span class="c">*</span>
+<span class="c">* val log : t -&gt; t</span>
+<span class="c">* val exp : t -&gt; t</span>
+</code></pre></div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../Utils/" title="Utils" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Utils
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../dict/" title="Dict" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Dict
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.d710d30a.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a45f732b.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: ["instant", "tabs"],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.c03f0417.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      
+    
+  </body>
+</html>

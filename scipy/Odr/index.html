@@ -1,0 +1,2672 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.2.3">
+    
+    
+      
+        <title>Odr - OCaml scikit-learn interface</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6e35a1a6.min.css">
+      
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.a46bcfb3.min.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#3f51b5">
+      
+    
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#parameters" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="OCaml scikit-learn interface" class="md-header-nav__button md-logo" aria-label="OCaml scikit-learn interface">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            OCaml scikit-learn interface
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Odr
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/lehy/ocaml-sklearn/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    lehy/ocaml-sklearn
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+          
+
+  
+
+<nav class="md-tabs md-tabs--active" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  <li class="md-tabs__item">
+    
+      <a href="../.." class="md-tabs__link">
+        Home
+      </a>
+    
+  </li>
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../np/" class="md-tabs__link">
+          Np
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../" class="md-tabs__link md-tabs__link--active">
+          Scipy
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../sklearn/Base/" class="md-tabs__link">
+          Sklearn
+        </a>
+      
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="OCaml scikit-learn interface" class="md-nav__button md-logo" aria-label="OCaml scikit-learn interface">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    OCaml scikit-learn interface
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/lehy/ocaml-sklearn/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    lehy/ocaml-sklearn
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+    
+    <label class="md-nav__link" for="nav-2">
+      Np
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Np" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Np
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/" title="Numpy for OCaml" class="md-nav__link">
+      Numpy for OCaml
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/Numpy/" title="Numpy" class="md-nav__link">
+      Numpy
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/NumpyRaw/" title="NumpyRaw" class="md-nav__link">
+      NumpyRaw
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/PyList/" title="PyList" class="md-nav__link">
+      PyList
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/dtype/" title="Dtype" class="md-nav__link">
+      Dtype
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/obj/" title="Obj" class="md-nav__link">
+      Obj
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" checked>
+    
+    <label class="md-nav__link" for="nav-3">
+      Scipy
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Scipy" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Scipy
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../" title="SciPy library for OCaml" class="md-nav__link">
+      SciPy library for OCaml
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Cluster/" title="Cluster" class="md-nav__link">
+      Cluster
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Conftest/" title="Conftest" class="md-nav__link">
+      Conftest
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Constants/" title="Constants" class="md-nav__link">
+      Constants
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Fft/" title="Fft" class="md-nav__link">
+      Fft
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Fftpack/" title="Fftpack" class="md-nav__link">
+      Fftpack
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Integrate/" title="Integrate" class="md-nav__link">
+      Integrate
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Interpolate/" title="Interpolate" class="md-nav__link">
+      Interpolate
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Io/" title="Io" class="md-nav__link">
+      Io
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Linalg/" title="Linalg" class="md-nav__link">
+      Linalg
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Misc/" title="Misc" class="md-nav__link">
+      Misc
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Ndimage/" title="Ndimage" class="md-nav__link">
+      Ndimage
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Odr
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
+        </span>
+      </label>
+    
+    <a href="./" title="Odr" class="md-nav__link md-nav__link--active">
+      Odr
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_1" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_1" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_1" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_2" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other-parameters" class="md-nav__link">
+    Other Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#attributes" class="md-nav__link">
+    Attributes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_3" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_1" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_4" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_2" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#attributes_1" class="md-nav__link">
+    Attributes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_3" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_5" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_4" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_2" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_6" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_5" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_7" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_2" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    See Also
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_6" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also_1" class="md-nav__link">
+    See Also
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_7" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_8" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_3" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Optimize/" title="Optimize" class="md-nav__link">
+      Optimize
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Setup/" title="Setup" class="md-nav__link">
+      Setup
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Signal/" title="Signal" class="md-nav__link">
+      Signal
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Sparse/" title="Sparse" class="md-nav__link">
+      Sparse
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Spatial/" title="Spatial" class="md-nav__link">
+      Spatial
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Special/" title="Special" class="md-nav__link">
+      Special
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Stats/" title="Stats" class="md-nav__link">
+      Stats
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Version/" title="Version" class="md-nav__link">
+      Version
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../wrap_version/" title="Wrap version" class="md-nav__link">
+      Wrap version
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
+    
+    <label class="md-nav__link" for="nav-4">
+      Sklearn
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Sklearn" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Sklearn
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Base/" title="Base" class="md-nav__link">
+      Base
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Calibration/" title="Calibration" class="md-nav__link">
+      Calibration
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Cluster/" title="Cluster" class="md-nav__link">
+      Cluster
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Compose/" title="Compose" class="md-nav__link">
+      Compose
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Conftest/" title="Conftest" class="md-nav__link">
+      Conftest
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Covariance/" title="Covariance" class="md-nav__link">
+      Covariance
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Cross_decomposition/" title="Cross decomposition" class="md-nav__link">
+      Cross decomposition
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Datasets/" title="Datasets" class="md-nav__link">
+      Datasets
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Decomposition/" title="Decomposition" class="md-nav__link">
+      Decomposition
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Discriminant_analysis/" title="Discriminant analysis" class="md-nav__link">
+      Discriminant analysis
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Dummy/" title="Dummy" class="md-nav__link">
+      Dummy
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Ensemble/" title="Ensemble" class="md-nav__link">
+      Ensemble
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Exceptions/" title="Exceptions" class="md-nav__link">
+      Exceptions
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Experimental/" title="Experimental" class="md-nav__link">
+      Experimental
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Externals/" title="Externals" class="md-nav__link">
+      Externals
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Feature_extraction/" title="Feature extraction" class="md-nav__link">
+      Feature extraction
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Feature_selection/" title="Feature selection" class="md-nav__link">
+      Feature selection
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Gaussian_process/" title="Gaussian process" class="md-nav__link">
+      Gaussian process
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Impute/" title="Impute" class="md-nav__link">
+      Impute
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Inspection/" title="Inspection" class="md-nav__link">
+      Inspection
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Isotonic/" title="Isotonic" class="md-nav__link">
+      Isotonic
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Kernel_approximation/" title="Kernel approximation" class="md-nav__link">
+      Kernel approximation
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Kernel_ridge/" title="Kernel ridge" class="md-nav__link">
+      Kernel ridge
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Linear_model/" title="Linear model" class="md-nav__link">
+      Linear model
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Manifold/" title="Manifold" class="md-nav__link">
+      Manifold
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Metrics/" title="Metrics" class="md-nav__link">
+      Metrics
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Mixture/" title="Mixture" class="md-nav__link">
+      Mixture
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Model_selection/" title="Model selection" class="md-nav__link">
+      Model selection
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Multiclass/" title="Multiclass" class="md-nav__link">
+      Multiclass
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Multioutput/" title="Multioutput" class="md-nav__link">
+      Multioutput
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Naive_bayes/" title="Naive bayes" class="md-nav__link">
+      Naive bayes
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Neighbors/" title="Neighbors" class="md-nav__link">
+      Neighbors
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Neural_network/" title="Neural network" class="md-nav__link">
+      Neural network
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Pipeline/" title="Pipeline" class="md-nav__link">
+      Pipeline
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Preprocessing/" title="Preprocessing" class="md-nav__link">
+      Preprocessing
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Random_projection/" title="Random projection" class="md-nav__link">
+      Random projection
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Semi_supervised/" title="Semi supervised" class="md-nav__link">
+      Semi supervised
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Setup/" title="Setup" class="md-nav__link">
+      Setup
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Svm/" title="Svm" class="md-nav__link">
+      Svm
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Tests/" title="Tests" class="md-nav__link">
+      Tests
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Tree/" title="Tree" class="md-nav__link">
+      Tree
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Utils/" title="Utils" class="md-nav__link">
+      Utils
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/arr/" title="Arr" class="md-nav__link">
+      Arr
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/dict/" title="Dict" class="md-nav__link">
+      Dict
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/wrap_version/" title="Wrap version" class="md-nav__link">
+      Wrap version
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_1" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_1" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_1" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_2" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other-parameters" class="md-nav__link">
+    Other Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#attributes" class="md-nav__link">
+    Attributes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_3" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_1" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_4" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_2" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#attributes_1" class="md-nav__link">
+    Attributes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_3" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_5" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_4" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_2" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_6" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_5" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_7" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_2" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    See Also
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_6" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also_1" class="md-nav__link">
+    See Also
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_7" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_8" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_3" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/lehy/ocaml-sklearn/edit/master/docs/scipy/Odr.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                  
+                
+                
+                  <h1>Odr</h1>
+                
+                <p>Get an attribute of this module as a Py.Object.t.
+This is useful to pass a Python function to another function.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_py</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+
+<span class="k">module</span> <span class="nc">Data</span> <span class="o">:</span> <span class="k">sig</span>
+<span class="k">type</span> <span class="n">tag</span> <span class="o">=</span> <span class="o">[`</span><span class="nc">Data</span><span class="o">]</span>
+<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="o">[`</span><span class="nc">Data</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">of_pyobject</span> <span class="o">:</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
+<span class="k">val</span> <span class="n">to_pyobject</span> <span class="o">:</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+
+<span class="k">val</span> <span class="n">create</span> <span class="o">:</span> <span class="o">?</span><span class="n">y</span><span class="o">:[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">we</span><span class="o">:[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">wd</span><span class="o">:[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">fix</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">meta</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="n">t</span>
+</code></pre></div>
+
+<p>The data to fit.</p>
+<h2 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h2>
+<p>x : array_like
+Observed data for the independent variable of the regression
+y : array_like, optional
+If array-like, observed data for the dependent variable of the
+regression. A scalar input implies that the model to be used on
+the data is implicit.
+we : array_like, optional
+If <code>we</code> is a scalar, then that value is used for all data points (and
+all dimensions of the response variable).
+If <code>we</code> is a rank-1 array of length q (the dimensionality of the
+response variable), then this vector is the diagonal of the covariant
+weighting matrix for all data points.
+If <code>we</code> is a rank-1 array of length n (the number of data points), then
+the i'th element is the weight for the i'th response variable
+observation (single-dimensional only).
+If <code>we</code> is a rank-2 array of shape (q, q), then this is the full
+covariant weighting matrix broadcast to each observation.
+If <code>we</code> is a rank-2 array of shape (q, n), then <code>we[:,i]</code> is the
+diagonal of the covariant weighting matrix for the i'th observation.
+If <code>we</code> is a rank-3 array of shape (q, q, n), then <code>we[:,:,i]</code> is the
+full specification of the covariant weighting matrix for each
+observation.
+If the fit is implicit, then only a positive scalar value is used.
+wd : array_like, optional
+If <code>wd</code> is a scalar, then that value is used for all data points
+(and all dimensions of the input variable). If <code>wd</code> = 0, then the
+covariant weighting matrix for each observation is set to the identity
+matrix (so each dimension of each observation has the same weight).
+If <code>wd</code> is a rank-1 array of length m (the dimensionality of the input
+variable), then this vector is the diagonal of the covariant weighting
+matrix for all data points.
+If <code>wd</code> is a rank-1 array of length n (the number of data points), then
+the i'th element is the weight for the i'th input variable observation
+(single-dimensional only).
+If <code>wd</code> is a rank-2 array of shape (m, m), then this is the full
+covariant weighting matrix broadcast to each observation.
+If <code>wd</code> is a rank-2 array of shape (m, n), then <code>wd[:,i]</code> is the
+diagonal of the covariant weighting matrix for the i'th observation.
+If <code>wd</code> is a rank-3 array of shape (m, m, n), then <code>wd[:,:,i]</code> is the
+full specification of the covariant weighting matrix for each
+observation.
+fix : array_like of ints, optional
+The <code>fix</code> argument is the same as ifixx in the class ODR. It is an
+array of integers with the same shape as data.x that determines which
+input observations are treated as fixed. One can use a sequence of
+length m (the dimensionality of the input observations) to fix some
+dimensions for all observations. A value of 0 fixes the observation,
+a value &gt; 0 makes it free.
+meta : dict, optional
+Free-form dictionary for metadata.</p>
+<h2 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h2>
+<p>Each argument is attached to the member of the instance of the same name.
+The structures of <code>x</code> and <code>y</code> are described in the Model class docstring.
+If <code>y</code> is an integer, then the Data instance can only be used to fit with
+implicit models where the dimensionality of the response is equal to the
+specified value of <code>y</code>.</p>
+<p>The <code>we</code> argument weights the effect a deviation in the response variable
+has on the fit.  The <code>wd</code> argument weights the effect a deviation in the
+input variable has on the fit. To handle multidimensional inputs and
+responses easily, the structure of these arguments has the n'th
+dimensional axis first. These arguments heavily use the structured
+arguments feature of ODRPACK to conveniently and flexibly support all
+options. See the ODRPACK User's Guide for a full explanation of how these
+weights are used in the algorithm. Basically, a higher value of the weight
+for a particular data point makes a deviation at that point more
+detrimental to the fit.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_meta</span> <span class="o">:</span> <span class="o">?</span><span class="n">kwds</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Update the metadata dictionary with the keywords and data provided
+by keywords.</p>
+<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
+<p>::</p>
+<p>data.set_meta(lab='Ph 7; Lab 26', title='Ag110 + Ag108 Decay')</p>
+<p>Print the object to a human-readable representation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Pretty-print the object to a formatter.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span> <span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">[@@</span><span class="n">ocaml</span><span class="o">.</span><span class="n">toplevel_printer</span><span class="o">]</span>
+
+
+
+<span class="k">module</span> <span class="nc">Model</span> <span class="o">:</span> <span class="k">sig</span>
+<span class="k">type</span> <span class="n">tag</span> <span class="o">=</span> <span class="o">[`</span><span class="nc">Model</span><span class="o">]</span>
+<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="o">[`</span><span class="nc">Model</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">of_pyobject</span> <span class="o">:</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
+<span class="k">val</span> <span class="n">to_pyobject</span> <span class="o">:</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+
+<span class="k">val</span> <span class="n">create</span> <span class="o">:</span> <span class="o">?</span><span class="n">fjacb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">fjacd</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">extra_args</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">estimate</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">implicit</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">meta</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">fcn</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="n">t</span>
+</code></pre></div>
+
+<p>The Model class stores information about the function you wish to fit.</p>
+<p>It stores the function itself, at the least, and optionally stores
+functions which compute the Jacobians used during fitting. Also, one
+can provide a function that will provide reasonable starting values
+for the fit parameters possibly given the set of data.</p>
+<h2 id="parameters_1">Parameters<a class="headerlink" href="#parameters_1" title="Permanent link">&para;</a></h2>
+<p>fcn : function
+fcn(beta, x) --&gt; y
+fjacb : function
+Jacobian of fcn wrt the fit parameters beta.</p>
+<p>fjacb(beta, x) --&gt; @f_i(x,B)/@B_j
+fjacd : function
+Jacobian of fcn wrt the (possibly multidimensional) input
+variable.</p>
+<p>fjacd(beta, x) --&gt; @f_i(x,B)/@x_j
+extra_args : tuple, optional
+If specified, <code>extra_args</code> should be a tuple of extra
+arguments to pass to <code>fcn</code>, <code>fjacb</code>, and <code>fjacd</code>. Each will be called
+by <code>apply(fcn, (beta, x) + extra_args)</code>
+estimate : array_like of rank-1
+Provides estimates of the fit parameters from the data</p>
+<p>estimate(data) --&gt; estbeta
+implicit : boolean
+If TRUE, specifies that the model
+is implicit; i.e <code>fcn(beta, x)</code> ~= 0 and there is no y data to fit
+against
+meta : dict, optional
+freeform dictionary of metadata for the model</p>
+<h2 id="notes_1">Notes<a class="headerlink" href="#notes_1" title="Permanent link">&para;</a></h2>
+<p>Note that the <code>fcn</code>, <code>fjacb</code>, and <code>fjacd</code> operate on NumPy arrays and
+return a NumPy array. The <code>estimate</code> object takes an instance of the
+Data class.</p>
+<p>Here are the rules for the shapes of the argument and return
+arrays of the callback functions:</p>
+<p><code>x</code>
+if the input data is single-dimensional, then <code>x</code> is rank-1
+array; i.e. <code>x = array([1, 2, 3, ...]); x.shape = (n,)</code>
+If the input data is multi-dimensional, then <code>x</code> is a rank-2 array;
+i.e., <code>x = array([[1, 2, ...], [2, 4, ...]]); x.shape = (m, n)</code>.
+In all cases, it has the same shape as the input data array passed to
+<code>~scipy.odr.odr</code>. <code>m</code> is the dimensionality of the input data,
+<code>n</code> is the number of observations.
+<code>y</code>
+if the response variable is single-dimensional, then <code>y</code> is a
+rank-1 array, i.e., <code>y = array([2, 4, ...]); y.shape = (n,)</code>.
+If the response variable is multi-dimensional, then <code>y</code> is a rank-2
+array, i.e., <code>y = array([[2, 4, ...], [3, 6, ...]]); y.shape =
+(q, n)</code> where <code>q</code> is the dimensionality of the response variable.
+<code>beta</code>
+rank-1 array of length <code>p</code> where <code>p</code> is the number of parameters;
+i.e. <code>beta = array([B_1, B_2, ..., B_p])</code>
+<code>fjacb</code>
+if the response variable is multi-dimensional, then the
+return array's shape is <code>(q, p, n)</code> such that <code>fjacb(x,beta)[l,k,i] =
+d f_l(X,B)/d B_k</code> evaluated at the i'th data point.  If <code>q == 1</code>, then
+the return array is only rank-2 and with shape <code>(p, n)</code>.
+<code>fjacd</code>
+as with fjacb, only the return array's shape is <code>(q, m, n)</code>
+such that <code>fjacd(x,beta)[l,j,i] = d f_l(X,B)/d X_j</code> at the i'th data
+point.  If <code>q == 1</code>, then the return array's shape is <code>(m, n)</code>. If
+<code>m == 1</code>, the shape is (q, n). If <code>m == q == 1</code>, the shape is <code>(n,)</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_meta</span> <span class="o">:</span> <span class="o">?</span><span class="n">kwds</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Update the metadata dictionary with the keywords and data provided
+here.</p>
+<h2 id="examples_1">Examples<a class="headerlink" href="#examples_1" title="Permanent link">&para;</a></h2>
+<p>set_meta(name='Exponential', equation='y = a exp(b x) + c')</p>
+<p>Print the object to a human-readable representation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Pretty-print the object to a formatter.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span> <span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">[@@</span><span class="n">ocaml</span><span class="o">.</span><span class="n">toplevel_printer</span><span class="o">]</span>
+
+
+
+<span class="k">module</span> <span class="nc">ODR</span> <span class="o">:</span> <span class="k">sig</span>
+<span class="k">type</span> <span class="n">tag</span> <span class="o">=</span> <span class="o">[`</span><span class="nc">ODR</span><span class="o">]</span>
+<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="o">[`</span><span class="nc">ODR</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">of_pyobject</span> <span class="o">:</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
+<span class="k">val</span> <span class="n">to_pyobject</span> <span class="o">:</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+
+<span class="k">val</span> <span class="n">create</span> <span class="o">:</span> <span class="o">?</span><span class="n">beta0</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">delta0</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">ifixb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">ifixx</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">job</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">iprint</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">errfile</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">rptfile</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">ndigit</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">taufac</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">sstol</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">partol</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">maxit</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">stpb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">stpd</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">sclb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">scld</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">work</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">iwork</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">data</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">model</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="n">t</span>
+</code></pre></div>
+
+<p>The ODR class gathers all information and coordinates the running of the
+main fitting routine.</p>
+<p>Members of instances of the ODR class have the same names as the arguments
+to the initialization routine.</p>
+<h2 id="parameters_2">Parameters<a class="headerlink" href="#parameters_2" title="Permanent link">&para;</a></h2>
+<p>data : Data class instance
+instance of the Data class
+model : Model class instance
+instance of the Model class</p>
+<h2 id="other-parameters">Other Parameters<a class="headerlink" href="#other-parameters" title="Permanent link">&para;</a></h2>
+<p>beta0 : array_like of rank-1
+a rank-1 sequence of initial parameter values. Optional if
+model provides an 'estimate' function to estimate these values.
+delta0 : array_like of floats of rank-1, optional
+a (double-precision) float array to hold the initial values of
+the errors in the input variables. Must be same shape as data.x
+ifixb : array_like of ints of rank-1, optional
+sequence of integers with the same length as beta0 that determines
+which parameters are held fixed. A value of 0 fixes the parameter,
+a value &gt; 0 makes the parameter free.
+ifixx : array_like of ints with same shape as data.x, optional
+an array of integers with the same shape as data.x that determines
+which input observations are treated as fixed. One can use a sequence
+of length m (the dimensionality of the input observations) to fix some
+dimensions for all observations. A value of 0 fixes the observation,
+a value &gt; 0 makes it free.
+job : int, optional
+an integer telling ODRPACK what tasks to perform. See p. 31 of the
+ODRPACK User's Guide if you absolutely must set the value here. Use the
+method set_job post-initialization for a more readable interface.
+iprint : int, optional
+an integer telling ODRPACK what to print. See pp. 33-34 of the
+ODRPACK User's Guide if you absolutely must set the value here. Use the
+method set_iprint post-initialization for a more readable interface.
+errfile : str, optional
+string with the filename to print ODRPACK errors to. <em>Do Not Open
+This File Yourself!</em>
+rptfile : str, optional
+string with the filename to print ODRPACK summaries to. <em>Do Not
+Open This File Yourself!</em>
+ndigit : int, optional
+integer specifying the number of reliable digits in the computation
+of the function.
+taufac : float, optional
+float specifying the initial trust region. The default value is 1.
+The initial trust region is equal to taufac times the length of the
+first computed Gauss-Newton step. taufac must be less than 1.
+sstol : float, optional
+float specifying the tolerance for convergence based on the relative
+change in the sum-of-squares. The default value is eps<strong>(1/2) where eps
+is the smallest value such that 1 + eps &gt; 1 for double precision
+computation on the machine. sstol must be less than 1.
+partol : float, optional
+float specifying the tolerance for convergence based on the relative
+change in the estimated parameters. The default value is eps</strong>(2/3) for
+explicit models and <code>eps**(1/3)</code> for implicit models. partol must be less
+than 1.
+maxit : int, optional
+integer specifying the maximum number of iterations to perform. For
+first runs, maxit is the total number of iterations performed and
+defaults to 50.  For restarts, maxit is the number of additional
+iterations to perform and defaults to 10.
+stpb : array_like, optional
+sequence (<code>len(stpb) == len(beta0)</code>) of relative step sizes to compute
+finite difference derivatives wrt the parameters.
+stpd : optional
+array (<code>stpd.shape == data.x.shape</code> or <code>stpd.shape == (m,)</code>) of relative
+step sizes to compute finite difference derivatives wrt the input
+variable errors. If stpd is a rank-1 array with length m (the
+dimensionality of the input variable), then the values are broadcast to
+all observations.
+sclb : array_like, optional
+sequence (<code>len(stpb) == len(beta0)</code>) of scaling factors for the
+parameters.  The purpose of these scaling factors are to scale all of
+the parameters to around unity. Normally appropriate scaling factors
+are computed if this argument is not specified. Specify them yourself
+if the automatic procedure goes awry.
+scld : array_like, optional
+array (scld.shape == data.x.shape or scld.shape == (m,)) of scaling
+factors for the <em>errors</em> in the input variables. Again, these factors
+are automatically computed if you do not provide them. If scld.shape ==
+(m,), then the scaling factors are broadcast to all observations.
+work : ndarray, optional
+array to hold the double-valued working data for ODRPACK. When
+restarting, takes the value of self.output.work.
+iwork : ndarray, optional
+array to hold the integer-valued working data for ODRPACK. When
+restarting, takes the value of self.output.iwork.</p>
+<h2 id="attributes">Attributes<a class="headerlink" href="#attributes" title="Permanent link">&para;</a></h2>
+<p>data : Data
+The data for this fit
+model : Model
+The model used in fit
+output : Output
+An instance if the Output class containing all of the returned
+data from an invocation of ODR.run() or ODR.restart()</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">restart</span> <span class="o">:</span> <span class="o">?</span><span class="n">iter</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Restarts the run with iter more iterations.</p>
+<h2 id="parameters_3">Parameters<a class="headerlink" href="#parameters_3" title="Permanent link">&para;</a></h2>
+<p>iter : int, optional
+ODRPACK's default for the number of new iterations is 10.</p>
+<h2 id="returns">Returns<a class="headerlink" href="#returns" title="Permanent link">&para;</a></h2>
+<p>output : Output instance
+This object is also assigned to the attribute .output .</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">run</span> <span class="o">:</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Run the fitting routine with all of the information given and with <code>full_output=1</code>.</p>
+<h2 id="returns_1">Returns<a class="headerlink" href="#returns_1" title="Permanent link">&para;</a></h2>
+<p>output : Output instance
+This object is also assigned to the attribute .output .</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_iprint</span> <span class="o">:</span> <span class="o">?</span><span class="n">init</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">so_init</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">iter</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">so_iter</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">iter_step</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">final</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">so_final</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Set the iprint parameter for the printing of computation reports.</p>
+<p>If any of the arguments are specified here, then they are set in the
+iprint member. If iprint is not set manually or with this method, then
+ODRPACK defaults to no printing. If no filename is specified with the
+member rptfile, then ODRPACK prints to stdout. One can tell ODRPACK to
+print to stdout in addition to the specified filename by setting the
+so_* arguments to this function, but one cannot specify to print to
+stdout but not a file since one can do that by not specifying a rptfile
+filename.</p>
+<p>There are three reports: initialization, iteration, and final reports.
+They are represented by the arguments init, iter, and final
+respectively.  The permissible values are 0, 1, and 2 representing 'no
+report', 'short report', and 'long report' respectively.</p>
+<p>The argument iter_step (0 &lt;= iter_step &lt;= 9) specifies how often to make
+the iteration report; the report will be made for every iter_step'th
+iteration starting with iteration one. If iter_step == 0, then no
+iteration report is made, regardless of the other arguments.</p>
+<p>If the rptfile is None, then any so_* arguments supplied will raise an
+exception.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_job</span> <span class="o">:</span> <span class="o">?</span><span class="n">fit_type</span><span class="o">:[`</span><span class="nc">One</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">deriv</span><span class="o">:[`</span><span class="nc">One</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Two</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">var_calc</span><span class="o">:[`</span><span class="nc">One</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">del_init</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">restart</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Sets the 'job' parameter is a hopefully comprehensible way.</p>
+<p>If an argument is not specified, then the value is left as is. The
+default value from class initialization is for all of these options set
+to 0.</p>
+<h2 id="parameters_4">Parameters<a class="headerlink" href="#parameters_4" title="Permanent link">&para;</a></h2>
+<p>fit_type : {0, 1, 2} int
+0 -&gt; explicit ODR</p>
+<p>1 -&gt; implicit ODR</p>
+<p>2 -&gt; ordinary least-squares
+deriv : {0, 1, 2, 3} int
+0 -&gt; forward finite differences</p>
+<p>1 -&gt; central finite differences</p>
+<p>2 -&gt; user-supplied derivatives (Jacobians) with results
+checked by ODRPACK</p>
+<p>3 -&gt; user-supplied derivatives, no checking
+var_calc : {0, 1, 2} int
+0 -&gt; calculate asymptotic covariance matrix and fit
+parameter uncertainties (V_B, s_B) using derivatives
+recomputed at the final solution</p>
+<p>1 -&gt; calculate V_B and s_B using derivatives from last iteration</p>
+<p>2 -&gt; do not calculate V_B and s_B
+del_init : {0, 1} int
+0 -&gt; initial input variable offsets set to 0</p>
+<p>1 -&gt; initial offsets provided by user in variable 'work'
+restart : {0, 1} int
+0 -&gt; fit is not a restart</p>
+<p>1 -&gt; fit is a restart</p>
+<h2 id="notes_2">Notes<a class="headerlink" href="#notes_2" title="Permanent link">&para;</a></h2>
+<p>The permissible values are different from those given on pg. 31 of the
+ODRPACK User's Guide only in that one cannot specify numbers greater than
+the last value for each variable.</p>
+<p>If one does not supply functions to compute the Jacobians, the fitting
+procedure will change deriv to 0, finite differences, as a default. To
+initialize the input variable offsets by yourself, set del_init to 1 and
+put the offsets into the 'work' variable correctly.</p>
+<p>Attribute data: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">data</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Attribute data: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">data_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Attribute model: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">model</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Attribute model: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">model_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Attribute output: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">output</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Attribute output: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">output_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Pretty-print the object to a formatter.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span> <span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">[@@</span><span class="n">ocaml</span><span class="o">.</span><span class="n">toplevel_printer</span><span class="o">]</span>
+
+
+
+<span class="k">module</span> <span class="nc">OdrError</span> <span class="o">:</span> <span class="k">sig</span>
+<span class="k">type</span> <span class="n">tag</span> <span class="o">=</span> <span class="o">[`</span><span class="nc">OdrError</span><span class="o">]</span>
+<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="o">[`</span><span class="nc">BaseException</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Object</span> <span class="o">|</span> <span class="o">`</span><span class="nc">OdrError</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">of_pyobject</span> <span class="o">:</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
+<span class="k">val</span> <span class="n">to_pyobject</span> <span class="o">:</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+
+<span class="k">val</span> <span class="n">as_exception</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">BaseException</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">with_traceback</span> <span class="o">:</span> <span class="n">tb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Exception.with_traceback(tb) --
+set self.<strong>traceback</strong> to tb and return self.</p>
+<p>Print the object to a human-readable representation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Pretty-print the object to a formatter.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span> <span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">[@@</span><span class="n">ocaml</span><span class="o">.</span><span class="n">toplevel_printer</span><span class="o">]</span>
+
+
+
+<span class="k">module</span> <span class="nc">OdrStop</span> <span class="o">:</span> <span class="k">sig</span>
+<span class="k">type</span> <span class="n">tag</span> <span class="o">=</span> <span class="o">[`</span><span class="nc">OdrStop</span><span class="o">]</span>
+<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="o">[`</span><span class="nc">BaseException</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Object</span> <span class="o">|</span> <span class="o">`</span><span class="nc">OdrStop</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">of_pyobject</span> <span class="o">:</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
+<span class="k">val</span> <span class="n">to_pyobject</span> <span class="o">:</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+
+<span class="k">val</span> <span class="n">as_exception</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">BaseException</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">with_traceback</span> <span class="o">:</span> <span class="n">tb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Exception.with_traceback(tb) --
+set self.<strong>traceback</strong> to tb and return self.</p>
+<p>Print the object to a human-readable representation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Pretty-print the object to a formatter.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span> <span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">[@@</span><span class="n">ocaml</span><span class="o">.</span><span class="n">toplevel_printer</span><span class="o">]</span>
+
+
+
+<span class="k">module</span> <span class="nc">OdrWarning</span> <span class="o">:</span> <span class="k">sig</span>
+<span class="k">type</span> <span class="n">tag</span> <span class="o">=</span> <span class="o">[`</span><span class="nc">OdrWarning</span><span class="o">]</span>
+<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="o">[`</span><span class="nc">BaseException</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Object</span> <span class="o">|</span> <span class="o">`</span><span class="nc">OdrWarning</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">of_pyobject</span> <span class="o">:</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
+<span class="k">val</span> <span class="n">to_pyobject</span> <span class="o">:</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+
+<span class="k">val</span> <span class="n">as_exception</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">BaseException</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">with_traceback</span> <span class="o">:</span> <span class="n">tb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Exception.with_traceback(tb) --
+set self.<strong>traceback</strong> to tb and return self.</p>
+<p>Print the object to a human-readable representation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Pretty-print the object to a formatter.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span> <span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">[@@</span><span class="n">ocaml</span><span class="o">.</span><span class="n">toplevel_printer</span><span class="o">]</span>
+
+
+
+<span class="k">module</span> <span class="nc">Output</span> <span class="o">:</span> <span class="k">sig</span>
+<span class="k">type</span> <span class="n">tag</span> <span class="o">=</span> <span class="o">[`</span><span class="nc">Output</span><span class="o">]</span>
+<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="o">[`</span><span class="nc">Object</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Output</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">of_pyobject</span> <span class="o">:</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
+<span class="k">val</span> <span class="n">to_pyobject</span> <span class="o">:</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+
+<span class="k">val</span> <span class="n">create</span> <span class="o">:</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
+</code></pre></div>
+
+<p>The Output class stores the output of an ODR run.</p>
+<h2 id="attributes_1">Attributes<a class="headerlink" href="#attributes_1" title="Permanent link">&para;</a></h2>
+<p>beta : ndarray
+Estimated parameter values, of shape (q,).
+sd_beta : ndarray
+Standard errors of the estimated parameters, of shape (p,).
+cov_beta : ndarray
+Covariance matrix of the estimated parameters, of shape (p,p).
+delta : ndarray, optional
+Array of estimated errors in input variables, of same shape as <code>x</code>.
+eps : ndarray, optional
+Array of estimated errors in response variables, of same shape as <code>y</code>.
+xplus : ndarray, optional
+Array of <code>x + delta</code>.
+y : ndarray, optional
+Array <code>y = fcn(x + delta)</code>.
+res_var : float, optional
+Residual variance.
+sum_square : float, optional
+Sum of squares error.
+sum_square_delta : float, optional
+Sum of squares of delta error.
+sum_square_eps : float, optional
+Sum of squares of eps error.
+inv_condnum : float, optional
+Inverse condition number (cf. ODRPACK UG p. 77).
+rel_error : float, optional
+Relative error in function values computed within fcn.
+work : ndarray, optional
+Final work array.
+work_ind : dict, optional
+Indices into work for drawing out values (cf. ODRPACK UG p. 83).
+info : int, optional
+Reason for returning, as output by ODRPACK (cf. ODRPACK UG p. 38).
+stopreason : list of str, optional
+<code>info</code> interpreted into English.</p>
+<h2 id="notes_3">Notes<a class="headerlink" href="#notes_3" title="Permanent link">&para;</a></h2>
+<p>Takes one argument for initialization, the return value from the
+function <code>~scipy.odr.odr</code>. The attributes listed as 'optional' above are
+only present if <code>~scipy.odr.odr</code> was run with <code>full_output=1</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pprint</span> <span class="o">:</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Pretty-print important results.</p>
+<p>Attribute beta: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">beta</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Attribute beta: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">beta_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Attribute sd_beta: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sd_beta</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Attribute sd_beta: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sd_beta_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Attribute cov_beta: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">cov_beta</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Attribute cov_beta: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">cov_beta_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Attribute delta: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">delta</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Attribute delta: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">delta_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Attribute eps: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">eps</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Attribute eps: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">eps_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Attribute xplus: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">xplus</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Attribute xplus: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">xplus_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Attribute y: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">y</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Attribute y: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">y_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Attribute res_var: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">res_var</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+</code></pre></div>
+
+<p>Attribute res_var: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">res_var_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Attribute sum_square: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sum_square</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+</code></pre></div>
+
+<p>Attribute sum_square: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sum_square_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Attribute sum_square_delta: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sum_square_delta</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+</code></pre></div>
+
+<p>Attribute sum_square_delta: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sum_square_delta_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Attribute sum_square_eps: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sum_square_eps</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+</code></pre></div>
+
+<p>Attribute sum_square_eps: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sum_square_eps_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Attribute inv_condnum: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">inv_condnum</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+</code></pre></div>
+
+<p>Attribute inv_condnum: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">inv_condnum_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Attribute rel_error: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">rel_error</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+</code></pre></div>
+
+<p>Attribute rel_error: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">rel_error_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Attribute work: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">work</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Attribute work: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">work_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Attribute work_ind: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">work_ind</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Attribute work_ind: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">work_ind_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Attribute info: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">info</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+</code></pre></div>
+
+<p>Attribute info: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">info_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Attribute stopreason: get value or raise Not_found if None.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">stopreason</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span> <span class="kt">list</span>
+</code></pre></div>
+
+<p>Attribute stopreason: get value as an option.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">stopreason_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">string</span> <span class="kt">list</span><span class="o">)</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Pretty-print the object to a formatter.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span> <span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">[@@</span><span class="n">ocaml</span><span class="o">.</span><span class="n">toplevel_printer</span><span class="o">]</span>
+
+
+
+<span class="k">module</span> <span class="nc">RealData</span> <span class="o">:</span> <span class="k">sig</span>
+<span class="k">type</span> <span class="n">tag</span> <span class="o">=</span> <span class="o">[`</span><span class="nc">RealData</span><span class="o">]</span>
+<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="o">[`</span><span class="nc">Object</span> <span class="o">|</span> <span class="o">`</span><span class="nc">RealData</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">of_pyobject</span> <span class="o">:</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
+<span class="k">val</span> <span class="n">to_pyobject</span> <span class="o">:</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+
+<span class="k">val</span> <span class="n">create</span> <span class="o">:</span> <span class="o">?</span><span class="n">y</span><span class="o">:[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">sx</span><span class="o">:[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">sy</span><span class="o">:[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">covx</span><span class="o">:[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">covy</span><span class="o">:[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">fix</span><span class="o">:[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">meta</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="n">t</span>
+</code></pre></div>
+
+<p>The data, with weightings as actual standard deviations and/or
+covariances.</p>
+<h2 id="parameters_5">Parameters<a class="headerlink" href="#parameters_5" title="Permanent link">&para;</a></h2>
+<p>x : array_like
+Observed data for the independent variable of the regression
+y : array_like, optional
+If array-like, observed data for the dependent variable of the
+regression. A scalar input implies that the model to be used on
+the data is implicit.
+sx : array_like, optional
+Standard deviations of <code>x</code>.
+<code>sx</code> are standard deviations of <code>x</code> and are converted to weights by
+dividing 1.0 by their squares.
+sy : array_like, optional
+Standard deviations of <code>y</code>.
+<code>sy</code> are standard deviations of <code>y</code> and are converted to weights by
+dividing 1.0 by their squares.
+covx : array_like, optional
+Covariance of <code>x</code>
+<code>covx</code> is an array of covariance matrices of <code>x</code> and are converted to
+weights by performing a matrix inversion on each observation's
+covariance matrix.
+covy : array_like, optional
+Covariance of <code>y</code>
+<code>covy</code> is an array of covariance matrices and are converted to
+weights by performing a matrix inversion on each observation's
+covariance matrix.
+fix : array_like, optional
+The argument and member fix is the same as Data.fix and ODR.ifixx:
+It is an array of integers with the same shape as <code>x</code> that
+determines which input observations are treated as fixed. One can
+use a sequence of length m (the dimensionality of the input
+observations) to fix some dimensions for all observations. A value
+of 0 fixes the observation, a value &gt; 0 makes it free.
+meta : dict, optional
+Free-form dictionary for metadata.</p>
+<h2 id="notes_4">Notes<a class="headerlink" href="#notes_4" title="Permanent link">&para;</a></h2>
+<p>The weights <code>wd</code> and <code>we</code> are computed from provided values as follows:</p>
+<p><code>sx</code> and <code>sy</code> are converted to weights by dividing 1.0 by their squares.
+For example, <code>wd = 1./numpy.power(`sx`, 2)</code>.</p>
+<p><code>covx</code> and <code>covy</code> are arrays of covariance matrices and are converted to
+weights by performing a matrix inversion on each observation's covariance
+matrix.  For example, <code>we[i] = numpy.linalg.inv(covy[i])</code>.</p>
+<p>These arguments follow the same structured argument conventions as wd and
+we only restricted by their natures: <code>sx</code> and <code>sy</code> can't be rank-3, but
+<code>covx</code> and <code>covy</code> can be.</p>
+<p>Only set <em>either</em> <code>sx</code> or <code>covx</code> (not both). Setting both will raise an
+exception.  Same with <code>sy</code> and <code>covy</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_meta</span> <span class="o">:</span> <span class="o">?</span><span class="n">kwds</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Update the metadata dictionary with the keywords and data provided
+by keywords.</p>
+<h2 id="examples_2">Examples<a class="headerlink" href="#examples_2" title="Permanent link">&para;</a></h2>
+<p>::</p>
+<p>data.set_meta(lab='Ph 7; Lab 26', title='Ag110 + Ag108 Decay')</p>
+<p>Print the object to a human-readable representation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Pretty-print the object to a formatter.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span> <span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">[@@</span><span class="n">ocaml</span><span class="o">.</span><span class="n">toplevel_printer</span><span class="o">]</span>
+
+
+
+<span class="k">module</span> <span class="nc">Add_newdocs</span> <span class="o">:</span> <span class="k">sig</span>
+</code></pre></div>
+
+<p>Get an attribute of this module as a Py.Object.t.
+This is useful to pass a Python function to another function.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_py</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+
+<span class="k">val</span> <span class="n">add_newdoc</span> <span class="o">:</span> <span class="o">?</span><span class="n">warn_on_python</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span> <span class="n">place</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">obj</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">doc</span><span class="o">:[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Add documentation to an existing object, typically one defined in C</p>
+<p>The purpose is to allow easier editing of the docstrings without requiring
+a re-compile. This exists primarily for internal use within numpy itself.</p>
+<h2 id="parameters_6">Parameters<a class="headerlink" href="#parameters_6" title="Permanent link">&para;</a></h2>
+<p>place : str
+The absolute name of the module to import from
+obj : str
+The name of the object to add documentation to, typically a class or
+function name
+doc : {str, Tuple[str, str], List[Tuple[str, str]]}
+If a string, the documentation to apply to <code>obj</code></p>
+<p>If a tuple, then the first element is interpreted as an attribute of
+<code>obj</code> and the second as the docstring to apply - <code>(method, docstring)</code></p>
+<p>If a list, then each element of the list should be a tuple of length
+two - <code>[(method1, docstring1), (method2, docstring2), ...]</code>
+warn_on_python : bool
+If True, the default, emit <code>UserWarning</code> if this is used to attach
+documentation to a pure-python object.</p>
+<h2 id="notes_5">Notes<a class="headerlink" href="#notes_5" title="Permanent link">&para;</a></h2>
+<p>This routine never raises an error if the docstring can't be written, but
+will raise an error if the object being documented does not exist.</p>
+<p>This routine cannot modify read-only docstrings, as appear
+in new-style classes or built-in functions. Because this
+routine never raises an error the caller must check manually
+that the docstrings were changed.</p>
+<p>Since this function grabs the <code>char *</code> from a c-level str object and puts
+it into the <code>tp_doc</code> slot of the type of <code>obj</code>, it violates a number of
+C-API best-practices, by:</p>
+<ul>
+<li>modifying a <code>PyTypeObject</code> after calling <code>PyType_Ready</code></li>
+<li>calling <code>Py_INCREF</code> on the str and losing the reference, so the str
+will never be released</li>
+</ul>
+<p>If possible it should be avoided.</p>
+<div class="highlight"><pre><span></span><code><span class="k">module</span> <span class="nc">Models</span> <span class="o">:</span> <span class="k">sig</span>
+</code></pre></div>
+
+<p>Get an attribute of this module as a Py.Object.t.
+This is useful to pass a Python function to another function.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_py</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+
+<span class="k">val</span> <span class="n">polynomial</span> <span class="o">:</span> <span class="o">[`</span><span class="nc">Sequence</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Factory function for a general polynomial model.</p>
+<h2 id="parameters_7">Parameters<a class="headerlink" href="#parameters_7" title="Permanent link">&para;</a></h2>
+<p>order : int or sequence
+If an integer, it becomes the order of the polynomial to fit. If
+a sequence of numbers, then these are the explicit powers in the
+polynomial.
+A constant term (power 0) is always included, so don't include 0.
+Thus, polynomial(n) is equivalent to polynomial(range(1, n+1)).</p>
+<h2 id="returns_2">Returns<a class="headerlink" href="#returns_2" title="Permanent link">&para;</a></h2>
+<p>polynomial : Model instance
+Model instance.</p>
+<div class="highlight"><pre><span></span><code><span class="k">module</span> <span class="nc">Odrpack</span> <span class="o">:</span> <span class="k">sig</span>
+</code></pre></div>
+
+<p>Get an attribute of this module as a Py.Object.t.
+This is useful to pass a Python function to another function.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_py</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+
+<span class="k">val</span> <span class="n">odr</span> <span class="o">:</span> <span class="o">?</span><span class="n">we</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">wd</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">fjacb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">fjacd</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">extra_args</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">ifixx</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">ifixb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">job</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">iprint</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">errfile</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">rptfile</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">ndigit</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">taufac</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">sstol</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">partol</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">maxit</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">stpb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">stpd</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">sclb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">scld</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">work</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">iwork</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">full_output</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">fcn</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">beta0</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>odr(fcn, beta0, y, x, we=None, wd=None, fjacb=None, fjacd=None, extra_args=None, ifixx=None, ifixb=None, job=0, iprint=0, errfile=None, rptfile=None, ndigit=0, taufac=0.0, sstol=-1.0, partol=-1.0, maxit=-1, stpb=None, stpd=None, sclb=None, scld=None, work=None, iwork=None, full_output=0)</p>
+<p>Low-level function for ODR.</p>
+<h2 id="see-also">See Also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
+<p>ODR
+Model
+Data
+RealData</p>
+<h2 id="notes_6">Notes<a class="headerlink" href="#notes_6" title="Permanent link">&para;</a></h2>
+<p>This is a function performing the same operation as the <code>ODR</code>,
+<code>Model</code> and <code>Data</code> classes together. The parameters of this
+function are explained in the class documentation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">warn</span> <span class="o">:</span> <span class="o">?</span><span class="n">category</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">stacklevel</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">source</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">message</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Issue a warning, or maybe ignore it or raise an exception.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">odr</span> <span class="o">:</span> <span class="o">?</span><span class="n">we</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">wd</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">fjacb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">fjacd</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">extra_args</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">ifixx</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">ifixb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">job</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">iprint</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">errfile</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">rptfile</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">ndigit</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">taufac</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">sstol</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">partol</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">maxit</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">stpb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">stpd</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">sclb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">scld</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">work</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">iwork</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">full_output</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">fcn</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">beta0</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>odr(fcn, beta0, y, x, we=None, wd=None, fjacb=None, fjacd=None, extra_args=None, ifixx=None, ifixb=None, job=0, iprint=0, errfile=None, rptfile=None, ndigit=0, taufac=0.0, sstol=-1.0, partol=-1.0, maxit=-1, stpb=None, stpd=None, sclb=None, scld=None, work=None, iwork=None, full_output=0)</p>
+<p>Low-level function for ODR.</p>
+<h2 id="see-also_1">See Also<a class="headerlink" href="#see-also_1" title="Permanent link">&para;</a></h2>
+<p>ODR
+Model
+Data
+RealData</p>
+<h2 id="notes_7">Notes<a class="headerlink" href="#notes_7" title="Permanent link">&para;</a></h2>
+<p>This is a function performing the same operation as the <code>ODR</code>,
+<code>Model</code> and <code>Data</code> classes together. The parameters of this
+function are explained in the class documentation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">polynomial</span> <span class="o">:</span> <span class="o">[`</span><span class="nc">Sequence</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Factory function for a general polynomial model.</p>
+<h2 id="parameters_8">Parameters<a class="headerlink" href="#parameters_8" title="Permanent link">&para;</a></h2>
+<p>order : int or sequence
+If an integer, it becomes the order of the polynomial to fit. If
+a sequence of numbers, then these are the explicit powers in the
+polynomial.
+A constant term (power 0) is always included, so don't include 0.
+Thus, polynomial(n) is equivalent to polynomial(range(1, n+1)).</p>
+<h2 id="returns_3">Returns<a class="headerlink" href="#returns_3" title="Permanent link">&para;</a></h2>
+<p>polynomial : Model instance
+Model instance.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../Ndimage/" title="Ndimage" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Ndimage
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../Optimize/" title="Optimize" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Optimize
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.d710d30a.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a45f732b.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: ["instant", "tabs"],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.c03f0417.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      
+    
+  </body>
+</html>

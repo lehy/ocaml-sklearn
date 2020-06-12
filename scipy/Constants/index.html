@@ -1,0 +1,2509 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.2.3">
+    
+    
+      
+        <title>Constants - OCaml scikit-learn interface</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6e35a1a6.min.css">
+      
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.a46bcfb3.min.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#3f51b5">
+      
+    
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#parameters" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="OCaml scikit-learn interface" class="md-header-nav__button md-logo" aria-label="OCaml scikit-learn interface">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            OCaml scikit-learn interface
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Constants
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/lehy/ocaml-sklearn/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    lehy/ocaml-sklearn
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+          
+
+  
+
+<nav class="md-tabs md-tabs--active" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  <li class="md-tabs__item">
+    
+      <a href="../.." class="md-tabs__link">
+        Home
+      </a>
+    
+  </li>
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../np/" class="md-tabs__link">
+          Np
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../" class="md-tabs__link md-tabs__link--active">
+          Scipy
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../sklearn/Base/" class="md-tabs__link">
+          Sklearn
+        </a>
+      
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="OCaml scikit-learn interface" class="md-nav__button md-logo" aria-label="OCaml scikit-learn interface">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    OCaml scikit-learn interface
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/lehy/ocaml-sklearn/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    lehy/ocaml-sklearn
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+    
+    <label class="md-nav__link" for="nav-2">
+      Np
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Np" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Np
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/" title="Numpy for OCaml" class="md-nav__link">
+      Numpy for OCaml
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/Numpy/" title="Numpy" class="md-nav__link">
+      Numpy
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/NumpyRaw/" title="NumpyRaw" class="md-nav__link">
+      NumpyRaw
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/PyList/" title="PyList" class="md-nav__link">
+      PyList
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/dtype/" title="Dtype" class="md-nav__link">
+      Dtype
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../np/obj/" title="Obj" class="md-nav__link">
+      Obj
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" checked>
+    
+    <label class="md-nav__link" for="nav-3">
+      Scipy
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Scipy" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Scipy
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../" title="SciPy library for OCaml" class="md-nav__link">
+      SciPy library for OCaml
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Cluster/" title="Cluster" class="md-nav__link">
+      Cluster
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Conftest/" title="Conftest" class="md-nav__link">
+      Conftest
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Constants
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
+        </span>
+      </label>
+    
+    <a href="./" title="Constants" class="md-nav__link md-nav__link--active">
+      Constants
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_1" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_1" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_1" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_2" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_2" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_2" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_3" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_3" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_3" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_4" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_4" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_4" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_5" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_5" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_1" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_5" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_6" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_6" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_2" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_6" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_7" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_7" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_3" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_7" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_8" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_8" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_8" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_9" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_9" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_4" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_9" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_10" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_10" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_5" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_10" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_11" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_11" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_11" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_12" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_12" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_12" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_13" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_13" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_13" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Fft/" title="Fft" class="md-nav__link">
+      Fft
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Fftpack/" title="Fftpack" class="md-nav__link">
+      Fftpack
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Integrate/" title="Integrate" class="md-nav__link">
+      Integrate
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Interpolate/" title="Interpolate" class="md-nav__link">
+      Interpolate
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Io/" title="Io" class="md-nav__link">
+      Io
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Linalg/" title="Linalg" class="md-nav__link">
+      Linalg
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Misc/" title="Misc" class="md-nav__link">
+      Misc
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Ndimage/" title="Ndimage" class="md-nav__link">
+      Ndimage
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Odr/" title="Odr" class="md-nav__link">
+      Odr
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Optimize/" title="Optimize" class="md-nav__link">
+      Optimize
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Setup/" title="Setup" class="md-nav__link">
+      Setup
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Signal/" title="Signal" class="md-nav__link">
+      Signal
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Sparse/" title="Sparse" class="md-nav__link">
+      Sparse
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Spatial/" title="Spatial" class="md-nav__link">
+      Spatial
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Special/" title="Special" class="md-nav__link">
+      Special
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Stats/" title="Stats" class="md-nav__link">
+      Stats
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Version/" title="Version" class="md-nav__link">
+      Version
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../wrap_version/" title="Wrap version" class="md-nav__link">
+      Wrap version
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
+    
+    <label class="md-nav__link" for="nav-4">
+      Sklearn
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Sklearn" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Sklearn
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Base/" title="Base" class="md-nav__link">
+      Base
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Calibration/" title="Calibration" class="md-nav__link">
+      Calibration
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Cluster/" title="Cluster" class="md-nav__link">
+      Cluster
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Compose/" title="Compose" class="md-nav__link">
+      Compose
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Conftest/" title="Conftest" class="md-nav__link">
+      Conftest
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Covariance/" title="Covariance" class="md-nav__link">
+      Covariance
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Cross_decomposition/" title="Cross decomposition" class="md-nav__link">
+      Cross decomposition
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Datasets/" title="Datasets" class="md-nav__link">
+      Datasets
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Decomposition/" title="Decomposition" class="md-nav__link">
+      Decomposition
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Discriminant_analysis/" title="Discriminant analysis" class="md-nav__link">
+      Discriminant analysis
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Dummy/" title="Dummy" class="md-nav__link">
+      Dummy
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Ensemble/" title="Ensemble" class="md-nav__link">
+      Ensemble
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Exceptions/" title="Exceptions" class="md-nav__link">
+      Exceptions
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Experimental/" title="Experimental" class="md-nav__link">
+      Experimental
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Externals/" title="Externals" class="md-nav__link">
+      Externals
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Feature_extraction/" title="Feature extraction" class="md-nav__link">
+      Feature extraction
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Feature_selection/" title="Feature selection" class="md-nav__link">
+      Feature selection
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Gaussian_process/" title="Gaussian process" class="md-nav__link">
+      Gaussian process
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Impute/" title="Impute" class="md-nav__link">
+      Impute
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Inspection/" title="Inspection" class="md-nav__link">
+      Inspection
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Isotonic/" title="Isotonic" class="md-nav__link">
+      Isotonic
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Kernel_approximation/" title="Kernel approximation" class="md-nav__link">
+      Kernel approximation
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Kernel_ridge/" title="Kernel ridge" class="md-nav__link">
+      Kernel ridge
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Linear_model/" title="Linear model" class="md-nav__link">
+      Linear model
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Manifold/" title="Manifold" class="md-nav__link">
+      Manifold
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Metrics/" title="Metrics" class="md-nav__link">
+      Metrics
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Mixture/" title="Mixture" class="md-nav__link">
+      Mixture
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Model_selection/" title="Model selection" class="md-nav__link">
+      Model selection
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Multiclass/" title="Multiclass" class="md-nav__link">
+      Multiclass
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Multioutput/" title="Multioutput" class="md-nav__link">
+      Multioutput
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Naive_bayes/" title="Naive bayes" class="md-nav__link">
+      Naive bayes
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Neighbors/" title="Neighbors" class="md-nav__link">
+      Neighbors
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Neural_network/" title="Neural network" class="md-nav__link">
+      Neural network
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Pipeline/" title="Pipeline" class="md-nav__link">
+      Pipeline
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Preprocessing/" title="Preprocessing" class="md-nav__link">
+      Preprocessing
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Random_projection/" title="Random projection" class="md-nav__link">
+      Random projection
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Semi_supervised/" title="Semi supervised" class="md-nav__link">
+      Semi supervised
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Setup/" title="Setup" class="md-nav__link">
+      Setup
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Svm/" title="Svm" class="md-nav__link">
+      Svm
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Tests/" title="Tests" class="md-nav__link">
+      Tests
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Tree/" title="Tree" class="md-nav__link">
+      Tree
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/Utils/" title="Utils" class="md-nav__link">
+      Utils
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/arr/" title="Arr" class="md-nav__link">
+      Arr
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/dict/" title="Dict" class="md-nav__link">
+      Dict
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../sklearn/wrap_version/" title="Wrap version" class="md-nav__link">
+      Wrap version
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_1" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_1" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_1" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_2" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_2" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_2" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_3" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_3" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_3" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_4" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_4" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_4" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_5" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_5" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_1" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_5" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_6" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_6" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_2" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_6" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_7" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_7" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_3" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_7" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_8" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_8" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_8" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_9" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_9" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_4" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_9" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_10" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_10" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes_5" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_10" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_11" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_11" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_11" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_12" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_12" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_12" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters_13" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns_13" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples_13" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/lehy/ocaml-sklearn/edit/master/docs/scipy/Constants.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                  
+                
+                
+                  <h1>Constants</h1>
+                
+                <p>Get an attribute of this module as a Py.Object.t.
+This is useful to pass a Python function to another function.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_py</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+
+<span class="k">module</span> <span class="nc">ConstantWarning</span> <span class="o">:</span> <span class="k">sig</span>
+<span class="k">type</span> <span class="n">tag</span> <span class="o">=</span> <span class="o">[`</span><span class="nc">ConstantWarning</span><span class="o">]</span>
+<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="o">[`</span><span class="nc">BaseException</span> <span class="o">|</span> <span class="o">`</span><span class="nc">ConstantWarning</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">of_pyobject</span> <span class="o">:</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
+<span class="k">val</span> <span class="n">to_pyobject</span> <span class="o">:</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+
+<span class="k">val</span> <span class="n">as_exception</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">BaseException</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">with_traceback</span> <span class="o">:</span> <span class="n">tb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Exception.with_traceback(tb) --
+set self.<strong>traceback</strong> to tb and return self.</p>
+<p>Print the object to a human-readable representation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Print the object to a human-readable representation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+</code></pre></div>
+
+<p>Pretty-print the object to a formatter.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span> <span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">[@@</span><span class="n">ocaml</span><span class="o">.</span><span class="n">toplevel_printer</span><span class="o">]</span>
+
+
+
+<span class="k">module</span> <span class="nc">Codata</span> <span class="o">:</span> <span class="k">sig</span>
+</code></pre></div>
+
+<p>Get an attribute of this module as a Py.Object.t.
+This is useful to pass a Python function to another function.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_py</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+
+<span class="k">val</span> <span class="n">find</span> <span class="o">:</span> <span class="o">?</span><span class="n">sub</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">disp</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Return list of physical_constant keys containing a given string.</p>
+<h2 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h2>
+<p>sub : str, unicode
+Sub-string to search keys for.  By default, return all keys.
+disp : bool
+If True, print the keys that are found, and return None.
+Otherwise, return the list of keys without printing anything.</p>
+<h2 id="returns">Returns<a class="headerlink" href="#returns" title="Permanent link">&para;</a></h2>
+<p>keys : list or None
+If <code>disp</code> is False, the list of keys is returned.
+Otherwise, None is returned.</p>
+<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>from scipy.constants import find, physical_constants</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>Which keys in the <code>physical_constants</code> dictionary contain 'boltzmann'?</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>find('boltzmann')
+['Boltzmann constant',
+'Boltzmann constant in Hz/K',
+'Boltzmann constant in eV/K',
+'Boltzmann constant in inverse meter per kelvin',
+'Stefan-Boltzmann constant']</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>Get the constant called 'Boltzmann constant in Hz/K':</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>physical_constants['Boltzmann constant in Hz/K']
+(20836619120.0, 'Hz K^-1', 0.0)</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>Find constants with 'radius' in the key:</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>find('radius')
+['Bohr radius',
+'classical electron radius',
+'deuteron rms charge radius',
+'proton rms charge radius']
+physical_constants['classical electron radius']
+(2.8179403262e-15, 'm', 1.3e-24)</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">parse_constants_2002to2014</span> <span class="o">:</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>None</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">parse_constants_2018toXXXX</span> <span class="o">:</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>None</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">precision</span> <span class="o">:</span> <span class="o">[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Python_string</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+</code></pre></div>
+
+<p>Relative precision in physical_constants indexed by key</p>
+<h2 id="parameters_1">Parameters<a class="headerlink" href="#parameters_1" title="Permanent link">&para;</a></h2>
+<p>key : Python string or unicode
+Key in dictionary <code>physical_constants</code></p>
+<h2 id="returns_1">Returns<a class="headerlink" href="#returns_1" title="Permanent link">&para;</a></h2>
+<p>prec : float
+Relative precision in <code>physical_constants</code> corresponding to <code>key</code></p>
+<h2 id="examples_1">Examples<a class="headerlink" href="#examples_1" title="Permanent link">&para;</a></h2>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>from scipy import constants
+constants.precision(u'proton mass')
+5.1e-37</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sqrt</span> <span class="o">:</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Return the square root of x.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="kt">unit</span> <span class="o">:</span> <span class="o">[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Python_string</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Unit in physical_constants indexed by key</p>
+<h2 id="parameters_2">Parameters<a class="headerlink" href="#parameters_2" title="Permanent link">&para;</a></h2>
+<p>key : Python string or unicode
+Key in dictionary <code>physical_constants</code></p>
+<h2 id="returns_2">Returns<a class="headerlink" href="#returns_2" title="Permanent link">&para;</a></h2>
+<p>unit : Python string
+Unit in <code>physical_constants</code> corresponding to <code>key</code></p>
+<h2 id="examples_2">Examples<a class="headerlink" href="#examples_2" title="Permanent link">&para;</a></h2>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>from scipy import constants
+constants.unit(u'proton mass')
+'kg'</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="k">value</span> <span class="o">:</span> <span class="o">[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Python_string</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+</code></pre></div>
+
+<p>Value in physical_constants indexed by key</p>
+<h2 id="parameters_3">Parameters<a class="headerlink" href="#parameters_3" title="Permanent link">&para;</a></h2>
+<p>key : Python string or unicode
+Key in dictionary <code>physical_constants</code></p>
+<h2 id="returns_3">Returns<a class="headerlink" href="#returns_3" title="Permanent link">&para;</a></h2>
+<p>value : float
+Value in <code>physical_constants</code> corresponding to <code>key</code></p>
+<h2 id="examples_3">Examples<a class="headerlink" href="#examples_3" title="Permanent link">&para;</a></h2>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>from scipy import constants
+constants.value(u'elementary charge')
+1.602176634e-19</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="k">module</span> <span class="nc">Constants</span> <span class="o">:</span> <span class="k">sig</span>
+</code></pre></div>
+
+<p>Get an attribute of this module as a Py.Object.t.
+This is useful to pass a Python function to another function.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_py</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+
+<span class="k">val</span> <span class="n">convert_temperature</span> <span class="o">:</span> <span class="n">val_</span><span class="o">:[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">old_scale</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">new_scale</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Convert from a temperature scale to another one among Celsius, Kelvin,
+Fahrenheit and Rankine scales.</p>
+<h2 id="parameters_4">Parameters<a class="headerlink" href="#parameters_4" title="Permanent link">&para;</a></h2>
+<p>val : array_like
+Value(s) of the temperature(s) to be converted expressed in the
+original scale.</p>
+<p>old_scale: str
+Specifies as a string the original scale from which the temperature
+value(s) will be converted. Supported scales are Celsius ('Celsius',
+'celsius', 'C' or 'c'), Kelvin ('Kelvin', 'kelvin', 'K', 'k'),
+Fahrenheit ('Fahrenheit', 'fahrenheit', 'F' or 'f') and Rankine
+('Rankine', 'rankine', 'R', 'r').</p>
+<p>new_scale: str
+Specifies as a string the new scale to which the temperature
+value(s) will be converted. Supported scales are Celsius ('Celsius',
+'celsius', 'C' or 'c'), Kelvin ('Kelvin', 'kelvin', 'K', 'k'),
+Fahrenheit ('Fahrenheit', 'fahrenheit', 'F' or 'f') and Rankine
+('Rankine', 'rankine', 'R', 'r').</p>
+<h2 id="returns_4">Returns<a class="headerlink" href="#returns_4" title="Permanent link">&para;</a></h2>
+<p>res : float or array of floats
+Value(s) of the converted temperature(s) expressed in the new scale.</p>
+<h2 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h2>
+<p>.. versionadded:: 0.18.0</p>
+<h2 id="examples_4">Examples<a class="headerlink" href="#examples_4" title="Permanent link">&para;</a></h2>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>from scipy.constants import convert_temperature
+convert_temperature(np.array([-40, 40.0]), 'Celsius', 'Kelvin')
+array([ 233.15,  313.15])</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">lambda2nu</span> <span class="o">:</span> <span class="o">[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Convert wavelength to optical frequency</p>
+<h2 id="parameters_5">Parameters<a class="headerlink" href="#parameters_5" title="Permanent link">&para;</a></h2>
+<p>lambda_ : array_like
+Wavelength(s) to be converted.</p>
+<h2 id="returns_5">Returns<a class="headerlink" href="#returns_5" title="Permanent link">&para;</a></h2>
+<p>nu : float or array of floats
+Equivalent optical frequency.</p>
+<h2 id="notes_1">Notes<a class="headerlink" href="#notes_1" title="Permanent link">&para;</a></h2>
+<p>Computes <code>nu = c / lambda</code> where c = 299792458.0, i.e., the
+(vacuum) speed of light in meters/second.</p>
+<h2 id="examples_5">Examples<a class="headerlink" href="#examples_5" title="Permanent link">&para;</a></h2>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>from scipy.constants import lambda2nu, speed_of_light
+lambda2nu(np.array((1, speed_of_light)))
+array([  2.99792458e+08,   1.00000000e+00])</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">nu2lambda</span> <span class="o">:</span> <span class="o">[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Convert optical frequency to wavelength.</p>
+<h2 id="parameters_6">Parameters<a class="headerlink" href="#parameters_6" title="Permanent link">&para;</a></h2>
+<p>nu : array_like
+Optical frequency to be converted.</p>
+<h2 id="returns_6">Returns<a class="headerlink" href="#returns_6" title="Permanent link">&para;</a></h2>
+<p>lambda : float or array of floats
+Equivalent wavelength(s).</p>
+<h2 id="notes_2">Notes<a class="headerlink" href="#notes_2" title="Permanent link">&para;</a></h2>
+<p>Computes <code>lambda = c / nu</code> where c = 299792458.0, i.e., the
+(vacuum) speed of light in meters/second.</p>
+<h2 id="examples_6">Examples<a class="headerlink" href="#examples_6" title="Permanent link">&para;</a></h2>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>from scipy.constants import nu2lambda, speed_of_light
+nu2lambda(np.array((1, speed_of_light)))
+array([  2.99792458e+08,   1.00000000e+00])</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">convert_temperature</span> <span class="o">:</span> <span class="n">val_</span><span class="o">:[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">old_scale</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">new_scale</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Convert from a temperature scale to another one among Celsius, Kelvin,
+Fahrenheit and Rankine scales.</p>
+<h2 id="parameters_7">Parameters<a class="headerlink" href="#parameters_7" title="Permanent link">&para;</a></h2>
+<p>val : array_like
+Value(s) of the temperature(s) to be converted expressed in the
+original scale.</p>
+<p>old_scale: str
+Specifies as a string the original scale from which the temperature
+value(s) will be converted. Supported scales are Celsius ('Celsius',
+'celsius', 'C' or 'c'), Kelvin ('Kelvin', 'kelvin', 'K', 'k'),
+Fahrenheit ('Fahrenheit', 'fahrenheit', 'F' or 'f') and Rankine
+('Rankine', 'rankine', 'R', 'r').</p>
+<p>new_scale: str
+Specifies as a string the new scale to which the temperature
+value(s) will be converted. Supported scales are Celsius ('Celsius',
+'celsius', 'C' or 'c'), Kelvin ('Kelvin', 'kelvin', 'K', 'k'),
+Fahrenheit ('Fahrenheit', 'fahrenheit', 'F' or 'f') and Rankine
+('Rankine', 'rankine', 'R', 'r').</p>
+<h2 id="returns_7">Returns<a class="headerlink" href="#returns_7" title="Permanent link">&para;</a></h2>
+<p>res : float or array of floats
+Value(s) of the converted temperature(s) expressed in the new scale.</p>
+<h2 id="notes_3">Notes<a class="headerlink" href="#notes_3" title="Permanent link">&para;</a></h2>
+<p>.. versionadded:: 0.18.0</p>
+<h2 id="examples_7">Examples<a class="headerlink" href="#examples_7" title="Permanent link">&para;</a></h2>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>from scipy.constants import convert_temperature
+convert_temperature(np.array([-40, 40.0]), 'Celsius', 'Kelvin')
+array([ 233.15,  313.15])</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">find</span> <span class="o">:</span> <span class="o">?</span><span class="n">sub</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span> <span class="o">?</span><span class="n">disp</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="n">option</span>
+</code></pre></div>
+
+<p>Return list of physical_constant keys containing a given string.</p>
+<h2 id="parameters_8">Parameters<a class="headerlink" href="#parameters_8" title="Permanent link">&para;</a></h2>
+<p>sub : str, unicode
+Sub-string to search keys for.  By default, return all keys.
+disp : bool
+If True, print the keys that are found, and return None.
+Otherwise, return the list of keys without printing anything.</p>
+<h2 id="returns_8">Returns<a class="headerlink" href="#returns_8" title="Permanent link">&para;</a></h2>
+<p>keys : list or None
+If <code>disp</code> is False, the list of keys is returned.
+Otherwise, None is returned.</p>
+<h2 id="examples_8">Examples<a class="headerlink" href="#examples_8" title="Permanent link">&para;</a></h2>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>from scipy.constants import find, physical_constants</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>Which keys in the <code>physical_constants</code> dictionary contain 'boltzmann'?</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>find('boltzmann')
+['Boltzmann constant',
+'Boltzmann constant in Hz/K',
+'Boltzmann constant in eV/K',
+'Boltzmann constant in inverse meter per kelvin',
+'Stefan-Boltzmann constant']</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>Get the constant called 'Boltzmann constant in Hz/K':</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>physical_constants['Boltzmann constant in Hz/K']
+(20836619120.0, 'Hz K^-1', 0.0)</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>Find constants with 'radius' in the key:</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>find('radius')
+['Bohr radius',
+'classical electron radius',
+'deuteron rms charge radius',
+'proton rms charge radius']
+physical_constants['classical electron radius']
+(2.8179403262e-15, 'm', 1.3e-24)</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">lambda2nu</span> <span class="o">:</span> <span class="o">[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Convert wavelength to optical frequency</p>
+<h2 id="parameters_9">Parameters<a class="headerlink" href="#parameters_9" title="Permanent link">&para;</a></h2>
+<p>lambda_ : array_like
+Wavelength(s) to be converted.</p>
+<h2 id="returns_9">Returns<a class="headerlink" href="#returns_9" title="Permanent link">&para;</a></h2>
+<p>nu : float or array of floats
+Equivalent optical frequency.</p>
+<h2 id="notes_4">Notes<a class="headerlink" href="#notes_4" title="Permanent link">&para;</a></h2>
+<p>Computes <code>nu = c / lambda</code> where c = 299792458.0, i.e., the
+(vacuum) speed of light in meters/second.</p>
+<h2 id="examples_9">Examples<a class="headerlink" href="#examples_9" title="Permanent link">&para;</a></h2>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>from scipy.constants import lambda2nu, speed_of_light
+lambda2nu(np.array((1, speed_of_light)))
+array([  2.99792458e+08,   1.00000000e+00])</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">nu2lambda</span> <span class="o">:</span> <span class="o">[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Convert optical frequency to wavelength.</p>
+<h2 id="parameters_10">Parameters<a class="headerlink" href="#parameters_10" title="Permanent link">&para;</a></h2>
+<p>nu : array_like
+Optical frequency to be converted.</p>
+<h2 id="returns_10">Returns<a class="headerlink" href="#returns_10" title="Permanent link">&para;</a></h2>
+<p>lambda : float or array of floats
+Equivalent wavelength(s).</p>
+<h2 id="notes_5">Notes<a class="headerlink" href="#notes_5" title="Permanent link">&para;</a></h2>
+<p>Computes <code>lambda = c / nu</code> where c = 299792458.0, i.e., the
+(vacuum) speed of light in meters/second.</p>
+<h2 id="examples_10">Examples<a class="headerlink" href="#examples_10" title="Permanent link">&para;</a></h2>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>from scipy.constants import nu2lambda, speed_of_light
+nu2lambda(np.array((1, speed_of_light)))
+array([  2.99792458e+08,   1.00000000e+00])</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">precision</span> <span class="o">:</span> <span class="o">[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Python_string</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+</code></pre></div>
+
+<p>Relative precision in physical_constants indexed by key</p>
+<h2 id="parameters_11">Parameters<a class="headerlink" href="#parameters_11" title="Permanent link">&para;</a></h2>
+<p>key : Python string or unicode
+Key in dictionary <code>physical_constants</code></p>
+<h2 id="returns_11">Returns<a class="headerlink" href="#returns_11" title="Permanent link">&para;</a></h2>
+<p>prec : float
+Relative precision in <code>physical_constants</code> corresponding to <code>key</code></p>
+<h2 id="examples_11">Examples<a class="headerlink" href="#examples_11" title="Permanent link">&para;</a></h2>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>from scipy import constants
+constants.precision(u'proton mass')
+5.1e-37</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="kt">unit</span> <span class="o">:</span> <span class="o">[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Python_string</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+</code></pre></div>
+
+<p>Unit in physical_constants indexed by key</p>
+<h2 id="parameters_12">Parameters<a class="headerlink" href="#parameters_12" title="Permanent link">&para;</a></h2>
+<p>key : Python string or unicode
+Key in dictionary <code>physical_constants</code></p>
+<h2 id="returns_12">Returns<a class="headerlink" href="#returns_12" title="Permanent link">&para;</a></h2>
+<p>unit : Python string
+Unit in <code>physical_constants</code> corresponding to <code>key</code></p>
+<h2 id="examples_12">Examples<a class="headerlink" href="#examples_12" title="Permanent link">&para;</a></h2>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>from scipy import constants
+constants.unit(u'proton mass')
+'kg'</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="k">value</span> <span class="o">:</span> <span class="o">[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Python_string</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+</code></pre></div>
+
+<p>Value in physical_constants indexed by key</p>
+<h2 id="parameters_13">Parameters<a class="headerlink" href="#parameters_13" title="Permanent link">&para;</a></h2>
+<p>key : Python string or unicode
+Key in dictionary <code>physical_constants</code></p>
+<h2 id="returns_13">Returns<a class="headerlink" href="#returns_13" title="Permanent link">&para;</a></h2>
+<p>value : float
+Value in <code>physical_constants</code> corresponding to <code>key</code></p>
+<h2 id="examples_13">Examples<a class="headerlink" href="#examples_13" title="Permanent link">&para;</a></h2>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>from scipy import constants
+constants.value(u'elementary charge')
+1.602176634e-19</p>
+</blockquote>
+</blockquote>
+</blockquote>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../Conftest/" title="Conftest" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Conftest
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../Fft/" title="Fft" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Fft
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.d710d30a.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a45f732b.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: ["instant", "tabs"],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.c03f0417.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      
+    
+  </body>
+</html>
