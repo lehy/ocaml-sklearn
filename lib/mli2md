@@ -6,6 +6,7 @@
 
 import sys
 
+
 def emit_code(block):
     block = [x for x in block if x != "end"]
     while block and not block[-1]:
@@ -18,11 +19,13 @@ def emit_code(block):
 ```
 """)
 
+
 def emit_doc(block):
     if not block:
         return
     for line in block:
         print(line)
+
 
 def main():
     block = []
@@ -50,6 +53,7 @@ def main():
             block.append(line)
     if block:
         emit(block)
+
 
 if __name__ == '__main__':
     main()
