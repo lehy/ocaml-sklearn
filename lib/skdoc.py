@@ -1043,8 +1043,9 @@ class Module:
         f.write("\nend\n\n")
 
     def write_to_md(self, f):
-        full_name = re.sub(r'\.', ".\u200b", self.name.full_ml_name())
-        f.write(f"## module {full_name}\n")
+        full_ml_name = re.sub(r'\.', ".\u200b", self.name.full_ml_name())
+        f.write(f"## {self.name.ml_name()}\n\n")
+        f.write(f"Module `{full_ml_name}` wraps Python module `{self.name.full_python_name()}`.\n\n")
         for element in self.elements:
             element.write_to_md(f)
 
@@ -1277,6 +1278,8 @@ class Class:
             f.write("\nend\n")
 
     def write_to_mli(self, f, wrap=True):
+        import pdb; pdb.set_trace()  # XXX DEBUG
+        gaga
         if wrap:
             f.write(f"module {self.name.ml_name()} : sig\n")
         f.write(f"type tag = [{self.self_tag()}]\n")
@@ -1319,11 +1322,16 @@ class Class:
 """)
 
     def write_to_md(self, f):
-        full_name = re.sub(r'\.', ".\u200b", self.name.full_ml_name())
-        f.write(f"## module {full_name}\n")
-        f.write("```ocaml\n")
+        full_ml_name = re.sub(r'\.', ".\u200b", self.name.full_ml_name())
+        full_python_name = self.name.full_python_name()
+        f.write(f"## {self.name.ml_name()}\n\n")
+        if full_python_name.startswith('sklearn'):
+            f.write(f"Module `{full_ml_name}` wraps Python class [`{full_python_name}`](https://scikit-learn.org/stable/modules/generated/{full_python_name}.html).\n\n")  # noqa e501
+        else:
+            f.write(f"Module `{full_ml_name}` wraps Python class `{full_python_name}`.\n\n")
+        f.write("~~~ocaml\n")
         f.write("type t\n")
-        f.write("```\n")
+        f.write("~~~\n")
         self.constructor.write_to_md(f)
         for element in self.elements:
             element.write_to_md(f)
@@ -1454,7 +1462,7 @@ def format_md_doc(doc):
                  flags=re.MULTILINE)
     doc = re.sub(r'$', "\n\n", doc)
     doc = re.sub(r'^(>>>([^\n]|\n[^\n])+)\n\n',
-                 r'```python\n\1\n```\n\n',
+                 r'~~~python\n\1\n~~~\n\n',
                  doc,
                  flags=re.MULTILINE)
     return doc
