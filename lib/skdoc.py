@@ -1281,8 +1281,6 @@ class Class:
             f.write("\nend\n")
 
     def write_to_mli(self, f, wrap=True):
-        import pdb; pdb.set_trace()  # XXX DEBUG
-        gaga
         if wrap:
             f.write(f"module {self.name.ml_name()} : sig\n")
         f.write(f"type tag = [{self.self_tag()}]\n")
