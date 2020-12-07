@@ -53,13 +53,13 @@ array([ 0.61..., 0.57..., -0.34..., 0.41..., 0.75...,
 
 let%expect_test "DecisionTreeRegressor" =
   let open Sklearn.Tree in
-  let boston = Sklearn.Datasets.load_boston () in
-  let x, y = boston#data, boston#target in
+  let diabetes = Sklearn.Datasets.load_diabetes () in
+  let x, y = diabetes#data, diabetes#target in
   let regressor = DecisionTreeRegressor.create ~random_state:0 () in
   print_ndarray @@ Sklearn.Model_selection.cross_val_score ~estimator:regressor ~x ~y ~cv:(`I 10) ();
   [%expect {|
-      [ 0.52939335  0.60461936 -1.60907519  0.4356399   0.77280671  0.40597035
-        0.23656049  0.38709149 -2.06488186 -0.95162992]
+      [-0.39292219 -0.46749346  0.02768473  0.06441362 -0.50323135  0.16437202
+        0.11242982 -0.73798979 -0.30953155 -0.00137327]
   |}]
 
 (* ExtraTreeRegressor *)
@@ -80,16 +80,16 @@ let%expect_test "DecisionTreeRegressor" =
 
 let%expect_test "ExtraTreeRegressor" =
   let open Sklearn.Tree in
-  let boston = Sklearn.Datasets.load_boston () in
+  let diabetes = Sklearn.Datasets.load_diabetes () in
   let [@ocaml.warning "-8"] [x_train; x_test; y_train; y_test] =
-    Sklearn.Model_selection.train_test_split [boston#data; boston#target] ~random_state:0
+    Sklearn.Model_selection.train_test_split [diabetes#data; diabetes#target] ~random_state:0
   in
   let extra_tree = ExtraTreeRegressor.create ~random_state:0 () in
   let reg = Sklearn.Ensemble.BaggingRegressor.(
       create ~base_estimator:extra_tree ~random_state:0 () |> fit ~x:x_train ~y:y_train)
   in
   print_float @@ Sklearn.Ensemble.BaggingRegressor.score ~x:x_test ~y:y_test reg;
-  [%expect {| 0.782357 |}]
+  [%expect {| 0.337405 |}]
 
 
 (* export_graphviz *)

@@ -68,8 +68,7 @@ let%expect_test "MissingIndicator" =
   let indicator = MissingIndicator.create () in
   print MissingIndicator.pp @@ MissingIndicator.fit ~x:x1 indicator;
   [%expect {|
-      MissingIndicator(error_on_new=True, features='missing-only', missing_values=nan,
-                       sparse='auto')
+      MissingIndicator()
   |}];
   let x2_tr = MissingIndicator.transform ~x:x2 indicator in
   print_ndarray @@ x2_tr;
@@ -100,8 +99,7 @@ let%expect_test "SimpleImputer" =
   let imp_mean = SimpleImputer.create ~missing_values:(`F nan) ~strategy:`Mean () in
   print SimpleImputer.pp @@ SimpleImputer.fit ~x:(Np.matrixf [|[|7.; 2.; 3.|]; [|4.; nan; 6.|]; [|10.; 5.; 9.|]|]) imp_mean;
   [%expect {|
-      SimpleImputer(add_indicator=False, copy=True, fill_value=None,
-                    missing_values=nan, strategy='mean', verbose=0)
+      SimpleImputer()
   |}];
   let x = Np.matrixf [|[|nan; 2.; 3.|]; [|4.; nan; 6.|]; [|10.; nan; 9.|]|] in
   print_ndarray @@ SimpleImputer.transform ~x imp_mean;

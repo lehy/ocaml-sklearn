@@ -30,8 +30,7 @@ let%expect_test "AdaBoostClassifier" =
   let clf = AdaBoostClassifier.create ~n_estimators:100 ~random_state:0 () in
   print AdaBoostClassifier.pp @@ AdaBoostClassifier.fit ~x ~y clf;
   [%expect {|
-      AdaBoostClassifier(algorithm='SAMME.R', base_estimator=None, learning_rate=1.0,
-                         n_estimators=100, random_state=0)
+      AdaBoostClassifier(n_estimators=100, random_state=0)
   |}];
   print_ndarray @@ AdaBoostClassifier.feature_importances_ clf;
   [%expect {|
@@ -71,8 +70,7 @@ let%expect_test "AdaBoostRegressor" =
   let regr = AdaBoostRegressor.create ~random_state:0 ~n_estimators:100 () in
   print AdaBoostRegressor.pp @@ AdaBoostRegressor.fit ~x ~y regr;
   [%expect {|
-        AdaBoostRegressor(base_estimator=None, learning_rate=1.0, loss='linear',
-                          n_estimators=100, random_state=0)
+        AdaBoostRegressor(n_estimators=100, random_state=0)
      |}];
   print_ndarray @@ AdaBoostRegressor.feature_importances_ regr;
   [%expect {|
@@ -172,14 +170,7 @@ let%expect_test "ExtraTreesClassifier" =
   let clf = ExtraTreesClassifier.create ~n_estimators:100 ~random_state:0 () in
   print ExtraTreesClassifier.pp @@ ExtraTreesClassifier.fit ~x ~y clf;
   [%expect {|
-      ExtraTreesClassifier(bootstrap=False, ccp_alpha=0.0, class_weight=None,
-                           criterion='gini', max_depth=None, max_features='auto',
-                           max_leaf_nodes=None, max_samples=None,
-                           min_impurity_decrease=0.0, min_impurity_split=None,
-                           min_samples_leaf=1, min_samples_split=2,
-                           min_weight_fraction_leaf=0.0, n_estimators=100,
-                           n_jobs=None, oob_score=False, random_state=0, verbose=0,
-                           warm_start=False)
+      ExtraTreesClassifier(random_state=0)
    |}];
   print_ndarray @@ ExtraTreesClassifier.predict ~x:(Np.matrixi [|[|0; 0; 0; 0|]|]) clf;
   [%expect {|
@@ -228,14 +219,7 @@ let%expect_test "RandomForestClassifier" =
   let clf = RandomForestClassifier.create ~max_depth:2 ~random_state:0 () in
   print RandomForestClassifier.pp @@ RandomForestClassifier.fit ~x ~y clf;
   [%expect {|
-      RandomForestClassifier(bootstrap=True, ccp_alpha=0.0, class_weight=None,
-                             criterion='gini', max_depth=2, max_features='auto',
-                             max_leaf_nodes=None, max_samples=None,
-                             min_impurity_decrease=0.0, min_impurity_split=None,
-                             min_samples_leaf=1, min_samples_split=2,
-                             min_weight_fraction_leaf=0.0, n_estimators=100,
-                             n_jobs=None, oob_score=False, random_state=0, verbose=0,
-                             warm_start=False)
+      RandomForestClassifier(max_depth=2, random_state=0)
    |}];
   print_ndarray @@ RandomForestClassifier.feature_importances_ clf;
   [%expect {|
@@ -269,13 +253,7 @@ let%expect_test "RandomForestRegressor" =
   let regr = RandomForestRegressor.create ~max_depth:2 ~random_state:0 () in
   print RandomForestRegressor.pp @@ RandomForestRegressor.fit ~x ~y regr;
   [%expect {|
-      RandomForestRegressor(bootstrap=True, ccp_alpha=0.0, criterion='mse',
-                            max_depth=2, max_features='auto', max_leaf_nodes=None,
-                            max_samples=None, min_impurity_decrease=0.0,
-                            min_impurity_split=None, min_samples_leaf=1,
-                            min_samples_split=2, min_weight_fraction_leaf=0.0,
-                            n_estimators=100, n_jobs=None, oob_score=False,
-                            random_state=0, verbose=0, warm_start=False)
+      RandomForestRegressor(max_depth=2, random_state=0)
    |}];
   print_ndarray @@ RandomForestRegressor.feature_importances_ regr;
   [%expect {|
@@ -368,7 +346,7 @@ let%expect_test "StackingRegressor" =
     Sklearn.Model_selection.train_test_split [diabetes#data; diabetes#target] ~random_state:42
   in
   Format.printf "%g" @@ StackingRegressor.(fit ~x:x_train ~y:y_train reg |> score ~x:x_test ~y:y_test);
-  [%expect {| 0.369668 |}]
+  [%expect {| 0.364262 |}]
 
 (* VotingClassifier *)
 (*
@@ -750,9 +728,8 @@ array([ 19.2,  40. ,  42.8])
 *)
 
 let%expect_test "mquantiles" =
-  let open Sklearn.Ensemble in
   let a = Np.vectori [|6; 47; 49; 15; 42; 41; 7; 39; 43; 40; 36;|] in
-  print_ndarray @@ Partial_dependence.mquantiles ~a ();
+  print_ndarray @@ Scipy.Stats.Mstats.mquantiles ~a ();
   [%expect {|
       [19.2 40.  42.8]
    |}]
@@ -778,12 +755,11 @@ let%expect_test "mquantiles" =
 *)
 
 let%expect_test "mquantiles" =
-   let open Sklearn.Ensemble in
    let data = Np.matrixi [|[| 6; 7; 1|]; [| 47; 15; 2|]; [| 49; 36; 3|]; [| 15; 39; 4|];
                         [| 42; 40; -999|]; [| 41; 41; -999|]; [| 7; -999; -999|]; [| 39; -999; -999|];
                         [| 43; -999; -999|]; [| 40; -999; -999|]; [| 36; -999; -999|]|]
    in
-   print_ndarray @@ Partial_dependence.mquantiles ~a:data ~axis:0 ~limit:(0., 50.) ();
+   print_ndarray @@ Scipy.Stats.Mstats.mquantiles ~a:data ~axis:0 ~limit:(0., 50.) ();
    [%expect {|
       [[19.2  14.6   1.45]
        [40.   37.5   2.5 ]
@@ -802,7 +778,6 @@ let%expect_test "mquantiles" =
 *)
 
 let%expect_test "mquantiles" =
-  let open Sklearn.Ensemble in
   let data = Np.matrixi [|[| 6; 7; 1|]; [| 47; 15; 2|]; [| 49; 36; 3|]; [| 15; 39; 4|];
                           [| 42; 40; -999|]; [| 41; 41; -999|]; [| 7; -999; -999|]; [| 39; -999; -999|];
                           [| 43; -999; -999|]; [| 40; -999; -999|]; [| 36; -999; -999|]|]
@@ -836,7 +811,7 @@ let%expect_test "mquantiles" =
      [  40 -999 -999]
      [  36 -999 -999]]
    |}];
-  print_ndarray @@ Partial_dependence.mquantiles ~a:data ~axis:0 ~limit:(0., 50.) ();
+  print_ndarray @@ Scipy.Stats.Mstats.mquantiles ~a:data ~axis:0 ~limit:(0., 50.) ();
   [%expect {|
       [[19.200000000000003 14.6 --]
        [40.0 37.5 --]

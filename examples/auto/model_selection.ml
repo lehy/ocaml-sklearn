@@ -43,17 +43,8 @@ let%expect_test "GridSearchCV" =
   let clf = GridSearchCV.create ~estimator:svc ~param_grid () in
   print GridSearchCV.pp @@ GridSearchCV.fit ~x:iris#data ~y:iris#target clf;
   [%expect {|
-      GridSearchCV(cv=None, error_score=nan,
-                   estimator=SVC(C=1.0, break_ties=False, cache_size=200,
-                                 class_weight=None, coef0=0.0,
-                                 decision_function_shape='ovr', degree=3,
-                                 gamma='scale', kernel='rbf', max_iter=-1,
-                                 probability=False, random_state=None, shrinking=True,
-                                 tol=0.001, verbose=False),
-                   iid='deprecated', n_jobs=None,
-                   param_grid={'C': [1, 10], 'kernel': ['linear', 'rbf']},
-                   pre_dispatch='2*n_jobs', refit=True, return_train_score=False,
-                   scoring=None, verbose=0)
+      GridSearchCV(estimator=SVC(),
+                   param_grid={'C': [1, 10], 'kernel': ['linear', 'rbf']})
   |}];
   print_ndarray @@ (GridSearchCV.cv_results_ clf |> Sklearn.Dict.keys |> Np.Ndarray.of_string_list |> Np.sort);
   [%expect {|

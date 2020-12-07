@@ -612,10 +612,7 @@ let%expect_test "hinge_loss" =
   let est = LinearSVC.create ~random_state:0 () in
   print LinearSVC.pp @@ LinearSVC.fit ~x ~y est;
   [%expect {|
-      LinearSVC(C=1.0, class_weight=None, dual=True, fit_intercept=True,
-                intercept_scaling=1, loss='squared_hinge', max_iter=1000,
-                multi_class='ovr', penalty='l2', random_state=0, tol=0.0001,
-                verbose=0)
+      LinearSVC(random_state=0)
   |}];
   let pred_decision = LinearSVC.decision_function ~x:(Np.matrixf [|[|-2.|]; [|3.|]; [|0.5|]|]) est in
   print_ndarray @@ pred_decision;
@@ -652,15 +649,12 @@ let%expect_test "hinge_loss" =
   let est = LinearSVC.create ~random_state:0 () in
   print LinearSVC.pp @@ LinearSVC.fit ~x ~y est;
   [%expect {|
-      LinearSVC(C=1.0, class_weight=None, dual=True, fit_intercept=True,
-                intercept_scaling=1, loss='squared_hinge', max_iter=1000,
-                multi_class='ovr', penalty='l2', random_state=0, tol=0.0001,
-                verbose=0)
+      LinearSVC(random_state=0)
   |}];
   let pred_decision = LinearSVC.decision_function ~x:(Np.matrixi [|[|-1|]; [|2|]; [|3|]|]) est in
   let y_true = Np.vectori [|0; 2; 3|] in
   print_float @@ hinge_loss ~y_true ~pred_decision ~labels ();
-  [%expect {| 0.564119 |}]
+  [%expect {| 0.564108 |}]
 
 
 (* jaccard_score *)
@@ -780,22 +774,17 @@ let%expect_test "make_scorer" =
   let grid =
     Sklearn.Model_selection.GridSearchCV.create
       ~estimator:Sklearn.Svm.LinearSVC.(create ~random_state:0 ())
-      ~param_grid:(`Grid ["C", `Ints [1; 10]]) ~scoring:(`Callable ftwo_scorer) ~cv:(`I 2) ()
+      ~param_grid:(`Grid ["C", `Floats [1.; 100.]])
+      ~scoring:(`Callable ftwo_scorer) ~cv:(`I 2) ()
   in
   print Sklearn.Model_selection.GridSearchCV.pp @@
   Sklearn.Model_selection.GridSearchCV.fit
-    ~x:(Np.matrixi [|[|1;2|]; [|3;4|]; [|5;6|]; [|7;8|]; [|9;10|]; [|11;12|]|])
-    ~y:(Np.vectori [|0; 1; 1; 0; 0; 1|]) grid;
+    ~x:(Np.matrixi [|[|1;2|]; [|3;4|]; [|5;6|]; [|7;8|]; [|9;10|]; [|11;12|]; [|11;13|]|])
+    ~y:(Np.vectori [|0; 1; 1; 0; 0; 1; 1|]) grid;
   [%expect {|
-     GridSearchCV(cv=2, error_score=nan,
-                  estimator=LinearSVC(C=1.0, class_weight=None, dual=True,
-                                      fit_intercept=True, intercept_scaling=1,
-                                      loss='squared_hinge', max_iter=1000,
-                                      multi_class='ovr', penalty='l2',
-                                      random_state=0, tol=0.0001, verbose=0),
-                  iid='deprecated', n_jobs=None, param_grid={'C': [1, 10]},
-                  pre_dispatch='2*n_jobs', refit=True, return_train_score=False,
-                  scoring=make_scorer(fbeta_score, beta=2), verbose=0)
+     GridSearchCV(cv=2, estimator=LinearSVC(random_state=0),
+                  param_grid={'C': [1.0, 100.0]},
+                  scoring=make_scorer(fbeta_score, beta=2))
    |}];
   print Sklearn.Dict.pp @@ Sklearn.Model_selection.GridSearchCV.cv_results_ grid;
   let output = Re.replace (Re.Perl.compile_pat {|('\w+time': array)\([^()]+\)|})
@@ -810,18 +799,18 @@ let%expect_test "make_scorer" =
      'std_fit_time': array(...),
      'mean_score_time': array(...),
      'std_score_time': array(...),
-     'param_C': masked_array(data=[1, 10],
+     'param_C': masked_array(data=[1.0, 100.0],
 
                  mask=[False, False],
 
            fill_value='?',
                 dtype=object),
-     'params': [{'C': 1}, {'C': 10}],
-     'split0_test_score': array([0.71428571, 0.83333333]),
+     'params': [{'C': 1.0}, {'C': 100.0}],
+     'split0_test_score': array([0.5, 0. ]),
      'split1_test_score': array([0., 0.]),
-     'mean_test_score': array([0.35714286, 0.41666667]),
-     'std_test_score': array([0.35714286, 0.41666667]),
-     'rank_test_score': array([2, 1],
+     'mean_test_score': array([0.25, 0.  ]),
+     'std_test_score': array([0.25, 0.  ]),
+     'rank_test_score': array([1, 2],
      dtype=int32)} |}]
 
 (* matthews_corrcoef *)
@@ -1599,10 +1588,7 @@ let%expect_test "plot_roc_curve" =
   let clf = SVC.create ~random_state:0 () in
   print SVC.pp @@ SVC.fit ~x:x_train ~y:y_train clf;
   [%expect {|
-      SVC(C=1.0, break_ties=False, cache_size=200, class_weight=None, coef0=0.0,
-          decision_function_shape='ovr', degree=3, gamma='scale', kernel='rbf',
-          max_iter=-1, probability=False, random_state=0, shrinking=True, tol=0.001,
-          verbose=False)
+      SVC(random_state=0)
    |}];
   print_py @@ Sklearn.Metrics.plot_roc_curve ~estimator:clf ~x:x_test ~y:y_test ();
   let output = Re.replace_string (Re.Perl.compile_pat {|0x[a-f0-9]+|}) ~by:"0x..." [%expect.output]

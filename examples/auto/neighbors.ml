@@ -35,9 +35,7 @@ let%expect_test "KNeighborsClassifier" =
     let neigh = KNeighborsClassifier.create ~n_neighbors:3 () in
     print KNeighborsClassifier.pp @@ KNeighborsClassifier.fit neigh ~x:(`Arr x) ~y;
     [%expect {|
-            KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski',
-                                 metric_params=None, n_jobs=None, n_neighbors=3, p=2,
-                                 weights='uniform')
+            KNeighborsClassifier(n_neighbors=3)
     |}];
     print_ndarray @@ KNeighborsClassifier.predict neigh ~x:(Np.matrixf [|[|1.1|]|]);
     [%expect {|
@@ -68,9 +66,7 @@ let%expect_test "KNeighborsMixin.kneighbors" =
   let neigh = NearestNeighbors.create ~n_neighbors:1 () in
   print NearestNeighbors.pp @@ NearestNeighbors.fit neigh ~x:(`Arr samples);
   [%expect {|
-            NearestNeighbors(algorithm='auto', leaf_size=30, metric='minkowski',
-                             metric_params=None, n_jobs=None, n_neighbors=1, p=2,
-                             radius=1.0)
+            NearestNeighbors(n_neighbors=1)
     |}];
   let neigh_dist, neigh_ind = NearestNeighbors.kneighbors neigh ~x:(Np.matrixf [|[|1.; 1.; 1.|]|]) in
   Format.printf "(%a, %a)" Np.pp neigh_dist Np.pp neigh_ind;
@@ -100,9 +96,7 @@ let%expect_test "KNeighborsMixin.kneighbors_graph" =
   let neigh = NearestNeighbors.create ~n_neighbors:2 () in
   print NearestNeighbors.pp @@ NearestNeighbors.fit neigh ~x:(`Arr x);
   [%expect {|
-            NearestNeighbors(algorithm='auto', leaf_size=30, metric='minkowski',
-                             metric_params=None, n_jobs=None, n_neighbors=2, p=2,
-                             radius=1.0)
+            NearestNeighbors(n_neighbors=2)
     |}];
   let a = NearestNeighbors.kneighbors_graph neigh ~x in
   Scipy.Sparse.Csr_matrix.pp Format.std_formatter @@ a;
@@ -142,9 +136,7 @@ let%expect_test "KNeighborsRegressor" =
     let neigh = KNeighborsRegressor.create ~n_neighbors:2 () in
     print KNeighborsRegressor.pp @@ KNeighborsRegressor.fit neigh ~x:(`Arr x) ~y;
     [%expect {|
-            KNeighborsRegressor(algorithm='auto', leaf_size=30, metric='minkowski',
-                                metric_params=None, n_jobs=None, n_neighbors=2, p=2,
-                                weights='uniform')
+            KNeighborsRegressor(n_neighbors=2)
     |}];
     print_ndarray @@ KNeighborsRegressor.predict neigh ~x:(Np.matrixf [|[|1.5|]|]);
     [%expect {|
@@ -206,7 +198,7 @@ let%expect_test "NearestCentroid" =
   let clf = NearestCentroid.create () in
   print NearestCentroid.pp @@ NearestCentroid.fit clf ~x ~y;
   [%expect {|
-            NearestCentroid(metric='euclidean', shrink_threshold=None)
+            NearestCentroid()
     |}];
   print Np.pp @@ NearestCentroid.predict clf ~x:(Np.matrixf [|[|-0.8; -1.|]|]);
   [%expect {|
@@ -237,9 +229,7 @@ let%expect_test "RadiusNeighborsMixin.radius_neighbors" =
     let neigh = NearestNeighbors.create ~radius:1.6 () in
     print NearestNeighbors.pp @@ NearestNeighbors.fit neigh ~x:(`Arr samples);
     [%expect {|
-            NearestNeighbors(algorithm='auto', leaf_size=30, metric='minkowski',
-                             metric_params=None, n_jobs=None, n_neighbors=5, p=2,
-                             radius=1.6)
+            NearestNeighbors(radius=1.6)
     |}];
     let dist, ind = NearestNeighbors.radius_neighbors neigh ~x:(Np.matrixf [|[|1.; 1.; 1.|]|]) in
     print Np.Ndarray.List.pp @@ dist;
@@ -273,9 +263,7 @@ let%expect_test "RadiusNeighborsMixin.radius_neighbors_graph" =
   let neigh = NearestNeighbors.create ~radius:1.5 () in
   print NearestNeighbors.pp @@ NearestNeighbors.fit neigh ~x:(`Arr x);
   [%expect {|
-            NearestNeighbors(algorithm='auto', leaf_size=30, metric='minkowski',
-                             metric_params=None, n_jobs=None, n_neighbors=5, p=2,
-                             radius=1.5)
+            NearestNeighbors(radius=1.5)
     |}];
   let a = NearestNeighbors.radius_neighbors_graph neigh ~x in
   Np.pp Format.std_formatter @@ Scipy.Sparse.Csr_matrix.todense a;
@@ -322,16 +310,12 @@ let%expect_test "NeighborhoodComponentsAnalysis" =
   let nca = NeighborhoodComponentsAnalysis.create ~random_state:42 () in
   print NeighborhoodComponentsAnalysis.pp @@ NeighborhoodComponentsAnalysis.fit nca ~x:x_train ~y:y_train;
   [%expect {|
-            NeighborhoodComponentsAnalysis(callback=None, init='auto', max_iter=50,
-                                           n_components=None, random_state=42, tol=1e-05,
-                                           verbose=0, warm_start=False)
+            NeighborhoodComponentsAnalysis(random_state=42)
     |}];
   let knn = KNeighborsClassifier.create ~n_neighbors:3 () in
   print KNeighborsClassifier.pp @@ KNeighborsClassifier.fit knn ~x:(`Arr x_train) ~y:y_train;
   [%expect {|
-            KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski',
-                                 metric_params=None, n_jobs=None, n_neighbors=3, p=2,
-                                 weights='uniform')
+            KNeighborsClassifier(n_neighbors=3)
     |}];
   Format.printf "%g" @@ KNeighborsClassifier.score knn ~x:x_test ~y:y_test;
     [%expect {|
@@ -340,9 +324,7 @@ let%expect_test "NeighborhoodComponentsAnalysis" =
   print KNeighborsClassifier.pp @@
   KNeighborsClassifier.fit knn ~x:(`Arr (NeighborhoodComponentsAnalysis.transform nca ~x:x_train)) ~y:y_train;
   [%expect {|
-            KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski',
-                                 metric_params=None, n_jobs=None, n_neighbors=3, p=2,
-                                 weights='uniform')
+            KNeighborsClassifier(n_neighbors=3)
     |}];
   Format.printf "%g" @@ KNeighborsClassifier.score knn ~x:(NeighborhoodComponentsAnalysis.transform nca ~x:x_test) ~y:y_test;
   [%expect {|
@@ -373,9 +355,7 @@ let%expect_test "RadiusNeighborsClassifier" =
    let neigh = RadiusNeighborsClassifier.create ~radius:1.0 () in
    print RadiusNeighborsClassifier.pp @@ RadiusNeighborsClassifier.fit neigh ~x:(`Arr x) ~y;
    [%expect {|
-            RadiusNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski',
-                                      metric_params=None, n_jobs=None, outlier_label=None,
-                                      p=2, radius=1.0, weights='uniform')
+            RadiusNeighborsClassifier()
     |}];
    print_ndarray @@ RadiusNeighborsClassifier.predict neigh ~x:(Np.matrixf [|[|1.5|]|]);
    [%expect {|
@@ -408,9 +388,7 @@ let%expect_test "RadiusNeighborsRegressor" =
   let neigh = RadiusNeighborsRegressor.create ~radius:1.0 () in
   print RadiusNeighborsRegressor.pp @@ RadiusNeighborsRegressor.fit neigh ~x:(`Arr x) ~y;
   [%expect {|
-            RadiusNeighborsRegressor(algorithm='auto', leaf_size=30, metric='minkowski',
-                                     metric_params=None, n_jobs=None, p=2, radius=1.0,
-                                     weights='uniform')
+            RadiusNeighborsRegressor()
     |}];
   print_ndarray @@ RadiusNeighborsRegressor.predict neigh ~x:(Np.matrixf [|[|1.5|]|]);
   [%expect {|
@@ -437,7 +415,8 @@ let%expect_test "kneighbors_graph" =
     Sklearn.Neighbors.kneighbors_graph ~x:(`Arr x) ~n_neighbors:2
       ~mode:`Connectivity ~include_self:(`Bool true) ()
   in
-  Np.pp Format.std_formatter @@ Scipy.Sparse.Csr_matrix.todense a;
+  (* Np.pp Format.std_formatter @@ Scipy.Sparse.Csr_matrix.todense a; *)
+  Np.pp Format.std_formatter @@ Scipy.Sparse.Spmatrix.todense a;
   [%expect {|
             [[1. 0. 1.]
              [0. 1. 1.]
@@ -464,7 +443,7 @@ let%expect_test "radius_neighbors_graph" =
   let a = Sklearn.Neighbors.radius_neighbors_graph ~x:(`Arr x) ~radius:1.5
       ~mode:`Connectivity ~include_self:(`Bool true) ()
   in
-  Np.pp Format.std_formatter @@ Scipy.Sparse.Csr_matrix.todense a;
+  Np.pp Format.std_formatter @@ Scipy.Sparse.Spmatrix.todense a;
   [%expect {|
             [[1. 0. 1.]
              [0. 1. 0.]

@@ -85,13 +85,8 @@ let%expect_test "TransformedTargetRegressor" =
   [%expect {||}];
   print TransformedTargetRegressor.pp @@ TransformedTargetRegressor.fit ~x ~y tt;
   [%expect {|
-      TransformedTargetRegressor(check_inverse=True, func=<ufunc 'log'>,
-                                 inverse_func=<ufunc 'exp'>,
-                                 regressor=LinearRegression(copy_X=True,
-                                                            fit_intercept=True,
-                                                            n_jobs=None,
-                                                            normalize=False),
-                                 transformer=None)
+      TransformedTargetRegressor(func=<ufunc 'log'>, inverse_func=<ufunc 'exp'>,
+                                 regressor=LinearRegression())
   |}];
   print_float @@ TransformedTargetRegressor.score ~x ~y tt;
   [%expect {|
@@ -158,17 +153,8 @@ let%expect_test "make_column_transformer" =
     [Sklearn.Preprocessing.StandardScaler.(create () |> as_transformer), `Ss ["numerical_column"];
      Sklearn.Preprocessing.OneHotEncoder.(create () |> as_transformer), `Ss ["categorical_column"]];
   [%expect {|
-      ColumnTransformer(n_jobs=None, remainder='drop', sparse_threshold=0.3,
-                        transformer_weights=None,
-                        transformers=[('standardscaler',
-                                       StandardScaler(copy=True, with_mean=True,
-                                                      with_std=True),
+      ColumnTransformer(transformers=[('standardscaler', StandardScaler(),
                                        ['numerical_column']),
-                                      ('onehotencoder',
-                                       OneHotEncoder(categories='auto', drop=None,
-                                                     dtype=<class 'numpy.float64'>,
-                                                     handle_unknown='error',
-                                                     sparse=True),
-                                       ['categorical_column'])],
-                        verbose=False)
+                                      ('onehotencoder', OneHotEncoder(),
+                                       ['categorical_column'])])
   |}]

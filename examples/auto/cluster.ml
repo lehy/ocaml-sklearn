@@ -47,8 +47,7 @@ let%expect_test "AffinityPropagation" =
   print AffinityPropagation.pp clustering;
   [%expect
     {|
-      AffinityPropagation(affinity='euclidean', convergence_iter=15, copy=True,
-                          damping=0.5, max_iter=200, preference=None, verbose=False)
+      AffinityPropagation()
   |}];
   print_ndarray @@ AffinityPropagation.labels_ clustering;
   [%expect {|
@@ -92,9 +91,7 @@ let%expect_test "AgglomerativeClustering" =
   print AgglomerativeClustering.pp @@ clustering;
   [%expect
     {|
-      AgglomerativeClustering(affinity='euclidean', compute_full_tree='auto',
-                              connectivity=None, distance_threshold=None,
-                              linkage='ward', memory=None, n_clusters=2)
+      AgglomerativeClustering()
    |}];
   print_ndarray @@ AgglomerativeClustering.labels_ clustering;
   [%expect {| [1 1 1 0 0 0] |}]
@@ -127,8 +124,7 @@ let%expect_test "Birch" =
   print Birch.pp @@ Birch.fit ~x brc;
   [%expect
     {|
-      Birch(branching_factor=50, compute_labels=True, copy=True, n_clusters=None,
-            threshold=0.5)
+      Birch(n_clusters=None)
    |}];
   print_ndarray @@ Birch.predict ~x brc;
   [%expect {| [0 0 0 1 1 1] |}]
@@ -163,8 +159,7 @@ let%expect_test "DBSCAN" =
   print DBSCAN.pp clustering;
   [%expect
     {|
-      DBSCAN(algorithm='auto', eps=3.0, leaf_size=30, metric='euclidean',
-             metric_params=None, min_samples=2, n_jobs=None, p=None)
+      DBSCAN(eps=3.0, min_samples=2)
    |}]
 
 (* FeatureAgglomeration *)
@@ -195,10 +190,7 @@ let%expect_test "FeatureAgglomeration" =
        ~by:"0x..." [%expect.output];
   [%expect
     {|
-      FeatureAgglomeration(affinity='euclidean', compute_full_tree='auto',
-                           connectivity=None, distance_threshold=None, linkage='ward',
-                           memory=None, n_clusters=32,
-                           pooling_func=<function mean at 0x...>)
+      FeatureAgglomeration(n_clusters=32)
    |}];
   let x_reduced = FeatureAgglomeration.transform ~x agglo in
   print_ndarray @@ Np.Ndarray.vectori @@ Np.shape x_reduced;
@@ -286,8 +278,7 @@ let%expect_test "MeanShift" =
   print MeanShift.pp @@ clustering;
   [%expect
     {|
-      MeanShift(bandwidth=2.0, bin_seeding=False, cluster_all=True, max_iter=300,
-                min_bin_freq=1, n_jobs=None, seeds=None)
+      MeanShift(bandwidth=2.0)
    |}]
 
 (* MiniBatchKMeans *)
@@ -443,10 +434,7 @@ let%expect_test "SpectralBiclustering" =
   print SpectralBiclustering.pp @@ clustering;
   [%expect
     {|
-      SpectralBiclustering(init='k-means++', method='bistochastic', mini_batch=False,
-                           n_best=3, n_clusters=2, n_components=6, n_init=10,
-                           n_jobs=None, n_svd_vecs=None, random_state=0,
-                           svd_method='randomized')
+      SpectralBiclustering(n_clusters=2, random_state=0)
    |}]
 
 (* SpectralClustering *)
@@ -486,10 +474,7 @@ let%expect_test "SpectralClustering" =
   print SpectralClustering.pp @@ clustering;
   [%expect
     {|
-      SpectralClustering(affinity='rbf', assign_labels='discretize', coef0=1,
-                         degree=3, eigen_solver=None, eigen_tol=0.0, gamma=1.0,
-                         kernel_params=None, n_clusters=2, n_components=None,
-                         n_init=10, n_jobs=None, n_neighbors=10, random_state=0)
+      SpectralClustering(assign_labels='discretize', n_clusters=2, random_state=0)
    |}]
 
 (* SpectralCoclustering *)
@@ -530,7 +515,5 @@ let%expect_test "SpectralCoclustering" =
   print SpectralCoclustering.pp @@ clustering;
   [%expect
     {|
-      SpectralCoclustering(init='k-means++', mini_batch=False, n_clusters=2,
-                           n_init=10, n_jobs=None, n_svd_vecs=None, random_state=0,
-                           svd_method='randomized')
+      SpectralCoclustering(n_clusters=2, random_state=0)
    |}]

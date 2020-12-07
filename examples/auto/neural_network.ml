@@ -30,6 +30,5 @@ let%expect_test "BernoulliRBM" =
   let model = BernoulliRBM.create ~n_components:2 () in
   print BernoulliRBM.pp @@ BernoulliRBM.fit ~x model;
   [%expect {|
-      BernoulliRBM(batch_size=10, learning_rate=0.1, n_components=2, n_iter=10,
-                   random_state=None, verbose=0)
+      BernoulliRBM(n_components=2)
   |}]

@@ -174,11 +174,8 @@ let%expect_test "make_pipeline" =
                                      Naive_bayes.GaussianNB.(create () |> as_estimator)] in
   print Pipeline.Pipeline.pp pipe;
     [%expect {|
-            Pipeline(memory=None,
-                     steps=[('standardscaler',
-                             StandardScaler(copy=True, with_mean=True, with_std=True)),
-                            ('gaussiannb', GaussianNB(priors=None, var_smoothing=1e-09))],
-                     verbose=False)
+            Pipeline(steps=[('standardscaler', StandardScaler()),
+                            ('gaussiannb', GaussianNB())])
     |}]
 
 (* >>> from sklearn.decomposition import PCA, TruncatedSVD
@@ -194,16 +191,8 @@ let%expect_test "make_union" =
   in
   print Pipeline.FeatureUnion.pp union;
   [%expect {|
-    FeatureUnion(n_jobs=None,
-                 transformer_list=[('pca',
-                                    PCA(copy=True, iterated_power='auto',
-                                        n_components=None, random_state=None,
-                                        svd_solver='auto', tol=0.0, whiten=False)),
-                                   ('truncatedsvd',
-                                    TruncatedSVD(algorithm='randomized',
-                                                 n_components=2, n_iter=5,
-                                                 random_state=None, tol=0.0))],
-                 transformer_weights=None, verbose=False) |}]
+    FeatureUnion(transformer_list=[('pca', PCA()),
+                                   ('truncatedsvd', TruncatedSVD())]) |}]
 
 (* >>> from sklearn.pipeline import FeatureUnion
  * >>> from sklearn.decomposition import PCA, TruncatedSVD
@@ -238,7 +227,7 @@ let%expect_test "complex_pipeline" =
     Py.Run.eval "sklearn.feature_selection.f_regression"
   in
   let anova_filter = Feature_selection.SelectKBest.(create ~score_func:f_regression ~k:(`I 5) () |> as_estimator) in
-  let clf = Svm.SVC.(create ~kernel:"linear" () |> as_estimator) in
+  let clf = Svm.SVC.(create ~kernel:`Linear () |> as_estimator) in
   let anova_svm = Pipeline.create ~steps:["anova", anova_filter;
                                           "svc", clf] ()
   in
@@ -249,17 +238,9 @@ let%expect_test "complex_pipeline" =
   (*  filtering out the address printed for f_regression, which is a problem for this test  *)
   print_string @@ Re.replace_string (Re.Perl.compile_pat "0x[a-fA-F0-9]+") ~by:"0x..." [%expect.output];
   [%expect {|
-    Pipeline(memory=None,
-             steps=[('anova',
-                     SelectKBest(k=10,
-                                 score_func=<function f_regression at 0x...>)),
-                    ('svc',
-                     SVC(C=0.1, break_ties=False, cache_size=200, class_weight=None,
-                         coef0=0.0, decision_function_shape='ovr', degree=3,
-                         gamma='scale', kernel='linear', max_iter=-1,
-                         probability=False, random_state=None, shrinking=True,
-                         tol=0.001, verbose=False))],
-             verbose=False) |}];
+    Pipeline(steps=[('anova',
+                     SelectKBest(score_func=<function f_regression at 0x...>)),
+                    ('svc', SVC(C=0.1, kernel='linear'))]) |}];
   let prediction = Pipeline.predict anova_svm ~x in
   print_ndarray prediction;
   [%expect {|

@@ -78,23 +78,21 @@ let%expect_test "LinearSVR" =
   print LinearSVR.pp @@ LinearSVR.fit regr ~x ~y;
   [%expect
     {|
-          LinearSVR(C=1.0, dual=True, epsilon=0.0, fit_intercept=True,
-                    intercept_scaling=1.0, loss='epsilon_insensitive', max_iter=1000,
-                    random_state=0, tol=1e-05, verbose=0)
+          LinearSVR(random_state=0, tol=1e-05)
   |}];
   print_ndarray @@ LinearSVR.coef_ regr;
   [%expect
     {|
-            [16.35841504 26.91644036 42.30619026 60.47800997]
+            [16.35883704 26.91633994 42.30602221 60.4781483 ]
     |}];
   print_ndarray @@ LinearSVR.intercept_ regr;
   [%expect {|
-            [-4.29622263]
+            [-4.29635256]
     |}];
   print_ndarray
   @@ LinearSVR.predict regr ~x:(Np.matrixf [| [| 0.; 0.; 0.; 0. |] |]);
   [%expect {|
-            [-4.29622263]
+            [-4.29635256]
     |}]
 
 (* NuSVC *)
@@ -122,10 +120,7 @@ let%expect_test "NuSVC" =
   print NuSVC.pp @@ NuSVC.fit clf ~x ~y;
   [%expect
     {|
-            NuSVC(break_ties=False, cache_size=200, class_weight=None, coef0=0.0,
-                  decision_function_shape='ovr', degree=3, gamma='scale', kernel='rbf',
-                  max_iter=-1, nu=0.5, probability=False, random_state=None, shrinking=True,
-                  tol=0.001, verbose=False)
+            NuSVC()
     |}];
   print_ndarray @@ NuSVC.predict clf ~x:(Np.matrixf [| [| -0.8; -1. |] |]);
   [%expect {|
@@ -158,8 +153,7 @@ let%expect_test "NuSVR" =
   print NuSVR.pp @@ NuSVR.fit clf ~x ~y;
   [%expect
     {|
-            NuSVR(C=1.0, cache_size=200, coef0=0.0, degree=3, gamma='scale', kernel='rbf',
-                  max_iter=-1, nu=0.1, shrinking=True, tol=0.001, verbose=False)
+            NuSVR(nu=0.1)
     |}]
 
 (* OneClassSVM *)
@@ -213,10 +207,7 @@ let%expect_test "SVC" =
   print SVC.pp @@ SVC.fit clf ~x ~y;
   [%expect
     {|
-            SVC(C=1.0, break_ties=False, cache_size=200, class_weight=None, coef0=0.0,
-                decision_function_shape='ovr', degree=3, gamma='auto', kernel='rbf',
-                max_iter=-1, probability=False, random_state=None, shrinking=True,
-                tol=0.001, verbose=False)
+            SVC(gamma='auto')
     |}];
   print_ndarray @@ SVC.predict clf ~x:(Np.matrixf [| [| -0.8; -1. |] |]);
   [%expect {|
@@ -266,6 +257,5 @@ let%expect_test "SVR" =
   print SVR.pp @@ SVR.fit clf ~x ~y;
   [%expect
     {|
-            SVR(C=1.0, cache_size=200, coef0=0.0, degree=3, epsilon=0.2, gamma='scale',
-                kernel='rbf', max_iter=-1, shrinking=True, tol=0.001, verbose=False)
+            SVR(epsilon=0.2)
     |}]

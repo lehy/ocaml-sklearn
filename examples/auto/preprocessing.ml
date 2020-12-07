@@ -35,7 +35,7 @@ let%expect_test "Binarizer" =
   let transformer = Binarizer.(create () |> fit ~x) in  (* fit does nothing.     *)
   print Binarizer.pp transformer;
   [%expect {|
-            Binarizer(copy=True, threshold=0.0)
+            Binarizer()
     |}];
   print_ndarray @@ Binarizer.transform transformer ~x;
   [%expect {|
@@ -237,7 +237,7 @@ let%expect_test "LabelBinarizer" =
   let lb = LabelBinarizer.create () in
   print LabelBinarizer.pp @@ LabelBinarizer.fit lb ~y:(Np.vectori [|1; 2; 6; 4; 2|]);
   [%expect {|
-            LabelBinarizer(neg_label=0, pos_label=1, sparse_output=False)
+            LabelBinarizer()
     |}];
   print_ndarray @@ LabelBinarizer.classes_ lb;
   [%expect {|
@@ -295,7 +295,7 @@ let%expect_test "LabelBinarizer" =
   let lb = LabelBinarizer.create () in
   print LabelBinarizer.pp @@ LabelBinarizer.fit lb ~y:(Np.matrixi ([|[|0; 1; 1|]; [|1; 0; 0|]|]));
   [%expect {|
-            LabelBinarizer(neg_label=0, pos_label=1, sparse_output=False)
+            LabelBinarizer()
     |}];
   print_ndarray @@ LabelBinarizer.classes_ lb;
   [%expect {|
@@ -407,7 +407,7 @@ let%expect_test "MaxAbsScaler" =
   let transformer = MaxAbsScaler.(create () |> fit ~x) in
   print MaxAbsScaler.pp transformer;
   [%expect {|
-            MaxAbsScaler(copy=True)
+            MaxAbsScaler()
     |}];
   print_ndarray @@ MaxAbsScaler.transform transformer ~x;
   [%expect {|
@@ -443,7 +443,7 @@ let%expect_test "MinMaxScaler" =
   let scaler = MinMaxScaler.create () in
   print MinMaxScaler.pp @@ MinMaxScaler.fit scaler ~x:data;
   [%expect {|
-            MinMaxScaler(copy=True, feature_range=(0, 1))
+            MinMaxScaler()
     |}];
   print_ndarray @@ MinMaxScaler.data_max_ scaler;
   [%expect {|
@@ -574,7 +574,7 @@ let%expect_test "MultiLabelBinarizer" =
   print MultiLabelBinarizer.pp @@ MultiLabelBinarizer.fit mlb
     ~y:(Np.Ndarray.List.vectors [[|"sci-fi"; "thriller"; "comedy"|]]);
   [%expect {|
-            MultiLabelBinarizer(classes=None, sparse_output=False)
+            MultiLabelBinarizer()
     |}];
   print_ndarray @@ MultiLabelBinarizer.classes_ mlb;
   [%expect {|
@@ -604,7 +604,7 @@ let%expect_test "Normalizer" =
   let transformer = Normalizer.(create () |> fit ~x) in  (* fit does nothing *)
   print Normalizer.pp transformer;
   [%expect {|
-            Normalizer(copy=True, norm='l2')
+            Normalizer()
     |}];
   print_ndarray @@ Normalizer.transform transformer ~x;
   [%expect {|
@@ -711,7 +711,7 @@ let%expect_test "OrdinalEncoder" =
      ['Female' 2]] |}];
   print OrdinalEncoder.pp @@ OrdinalEncoder.fit enc ~x;
   [%expect {|
-            OrdinalEncoder(categories='auto', dtype=<class 'numpy.float64'>)
+            OrdinalEncoder()
     |}];
   print Np.Ndarray.List.pp @@ OrdinalEncoder.categories_ enc;
   [%expect {|
@@ -819,7 +819,7 @@ let%expect_test "PowerTransformer" =
   let data = Np.matrixi [|[|1; 2|]; [|3; 2|]; [|4; 5|]|] in
   print PowerTransformer.pp @@ PowerTransformer.fit pt ~x:data;
   [%expect {|
-            PowerTransformer(copy=True, method='yeo-johnson', standardize=True)
+            PowerTransformer()
     |}];
   print_ndarray @@ PowerTransformer.lambdas_ pt;
   [%expect {|
@@ -912,8 +912,7 @@ let%expect_test "RobustScaler" =
   let transformer = RobustScaler.(create () |> fit ~x) in
   print RobustScaler.pp transformer;
   [%expect {|
-            RobustScaler(copy=True, quantile_range=(25.0, 75.0), with_centering=True,
-                         with_scaling=True)
+            RobustScaler()
     |}];
   print_ndarray @@ RobustScaler.transform transformer ~x;
   [%expect {|
@@ -949,7 +948,7 @@ let%expect_test "StandardScaler" =
   let scaler = StandardScaler.create () in
   print StandardScaler.pp @@ StandardScaler.fit scaler ~x:data;
   [%expect {|
-            StandardScaler(copy=True, with_mean=True, with_std=True)
+            StandardScaler()
     |}];
   print_ndarray @@ StandardScaler.mean_ scaler;
   [%expect {|
