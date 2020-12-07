@@ -1,5 +1,5 @@
 opam-version: "2.0"
-version: "sp1.4-0.3.0"
+version: "sp1.5-0.3.1"
 synopsis: "SciPy scientific computing library for OCaml"
 description: """
 These are OCaml bindings to the SciPy Python library.
@@ -17,7 +17,7 @@ depends: [
   "dune" {>= "2.4"}
   "ocaml" {>= "4.07.1"}
   "pyml" {>= "20200222"}
-  "np" {= "np1.18-0.3.0"}
+  "np" {= "np1.19-0.3.1"}
 ]
 build: [
   [
