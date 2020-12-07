@@ -4149,6 +4149,39 @@ def numpy_pkg():
     return pkg
 
 
+def numpy_fun(fn):
+    builtin = numpy_builtin_types
+    import numpy
+
+    over = Overrides(
+        np_overrides,
+        r'^(?!.*\bchararray\b.*)(?!numpy\.dtype)numpy(\..+)?')
+    over.add_filter(numpy_filter)
+    registry = Registry()
+    # pkg = Module(in_ml_namespace('Np', UpperName('numpy', None)), numpy, over,
+    #              registry, builtin)
+    name = LowerName(fn.__name__, None, mlid(fn.__name__))
+    return Function(name, fn, over, registry, builtin)
+
+
+def sklearn_fun(fn):
+    import sklearn
+    over = Overrides(sklearn_overrides, r'^sklearn(\..+)?')
+    registry = Registry()
+    builtin = sklearn_builtin_types
+    name = LowerName(fn.__name__, None, mlid(fn.__name__))
+    return Function(name, fn, over, registry, builtin)
+
+
+def sklearn_method(fn):
+    import sklearn
+    over = Overrides(sklearn_overrides, r'^sklearn(\..+)?')
+    registry = Registry()
+    builtin = sklearn_builtin_types
+    name = LowerName(fn.__name__, None, mlid(fn.__name__))
+    return Method(name, fn, over, registry, builtin)
+
+
 def write(pkg, path):
     pkg.write(path)
     try:
