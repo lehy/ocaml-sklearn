@@ -139,6 +139,9 @@ scikit-learn's documentation.
 ### Dev tl;dr
 
 ~~~sh
+python3 -mvenv .venv
+source .venv/bin/activate
+pip install -r requirements-dev.txt
 opam switch create . 4.11.1 --deps-only
 dune runtest
 ~~~
