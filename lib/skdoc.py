@@ -6,6 +6,7 @@ import pkgutil
 import pathlib
 import logging
 import textwrap
+import distutils
 import importlib
 import functools
 import collections
@@ -4024,8 +4025,7 @@ np_overrides = {
 
 
 def write_version(package, build_dir, registry):
-    import sklearn.utils
-    full_version = sklearn.utils.validation.LooseVersion(
+    full_version = distutils.version.LooseVersion(
         package.__version__).version
     full_version_ml = '[' + '; '.join([f'"{x}"' for x in full_version]) + ']'
     version_ml = '(' + ', '.join(str(x) for x in full_version[:2]) + ')'
