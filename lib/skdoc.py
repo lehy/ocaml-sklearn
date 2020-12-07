@@ -1959,7 +1959,7 @@ class Generator(Type):
 
 def ArrGenerator():
     ret = Generator(Arr())
-    ret.names = ['generator of array']
+    ret.names = ['generator of array', 'generator of ndarray']
     return ret
 
 
