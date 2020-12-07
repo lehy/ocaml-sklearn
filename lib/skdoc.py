@@ -1470,7 +1470,6 @@ def format_md_doc(doc):
 
 
 def examples(doc):
-    # XXX removed a \n at the end, hoping that would work, check it
     groups = re.findall(r'^(?:>>>(?:[^\n]|\n[^\n])+)\n',
                         doc,
                         flags=re.MULTILINE)
