@@ -150,10 +150,10 @@ class Registry:
         self.generated_files = []
         self.generated_doc_files = []
         self.elements = collections.defaultdict(list)
-        
+
     def add(self, name, element):
         self.elements[element].append(name)
-        
+
     def add_generated_file(self, f):
         f = pathlib.Path(f)
         assert f not in self.generated_files, f"source file already generated: {f}"
@@ -893,7 +893,7 @@ class Module:
             raise OutsideScope(name)
 
         registry.add(name, module)
-        
+
         self.module = module
         self.elements = self._list_elements(module, overrides, registry,
                                             builtin, inside)
@@ -1006,7 +1006,7 @@ class Module:
         with open(mli, 'w') as f:
             self.registry.add_generated_file(mli)
             self.write_mli_inside(f)
-            
+
     def write_ml_inside(self, f):
         self.write_header(f)
         f.write("let get_py name = Py.Module.get __wrap_namespace name\n")
@@ -1093,7 +1093,7 @@ class Class:
             raise OutsideScope(self.name)
 
         registry.add(name, klass)
-        
+
         self.klass = klass
 
         if inspect.isabstract(klass):
@@ -3329,7 +3329,7 @@ class Function:
         self.name.apply_overrides(overrides)
 
         registry.add(self.name, function)
-        
+
         self.overrides = overrides
         self.function = function
         self.context = TypeContext(
@@ -3567,7 +3567,7 @@ class Overrides:
         self._on_function = []
         self._blacklisted_submodules = []
         self._filters = []
-        
+
     def is_blacklisted_submodule(self, m):
         for x in self._blacklisted_submodules:
             if x is m:
@@ -3592,7 +3592,7 @@ class Overrides:
 
     def add_filter(self, f):
         self._filters.append(f)
-            
+
     def check_scope(self, full_python_name, element):
         if re.match(self.scope, full_python_name) is None:
             return False
@@ -3854,13 +3854,30 @@ sklearn_overrides = {
         'filename': String()
     })),
     r'(fetch_.*|load_(?!iris)(?!svmlight_files).*)$':
-    dict(ret_bunch=True, types={
-        'r^(data|target|pairs|images)$': Arr(),
-    }),
+    dict(ret_bunch=True),
+    r'load_digits$':
+    dict(ret_type=Bunch({
+        'data': Arr(),
+        'target': Arr(),
+        'target_names': List(String()),  # XXX load_iris has Arr() here?
+        'feature_names': List(String()),
+        'DESCR': String(),
+        'images': Arr(),
+    })),
+    r'load_diabetes$':
+    dict(ret_type=Bunch({
+        'data': Arr(),
+        'target': Arr(),
+        'feature_names': List(String()),
+        'DESCR': String(),
+        'data_filename': String(),
+        'target_filename': String(),
+    })),
     r'':
     dict(
         fixed_values=dict(return_X_y=('false', True),
-                          return_distance=('true', False)),
+                          return_distance=('true', False),
+                          as_frame=('false', True)),
         types={
             '^shape$': List(Int()),
             '^DESCR$': String(),
@@ -4114,6 +4131,7 @@ def scipy_pkg():
     registry = Registry()
     pkg = Package(scipy, over, registry, builtin)
     return pkg
+
 
 def numpy_filter(full_python_name, element):
     import numpy
