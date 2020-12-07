@@ -136,6 +136,13 @@ ocaml-sklearn's sources are generated using a Python program (see
 generate bindings based on `pyml`. To determine types, it parses
 scikit-learn's documentation.
 
+### Dev tl;dr
+
+~~~sh
+opam switch create . 4.11.1 --deps-only
+dune runtest
+~~~
+
 ### Python requirements
 
 The requirements for developing (not using) the bindings are in file
