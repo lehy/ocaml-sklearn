@@ -78,6 +78,8 @@ def tag(s):
 def mlid(s):
     if s is None:
         return None
+    if s == '_':
+        return '_dummy'
     # DESCR -> descr
     if s == s.upper():
         return s.lower()
