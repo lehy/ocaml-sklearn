@@ -3895,14 +3895,6 @@ sklearn_overrides = {
               StringValue("normal")])
     },
          ret_type=Arr()),
-    r'mquantiles$':
-    dict(param_types=dict(a=Arr(),
-                          prob=Arr(),
-                          alphap=Float(),
-                          betap=Float(),
-                          axis=Int(),
-                          limit=Tuple([Float(), Float()])),
-         ret_type=Arr()),
     r'\.auc$':
     dict(param_types=dict(x=Arr(), y=Arr()), ret_type=Float()),
     r'\.classification_report$':
@@ -3951,7 +3943,19 @@ sklearn_overrides = {
                                         ret_type=WrappedModule('Sklearn.Compose.ColumnTransformer'))
 }
 
-scipy_overrides = {r'': dict(types={r'^loc$': Float(), '^scale$': Float()})}
+scipy_overrides = {
+    r'': dict(types={r'^loc$': Float(), '^scale$': Float()}),
+    r'mquantiles$':
+    dict(param_types=dict(a=Arr(),
+                          prob=Arr(),
+                          alphap=Float(),
+                          betap=Float(),
+                          axis=Int(),
+                          limit=Tuple([Float(), Float()])),
+         ret_type=Arr()),
+    r'todense$':
+    dict(ret_type=Arr())
+}
 
 
 def zeros_sig():
