@@ -1,6 +1,7 @@
 *~
 .merlin
 _build/
+_opam/
 .ipynb_checkpoints/
 .venv/
 .venv*
