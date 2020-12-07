@@ -2314,6 +2314,7 @@ class Arr(BaseTypeByTag):
         'ndarray of reals',
         'ndarray or scalar',
         'ndarray',
+        '{ndarray}',
         'ndarray, int',
         'ndarray, float',
         'ndarray, bool',
