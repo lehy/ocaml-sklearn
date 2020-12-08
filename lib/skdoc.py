@@ -1314,7 +1314,7 @@ class Class:
         f.write(f"""
 ### {name}
 
-???+ note "method"
+???+ note "method {name}"
     ~~~ocaml
 {valsig}
     ~~~
@@ -1415,7 +1415,7 @@ val {self.name.ml_name_opt()} : t -> ({ml_type_ret}) option
         f.write(f"""
 ### {self.name.ml_name()}
 
-???+ note "attribute"
+???+ note "attribute {self.name.ml_name()}"
     ~~~ocaml
     val {self.name.ml_name()} : t -> {ml_type_ret}
     val {self.name.ml_name_opt()} : t -> ({ml_type_ret}) option
@@ -1454,7 +1454,7 @@ def format_md_doc(doc):
     doc = re.sub(r'^(.+)\n---+\n', r'\n#### \1\n\n', doc, flags=re.MULTILINE)
     # doc = re.sub(r'^(\s*)(\S+)(\s*:)', r'\1**\2**\3', doc, flags=re.MULTILINE)
     doc = re.sub(r'^(\s*)([\w*]\S*\s*:[^\n]+)',
-                 r'\n???+ info "\2"',
+                 r'\n* **\2**',
                  doc,
                  flags=re.MULTILINE)
     doc = re.sub(r'^.. math::\n(([^\n]|\n[^\n])+)',
@@ -2972,7 +2972,7 @@ class Wrapper:
         return f"""
 ### {self.name.ml_name()}
 
-???+ note "{self.doc_type}"
+???+ note "{self.doc_type} {self.name.ml_name()}"
     ~~~ocaml
     val {self.name.ml_name()} :
 {sig}
