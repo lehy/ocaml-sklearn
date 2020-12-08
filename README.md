@@ -148,6 +148,8 @@ dune runtest
 
 ### Python requirements
 
+Make sure you have Python >= 3.8, skdoc.py needs it.
+
 The requirements for developing (not using) the bindings are in file
 `requirements-dev.txt`. Install it using:
 
