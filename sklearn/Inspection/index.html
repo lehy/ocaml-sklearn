@@ -1459,7 +1459,7 @@
 </code></pre></div>
 
 <h3 id="create">create<a class="headerlink" href="#create" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
+<details class="note" open="open"><summary>constructor and attributes create</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
   <span class="n">pd_results</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">features</span><span class="o">:[`</span><span class="nc">List_of_int_</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Tuples</span> <span class="k">of</span> <span class="o">(</span><span class="kt">int</span> <span class="o">*</span> <span class="kt">int</span><span class="o">)</span> <span class="kt">list</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="n">feature_names</span><span class="o">:</span><span class="kt">string</span> <span class="kt">list</span> <span class="o">-&gt;</span>
@@ -1483,16 +1483,25 @@ and the :ref:<code>User Guide &lt;visualizations&gt;</code>.</p>
 
 
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>pd_results : list of (ndarray, ndarray)</summary><p>Results of :func:<code>~sklearn.inspection.partial_dependence</code> for
-<code>features</code>. Each tuple corresponds to a (averaged_predictions, grid).</p>
-</details>
-<details class="info" open="open"><summary>features : list of (int,) or list of (int, int)</summary><p>Indices of features for a given plot. A tuple of one integer will plot
-a partial dependence curve of one feature. A tuple of two integers will
-plot a two-way partial dependence curve as a contour plot.</p>
-</details>
-<details class="info" open="open"><summary>feature_names : list of str</summary><p>Feature names corresponding to the indices in <code>features</code>.</p>
-</details>
-<details class="info" open="open"><summary>target_idx : int</summary><ul>
+<ul>
+<li>
+<p><strong>pd_results : list of (ndarray, ndarray)</strong>
+    Results of :func:<code>~sklearn.inspection.partial_dependence</code> for
+    <code>features</code>. Each tuple corresponds to a (averaged_predictions, grid).</p>
+</li>
+<li>
+<p><strong>features : list of (int,) or list of (int, int)</strong>
+    Indices of features for a given plot. A tuple of one integer will plot
+    a partial dependence curve of one feature. A tuple of two integers will
+    plot a two-way partial dependence curve as a contour plot.</p>
+</li>
+<li>
+<p><strong>feature_names : list of str</strong>
+    Feature names corresponding to the indices in <code>features</code>.</p>
+</li>
+<li>
+<p><strong>target_idx : int</strong></p>
+<ul>
 <li>In a multiclass setting, specifies the class for which the PDPs
   should be computed. Note that for binary classification, the
   positive class (index 1) is always used.</li>
@@ -1500,55 +1509,76 @@ plot a two-way partial dependence curve as a contour plot.</p>
   should be computed.</li>
 </ul>
 <p>Ignored in binary classification or classical regression settings.</p>
-</details>
-<details class="info" open="open"><summary>pdp_lim : dict</summary><p>Global min and max average predictions, such that all plots will have
-the same scale and y limits. <code>pdp_lim[1]</code> is the global min and max for
-single partial dependence curves. <code>pdp_lim[2]</code> is the global min and
-max for two-way partial dependence curves.</p>
-</details>
-<details class="info" open="open"><summary>deciles : dict</summary><p>Deciles for feature indices in <code>features</code>.</p>
-</details>
+</li>
+<li>
+<p><strong>pdp_lim : dict</strong>
+    Global min and max average predictions, such that all plots will have
+    the same scale and y limits. <code>pdp_lim[1]</code> is the global min and max for
+    single partial dependence curves. <code>pdp_lim[2]</code> is the global min and
+    max for two-way partial dependence curves.</p>
+</li>
+<li>
+<p><strong>deciles : dict</strong>
+    Deciles for feature indices in <code>features</code>.</p>
+</li>
+</ul>
 <h4>Attributes</h4>
-<details class="info" open="open"><summary>bounding_ax_ : matplotlib Axes or None</summary><p>If <code>ax</code> is an axes or None, the <code>bounding_ax_</code> is the axes where the
-grid of partial dependence plots are drawn. If <code>ax</code> is a list of axes
-or a numpy array of axes, <code>bounding_ax_</code> is None.</p>
-</details>
-<details class="info" open="open"><summary>axes_ : ndarray of matplotlib Axes</summary><p>If <code>ax</code> is an axes or None, <code>axes_[i, j]</code> is the axes on the i-th row
-and j-th column. If <code>ax</code> is a list of axes, <code>axes_[i]</code> is the i-th item
-in <code>ax</code>. Elements that are None correspond to a nonexisting axes in
-that position.</p>
-</details>
-<details class="info" open="open"><summary>lines_ : ndarray of matplotlib Artists</summary><p>If <code>ax</code> is an axes or None, <code>lines_[i, j]</code> is the partial dependence
-curve on the i-th row and j-th column. If <code>ax</code> is a list of axes,
-<code>lines_[i]</code> is the partial dependence curve corresponding to the i-th
-item in <code>ax</code>. Elements that are None correspond to a nonexisting axes
-or an axes that does not include a line plot.</p>
-</details>
-<details class="info" open="open"><summary>deciles_vlines_ : ndarray of matplotlib LineCollection</summary><p>If <code>ax</code> is an axes or None, <code>vlines_[i, j]</code> is the line collection
-representing the x axis deciles of the i-th row and j-th column. If
-<code>ax</code> is a list of axes, <code>vlines_[i]</code> corresponds to the i-th item in
-<code>ax</code>. Elements that are None correspond to a nonexisting axes or an
-axes that does not include a PDP plot.
-.. versionadded:: 0.23</p>
-</details>
-<details class="info" open="open"><summary>deciles_hlines_ : ndarray of matplotlib LineCollection</summary><p>If <code>ax</code> is an axes or None, <code>vlines_[i, j]</code> is the line collection
-representing the y axis deciles of the i-th row and j-th column. If
-<code>ax</code> is a list of axes, <code>vlines_[i]</code> corresponds to the i-th item in
-<code>ax</code>. Elements that are None correspond to a nonexisting axes or an
-axes that does not include a 2-way plot.
-.. versionadded:: 0.23</p>
-</details>
-<details class="info" open="open"><summary>contours_ : ndarray of matplotlib Artists</summary><p>If <code>ax</code> is an axes or None, <code>contours_[i, j]</code> is the partial dependence
-plot on the i-th row and j-th column. If <code>ax</code> is a list of axes,
-<code>contours_[i]</code> is the partial dependence plot corresponding to the i-th
-item in <code>ax</code>. Elements that are None correspond to a nonexisting axes
-or an axes that does not include a contour plot.</p>
-</details>
-<details class="info" open="open"><summary>figure_ : matplotlib Figure</summary><p>Figure containing partial dependence plots.</p>
-</details>
+<ul>
+<li>
+<p><strong>bounding_ax_ : matplotlib Axes or None</strong>
+    If <code>ax</code> is an axes or None, the <code>bounding_ax_</code> is the axes where the
+    grid of partial dependence plots are drawn. If <code>ax</code> is a list of axes
+    or a numpy array of axes, <code>bounding_ax_</code> is None.</p>
+</li>
+<li>
+<p><strong>axes_ : ndarray of matplotlib Axes</strong>
+    If <code>ax</code> is an axes or None, <code>axes_[i, j]</code> is the axes on the i-th row
+    and j-th column. If <code>ax</code> is a list of axes, <code>axes_[i]</code> is the i-th item
+    in <code>ax</code>. Elements that are None correspond to a nonexisting axes in
+    that position.</p>
+</li>
+<li>
+<p><strong>lines_ : ndarray of matplotlib Artists</strong>
+    If <code>ax</code> is an axes or None, <code>lines_[i, j]</code> is the partial dependence
+    curve on the i-th row and j-th column. If <code>ax</code> is a list of axes,
+    <code>lines_[i]</code> is the partial dependence curve corresponding to the i-th
+    item in <code>ax</code>. Elements that are None correspond to a nonexisting axes
+    or an axes that does not include a line plot.</p>
+</li>
+<li>
+<p><strong>deciles_vlines_ : ndarray of matplotlib LineCollection</strong>
+    If <code>ax</code> is an axes or None, <code>vlines_[i, j]</code> is the line collection
+    representing the x axis deciles of the i-th row and j-th column. If
+    <code>ax</code> is a list of axes, <code>vlines_[i]</code> corresponds to the i-th item in
+    <code>ax</code>. Elements that are None correspond to a nonexisting axes or an
+    axes that does not include a PDP plot.
+    .. versionadded:: 0.23</p>
+</li>
+<li>
+<p><strong>deciles_hlines_ : ndarray of matplotlib LineCollection</strong>
+    If <code>ax</code> is an axes or None, <code>vlines_[i, j]</code> is the line collection
+    representing the y axis deciles of the i-th row and j-th column. If
+    <code>ax</code> is a list of axes, <code>vlines_[i]</code> corresponds to the i-th item in
+    <code>ax</code>. Elements that are None correspond to a nonexisting axes or an
+    axes that does not include a 2-way plot.
+    .. versionadded:: 0.23</p>
+</li>
+<li>
+<p><strong>contours_ : ndarray of matplotlib Artists</strong>
+    If <code>ax</code> is an axes or None, <code>contours_[i, j]</code> is the partial dependence
+    plot on the i-th row and j-th column. If <code>ax</code> is a list of axes,
+    <code>contours_[i]</code> is the partial dependence plot corresponding to the i-th
+    item in <code>ax</code>. Elements that are None correspond to a nonexisting axes
+    or an axes that does not include a contour plot.</p>
+</li>
+<li>
+<p><strong>figure_ : matplotlib Figure</strong>
+    Figure containing partial dependence plots.</p>
+</li>
+</ul>
 </details>
 <h3 id="plot">plot<a class="headerlink" href="#plot" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">plot</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method plot</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">plot</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">ax</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">n_cols</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">line_kw</span><span class="o">:</span><span class="nn">Dict</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -1559,7 +1589,10 @@ or an axes that does not include a contour plot.</p>
 
 <p>Plot partial dependence plots.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>ax : Matplotlib axes or array-like of Matplotlib axes, default=None</summary><ul>
+<ul>
+<li>
+<p><strong>ax : Matplotlib axes or array-like of Matplotlib axes, default=None</strong></p>
+<ul>
 <li>If a single axis is passed in, it is treated as a bounding axes
     and a grid of partial dependence plots will be drawn within
     these bounds. The <code>n_cols</code> parameter controls the number of
@@ -1569,21 +1602,30 @@ or an axes that does not include a contour plot.</p>
 <li>If <code>None</code>, a figure and a bounding axes is created and treated
     as the single axes case.</li>
 </ul>
-</details>
-<details class="info" open="open"><summary>n_cols : int, default=3</summary><p>The maximum number of columns in the grid plot. Only active when
-<code>ax</code> is a single axes or <code>None</code>.</p>
-</details>
-<details class="info" open="open"><summary>line_kw : dict, default=None</summary><p>Dict with keywords passed to the <code>matplotlib.pyplot.plot</code> call.
-For one-way partial dependence plots.</p>
-</details>
-<details class="info" open="open"><summary>contour_kw : dict, default=None</summary><p>Dict with keywords passed to the <code>matplotlib.pyplot.contourf</code>
-call for two-way partial dependence plots.</p>
-</details>
+</li>
+<li>
+<p><strong>n_cols : int, default=3</strong>
+    The maximum number of columns in the grid plot. Only active when
+    <code>ax</code> is a single axes or <code>None</code>.</p>
+</li>
+<li>
+<p><strong>line_kw : dict, default=None</strong>
+    Dict with keywords passed to the <code>matplotlib.pyplot.plot</code> call.
+    For one-way partial dependence plots.</p>
+</li>
+<li>
+<p><strong>contour_kw : dict, default=None</strong>
+    Dict with keywords passed to the <code>matplotlib.pyplot.contourf</code>
+    call for two-way partial dependence plots.</p>
+</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>display: :class:<code>~sklearn.inspection.PartialDependenceDisplay</code></summary></details>
+<ul>
+<li><strong>display: :class:<code>~sklearn.inspection.PartialDependenceDisplay</code></strong></li>
+</ul>
 </details>
 <h3 id="bounding_ax_">bounding_ax_<a class="headerlink" href="#bounding_ax_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">bounding_ax_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute bounding_ax_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">bounding_ax_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">bounding_ax_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -1591,7 +1633,7 @@ call for two-way partial dependence plots.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="axes_">axes_<a class="headerlink" href="#axes_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">axes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute axes_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">axes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">axes_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -1599,7 +1641,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="lines_">lines_<a class="headerlink" href="#lines_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">lines_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute lines_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">lines_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">lines_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -1607,7 +1649,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="deciles_vlines_">deciles_vlines_<a class="headerlink" href="#deciles_vlines_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">deciles_vlines_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute deciles_vlines_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">deciles_vlines_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">deciles_vlines_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -1615,7 +1657,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="deciles_hlines_">deciles_hlines_<a class="headerlink" href="#deciles_hlines_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">deciles_hlines_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute deciles_hlines_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">deciles_hlines_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">deciles_hlines_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -1623,7 +1665,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="contours_">contours_<a class="headerlink" href="#contours_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">contours_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute contours_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">contours_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">contours_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -1631,7 +1673,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="figure_">figure_<a class="headerlink" href="#figure_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">figure_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute figure_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">figure_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">figure_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -1639,25 +1681,25 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="to_string">to_string<a class="headerlink" href="#to_string" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method to_string</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="show">show<a class="headerlink" href="#show" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method show</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="pp">pp<a class="headerlink" href="#pp" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+<details class="note" open="open"><summary>method pp</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
 </code></pre></div>
 
 <p>Pretty-print the object to a formatter.</p>
 </details>
 <h3 id="partial_dependence">partial_dependence<a class="headerlink" href="#partial_dependence" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">partial_dependence</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function partial_dependence</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">partial_dependence</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">response_method</span><span class="o">:[`</span><span class="nc">Auto</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Predict_proba</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Decision_function</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">percentiles</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">grid_resolution</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
@@ -1675,48 +1717,65 @@ the average response of an estimator for each possible value of the
 feature.</p>
 <p>Read more in the :ref:<code>User Guide &lt;partial_dependence&gt;</code>.</p>
 <p>.. warning::</p>
-<details class="info" open="open"><summary>For :class:<code>~sklearn.ensemble.GradientBoostingClassifier</code> and</summary><p>:class:<code>~sklearn.ensemble.GradientBoostingRegressor</code>, the
-'recursion' method (used by default) will not account for the <code>init</code>
-predictor of the boosting process. In practice, this will produce
-the same values as 'brute' up to a constant offset in the target
-response, provided that <code>init</code> is a constant estimator (which is the
-default). However, if <code>init</code> is not a constant estimator, the
-partial dependence values are incorrect for 'recursion' because the
-offset will be sample-dependent. It is preferable to use the 'brute'
-method. Note that this only applies to
-:class:<code>~sklearn.ensemble.GradientBoostingClassifier</code> and
-:class:<code>~sklearn.ensemble.GradientBoostingRegressor</code>, not to
-:class:<code>~sklearn.ensemble.HistGradientBoostingClassifier</code> and
-:class:<code>~sklearn.ensemble.HistGradientBoostingRegressor</code>.</p>
-</details>
+<ul>
+<li><strong>For :class:<code>~sklearn.ensemble.GradientBoostingClassifier</code> and</strong>
+    :class:<code>~sklearn.ensemble.GradientBoostingRegressor</code>, the
+    'recursion' method (used by default) will not account for the <code>init</code>
+    predictor of the boosting process. In practice, this will produce
+    the same values as 'brute' up to a constant offset in the target
+    response, provided that <code>init</code> is a constant estimator (which is the
+    default). However, if <code>init</code> is not a constant estimator, the
+    partial dependence values are incorrect for 'recursion' because the
+    offset will be sample-dependent. It is preferable to use the 'brute'
+    method. Note that this only applies to
+    :class:<code>~sklearn.ensemble.GradientBoostingClassifier</code> and
+    :class:<code>~sklearn.ensemble.GradientBoostingRegressor</code>, not to
+    :class:<code>~sklearn.ensemble.HistGradientBoostingClassifier</code> and
+    :class:<code>~sklearn.ensemble.HistGradientBoostingRegressor</code>.</li>
+</ul>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>estimator : BaseEstimator</summary><p>A fitted estimator object implementing :term:<code>predict</code>,
-:term:<code>predict_proba</code>, or :term:<code>decision_function</code>.
-Multioutput-multiclass classifiers are not supported.</p>
-</details>
-<details class="info" open="open"><summary>X : {array-like or dataframe} of shape (n_samples, n_features)</summary><p><code>X</code> is used to generate a grid of values for the target
-<code>features</code> (where the partial dependence will be evaluated), and
-also to generate values for the complement features when the
-<code>method</code> is 'brute'.</p>
-</details>
-<details class="info" open="open"><summary>features : array-like of {int, str}</summary><p>The feature (e.g. <code>[0]</code>) or pair of interacting features
-(e.g. <code>[(0, 1)]</code>) for which the partial dependency should be computed.</p>
-</details>
-<details class="info" open="open"><summary>response_method : 'auto', 'predict_proba' or 'decision_function',             optional (default='auto')</summary><p>Specifies whether to use :term:<code>predict_proba</code> or
-:term:<code>decision_function</code> as the target response. For regressors
-this parameter is ignored and the response is always the output of
-:term:<code>predict</code>. By default, :term:<code>predict_proba</code> is tried first
-and we revert to :term:<code>decision_function</code> if it doesn't exist. If
-<code>method</code> is 'recursion', the response is always the output of
-:term:<code>decision_function</code>.</p>
-</details>
-<details class="info" open="open"><summary>percentiles : tuple of float, optional (default=(0.05, 0.95))</summary><p>The lower and upper percentile used to create the extreme values
-for the grid. Must be in [0, 1].</p>
-</details>
-<details class="info" open="open"><summary>grid_resolution : int, optional (default=100)</summary><p>The number of equally spaced points on the grid, for each target
-feature.</p>
-</details>
-<details class="info" open="open"><summary>method : str, optional (default='auto')</summary><p>The method used to calculate the averaged predictions:</p>
+<ul>
+<li>
+<p><strong>estimator : BaseEstimator</strong>
+    A fitted estimator object implementing :term:<code>predict</code>,
+    :term:<code>predict_proba</code>, or :term:<code>decision_function</code>.
+    Multioutput-multiclass classifiers are not supported.</p>
+</li>
+<li>
+<p><strong>X : {array-like or dataframe} of shape (n_samples, n_features)</strong>
+    <code>X</code> is used to generate a grid of values for the target
+    <code>features</code> (where the partial dependence will be evaluated), and
+    also to generate values for the complement features when the
+    <code>method</code> is 'brute'.</p>
+</li>
+<li>
+<p><strong>features : array-like of {int, str}</strong>
+    The feature (e.g. <code>[0]</code>) or pair of interacting features
+    (e.g. <code>[(0, 1)]</code>) for which the partial dependency should be computed.</p>
+</li>
+<li>
+<p><strong>response_method : 'auto', 'predict_proba' or 'decision_function',             optional (default='auto')</strong>
+    Specifies whether to use :term:<code>predict_proba</code> or
+    :term:<code>decision_function</code> as the target response. For regressors
+    this parameter is ignored and the response is always the output of
+    :term:<code>predict</code>. By default, :term:<code>predict_proba</code> is tried first
+    and we revert to :term:<code>decision_function</code> if it doesn't exist. If
+    <code>method</code> is 'recursion', the response is always the output of
+    :term:<code>decision_function</code>.</p>
+</li>
+<li>
+<p><strong>percentiles : tuple of float, optional (default=(0.05, 0.95))</strong>
+    The lower and upper percentile used to create the extreme values
+    for the grid. Must be in [0, 1].</p>
+</li>
+<li>
+<p><strong>grid_resolution : int, optional (default=100)</strong>
+    The number of equally spaced points on the grid, for each target
+    feature.</p>
+</li>
+<li>
+<p><strong>method : str, optional (default='auto')</strong>
+    The method used to calculate the averaged predictions:</p>
 <ul>
 <li>
 <p>'recursion' is only supported for some tree-based estimators (namely
@@ -1743,22 +1802,29 @@ feature.</p>
 </ul>
 <p>Please see :ref:<code>this note &lt;pdp_method_differences&gt;</code> for
 differences between the 'brute' and 'recursion' method.</p>
-</details>
+</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>averaged_predictions : ndarray,             shape (n_outputs, len(values[0]), len(values[1]), ...)</summary><p>The predictions for all the points in the grid, averaged over all
-samples in X (or over the training data if <code>method</code> is
-'recursion'). <code>n_outputs</code> corresponds to the number of classes in
-a multi-class setting, or to the number of tasks for multi-output
-regression. For classical regression and binary classification
-<code>n_outputs==1</code>. <code>n_values_feature_j</code> corresponds to the size
-<code>values[j]</code>.</p>
-</details>
-<details class="info" open="open"><summary>values : seq of 1d ndarrays</summary><p>The values with which the grid has been created. The generated grid
-is a cartesian product of the arrays in <code>values</code>. <code>len(values) ==
-len(features)</code>. The size of each array <code>values[j]</code> is either
-<code>grid_resolution</code>, or the number of unique values in <code>X[:, j]</code>,
-whichever is smaller.</p>
-</details>
+<ul>
+<li>
+<p><strong>averaged_predictions : ndarray,             shape (n_outputs, len(values[0]), len(values[1]), ...)</strong>
+    The predictions for all the points in the grid, averaged over all
+    samples in X (or over the training data if <code>method</code> is
+    'recursion'). <code>n_outputs</code> corresponds to the number of classes in
+    a multi-class setting, or to the number of tasks for multi-output
+    regression. For classical regression and binary classification
+    <code>n_outputs==1</code>. <code>n_values_feature_j</code> corresponds to the size
+    <code>values[j]</code>.</p>
+</li>
+<li>
+<p><strong>values : seq of 1d ndarrays</strong>
+    The values with which the grid has been created. The generated grid
+    is a cartesian product of the arrays in <code>values</code>. <code>len(values) ==
+    len(features)</code>. The size of each array <code>values[j]</code> is either
+    <code>grid_resolution</code>, or the number of unique values in <code>X[:, j]</code>,
+    whichever is smaller.</p>
+</li>
+</ul>
 <h4>Examples</h4>
 <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">X</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
@@ -1770,73 +1836,98 @@ whichever is smaller.</p>
 </code></pre></div>
 
 <h4>See also</h4>
-<details class="info" open="open"><summary>sklearn.inspection.plot_partial_dependence: Plot partial dependence</summary></details>
+<ul>
+<li><strong>sklearn.inspection.plot_partial_dependence: Plot partial dependence</strong></li>
+</ul>
 </details>
 <h3 id="permutation_importance">permutation_importance<a class="headerlink" href="#permutation_importance" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">permutation_importance</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">scoring</span><span class="o">:[`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Score</span> <span class="k">of</span> <span class="o">[`</span><span class="nc">Explained_variance</span> <span class="o">|</span> <span class="o">`</span><span class="nc">R2</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Max_error</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Neg_median_absolute_error</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Neg_mean_absolute_error</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Neg_mean_squared_error</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Neg_mean_squared_log_error</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Neg_root_mean_squared_error</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Neg_mean_poisson_deviance</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Neg_mean_gamma_deviance</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Accuracy</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Roc_auc</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Roc_auc_ovr</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Roc_auc_ovo</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Roc_auc_ovr_weighted</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Roc_auc_ovo_weighted</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Balanced_accuracy</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Average_precision</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Neg_log_loss</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Neg_brier_score</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Adjusted_rand_score</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Homogeneity_score</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Completeness_score</span> <span class="o">|</span> <span class="o">`</span><span class="nc">V_measure_score</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Mutual_info_score</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Adjusted_mutual_info_score</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Normalized_mutual_info_score</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Fowlkes_mallows_score</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Precision</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Precision_macro</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Precision_micro</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Precision_samples</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Precision_weighted</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Recall</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Recall_macro</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Recall_micro</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Recall_samples</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Recall_weighted</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F1</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F1_macro</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F1_micro</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F1_samples</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F1_weighted</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Jaccard</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Jaccard_macro</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Jaccard_micro</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Jaccard_samples</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Jaccard_weighted</span><span class="o">]]</span> <span class="o">-&gt;</span>
+<details class="note" open="open"><summary>function permutation_importance</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">permutation_importance</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">scoring</span><span class="o">:[`</span><span class="nc">Score</span> <span class="k">of</span> <span class="o">[`</span><span class="nc">Explained_variance</span> <span class="o">|</span> <span class="o">`</span><span class="nc">R2</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Max_error</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Neg_median_absolute_error</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Neg_mean_absolute_error</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Neg_mean_squared_error</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Neg_mean_squared_log_error</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Neg_root_mean_squared_error</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Neg_mean_poisson_deviance</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Neg_mean_gamma_deviance</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Accuracy</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Roc_auc</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Roc_auc_ovr</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Roc_auc_ovo</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Roc_auc_ovr_weighted</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Roc_auc_ovo_weighted</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Balanced_accuracy</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Average_precision</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Neg_log_loss</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Neg_brier_score</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Adjusted_rand_score</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Homogeneity_score</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Completeness_score</span> <span class="o">|</span> <span class="o">`</span><span class="nc">V_measure_score</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Mutual_info_score</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Adjusted_mutual_info_score</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Normalized_mutual_info_score</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Fowlkes_mallows_score</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Precision</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Precision_macro</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Precision_micro</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Precision_samples</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Precision_weighted</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Recall</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Recall_macro</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Recall_micro</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Recall_samples</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Recall_weighted</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F1</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F1_macro</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F1_micro</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F1_samples</span> <span class="o">|</span> <span class="o">`</span><span class="nc">F1_weighted</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Jaccard</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Jaccard_macro</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Jaccard_micro</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Jaccard_samples</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Jaccard_weighted</span><span class="o">]</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">n_repeats</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">n_jobs</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">random_state</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="n">estimator</span><span class="o">:[&gt;`</span><span class="nc">BaseEstimator</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
-  <span class="n">x</span><span class="o">:[`</span><span class="nc">DataFrame</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="n">x</span><span class="o">:[`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">DataFrame</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="n">y</span><span class="o">:[`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
   <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span>
 </code></pre></div>
 
 <p>Permutation importance for feature evaluation [BRE]_.</p>
-<details class="info" open="open"><summary>The :term:<code>estimator</code> is required to be a fitted estimator. <code>X</code> can be the</summary></details>
-<p>data set used to train the estimator or a hold-out set. The permutation
+<ul>
+<li><strong>The :term:<code>estimator</code> is required to be a fitted estimator. <code>X</code> can be the</strong>
+data set used to train the estimator or a hold-out set. The permutation
 importance of a feature is calculated as follows. First, a baseline metric,
 defined by :term:<code>scoring</code>, is evaluated on a (potentially different)
 dataset defined by the <code>X</code>. Next, a feature column from the validation set
 is permuted and the metric is evaluated again. The permutation importance
 is defined to be the difference between the baseline metric and metric from
-permutating the feature column.</p>
+permutating the feature column.</li>
+</ul>
 <p>Read more in the :ref:<code>User Guide &lt;permutation_importance&gt;</code>.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>estimator : object</summary><p>An estimator that has already been :term:<code>fitted</code> and is compatible</p>
-</details>
-<details class="info" open="open"><summary>with :term:<code>scorer</code>.</summary></details>
-<details class="info" open="open"><summary>X : ndarray or DataFrame, shape (n_samples, n_features)</summary><p>Data on which permutation importance will be computed.</p>
-</details>
-<details class="info" open="open"><summary>y : array-like or None, shape (n_samples, ) or (n_samples, n_classes)</summary><p>Targets for supervised or <code>None</code> for unsupervised.</p>
-</details>
-<details class="info" open="open"><summary>scoring : string, callable or None, default=None</summary><p>Scorer to use. It can be a single
-string (see :ref:<code>scoring_parameter</code>) or a callable (see
-:ref:<code>scoring</code>). If None, the estimator's default scorer is used.</p>
-</details>
-<details class="info" open="open"><summary>n_repeats : int, default=5</summary><p>Number of times to permute a feature.</p>
-</details>
-<details class="info" open="open"><summary>n_jobs : int or None, default=None</summary><p>The number of jobs to use for the computation.
-<code>None</code> means 1 unless in a :obj:<code>joblib.parallel_backend</code> context.
-<code>-1</code> means using all processors. See :term:<code>Glossary &lt;n_jobs&gt;</code>
-for more details.</p>
-</details>
-<details class="info" open="open"><summary>random_state : int, RandomState instance, default=None</summary><p>Pseudo-random number generator to control the permutations of each
-feature.
-Pass an int to get reproducible results across function calls.</p>
-</details>
-<details class="info" open="open"><summary>See :term: <code>Glossary &lt;random_state&gt;</code>.</summary></details>
+<ul>
+<li>
+<p><strong>estimator : object</strong>
+    An estimator that has already been :term:<code>fitted</code> and is compatible</p>
+</li>
+<li>
+<p><strong>with :term:<code>scorer</code>.</strong></p>
+</li>
+<li>
+<p><strong>X : ndarray or DataFrame, shape (n_samples, n_features)</strong>
+    Data on which permutation importance will be computed.</p>
+</li>
+<li>
+<p><strong>y : array-like or None, shape (n_samples, ) or (n_samples, n_classes)</strong>
+    Targets for supervised or <code>None</code> for unsupervised.</p>
+</li>
+<li>
+<p><strong>scoring : string, callable or None, default=None</strong>
+    Scorer to use. It can be a single
+    string (see :ref:<code>scoring_parameter</code>) or a callable (see
+    :ref:<code>scoring</code>). If None, the estimator's default scorer is used.</p>
+</li>
+<li>
+<p><strong>n_repeats : int, default=5</strong>
+    Number of times to permute a feature.</p>
+</li>
+<li>
+<p><strong>n_jobs : int or None, default=None</strong>
+    The number of jobs to use for the computation.
+    <code>None</code> means 1 unless in a :obj:<code>joblib.parallel_backend</code> context.
+    <code>-1</code> means using all processors. See :term:<code>Glossary &lt;n_jobs&gt;</code>
+    for more details.</p>
+</li>
+<li>
+<p><strong>random_state : int, RandomState instance, default=None</strong>
+    Pseudo-random number generator to control the permutations of each
+    feature.
+    Pass an int to get reproducible results across function calls.</p>
+</li>
+<li>
+<p><strong>See :term: <code>Glossary &lt;random_state&gt;</code>.</strong></p>
+</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>result : :class:<code>~sklearn.utils.Bunch</code></summary><p>Dictionary-like object, with the following attributes.</p>
-</details>
-<details class="info" open="open"><summary>importances_mean : ndarray, shape (n_features, )</summary><div class="codehilite"><pre><span></span><code>Mean of feature importance over `n_repeats`.
-</code></pre></div>
-
-
-</details>
-<details class="info" open="open"><summary>importances_std : ndarray, shape (n_features, )</summary><div class="codehilite"><pre><span></span><code>Standard deviation over `n_repeats`.
-</code></pre></div>
-
-
-</details>
-<details class="info" open="open"><summary>importances : ndarray, shape (n_features, n_repeats)</summary><div class="codehilite"><pre><span></span><code>Raw permutation importance scores.
-</code></pre></div>
-
-
-</details>
+<ul>
+<li>
+<p><strong>result : :class:<code>~sklearn.utils.Bunch</code></strong>
+    Dictionary-like object, with the following attributes.</p>
+</li>
+<li>
+<p><strong>importances_mean : ndarray, shape (n_features, )</strong>
+        Mean of feature importance over <code>n_repeats</code>.</p>
+</li>
+<li>
+<p><strong>importances_std : ndarray, shape (n_features, )</strong>
+        Standard deviation over <code>n_repeats</code>.</p>
+</li>
+<li>
+<p><strong>importances : ndarray, shape (n_features, n_repeats)</strong>
+        Raw permutation importance scores.</p>
+</li>
+</ul>
 <h4>References</h4>
 <p>.. [BRE] L. Breiman, 'Random Forests', Machine Learning, 45(1), 5-32,
          2001. https://doi.org/10.1023/A:1010933404324</p>
@@ -1857,7 +1948,7 @@ Pass an int to get reproducible results across function calls.</p>
 
 </details>
 <h3 id="plot_partial_dependence">plot_partial_dependence<a class="headerlink" href="#plot_partial_dependence" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">plot_partial_dependence</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function plot_partial_dependence</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">plot_partial_dependence</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">feature_names</span><span class="o">:[`</span><span class="nc">Dtype_str</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Ss</span> <span class="k">of</span> <span class="kt">string</span> <span class="kt">list</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">target</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">response_method</span><span class="o">:[`</span><span class="nc">Auto</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Predict_proba</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Decision_function</span><span class="o">]</span> <span class="o">-&gt;</span>
@@ -1902,42 +1993,55 @@ second call::
 
 
 <p>.. warning::</p>
-<details class="info" open="open"><summary>For :class:<code>~sklearn.ensemble.GradientBoostingClassifier</code> and</summary><p>:class:<code>~sklearn.ensemble.GradientBoostingRegressor</code>, the
-'recursion' method (used by default) will not account for the <code>init</code>
-predictor of the boosting process. In practice, this will produce
-the same values as 'brute' up to a constant offset in the target
-response, provided that <code>init</code> is a constant estimator (which is the
-default). However, if <code>init</code> is not a constant estimator, the
-partial dependence values are incorrect for 'recursion' because the
-offset will be sample-dependent. It is preferable to use the 'brute'
-method. Note that this only applies to
-:class:<code>~sklearn.ensemble.GradientBoostingClassifier</code> and
-:class:<code>~sklearn.ensemble.GradientBoostingRegressor</code>, not to
-:class:<code>~sklearn.ensemble.HistGradientBoostingClassifier</code> and
-:class:<code>~sklearn.ensemble.HistGradientBoostingRegressor</code>.</p>
-</details>
+<ul>
+<li><strong>For :class:<code>~sklearn.ensemble.GradientBoostingClassifier</code> and</strong>
+    :class:<code>~sklearn.ensemble.GradientBoostingRegressor</code>, the
+    'recursion' method (used by default) will not account for the <code>init</code>
+    predictor of the boosting process. In practice, this will produce
+    the same values as 'brute' up to a constant offset in the target
+    response, provided that <code>init</code> is a constant estimator (which is the
+    default). However, if <code>init</code> is not a constant estimator, the
+    partial dependence values are incorrect for 'recursion' because the
+    offset will be sample-dependent. It is preferable to use the 'brute'
+    method. Note that this only applies to
+    :class:<code>~sklearn.ensemble.GradientBoostingClassifier</code> and
+    :class:<code>~sklearn.ensemble.GradientBoostingRegressor</code>, not to
+    :class:<code>~sklearn.ensemble.HistGradientBoostingClassifier</code> and
+    :class:<code>~sklearn.ensemble.HistGradientBoostingRegressor</code>.</li>
+</ul>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>estimator : BaseEstimator</summary><p>A fitted estimator object implementing :term:<code>predict</code>,
-:term:<code>predict_proba</code>, or :term:<code>decision_function</code>.
-Multioutput-multiclass classifiers are not supported.</p>
-</details>
-<details class="info" open="open"><summary>X : {array-like or dataframe} of shape (n_samples, n_features)</summary><p><code>X</code> is used to generate a grid of values for the target
-<code>features</code> (where the partial dependence will be evaluated), and
-also to generate values for the complement features when the
-<code>method</code> is 'brute'.</p>
-</details>
-<details class="info" open="open"><summary>features : list of {int, str, pair of int, pair of str}</summary><p>The target features for which to create the PDPs.
-If features[i] is an int or a string, a one-way PDP is created; if
-features[i] is a tuple, a two-way PDP is created. Each tuple must be
-of size 2.
-if any entry is a string, then it must be in <code>feature_names</code>.</p>
-</details>
-<details class="info" open="open"><summary>feature_names : array-like of shape (n_features,), dtype=str, default=None</summary><p>Name of each feature; feature_names[i] holds the name of the feature
-with index i.
-By default, the name of the feature corresponds to their numerical
-index for NumPy array and their column name for pandas dataframe.</p>
-</details>
-<details class="info" open="open"><summary>target : int, optional (default=None)</summary><ul>
+<ul>
+<li>
+<p><strong>estimator : BaseEstimator</strong>
+    A fitted estimator object implementing :term:<code>predict</code>,
+    :term:<code>predict_proba</code>, or :term:<code>decision_function</code>.
+    Multioutput-multiclass classifiers are not supported.</p>
+</li>
+<li>
+<p><strong>X : {array-like or dataframe} of shape (n_samples, n_features)</strong>
+    <code>X</code> is used to generate a grid of values for the target
+    <code>features</code> (where the partial dependence will be evaluated), and
+    also to generate values for the complement features when the
+    <code>method</code> is 'brute'.</p>
+</li>
+<li>
+<p><strong>features : list of {int, str, pair of int, pair of str}</strong>
+    The target features for which to create the PDPs.
+    If features[i] is an int or a string, a one-way PDP is created; if
+    features[i] is a tuple, a two-way PDP is created. Each tuple must be
+    of size 2.
+    if any entry is a string, then it must be in <code>feature_names</code>.</p>
+</li>
+<li>
+<p><strong>feature_names : array-like of shape (n_features,), dtype=str, default=None</strong>
+    Name of each feature; feature_names[i] holds the name of the feature
+    with index i.
+    By default, the name of the feature corresponds to their numerical
+    index for NumPy array and their column name for pandas dataframe.</p>
+</li>
+<li>
+<p><strong>target : int, optional (default=None)</strong></p>
+<ul>
 <li>In a multiclass setting, specifies the class for which the PDPs
   should be computed. Note that for binary classification, the
   positive class (index 1) is always used.</li>
@@ -1945,25 +2049,35 @@ index for NumPy array and their column name for pandas dataframe.</p>
   should be computed.</li>
 </ul>
 <p>Ignored in binary classification or classical regression settings.</p>
-</details>
-<details class="info" open="open"><summary>response_method : 'auto', 'predict_proba' or 'decision_function',             optional (default='auto')</summary><p>Specifies whether to use :term:<code>predict_proba</code> or
-:term:<code>decision_function</code> as the target response. For regressors
-this parameter is ignored and the response is always the output of
-:term:<code>predict</code>. By default, :term:<code>predict_proba</code> is tried first
-and we revert to :term:<code>decision_function</code> if it doesn't exist. If
-<code>method</code> is 'recursion', the response is always the output of
-:term:<code>decision_function</code>.</p>
-</details>
-<details class="info" open="open"><summary>n_cols : int, optional (default=3)</summary><p>The maximum number of columns in the grid plot. Only active when <code>ax</code>
-is a single axis or <code>None</code>.</p>
-</details>
-<details class="info" open="open"><summary>grid_resolution : int, optional (default=100)</summary><p>The number of equally spaced points on the axes of the plots, for each
-target feature.</p>
-</details>
-<details class="info" open="open"><summary>percentiles : tuple of float, optional (default=(0.05, 0.95))</summary><p>The lower and upper percentile used to create the extreme values
-for the PDP axes. Must be in [0, 1].</p>
-</details>
-<details class="info" open="open"><summary>method : str, optional (default='auto')</summary><p>The method used to calculate the averaged predictions:</p>
+</li>
+<li>
+<p><strong>response_method : 'auto', 'predict_proba' or 'decision_function',             optional (default='auto')</strong>
+    Specifies whether to use :term:<code>predict_proba</code> or
+    :term:<code>decision_function</code> as the target response. For regressors
+    this parameter is ignored and the response is always the output of
+    :term:<code>predict</code>. By default, :term:<code>predict_proba</code> is tried first
+    and we revert to :term:<code>decision_function</code> if it doesn't exist. If
+    <code>method</code> is 'recursion', the response is always the output of
+    :term:<code>decision_function</code>.</p>
+</li>
+<li>
+<p><strong>n_cols : int, optional (default=3)</strong>
+    The maximum number of columns in the grid plot. Only active when <code>ax</code>
+    is a single axis or <code>None</code>.</p>
+</li>
+<li>
+<p><strong>grid_resolution : int, optional (default=100)</strong>
+    The number of equally spaced points on the axes of the plots, for each
+    target feature.</p>
+</li>
+<li>
+<p><strong>percentiles : tuple of float, optional (default=(0.05, 0.95))</strong>
+    The lower and upper percentile used to create the extreme values
+    for the PDP axes. Must be in [0, 1].</p>
+</li>
+<li>
+<p><strong>method : str, optional (default='auto')</strong>
+    The method used to calculate the averaged predictions:</p>
 <ul>
 <li>
 <p>'recursion' is only supported for some tree-based estimators (namely
@@ -1989,26 +2103,38 @@ for the PDP axes. Must be in [0, 1].</p>
 </ul>
 <p>Please see :ref:<code>this note &lt;pdp_method_differences&gt;</code> for
 differences between the 'brute' and 'recursion' method.</p>
-</details>
-<details class="info" open="open"><summary>n_jobs : int, optional (default=None)</summary><p>The number of CPUs to use to compute the partial dependences.
-<code>None</code> means 1 unless in a :obj:<code>joblib.parallel_backend</code> context.
-<code>-1</code> means using all processors. See :term:<code>Glossary &lt;n_jobs&gt;</code>
-for more details.</p>
-</details>
-<details class="info" open="open"><summary>verbose : int, optional (default=0)</summary><p>Verbose output during PD computations.</p>
-</details>
-<details class="info" open="open"><summary>fig : Matplotlib figure object, optional (default=None)</summary><p>A figure object onto which the plots will be drawn, after the figure
-has been cleared. By default, a new one is created.</p>
+</li>
+<li>
+<p><strong>n_jobs : int, optional (default=None)</strong>
+    The number of CPUs to use to compute the partial dependences.
+    <code>None</code> means 1 unless in a :obj:<code>joblib.parallel_backend</code> context.
+    <code>-1</code> means using all processors. See :term:<code>Glossary &lt;n_jobs&gt;</code>
+    for more details.</p>
+</li>
+<li>
+<p><strong>verbose : int, optional (default=0)</strong>
+    Verbose output during PD computations.</p>
+</li>
+<li>
+<p><strong>fig : Matplotlib figure object, optional (default=None)</strong>
+    A figure object onto which the plots will be drawn, after the figure
+    has been cleared. By default, a new one is created.</p>
 <p>.. deprecated:: 0.22
    <code>fig</code> will be removed in 0.24.</p>
-</details>
-<details class="info" open="open"><summary>line_kw : dict, optional</summary><p>Dict with keywords passed to the <code>matplotlib.pyplot.plot</code> call.
-For one-way partial dependence plots.</p>
-</details>
-<details class="info" open="open"><summary>contour_kw : dict, optional</summary><p>Dict with keywords passed to the <code>matplotlib.pyplot.contourf</code> call.
-For two-way partial dependence plots.</p>
-</details>
-<details class="info" open="open"><summary>ax : Matplotlib axes or array-like of Matplotlib axes, default=None</summary><ul>
+</li>
+<li>
+<p><strong>line_kw : dict, optional</strong>
+    Dict with keywords passed to the <code>matplotlib.pyplot.plot</code> call.
+    For one-way partial dependence plots.</p>
+</li>
+<li>
+<p><strong>contour_kw : dict, optional</strong>
+    Dict with keywords passed to the <code>matplotlib.pyplot.contourf</code> call.
+    For two-way partial dependence plots.</p>
+</li>
+<li>
+<p><strong>ax : Matplotlib axes or array-like of Matplotlib axes, default=None</strong></p>
+<ul>
 <li>If a single axis is passed in, it is treated as a bounding axes
     and a grid of partial dependence plots will be drawn within
     these bounds. The <code>n_cols</code> parameter controls the number of
@@ -2019,9 +2145,12 @@ For two-way partial dependence plots.</p>
     as the single axes case.</li>
 </ul>
 <p>.. versionadded:: 0.22</p>
-</details>
+</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>display: :class:<code>~sklearn.inspection.PartialDependenceDisplay</code></summary></details>
+<ul>
+<li><strong>display: :class:<code>~sklearn.inspection.PartialDependenceDisplay</code></strong></li>
+</ul>
 <h4>Examples</h4>
 <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">make_friedman1</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">GradientBoostingRegressor</span>
@@ -2031,8 +2160,10 @@ For two-way partial dependence plots.</p>
 </code></pre></div>
 
 <h4>See also</h4>
-<details class="info" open="open"><summary>sklearn.inspection.partial_dependence: Return raw partial</summary></details>
-<p>dependence values</p>
+<ul>
+<li><strong>sklearn.inspection.partial_dependence: Return raw partial</strong>
+  dependence values</li>
+</ul>
 </details>
                 
               

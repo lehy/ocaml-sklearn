@@ -1443,7 +1443,7 @@
 </code></pre></div>
 
 <h3 id="with_traceback">with_traceback<a class="headerlink" href="#with_traceback" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">with_traceback</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method with_traceback</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">with_traceback</span> <span class="o">:</span>
   <span class="n">tb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
@@ -1453,19 +1453,19 @@
 set self.<strong>traceback</strong> to tb and return self.</p>
 </details>
 <h3 id="to_string">to_string<a class="headerlink" href="#to_string" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method to_string</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="show">show<a class="headerlink" href="#show" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method show</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="pp">pp<a class="headerlink" href="#pp" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+<details class="note" open="open"><summary>method pp</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
 </code></pre></div>
 
 <p>Pretty-print the object to a formatter.</p>
@@ -1476,7 +1476,7 @@ set self.<strong>traceback</strong> to tb and return self.</p>
 </code></pre></div>
 
 <h3 id="create">create<a class="headerlink" href="#create" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
+<details class="note" open="open"><summary>constructor and attributes create</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">vstring</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
@@ -1514,7 +1514,7 @@ but may not always give the results you want (for some definition
 of 'want').</p>
 </details>
 <h3 id="parse">parse<a class="headerlink" href="#parse" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">parse</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method parse</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">parse</span> <span class="o">:</span>
   <span class="n">vstring</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
@@ -1522,25 +1522,25 @@ of 'want').</p>
 
 </details>
 <h3 id="to_string_1">to_string<a class="headerlink" href="#to_string_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method to_string</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="show_1">show<a class="headerlink" href="#show_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method show</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="pp_1">pp<a class="headerlink" href="#pp_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+<details class="note" open="open"><summary>method pp</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
 </code></pre></div>
 
 <p>Pretty-print the object to a formatter.</p>
 </details>
 <h3 id="check_fpu_mode">check_fpu_mode<a class="headerlink" href="#check_fpu_mode" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">check_fpu_mode</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function check_fpu_mode</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">check_fpu_mode</span> <span class="o">:</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -1548,14 +1548,14 @@ of 'want').</p>
 <p>Check FPU mode was not changed during the test.</p>
 </details>
 <h3 id="pytest_configure">pytest_configure<a class="headerlink" href="#pytest_configure" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pytest_configure</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function pytest_configure</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pytest_configure</span> <span class="o">:</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 </details>
 <h3 id="pytest_runtest_setup">pytest_runtest_setup<a class="headerlink" href="#pytest_runtest_setup" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pytest_runtest_setup</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function pytest_runtest_setup</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pytest_runtest_setup</span> <span class="o">:</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>

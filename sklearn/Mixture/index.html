@@ -2003,7 +2003,7 @@
 </code></pre></div>
 
 <h3 id="create">create<a class="headerlink" href="#create" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
+<details class="note" open="open"><summary>constructor and attributes create</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">n_components</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">covariance_type</span><span class="o">:[`</span><span class="nc">Full</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Tied</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Diag</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Spherical</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">tol</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
@@ -2038,14 +2038,19 @@ The number of components actually used almost always depends on the data.</p>
 <p>.. versionadded:: 0.18</p>
 <p>Read more in the :ref:<code>User Guide &lt;bgmm&gt;</code>.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>n_components : int, defaults to 1.</summary><p>The number of mixture components. Depending on the data and the value
-of the <code>weight_concentration_prior</code> the model can decide to not use
-all the components by setting some component <code>weights_</code> to values very
-close to zero. The number of effective components is therefore smaller
-than n_components.</p>
-</details>
-<details class="info" open="open"><summary>covariance_type : {'full', 'tied', 'diag', 'spherical'}, defaults to 'full'</summary><p>String describing the type of covariance parameters to use.
-Must be one of::</p>
+<ul>
+<li>
+<p><strong>n_components : int, defaults to 1.</strong>
+    The number of mixture components. Depending on the data and the value
+    of the <code>weight_concentration_prior</code> the model can decide to not use
+    all the components by setting some component <code>weights_</code> to values very
+    close to zero. The number of effective components is therefore smaller
+    than n_components.</p>
+</li>
+<li>
+<p><strong>covariance_type : {'full', 'tied', 'diag', 'spherical'}, defaults to 'full'</strong>
+    String describing the type of covariance parameters to use.
+    Must be one of::</p>
 <div class="codehilite"><pre><span></span><code>&#39;full&#39; (each component has its own general covariance matrix),
 &#39;tied&#39; (all components share the same general covariance matrix),
 &#39;diag&#39; (each component has its own diagonal covariance matrix),
@@ -2053,59 +2058,81 @@ Must be one of::</p>
 </code></pre></div>
 
 
-</details>
-<details class="info" open="open"><summary>tol : float, defaults to 1e-3.</summary><p>The convergence threshold. EM iterations will stop when the
-lower bound average gain on the likelihood (of the training data with
-respect to the model) is below this threshold.</p>
-</details>
-<details class="info" open="open"><summary>reg_covar : float, defaults to 1e-6.</summary><p>Non-negative regularization added to the diagonal of covariance.
-Allows to assure that the covariance matrices are all positive.</p>
-</details>
-<details class="info" open="open"><summary>max_iter : int, defaults to 100.</summary><p>The number of EM iterations to perform.</p>
-</details>
-<details class="info" open="open"><summary>n_init : int, defaults to 1.</summary><p>The number of initializations to perform. The result with the highest
-lower bound value on the likelihood is kept.</p>
-</details>
-<details class="info" open="open"><summary>init_params : {'kmeans', 'random'}, defaults to 'kmeans'.</summary><p>The method used to initialize the weights, the means and the
-covariances.
-Must be one of::</p>
+</li>
+<li>
+<p><strong>tol : float, defaults to 1e-3.</strong>
+    The convergence threshold. EM iterations will stop when the
+    lower bound average gain on the likelihood (of the training data with
+    respect to the model) is below this threshold.</p>
+</li>
+<li>
+<p><strong>reg_covar : float, defaults to 1e-6.</strong>
+    Non-negative regularization added to the diagonal of covariance.
+    Allows to assure that the covariance matrices are all positive.</p>
+</li>
+<li>
+<p><strong>max_iter : int, defaults to 100.</strong>
+    The number of EM iterations to perform.</p>
+</li>
+<li>
+<p><strong>n_init : int, defaults to 1.</strong>
+    The number of initializations to perform. The result with the highest
+    lower bound value on the likelihood is kept.</p>
+</li>
+<li>
+<p><strong>init_params : {'kmeans', 'random'}, defaults to 'kmeans'.</strong>
+    The method used to initialize the weights, the means and the
+    covariances.
+    Must be one of::</p>
 <div class="codehilite"><pre><span></span><code>&#39;kmeans&#39; : responsibilities are initialized using kmeans.
 &#39;random&#39; : responsibilities are initialized randomly.
 </code></pre></div>
 
 
-</details>
-<details class="info" open="open"><summary>weight_concentration_prior_type : str, defaults to 'dirichlet_process'.</summary><p>String describing the type of the weight concentration prior.
-Must be one of::</p>
+</li>
+<li>
+<p><strong>weight_concentration_prior_type : str, defaults to 'dirichlet_process'.</strong>
+    String describing the type of the weight concentration prior.
+    Must be one of::</p>
 <div class="codehilite"><pre><span></span><code>&#39;dirichlet_process&#39; (using the Stick-breaking representation),
 &#39;dirichlet_distribution&#39; (can favor more uniform weights).
 </code></pre></div>
 
 
-</details>
-<details class="info" open="open"><summary>weight_concentration_prior : float | None, optional.</summary><p>The dirichlet concentration of each component on the weight
-distribution (Dirichlet). This is commonly called gamma in the
-literature. The higher concentration puts more mass in
-the center and will lead to more components being active, while a lower
-concentration parameter will lead to more mass at the edge of the
-mixture weights simplex. The value of the parameter must be greater
-than 0. If it is None, it's set to <code>1. / n_components</code>.</p>
-</details>
-<details class="info" open="open"><summary>mean_precision_prior : float | None, optional.</summary><p>The precision prior on the mean distribution (Gaussian).
-Controls the extent of where means can be placed. Larger
-values concentrate the cluster means around <code>mean_prior</code>.
-The value of the parameter must be greater than 0.
-If it is None, it is set to 1.</p>
-</details>
-<details class="info" open="open"><summary>mean_prior : array-like, shape (n_features,), optional</summary><p>The prior on the mean distribution (Gaussian).
-If it is None, it is set to the mean of X.</p>
-</details>
-<details class="info" open="open"><summary>degrees_of_freedom_prior : float | None, optional.</summary><p>The prior of the number of degrees of freedom on the covariance
-distributions (Wishart). If it is None, it's set to <code>n_features</code>.</p>
-</details>
-<details class="info" open="open"><summary>covariance_prior : float or array-like, optional</summary><p>The prior on the covariance distribution (Wishart).
-If it is None, the emiprical covariance prior is initialized using the
-covariance of X. The shape depends on <code>covariance_type</code>::</p>
+</li>
+<li>
+<p><strong>weight_concentration_prior : float | None, optional.</strong>
+    The dirichlet concentration of each component on the weight
+    distribution (Dirichlet). This is commonly called gamma in the
+    literature. The higher concentration puts more mass in
+    the center and will lead to more components being active, while a lower
+    concentration parameter will lead to more mass at the edge of the
+    mixture weights simplex. The value of the parameter must be greater
+    than 0. If it is None, it's set to <code>1. / n_components</code>.</p>
+</li>
+<li>
+<p><strong>mean_precision_prior : float | None, optional.</strong>
+    The precision prior on the mean distribution (Gaussian).
+    Controls the extent of where means can be placed. Larger
+    values concentrate the cluster means around <code>mean_prior</code>.
+    The value of the parameter must be greater than 0.
+    If it is None, it is set to 1.</p>
+</li>
+<li>
+<p><strong>mean_prior : array-like, shape (n_features,), optional</strong>
+    The prior on the mean distribution (Gaussian).
+    If it is None, it is set to the mean of X.</p>
+</li>
+<li>
+<p><strong>degrees_of_freedom_prior : float | None, optional.</strong>
+    The prior of the number of degrees of freedom on the covariance
+    distributions (Wishart). If it is None, it's set to <code>n_features</code>.</p>
+</li>
+<li>
+<p><strong>covariance_prior : float or array-like, optional</strong>
+    The prior on the covariance distribution (Wishart).
+    If it is None, the emiprical covariance prior is initialized using the
+    covariance of X. The shape depends on <code>covariance_type</code>::</p>
 <div class="codehilite"><pre><span></span><code>    (n_features, n_features) if &#39;full&#39;,
     (n_features, n_features) if &#39;tied&#39;,
     (n_features)             if &#39;diag&#39;,
@@ -2113,33 +2140,53 @@ covariance of X. The shape depends on <code>covariance_type</code>::</p>
 </code></pre></div>
 
 
-</details>
-<details class="info" open="open"><summary>random_state : int, RandomState instance or None, optional (default=None)</summary><p>Controls the random seed given to the method chosen to initialize the
-parameters (see <code>init_params</code>).
-In addition, it controls the generation of random samples from the
-fitted distribution (see the method <code>sample</code>).
-Pass an int for reproducible output across multiple function calls.</p>
-</details>
-<details class="info" open="open"><summary>See :term:<code>Glossary &lt;random_state&gt;</code>.</summary></details>
-<details class="info" open="open"><summary>warm_start : bool, default to False.</summary><p>If 'warm_start' is True, the solution of the last fitting is used as
-initialization for the next call of fit(). This can speed up
-convergence when fit is called several times on similar problems.</p>
-</details>
-<details class="info" open="open"><summary>See :term:<code>the Glossary &lt;warm_start&gt;</code>.</summary></details>
-<details class="info" open="open"><summary>verbose : int, default to 0.</summary><p>Enable verbose output. If 1 then it prints the current
-initialization and each iteration step. If greater than 1 then
-it prints also the log probability and the time needed
-for each step.</p>
-</details>
-<details class="info" open="open"><summary>verbose_interval : int, default to 10.</summary><p>Number of iteration done before the next print.</p>
-</details>
+</li>
+<li>
+<p><strong>random_state : int, RandomState instance or None, optional (default=None)</strong>
+    Controls the random seed given to the method chosen to initialize the
+    parameters (see <code>init_params</code>).
+    In addition, it controls the generation of random samples from the
+    fitted distribution (see the method <code>sample</code>).
+    Pass an int for reproducible output across multiple function calls.</p>
+</li>
+<li>
+<p><strong>See :term:<code>Glossary &lt;random_state&gt;</code>.</strong></p>
+</li>
+<li>
+<p><strong>warm_start : bool, default to False.</strong>
+    If 'warm_start' is True, the solution of the last fitting is used as
+    initialization for the next call of fit(). This can speed up
+    convergence when fit is called several times on similar problems.</p>
+</li>
+<li>
+<p><strong>See :term:<code>the Glossary &lt;warm_start&gt;</code>.</strong></p>
+</li>
+<li>
+<p><strong>verbose : int, default to 0.</strong>
+    Enable verbose output. If 1 then it prints the current
+    initialization and each iteration step. If greater than 1 then
+    it prints also the log probability and the time needed
+    for each step.</p>
+</li>
+<li>
+<p><strong>verbose_interval : int, default to 10.</strong>
+    Number of iteration done before the next print.</p>
+</li>
+</ul>
 <h4>Attributes</h4>
-<details class="info" open="open"><summary>weights_ : array-like, shape (n_components,)</summary><p>The weights of each mixture components.</p>
-</details>
-<details class="info" open="open"><summary>means_ : array-like, shape (n_components, n_features)</summary><p>The mean of each mixture component.</p>
-</details>
-<details class="info" open="open"><summary>covariances_ : array-like</summary><p>The covariance of each mixture component.
-The shape depends on <code>covariance_type</code>::</p>
+<ul>
+<li>
+<p><strong>weights_ : array-like, shape (n_components,)</strong>
+    The weights of each mixture components.</p>
+</li>
+<li>
+<p><strong>means_ : array-like, shape (n_components, n_features)</strong>
+    The mean of each mixture component.</p>
+</li>
+<li>
+<p><strong>covariances_ : array-like</strong>
+    The covariance of each mixture component.
+    The shape depends on <code>covariance_type</code>::</p>
 <div class="codehilite"><pre><span></span><code>(n_components,)                        if &#39;spherical&#39;,
 (n_features, n_features)               if &#39;tied&#39;,
 (n_components, n_features)             if &#39;diag&#39;,
@@ -2147,14 +2194,16 @@ The shape depends on <code>covariance_type</code>::</p>
 </code></pre></div>
 
 
-</details>
-<details class="info" open="open"><summary>precisions_ : array-like</summary><p>The precision matrices for each component in the mixture. A precision
-matrix is the inverse of a covariance matrix. A covariance matrix is
-symmetric positive definite so the mixture of Gaussian can be
-equivalently parameterized by the precision matrices. Storing the
-precision matrices instead of the covariance matrices makes it more
-efficient to compute the log-likelihood of new samples at test time.
-The shape depends on <code>covariance_type</code>::</p>
+</li>
+<li>
+<p><strong>precisions_ : array-like</strong>
+    The precision matrices for each component in the mixture. A precision
+    matrix is the inverse of a covariance matrix. A covariance matrix is
+    symmetric positive definite so the mixture of Gaussian can be
+    equivalently parameterized by the precision matrices. Storing the
+    precision matrices instead of the covariance matrices makes it more
+    efficient to compute the log-likelihood of new samples at test time.
+    The shape depends on <code>covariance_type</code>::</p>
 <div class="codehilite"><pre><span></span><code>(n_components,)                        if &#39;spherical&#39;,
 (n_features, n_features)               if &#39;tied&#39;,
 (n_components, n_features)             if &#39;diag&#39;,
@@ -2162,14 +2211,16 @@ The shape depends on <code>covariance_type</code>::</p>
 </code></pre></div>
 
 
-</details>
-<details class="info" open="open"><summary>precisions_cholesky_ : array-like</summary><p>The cholesky decomposition of the precision matrices of each mixture
-component. A precision matrix is the inverse of a covariance matrix.
-A covariance matrix is symmetric positive definite so the mixture of
-Gaussian can be equivalently parameterized by the precision matrices.
-Storing the precision matrices instead of the covariance matrices makes
-it more efficient to compute the log-likelihood of new samples at test
-time. The shape depends on <code>covariance_type</code>::</p>
+</li>
+<li>
+<p><strong>precisions_cholesky_ : array-like</strong>
+    The cholesky decomposition of the precision matrices of each mixture
+    component. A precision matrix is the inverse of a covariance matrix.
+    A covariance matrix is symmetric positive definite so the mixture of
+    Gaussian can be equivalently parameterized by the precision matrices.
+    Storing the precision matrices instead of the covariance matrices makes
+    it more efficient to compute the log-likelihood of new samples at test
+    time. The shape depends on <code>covariance_type</code>::</p>
 <div class="codehilite"><pre><span></span><code>(n_components,)                        if &#39;spherical&#39;,
 (n_features, n_features)               if &#39;tied&#39;,
 (n_components, n_features)             if &#39;diag&#39;,
@@ -2177,18 +2228,26 @@ time. The shape depends on <code>covariance_type</code>::</p>
 </code></pre></div>
 
 
-</details>
-<details class="info" open="open"><summary>converged_ : bool</summary><p>True when convergence was reached in fit(), False otherwise.</p>
-</details>
-<details class="info" open="open"><summary>n_iter_ : int</summary><p>Number of step used by the best fit of inference to reach the
-convergence.</p>
-</details>
-<details class="info" open="open"><summary>lower_bound_ : float</summary><p>Lower bound value on the likelihood (of the training data with
-respect to the model) of the best fit of inference.</p>
-</details>
-<details class="info" open="open"><summary>weight_concentration_prior_ : tuple or float</summary><p>The dirichlet concentration of each component on the weight
-distribution (Dirichlet). The type depends on
-<code>weight_concentration_prior_type</code>::</p>
+</li>
+<li>
+<p><strong>converged_ : bool</strong>
+    True when convergence was reached in fit(), False otherwise.</p>
+</li>
+<li>
+<p><strong>n_iter_ : int</strong>
+    Number of step used by the best fit of inference to reach the
+    convergence.</p>
+</li>
+<li>
+<p><strong>lower_bound_ : float</strong>
+    Lower bound value on the likelihood (of the training data with
+    respect to the model) of the best fit of inference.</p>
+</li>
+<li>
+<p><strong>weight_concentration_prior_ : tuple or float</strong>
+    The dirichlet concentration of each component on the weight
+    distribution (Dirichlet). The type depends on
+    <code>weight_concentration_prior_type</code>::</p>
 <div class="codehilite"><pre><span></span><code>(float, float) if &#39;dirichlet_process&#39; (Beta parameters),
 float          if &#39;dirichlet_distribution&#39; (Dirichlet parameters).
 </code></pre></div>
@@ -2198,27 +2257,41 @@ float          if &#39;dirichlet_distribution&#39; (Dirichlet parameters).
 the center and will lead to more components being active, while a lower
 concentration parameter will lead to more mass at the edge of the
 simplex.</p>
-</details>
-<details class="info" open="open"><summary>weight_concentration_ : array-like, shape (n_components,)</summary><p>The dirichlet concentration of each component on the weight
-distribution (Dirichlet).</p>
-</details>
-<details class="info" open="open"><summary>mean_precision_prior_ : float</summary><p>The precision prior on the mean distribution (Gaussian).
-Controls the extent of where means can be placed.
-Larger values concentrate the cluster means around <code>mean_prior</code>.
-If mean_precision_prior is set to None, <code>mean_precision_prior_</code> is set
-to 1.</p>
-</details>
-<details class="info" open="open"><summary>mean_precision_ : array-like, shape (n_components,)</summary><p>The precision of each components on the mean distribution (Gaussian).</p>
-</details>
-<details class="info" open="open"><summary>mean_prior_ : array-like, shape (n_features,)</summary><p>The prior on the mean distribution (Gaussian).</p>
-</details>
-<details class="info" open="open"><summary>degrees_of_freedom_prior_ : float</summary><p>The prior of the number of degrees of freedom on the covariance
-distributions (Wishart).</p>
-</details>
-<details class="info" open="open"><summary>degrees_of_freedom_ : array-like, shape (n_components,)</summary><p>The number of degrees of freedom of each components in the model.</p>
-</details>
-<details class="info" open="open"><summary>covariance_prior_ : float or array-like</summary><p>The prior on the covariance distribution (Wishart).
-The shape depends on <code>covariance_type</code>::</p>
+</li>
+<li>
+<p><strong>weight_concentration_ : array-like, shape (n_components,)</strong>
+    The dirichlet concentration of each component on the weight
+    distribution (Dirichlet).</p>
+</li>
+<li>
+<p><strong>mean_precision_prior_ : float</strong>
+    The precision prior on the mean distribution (Gaussian).
+    Controls the extent of where means can be placed.
+    Larger values concentrate the cluster means around <code>mean_prior</code>.
+    If mean_precision_prior is set to None, <code>mean_precision_prior_</code> is set
+    to 1.</p>
+</li>
+<li>
+<p><strong>mean_precision_ : array-like, shape (n_components,)</strong>
+    The precision of each components on the mean distribution (Gaussian).</p>
+</li>
+<li>
+<p><strong>mean_prior_ : array-like, shape (n_features,)</strong>
+    The prior on the mean distribution (Gaussian).</p>
+</li>
+<li>
+<p><strong>degrees_of_freedom_prior_ : float</strong>
+    The prior of the number of degrees of freedom on the covariance
+    distributions (Wishart).</p>
+</li>
+<li>
+<p><strong>degrees_of_freedom_ : array-like, shape (n_components,)</strong>
+    The number of degrees of freedom of each components in the model.</p>
+</li>
+<li>
+<p><strong>covariance_prior_ : float or array-like</strong>
+    The prior on the covariance distribution (Wishart).
+    The shape depends on <code>covariance_type</code>::</p>
 <div class="codehilite"><pre><span></span><code>(n_features, n_features) if &#39;full&#39;,
 (n_features, n_features) if &#39;tied&#39;,
 (n_features)             if &#39;diag&#39;,
@@ -2226,9 +2299,12 @@ float                    if &#39;spherical&#39;
 </code></pre></div>
 
 
-</details>
+</li>
+</ul>
 <h4>See Also</h4>
-<details class="info" open="open"><summary>GaussianMixture : Finite Gaussian mixture fit with EM.</summary></details>
+<ul>
+<li><strong>GaussianMixture : Finite Gaussian mixture fit with EM.</strong></li>
+</ul>
 <h4>References</h4>
 <p>.. [1] <code>Bishop, Christopher M. (2006). 'Pattern recognition and machine
    learning'. Vol. 4 No. 4. New York: Springer.
@@ -2242,7 +2318,7 @@ float                    if &#39;spherical&#39;
    &lt;https://www.cs.princeton.edu/courses/archive/fall11/cos597C/reading/BleiJordan2005.pdf&gt;</code>_</p>
 </details>
 <h3 id="fit">fit<a class="headerlink" href="#fit" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method fit</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -2259,14 +2335,16 @@ If <code>warm_start</code> is <code>True</code>, then <code>n_init</code> is ign
 initialization is performed upon the first call. Upon consecutive
 calls, training starts where it left off.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : array-like, shape (n_samples, n_features)</summary><p>List of n_features-dimensional data points. Each row
-corresponds to a single data point.</p>
-</details>
+<ul>
+<li><strong>X : array-like, shape (n_samples, n_features)</strong>
+    List of n_features-dimensional data points. Each row
+    corresponds to a single data point.</li>
+</ul>
 <h4>Returns</h4>
 <p>self</p>
 </details>
 <h3 id="fit_predict">fit_predict<a class="headerlink" href="#fit_predict" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit_predict</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method fit_predict</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit_predict</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -2283,15 +2361,19 @@ raised. After fitting, it predicts the most probable label for the
 input data points.</p>
 <p>.. versionadded:: 0.20</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : array-like, shape (n_samples, n_features)</summary><p>List of n_features-dimensional data points. Each row
-corresponds to a single data point.</p>
-</details>
+<ul>
+<li><strong>X : array-like, shape (n_samples, n_features)</strong>
+    List of n_features-dimensional data points. Each row
+    corresponds to a single data point.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>labels : array, shape (n_samples,)</summary><p>Component labels.</p>
-</details>
+<ul>
+<li><strong>labels : array, shape (n_samples,)</strong>
+    Component labels.</li>
+</ul>
 </details>
 <h3 id="get_params">get_params<a class="headerlink" href="#get_params" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method get_params</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
@@ -2299,15 +2381,19 @@ corresponds to a single data point.</p>
 
 <p>Get parameters for this estimator.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>deep : bool, default=True</summary><p>If True, will return the parameters for this estimator and
-contained subobjects that are estimators.</p>
-</details>
+<ul>
+<li><strong>deep : bool, default=True</strong>
+    If True, will return the parameters for this estimator and
+    contained subobjects that are estimators.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>params : mapping of string to any</summary><p>Parameter names mapped to their values.</p>
-</details>
+<ul>
+<li><strong>params : mapping of string to any</strong>
+    Parameter names mapped to their values.</li>
+</ul>
 </details>
 <h3 id="predict">predict<a class="headerlink" href="#predict" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method predict</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
@@ -2315,15 +2401,19 @@ contained subobjects that are estimators.</p>
 
 <p>Predict the labels for the data samples in X using trained model.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : array-like, shape (n_samples, n_features)</summary><p>List of n_features-dimensional data points. Each row
-corresponds to a single data point.</p>
-</details>
+<ul>
+<li><strong>X : array-like, shape (n_samples, n_features)</strong>
+    List of n_features-dimensional data points. Each row
+    corresponds to a single data point.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>labels : array, shape (n_samples,)</summary><p>Component labels.</p>
-</details>
+<ul>
+<li><strong>labels : array, shape (n_samples,)</strong>
+    Component labels.</li>
+</ul>
 </details>
 <h3 id="predict_proba">predict_proba<a class="headerlink" href="#predict_proba" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict_proba</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method predict_proba</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict_proba</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
@@ -2331,16 +2421,20 @@ corresponds to a single data point.</p>
 
 <p>Predict posterior probability of each component given the data.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : array-like, shape (n_samples, n_features)</summary><p>List of n_features-dimensional data points. Each row
-corresponds to a single data point.</p>
-</details>
+<ul>
+<li><strong>X : array-like, shape (n_samples, n_features)</strong>
+    List of n_features-dimensional data points. Each row
+    corresponds to a single data point.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>resp : array, shape (n_samples, n_components)</summary><p>Returns the probability each Gaussian (state) in
-the model given each sample.</p>
-</details>
+<ul>
+<li><strong>resp : array, shape (n_samples, n_components)</strong>
+    Returns the probability each Gaussian (state) in
+    the model given each sample.</li>
+</ul>
 </details>
 <h3 id="sample">sample<a class="headerlink" href="#sample" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sample</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method sample</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sample</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">n_samples</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span>
@@ -2348,16 +2442,24 @@ the model given each sample.</p>
 
 <p>Generate random samples from the fitted Gaussian distribution.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>n_samples : int, optional</summary><p>Number of samples to generate. Defaults to 1.</p>
-</details>
+<ul>
+<li><strong>n_samples : int, optional</strong>
+    Number of samples to generate. Defaults to 1.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>X : array, shape (n_samples, n_features)</summary><p>Randomly generated sample</p>
-</details>
-<details class="info" open="open"><summary>y : array, shape (nsamples,)</summary><p>Component labels</p>
-</details>
+<ul>
+<li>
+<p><strong>X : array, shape (n_samples, n_features)</strong>
+    Randomly generated sample</p>
+</li>
+<li>
+<p><strong>y : array, shape (nsamples,)</strong>
+    Component labels</p>
+</li>
+</ul>
 </details>
 <h3 id="score">score<a class="headerlink" href="#score" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method score</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -2366,15 +2468,19 @@ the model given each sample.</p>
 
 <p>Compute the per-sample average log-likelihood of the given data X.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : array-like, shape (n_samples, n_dimensions)</summary><p>List of n_features-dimensional data points. Each row
-corresponds to a single data point.</p>
-</details>
+<ul>
+<li><strong>X : array-like, shape (n_samples, n_dimensions)</strong>
+    List of n_features-dimensional data points. Each row
+    corresponds to a single data point.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>log_likelihood : float</summary><p>Log likelihood of the Gaussian mixture given X.</p>
-</details>
+<ul>
+<li><strong>log_likelihood : float</strong>
+    Log likelihood of the Gaussian mixture given X.</li>
+</ul>
 </details>
 <h3 id="score_samples">score_samples<a class="headerlink" href="#score_samples" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score_samples</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method score_samples</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score_samples</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
@@ -2382,15 +2488,19 @@ corresponds to a single data point.</p>
 
 <p>Compute the weighted log probabilities for each sample.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : array-like, shape (n_samples, n_features)</summary><p>List of n_features-dimensional data points. Each row
-corresponds to a single data point.</p>
-</details>
+<ul>
+<li><strong>X : array-like, shape (n_samples, n_features)</strong>
+    List of n_features-dimensional data points. Each row
+    corresponds to a single data point.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>log_prob : array, shape (n_samples,)</summary><p>Log probabilities of each data point in X.</p>
-</details>
+<ul>
+<li><strong>log_prob : array, shape (n_samples,)</strong>
+    Log probabilities of each data point in X.</li>
+</ul>
 </details>
 <h3 id="set_params">set_params<a class="headerlink" href="#set_params" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_params</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method set_params</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">params</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
@@ -2402,14 +2512,18 @@ corresponds to a single data point.</p>
 <code>&lt;component&gt;__&lt;parameter&gt;</code> so that it's possible to update each
 component of a nested object.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>**params : dict</summary><p>Estimator parameters.</p>
-</details>
+<ul>
+<li><strong>**params : dict</strong>
+    Estimator parameters.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>self : object</summary><p>Estimator instance.</p>
-</details>
+<ul>
+<li><strong>self : object</strong>
+    Estimator instance.</li>
+</ul>
 </details>
 <h3 id="weights_">weights_<a class="headerlink" href="#weights_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">weights_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute weights_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">weights_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">weights_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2417,7 +2531,7 @@ component of a nested object.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="means_">means_<a class="headerlink" href="#means_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">means_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute means_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">means_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">means_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2425,7 +2539,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="covariances_">covariances_<a class="headerlink" href="#covariances_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">covariances_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute covariances_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">covariances_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">covariances_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2433,7 +2547,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="precisions_">precisions_<a class="headerlink" href="#precisions_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">precisions_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute precisions_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">precisions_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">precisions_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2441,7 +2555,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="precisions_cholesky_">precisions_cholesky_<a class="headerlink" href="#precisions_cholesky_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">precisions_cholesky_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute precisions_cholesky_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">precisions_cholesky_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">precisions_cholesky_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2449,7 +2563,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="converged_">converged_<a class="headerlink" href="#converged_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">converged_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
+<details class="note" open="open"><summary>attribute converged_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">converged_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
 <span class="k">val</span> <span class="n">converged_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">bool</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2457,7 +2571,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="n_iter_">n_iter_<a class="headerlink" href="#n_iter_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_iter_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+<details class="note" open="open"><summary>attribute n_iter_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_iter_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
 <span class="k">val</span> <span class="n">n_iter_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2465,7 +2579,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="lower_bound_">lower_bound_<a class="headerlink" href="#lower_bound_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">lower_bound_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+<details class="note" open="open"><summary>attribute lower_bound_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">lower_bound_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
 <span class="k">val</span> <span class="n">lower_bound_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2473,7 +2587,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="weight_concentration_prior_">weight_concentration_prior_<a class="headerlink" href="#weight_concentration_prior_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">weight_concentration_prior_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute weight_concentration_prior_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">weight_concentration_prior_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">weight_concentration_prior_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2481,7 +2595,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="weight_concentration_">weight_concentration_<a class="headerlink" href="#weight_concentration_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">weight_concentration_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute weight_concentration_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">weight_concentration_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">weight_concentration_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2489,7 +2603,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="mean_precision_prior_">mean_precision_prior_<a class="headerlink" href="#mean_precision_prior_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">mean_precision_prior_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+<details class="note" open="open"><summary>attribute mean_precision_prior_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">mean_precision_prior_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
 <span class="k">val</span> <span class="n">mean_precision_prior_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2497,7 +2611,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="mean_precision_">mean_precision_<a class="headerlink" href="#mean_precision_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">mean_precision_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute mean_precision_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">mean_precision_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">mean_precision_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2505,7 +2619,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="mean_prior_">mean_prior_<a class="headerlink" href="#mean_prior_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">mean_prior_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute mean_prior_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">mean_prior_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">mean_prior_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2513,7 +2627,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="degrees_of_freedom_prior_">degrees_of_freedom_prior_<a class="headerlink" href="#degrees_of_freedom_prior_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">degrees_of_freedom_prior_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+<details class="note" open="open"><summary>attribute degrees_of_freedom_prior_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">degrees_of_freedom_prior_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
 <span class="k">val</span> <span class="n">degrees_of_freedom_prior_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2521,7 +2635,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="degrees_of_freedom_">degrees_of_freedom_<a class="headerlink" href="#degrees_of_freedom_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">degrees_of_freedom_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute degrees_of_freedom_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">degrees_of_freedom_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">degrees_of_freedom_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2529,7 +2643,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="covariance_prior_">covariance_prior_<a class="headerlink" href="#covariance_prior_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">covariance_prior_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute covariance_prior_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">covariance_prior_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">covariance_prior_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2537,19 +2651,19 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="to_string">to_string<a class="headerlink" href="#to_string" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method to_string</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="show">show<a class="headerlink" href="#show" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method show</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="pp">pp<a class="headerlink" href="#pp" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+<details class="note" open="open"><summary>method pp</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
 </code></pre></div>
 
 <p>Pretty-print the object to a formatter.</p>
@@ -2560,7 +2674,7 @@ if the attribute is None. The _opt version returns an option.</p>
 </code></pre></div>
 
 <h3 id="create_1">create<a class="headerlink" href="#create_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
+<details class="note" open="open"><summary>constructor and attributes create</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">n_components</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">covariance_type</span><span class="o">:[`</span><span class="nc">Full</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Tied</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Diag</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Spherical</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">tol</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
@@ -2586,10 +2700,15 @@ distribution.</p>
 <p>Read more in the :ref:<code>User Guide &lt;gmm&gt;</code>.</p>
 <p>.. versionadded:: 0.18</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>n_components : int, defaults to 1.</summary><p>The number of mixture components.</p>
-</details>
-<details class="info" open="open"><summary>covariance_type : {'full' (default), 'tied', 'diag', 'spherical'}</summary><p>String describing the type of covariance parameters to use.
-Must be one of:</p>
+<ul>
+<li>
+<p><strong>n_components : int, defaults to 1.</strong>
+    The number of mixture components.</p>
+</li>
+<li>
+<p><strong>covariance_type : {'full' (default), 'tied', 'diag', 'spherical'}</strong>
+    String describing the type of covariance parameters to use.
+    Must be one of:</p>
 <p>'full'
     each component has its own general covariance matrix
 'tied'
@@ -2598,36 +2717,52 @@ Must be one of:</p>
     each component has its own diagonal covariance matrix
 'spherical'
     each component has its own single variance</p>
-</details>
-<details class="info" open="open"><summary>tol : float, defaults to 1e-3.</summary><p>The convergence threshold. EM iterations will stop when the
-lower bound average gain is below this threshold.</p>
-</details>
-<details class="info" open="open"><summary>reg_covar : float, defaults to 1e-6.</summary><p>Non-negative regularization added to the diagonal of covariance.
-Allows to assure that the covariance matrices are all positive.</p>
-</details>
-<details class="info" open="open"><summary>max_iter : int, defaults to 100.</summary><p>The number of EM iterations to perform.</p>
-</details>
-<details class="info" open="open"><summary>n_init : int, defaults to 1.</summary><p>The number of initializations to perform. The best results are kept.</p>
-</details>
-<details class="info" open="open"><summary>init_params : {'kmeans', 'random'}, defaults to 'kmeans'.</summary><p>The method used to initialize the weights, the means and the
-precisions.
-Must be one of::</p>
+</li>
+<li>
+<p><strong>tol : float, defaults to 1e-3.</strong>
+    The convergence threshold. EM iterations will stop when the
+    lower bound average gain is below this threshold.</p>
+</li>
+<li>
+<p><strong>reg_covar : float, defaults to 1e-6.</strong>
+    Non-negative regularization added to the diagonal of covariance.
+    Allows to assure that the covariance matrices are all positive.</p>
+</li>
+<li>
+<p><strong>max_iter : int, defaults to 100.</strong>
+    The number of EM iterations to perform.</p>
+</li>
+<li>
+<p><strong>n_init : int, defaults to 1.</strong>
+    The number of initializations to perform. The best results are kept.</p>
+</li>
+<li>
+<p><strong>init_params : {'kmeans', 'random'}, defaults to 'kmeans'.</strong>
+    The method used to initialize the weights, the means and the
+    precisions.
+    Must be one of::</p>
 <div class="codehilite"><pre><span></span><code>&#39;kmeans&#39; : responsibilities are initialized using kmeans.
 &#39;random&#39; : responsibilities are initialized randomly.
 </code></pre></div>
 
 
-</details>
-<details class="info" open="open"><summary>weights_init : array-like, shape (n_components, ), optional</summary><p>The user-provided initial weights, defaults to None.
-If it None, weights are initialized using the <code>init_params</code> method.</p>
-</details>
-<details class="info" open="open"><summary>means_init : array-like, shape (n_components, n_features), optional</summary><p>The user-provided initial means, defaults to None,
-If it None, means are initialized using the <code>init_params</code> method.</p>
-</details>
-<details class="info" open="open"><summary>precisions_init : array-like, optional.</summary><p>The user-provided initial precisions (inverse of the covariance
-matrices), defaults to None.
-If it None, precisions are initialized using the 'init_params' method.
-The shape depends on 'covariance_type'::</p>
+</li>
+<li>
+<p><strong>weights_init : array-like, shape (n_components, ), optional</strong>
+    The user-provided initial weights, defaults to None.
+    If it None, weights are initialized using the <code>init_params</code> method.</p>
+</li>
+<li>
+<p><strong>means_init : array-like, shape (n_components, n_features), optional</strong>
+    The user-provided initial means, defaults to None,
+    If it None, means are initialized using the <code>init_params</code> method.</p>
+</li>
+<li>
+<p><strong>precisions_init : array-like, optional.</strong>
+    The user-provided initial precisions (inverse of the covariance
+    matrices), defaults to None.
+    If it None, precisions are initialized using the 'init_params' method.
+    The shape depends on 'covariance_type'::</p>
 <div class="codehilite"><pre><span></span><code>(n_components,)                        if &#39;spherical&#39;,
 (n_features, n_features)               if &#39;tied&#39;,
 (n_components, n_features)             if &#39;diag&#39;,
@@ -2635,35 +2770,55 @@ The shape depends on 'covariance_type'::</p>
 </code></pre></div>
 
 
-</details>
-<details class="info" open="open"><summary>random_state : int, RandomState instance or None, optional (default=None)</summary><p>Controls the random seed given to the method chosen to initialize the
-parameters (see <code>init_params</code>).
-In addition, it controls the generation of random samples from the
-fitted distribution (see the method <code>sample</code>).
-Pass an int for reproducible output across multiple function calls.</p>
-</details>
-<details class="info" open="open"><summary>See :term:<code>Glossary &lt;random_state&gt;</code>.</summary></details>
-<details class="info" open="open"><summary>warm_start : bool, default to False.</summary><p>If 'warm_start' is True, the solution of the last fitting is used as
-initialization for the next call of fit(). This can speed up
-convergence when fit is called several times on similar problems.
-In that case, 'n_init' is ignored and only a single initialization
-occurs upon the first call.</p>
-</details>
-<details class="info" open="open"><summary>See :term:<code>the Glossary &lt;warm_start&gt;</code>.</summary></details>
-<details class="info" open="open"><summary>verbose : int, default to 0.</summary><p>Enable verbose output. If 1 then it prints the current
-initialization and each iteration step. If greater than 1 then
-it prints also the log probability and the time needed
-for each step.</p>
-</details>
-<details class="info" open="open"><summary>verbose_interval : int, default to 10.</summary><p>Number of iteration done before the next print.</p>
-</details>
+</li>
+<li>
+<p><strong>random_state : int, RandomState instance or None, optional (default=None)</strong>
+    Controls the random seed given to the method chosen to initialize the
+    parameters (see <code>init_params</code>).
+    In addition, it controls the generation of random samples from the
+    fitted distribution (see the method <code>sample</code>).
+    Pass an int for reproducible output across multiple function calls.</p>
+</li>
+<li>
+<p><strong>See :term:<code>Glossary &lt;random_state&gt;</code>.</strong></p>
+</li>
+<li>
+<p><strong>warm_start : bool, default to False.</strong>
+    If 'warm_start' is True, the solution of the last fitting is used as
+    initialization for the next call of fit(). This can speed up
+    convergence when fit is called several times on similar problems.
+    In that case, 'n_init' is ignored and only a single initialization
+    occurs upon the first call.</p>
+</li>
+<li>
+<p><strong>See :term:<code>the Glossary &lt;warm_start&gt;</code>.</strong></p>
+</li>
+<li>
+<p><strong>verbose : int, default to 0.</strong>
+    Enable verbose output. If 1 then it prints the current
+    initialization and each iteration step. If greater than 1 then
+    it prints also the log probability and the time needed
+    for each step.</p>
+</li>
+<li>
+<p><strong>verbose_interval : int, default to 10.</strong>
+    Number of iteration done before the next print.</p>
+</li>
+</ul>
 <h4>Attributes</h4>
-<details class="info" open="open"><summary>weights_ : array-like, shape (n_components,)</summary><p>The weights of each mixture components.</p>
-</details>
-<details class="info" open="open"><summary>means_ : array-like, shape (n_components, n_features)</summary><p>The mean of each mixture component.</p>
-</details>
-<details class="info" open="open"><summary>covariances_ : array-like</summary><p>The covariance of each mixture component.
-The shape depends on <code>covariance_type</code>::</p>
+<ul>
+<li>
+<p><strong>weights_ : array-like, shape (n_components,)</strong>
+    The weights of each mixture components.</p>
+</li>
+<li>
+<p><strong>means_ : array-like, shape (n_components, n_features)</strong>
+    The mean of each mixture component.</p>
+</li>
+<li>
+<p><strong>covariances_ : array-like</strong>
+    The covariance of each mixture component.
+    The shape depends on <code>covariance_type</code>::</p>
 <div class="codehilite"><pre><span></span><code>(n_components,)                        if &#39;spherical&#39;,
 (n_features, n_features)               if &#39;tied&#39;,
 (n_components, n_features)             if &#39;diag&#39;,
@@ -2671,14 +2826,16 @@ The shape depends on <code>covariance_type</code>::</p>
 </code></pre></div>
 
 
-</details>
-<details class="info" open="open"><summary>precisions_ : array-like</summary><p>The precision matrices for each component in the mixture. A precision
-matrix is the inverse of a covariance matrix. A covariance matrix is
-symmetric positive definite so the mixture of Gaussian can be
-equivalently parameterized by the precision matrices. Storing the
-precision matrices instead of the covariance matrices makes it more
-efficient to compute the log-likelihood of new samples at test time.
-The shape depends on <code>covariance_type</code>::</p>
+</li>
+<li>
+<p><strong>precisions_ : array-like</strong>
+    The precision matrices for each component in the mixture. A precision
+    matrix is the inverse of a covariance matrix. A covariance matrix is
+    symmetric positive definite so the mixture of Gaussian can be
+    equivalently parameterized by the precision matrices. Storing the
+    precision matrices instead of the covariance matrices makes it more
+    efficient to compute the log-likelihood of new samples at test time.
+    The shape depends on <code>covariance_type</code>::</p>
 <div class="codehilite"><pre><span></span><code>(n_components,)                        if &#39;spherical&#39;,
 (n_features, n_features)               if &#39;tied&#39;,
 (n_components, n_features)             if &#39;diag&#39;,
@@ -2686,14 +2843,16 @@ The shape depends on <code>covariance_type</code>::</p>
 </code></pre></div>
 
 
-</details>
-<details class="info" open="open"><summary>precisions_cholesky_ : array-like</summary><p>The cholesky decomposition of the precision matrices of each mixture
-component. A precision matrix is the inverse of a covariance matrix.
-A covariance matrix is symmetric positive definite so the mixture of
-Gaussian can be equivalently parameterized by the precision matrices.
-Storing the precision matrices instead of the covariance matrices makes
-it more efficient to compute the log-likelihood of new samples at test
-time. The shape depends on <code>covariance_type</code>::</p>
+</li>
+<li>
+<p><strong>precisions_cholesky_ : array-like</strong>
+    The cholesky decomposition of the precision matrices of each mixture
+    component. A precision matrix is the inverse of a covariance matrix.
+    A covariance matrix is symmetric positive definite so the mixture of
+    Gaussian can be equivalently parameterized by the precision matrices.
+    Storing the precision matrices instead of the covariance matrices makes
+    it more efficient to compute the log-likelihood of new samples at test
+    time. The shape depends on <code>covariance_type</code>::</p>
 <div class="codehilite"><pre><span></span><code>(n_components,)                        if &#39;spherical&#39;,
 (n_features, n_features)               if &#39;tied&#39;,
 (n_components, n_features)             if &#39;diag&#39;,
@@ -2701,20 +2860,29 @@ time. The shape depends on <code>covariance_type</code>::</p>
 </code></pre></div>
 
 
-</details>
-<details class="info" open="open"><summary>converged_ : bool</summary><p>True when convergence was reached in fit(), False otherwise.</p>
-</details>
-<details class="info" open="open"><summary>n_iter_ : int</summary><p>Number of step used by the best fit of EM to reach the convergence.</p>
-</details>
-<details class="info" open="open"><summary>lower_bound_ : float</summary><p>Lower bound value on the log-likelihood (of the training data with
-respect to the model) of the best fit of EM.</p>
-</details>
+</li>
+<li>
+<p><strong>converged_ : bool</strong>
+    True when convergence was reached in fit(), False otherwise.</p>
+</li>
+<li>
+<p><strong>n_iter_ : int</strong>
+    Number of step used by the best fit of EM to reach the convergence.</p>
+</li>
+<li>
+<p><strong>lower_bound_ : float</strong>
+    Lower bound value on the log-likelihood (of the training data with
+    respect to the model) of the best fit of EM.</p>
+</li>
+</ul>
 <h4>See Also</h4>
-<details class="info" open="open"><summary>BayesianGaussianMixture : Gaussian mixture model fit with a variational</summary><p>inference.</p>
-</details>
+<ul>
+<li><strong>BayesianGaussianMixture : Gaussian mixture model fit with a variational</strong>
+    inference.</li>
+</ul>
 </details>
 <h3 id="aic">aic<a class="headerlink" href="#aic" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">aic</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method aic</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">aic</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">float</span>
@@ -2722,13 +2890,17 @@ respect to the model) of the best fit of EM.</p>
 
 <p>Akaike information criterion for the current model on the input X.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : array of shape (n_samples, n_dimensions)</summary></details>
+<ul>
+<li><strong>X : array of shape (n_samples, n_dimensions)</strong></li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>aic : float</summary><p>The lower the better.</p>
-</details>
+<ul>
+<li><strong>aic : float</strong>
+    The lower the better.</li>
+</ul>
 </details>
 <h3 id="bic">bic<a class="headerlink" href="#bic" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">bic</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method bic</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">bic</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">float</span>
@@ -2736,13 +2908,17 @@ respect to the model) of the best fit of EM.</p>
 
 <p>Bayesian information criterion for the current model on the input X.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : array of shape (n_samples, n_dimensions)</summary></details>
+<ul>
+<li><strong>X : array of shape (n_samples, n_dimensions)</strong></li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>bic : float</summary><p>The lower the better.</p>
-</details>
+<ul>
+<li><strong>bic : float</strong>
+    The lower the better.</li>
+</ul>
 </details>
 <h3 id="fit_1">fit<a class="headerlink" href="#fit_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method fit</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -2759,14 +2935,16 @@ If <code>warm_start</code> is <code>True</code>, then <code>n_init</code> is ign
 initialization is performed upon the first call. Upon consecutive
 calls, training starts where it left off.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : array-like, shape (n_samples, n_features)</summary><p>List of n_features-dimensional data points. Each row
-corresponds to a single data point.</p>
-</details>
+<ul>
+<li><strong>X : array-like, shape (n_samples, n_features)</strong>
+    List of n_features-dimensional data points. Each row
+    corresponds to a single data point.</li>
+</ul>
 <h4>Returns</h4>
 <p>self</p>
 </details>
 <h3 id="fit_predict_1">fit_predict<a class="headerlink" href="#fit_predict_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit_predict</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method fit_predict</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit_predict</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -2783,15 +2961,19 @@ raised. After fitting, it predicts the most probable label for the
 input data points.</p>
 <p>.. versionadded:: 0.20</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : array-like, shape (n_samples, n_features)</summary><p>List of n_features-dimensional data points. Each row
-corresponds to a single data point.</p>
-</details>
+<ul>
+<li><strong>X : array-like, shape (n_samples, n_features)</strong>
+    List of n_features-dimensional data points. Each row
+    corresponds to a single data point.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>labels : array, shape (n_samples,)</summary><p>Component labels.</p>
-</details>
+<ul>
+<li><strong>labels : array, shape (n_samples,)</strong>
+    Component labels.</li>
+</ul>
 </details>
 <h3 id="get_params_1">get_params<a class="headerlink" href="#get_params_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method get_params</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
@@ -2799,15 +2981,19 @@ corresponds to a single data point.</p>
 
 <p>Get parameters for this estimator.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>deep : bool, default=True</summary><p>If True, will return the parameters for this estimator and
-contained subobjects that are estimators.</p>
-</details>
+<ul>
+<li><strong>deep : bool, default=True</strong>
+    If True, will return the parameters for this estimator and
+    contained subobjects that are estimators.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>params : mapping of string to any</summary><p>Parameter names mapped to their values.</p>
-</details>
+<ul>
+<li><strong>params : mapping of string to any</strong>
+    Parameter names mapped to their values.</li>
+</ul>
 </details>
 <h3 id="predict_1">predict<a class="headerlink" href="#predict_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method predict</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
@@ -2815,15 +3001,19 @@ contained subobjects that are estimators.</p>
 
 <p>Predict the labels for the data samples in X using trained model.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : array-like, shape (n_samples, n_features)</summary><p>List of n_features-dimensional data points. Each row
-corresponds to a single data point.</p>
-</details>
+<ul>
+<li><strong>X : array-like, shape (n_samples, n_features)</strong>
+    List of n_features-dimensional data points. Each row
+    corresponds to a single data point.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>labels : array, shape (n_samples,)</summary><p>Component labels.</p>
-</details>
+<ul>
+<li><strong>labels : array, shape (n_samples,)</strong>
+    Component labels.</li>
+</ul>
 </details>
 <h3 id="predict_proba_1">predict_proba<a class="headerlink" href="#predict_proba_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict_proba</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method predict_proba</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict_proba</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
@@ -2831,16 +3021,20 @@ corresponds to a single data point.</p>
 
 <p>Predict posterior probability of each component given the data.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : array-like, shape (n_samples, n_features)</summary><p>List of n_features-dimensional data points. Each row
-corresponds to a single data point.</p>
-</details>
+<ul>
+<li><strong>X : array-like, shape (n_samples, n_features)</strong>
+    List of n_features-dimensional data points. Each row
+    corresponds to a single data point.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>resp : array, shape (n_samples, n_components)</summary><p>Returns the probability each Gaussian (state) in
-the model given each sample.</p>
-</details>
+<ul>
+<li><strong>resp : array, shape (n_samples, n_components)</strong>
+    Returns the probability each Gaussian (state) in
+    the model given each sample.</li>
+</ul>
 </details>
 <h3 id="sample_1">sample<a class="headerlink" href="#sample_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sample</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method sample</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sample</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">n_samples</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span>
@@ -2848,16 +3042,24 @@ the model given each sample.</p>
 
 <p>Generate random samples from the fitted Gaussian distribution.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>n_samples : int, optional</summary><p>Number of samples to generate. Defaults to 1.</p>
-</details>
+<ul>
+<li><strong>n_samples : int, optional</strong>
+    Number of samples to generate. Defaults to 1.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>X : array, shape (n_samples, n_features)</summary><p>Randomly generated sample</p>
-</details>
-<details class="info" open="open"><summary>y : array, shape (nsamples,)</summary><p>Component labels</p>
-</details>
+<ul>
+<li>
+<p><strong>X : array, shape (n_samples, n_features)</strong>
+    Randomly generated sample</p>
+</li>
+<li>
+<p><strong>y : array, shape (nsamples,)</strong>
+    Component labels</p>
+</li>
+</ul>
 </details>
 <h3 id="score_1">score<a class="headerlink" href="#score_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method score</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -2866,15 +3068,19 @@ the model given each sample.</p>
 
 <p>Compute the per-sample average log-likelihood of the given data X.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : array-like, shape (n_samples, n_dimensions)</summary><p>List of n_features-dimensional data points. Each row
-corresponds to a single data point.</p>
-</details>
+<ul>
+<li><strong>X : array-like, shape (n_samples, n_dimensions)</strong>
+    List of n_features-dimensional data points. Each row
+    corresponds to a single data point.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>log_likelihood : float</summary><p>Log likelihood of the Gaussian mixture given X.</p>
-</details>
+<ul>
+<li><strong>log_likelihood : float</strong>
+    Log likelihood of the Gaussian mixture given X.</li>
+</ul>
 </details>
 <h3 id="score_samples_1">score_samples<a class="headerlink" href="#score_samples_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score_samples</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method score_samples</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score_samples</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
@@ -2882,15 +3088,19 @@ corresponds to a single data point.</p>
 
 <p>Compute the weighted log probabilities for each sample.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : array-like, shape (n_samples, n_features)</summary><p>List of n_features-dimensional data points. Each row
-corresponds to a single data point.</p>
-</details>
+<ul>
+<li><strong>X : array-like, shape (n_samples, n_features)</strong>
+    List of n_features-dimensional data points. Each row
+    corresponds to a single data point.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>log_prob : array, shape (n_samples,)</summary><p>Log probabilities of each data point in X.</p>
-</details>
+<ul>
+<li><strong>log_prob : array, shape (n_samples,)</strong>
+    Log probabilities of each data point in X.</li>
+</ul>
 </details>
 <h3 id="set_params_1">set_params<a class="headerlink" href="#set_params_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_params</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method set_params</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">params</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
@@ -2902,14 +3112,18 @@ corresponds to a single data point.</p>
 <code>&lt;component&gt;__&lt;parameter&gt;</code> so that it's possible to update each
 component of a nested object.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>**params : dict</summary><p>Estimator parameters.</p>
-</details>
+<ul>
+<li><strong>**params : dict</strong>
+    Estimator parameters.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>self : object</summary><p>Estimator instance.</p>
-</details>
+<ul>
+<li><strong>self : object</strong>
+    Estimator instance.</li>
+</ul>
 </details>
 <h3 id="weights__1">weights_<a class="headerlink" href="#weights__1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">weights_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute weights_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">weights_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">weights_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2917,7 +3131,7 @@ component of a nested object.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="means__1">means_<a class="headerlink" href="#means__1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">means_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute means_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">means_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">means_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2925,7 +3139,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="covariances__1">covariances_<a class="headerlink" href="#covariances__1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">covariances_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute covariances_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">covariances_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">covariances_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2933,7 +3147,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="precisions__1">precisions_<a class="headerlink" href="#precisions__1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">precisions_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute precisions_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">precisions_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">precisions_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2941,7 +3155,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="precisions_cholesky__1">precisions_cholesky_<a class="headerlink" href="#precisions_cholesky__1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">precisions_cholesky_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute precisions_cholesky_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">precisions_cholesky_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">precisions_cholesky_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2949,7 +3163,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="converged__1">converged_<a class="headerlink" href="#converged__1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">converged_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
+<details class="note" open="open"><summary>attribute converged_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">converged_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
 <span class="k">val</span> <span class="n">converged_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">bool</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2957,7 +3171,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="n_iter__1">n_iter_<a class="headerlink" href="#n_iter__1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_iter_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+<details class="note" open="open"><summary>attribute n_iter_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_iter_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
 <span class="k">val</span> <span class="n">n_iter_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2965,7 +3179,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="lower_bound__1">lower_bound_<a class="headerlink" href="#lower_bound__1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">lower_bound_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+<details class="note" open="open"><summary>attribute lower_bound_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">lower_bound_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
 <span class="k">val</span> <span class="n">lower_bound_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2973,19 +3187,19 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="to_string_1">to_string<a class="headerlink" href="#to_string_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method to_string</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="show_1">show<a class="headerlink" href="#show_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method show</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="pp_1">pp<a class="headerlink" href="#pp_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+<details class="note" open="open"><summary>method pp</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
 </code></pre></div>
 
 <p>Pretty-print the object to a formatter.</p>

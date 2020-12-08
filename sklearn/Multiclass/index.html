@@ -2361,7 +2361,7 @@
 </code></pre></div>
 
 <h3 id="create">create<a class="headerlink" href="#create" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
+<details class="note" open="open"><summary>constructor and attributes create</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">neg_label</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">pos_label</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">sparse_output</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
@@ -2384,24 +2384,40 @@ model gave the greatest confidence. LabelBinarizer makes this easy
 with the inverse_transform method.</p>
 <p>Read more in the :ref:<code>User Guide &lt;preprocessing_targets&gt;</code>.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>neg_label : int (default: 0)</summary><p>Value with which negative labels must be encoded.</p>
-</details>
-<details class="info" open="open"><summary>pos_label : int (default: 1)</summary><p>Value with which positive labels must be encoded.</p>
-</details>
-<details class="info" open="open"><summary>sparse_output : boolean (default: False)</summary><p>True if the returned array from transform is desired to be in sparse
-CSR format.</p>
-</details>
+<ul>
+<li>
+<p><strong>neg_label : int (default: 0)</strong>
+    Value with which negative labels must be encoded.</p>
+</li>
+<li>
+<p><strong>pos_label : int (default: 1)</strong>
+    Value with which positive labels must be encoded.</p>
+</li>
+<li>
+<p><strong>sparse_output : boolean (default: False)</strong>
+    True if the returned array from transform is desired to be in sparse
+    CSR format.</p>
+</li>
+</ul>
 <h4>Attributes</h4>
-<details class="info" open="open"><summary>classes_ : array of shape [n_class]</summary><p>Holds the label for each class.</p>
-</details>
-<details class="info" open="open"><summary>y_type_ : str,</summary><p>Represents the type of the target data as evaluated by
-utils.multiclass.type_of_target. Possible type are 'continuous',
-'continuous-multioutput', 'binary', 'multiclass',
-'multiclass-multioutput', 'multilabel-indicator', and 'unknown'.</p>
-</details>
-<details class="info" open="open"><summary>sparse_input_ : boolean,</summary><p>True if the input data to transform is given as a sparse matrix, False
-otherwise.</p>
-</details>
+<ul>
+<li>
+<p><strong>classes_ : array of shape [n_class]</strong>
+    Holds the label for each class.</p>
+</li>
+<li>
+<p><strong>y_type_ : str,</strong>
+    Represents the type of the target data as evaluated by
+    utils.multiclass.type_of_target. Possible type are 'continuous',
+    'continuous-multioutput', 'binary', 'multiclass',
+    'multiclass-multioutput', 'multilabel-indicator', and 'unknown'.</p>
+</li>
+<li>
+<p><strong>sparse_input_ : boolean,</strong>
+    True if the input data to transform is given as a sparse matrix, False
+    otherwise.</p>
+</li>
+</ul>
 <h4>Examples</h4>
 <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">preprocessing</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">lb</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">LabelBinarizer</span><span class="p">()</span>
@@ -2437,13 +2453,19 @@ otherwise.</p>
 </code></pre></div>
 
 <h4>See also</h4>
-<details class="info" open="open"><summary>label_binarize : function to perform the transform operation of</summary><p>LabelBinarizer with fixed classes.</p>
-</details>
-<details class="info" open="open"><summary>sklearn.preprocessing.OneHotEncoder : encode categorical features</summary><p>using a one-hot aka one-of-K scheme.</p>
-</details>
+<ul>
+<li>
+<p><strong>label_binarize : function to perform the transform operation of</strong>
+    LabelBinarizer with fixed classes.</p>
+</li>
+<li>
+<p><strong>sklearn.preprocessing.OneHotEncoder : encode categorical features</strong>
+    using a one-hot aka one-of-K scheme.</p>
+</li>
+</ul>
 </details>
 <h3 id="fit">fit<a class="headerlink" href="#fit" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method fit</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
   <span class="n">y</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
@@ -2451,14 +2473,18 @@ otherwise.</p>
 
 <p>Fit label binarizer</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>y : array of shape [n_samples,] or [n_samples, n_classes]</summary><p>Target values. The 2-d matrix should only contain 0 and 1,
-represents multilabel classification.</p>
-</details>
+<ul>
+<li><strong>y : array of shape [n_samples,] or [n_samples, n_classes]</strong>
+    Target values. The 2-d matrix should only contain 0 and 1,
+    represents multilabel classification.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>self : returns an instance of self.</summary></details>
+<ul>
+<li><strong>self : returns an instance of self.</strong></li>
+</ul>
 </details>
 <h3 id="fit_transform">fit_transform<a class="headerlink" href="#fit_transform" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit_transform</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method fit_transform</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit_transform</span> <span class="o">:</span>
   <span class="n">y</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
@@ -2469,16 +2495,20 @@ labels.</p>
 <p>The output of transform is sometimes referred to as
 the 1-of-K coding scheme.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>y : array or sparse matrix of shape [n_samples,] or             [n_samples, n_classes]</summary><p>Target values. The 2-d matrix should only contain 0 and 1,
-represents multilabel classification. Sparse matrix can be
-CSR, CSC, COO, DOK, or LIL.</p>
-</details>
+<ul>
+<li><strong>y : array or sparse matrix of shape [n_samples,] or             [n_samples, n_classes]</strong>
+    Target values. The 2-d matrix should only contain 0 and 1,
+    represents multilabel classification. Sparse matrix can be
+    CSR, CSC, COO, DOK, or LIL.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>Y : array or CSR matrix of shape [n_samples, n_classes]</summary><p>Shape will be [n_samples, 1] for binary problems.</p>
-</details>
+<ul>
+<li><strong>Y : array or CSR matrix of shape [n_samples, n_classes]</strong>
+    Shape will be [n_samples, 1] for binary problems.</li>
+</ul>
 </details>
 <h3 id="get_params">get_params<a class="headerlink" href="#get_params" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method get_params</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
@@ -2486,15 +2516,19 @@ CSR, CSC, COO, DOK, or LIL.</p>
 
 <p>Get parameters for this estimator.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>deep : bool, default=True</summary><p>If True, will return the parameters for this estimator and
-contained subobjects that are estimators.</p>
-</details>
+<ul>
+<li><strong>deep : bool, default=True</strong>
+    If True, will return the parameters for this estimator and
+    contained subobjects that are estimators.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>params : mapping of string to any</summary><p>Parameter names mapped to their values.</p>
-</details>
+<ul>
+<li><strong>params : mapping of string to any</strong>
+    Parameter names mapped to their values.</li>
+</ul>
 </details>
 <h3 id="inverse_transform">inverse_transform<a class="headerlink" href="#inverse_transform" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">inverse_transform</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method inverse_transform</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">inverse_transform</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">threshold</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
   <span class="n">y</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -2503,18 +2537,26 @@ contained subobjects that are estimators.</p>
 
 <p>Transform binary labels back to multi-class labels</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>Y : numpy array or sparse matrix with shape [n_samples, n_classes]</summary><p>Target values. All sparse matrices are converted to CSR before
-inverse transformation.</p>
-</details>
-<details class="info" open="open"><summary>threshold : float or None</summary><p>Threshold used in the binary and multi-label cases.</p>
+<ul>
+<li>
+<p><strong>Y : numpy array or sparse matrix with shape [n_samples, n_classes]</strong>
+    Target values. All sparse matrices are converted to CSR before
+    inverse transformation.</p>
+</li>
+<li>
+<p><strong>threshold : float or None</strong>
+    Threshold used in the binary and multi-label cases.</p>
 <p>Use 0 when <code>Y</code> contains the output of decision_function
 (classifier).
 Use 0.5 when <code>Y</code> contains the output of predict_proba.</p>
 <p>If None, the threshold is assumed to be half way between
 neg_label and pos_label.</p>
-</details>
+</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>y : numpy array or CSR matrix of shape [n_samples] Target values.</summary></details>
+<ul>
+<li><strong>y : numpy array or CSR matrix of shape [n_samples] Target values.</strong></li>
+</ul>
 <h4>Notes</h4>
 <p>In the case when the binary labels are fractional
 (probabilistic), inverse_transform chooses the class with the
@@ -2523,7 +2565,7 @@ linear model's decision_function method directly as the input
 of inverse_transform.</p>
 </details>
 <h3 id="set_params">set_params<a class="headerlink" href="#set_params" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_params</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method set_params</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">params</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
@@ -2535,14 +2577,18 @@ of inverse_transform.</p>
 <code>&lt;component&gt;__&lt;parameter&gt;</code> so that it's possible to update each
 component of a nested object.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>**params : dict</summary><p>Estimator parameters.</p>
-</details>
+<ul>
+<li><strong>**params : dict</strong>
+    Estimator parameters.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>self : object</summary><p>Estimator instance.</p>
-</details>
+<ul>
+<li><strong>self : object</strong>
+    Estimator instance.</li>
+</ul>
 </details>
 <h3 id="transform">transform<a class="headerlink" href="#transform" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">transform</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method transform</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">transform</span> <span class="o">:</span>
   <span class="n">y</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
@@ -2552,16 +2598,20 @@ component of a nested object.</p>
 <p>The output of transform is sometimes referred to by some authors as
 the 1-of-K coding scheme.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>y : array or sparse matrix of shape [n_samples,] or             [n_samples, n_classes]</summary><p>Target values. The 2-d matrix should only contain 0 and 1,
-represents multilabel classification. Sparse matrix can be
-CSR, CSC, COO, DOK, or LIL.</p>
-</details>
+<ul>
+<li><strong>y : array or sparse matrix of shape [n_samples,] or             [n_samples, n_classes]</strong>
+    Target values. The 2-d matrix should only contain 0 and 1,
+    represents multilabel classification. Sparse matrix can be
+    CSR, CSC, COO, DOK, or LIL.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>Y : numpy array or CSR matrix of shape [n_samples, n_classes]</summary><p>Shape will be [n_samples, 1] for binary problems.</p>
-</details>
+<ul>
+<li><strong>Y : numpy array or CSR matrix of shape [n_samples, n_classes]</strong>
+    Shape will be [n_samples, 1] for binary problems.</li>
+</ul>
 </details>
 <h3 id="classes_">classes_<a class="headerlink" href="#classes_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">classes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute classes_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">classes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">classes_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2569,7 +2619,7 @@ CSR, CSC, COO, DOK, or LIL.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="y_type_">y_type_<a class="headerlink" href="#y_type_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">y_type_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>attribute y_type_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">y_type_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 <span class="k">val</span> <span class="n">y_type_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">string</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2577,7 +2627,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="sparse_input_">sparse_input_<a class="headerlink" href="#sparse_input_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sparse_input_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
+<details class="note" open="open"><summary>attribute sparse_input_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sparse_input_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
 <span class="k">val</span> <span class="n">sparse_input_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">bool</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2585,19 +2635,19 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="to_string">to_string<a class="headerlink" href="#to_string" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method to_string</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="show">show<a class="headerlink" href="#show" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method show</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="pp">pp<a class="headerlink" href="#pp" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+<details class="note" open="open"><summary>method pp</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
 </code></pre></div>
 
 <p>Pretty-print the object to a formatter.</p>
@@ -2608,7 +2658,7 @@ if the attribute is None. The _opt version returns an option.</p>
 </code></pre></div>
 
 <h3 id="with_traceback">with_traceback<a class="headerlink" href="#with_traceback" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">with_traceback</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method with_traceback</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">with_traceback</span> <span class="o">:</span>
   <span class="n">tb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
@@ -2618,19 +2668,19 @@ if the attribute is None. The _opt version returns an option.</p>
 set self.<strong>traceback</strong> to tb and return self.</p>
 </details>
 <h3 id="to_string_1">to_string<a class="headerlink" href="#to_string_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method to_string</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="show_1">show<a class="headerlink" href="#show_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method show</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="pp_1">pp<a class="headerlink" href="#pp_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+<details class="note" open="open"><summary>method pp</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
 </code></pre></div>
 
 <p>Pretty-print the object to a formatter.</p>
@@ -2641,7 +2691,7 @@ set self.<strong>traceback</strong> to tb and return self.</p>
 </code></pre></div>
 
 <h3 id="create_1">create<a class="headerlink" href="#create_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
+<details class="note" open="open"><summary>constructor and attributes create</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">n_jobs</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="n">estimator</span><span class="o">:[&gt;`</span><span class="nc">BaseEstimator</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
@@ -2660,24 +2710,40 @@ a small subset of the data whereas, with one-vs-the-rest, the complete
 dataset is used <code>n_classes</code> times.</p>
 <p>Read more in the :ref:<code>User Guide &lt;ovo_classification&gt;</code>.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>estimator : estimator object</summary><p>An estimator object implementing :term:<code>fit</code> and one of
-:term:<code>decision_function</code> or :term:<code>predict_proba</code>.</p>
-</details>
-<details class="info" open="open"><summary>n_jobs : int or None, optional (default=None)</summary><p>The number of jobs to use for the computation.
-<code>None</code> means 1 unless in a :obj:<code>joblib.parallel_backend</code> context.
-<code>-1</code> means using all processors. See :term:<code>Glossary &lt;n_jobs&gt;</code>
-for more details.</p>
-</details>
+<ul>
+<li>
+<p><strong>estimator : estimator object</strong>
+    An estimator object implementing :term:<code>fit</code> and one of
+    :term:<code>decision_function</code> or :term:<code>predict_proba</code>.</p>
+</li>
+<li>
+<p><strong>n_jobs : int or None, optional (default=None)</strong>
+    The number of jobs to use for the computation.
+    <code>None</code> means 1 unless in a :obj:<code>joblib.parallel_backend</code> context.
+    <code>-1</code> means using all processors. See :term:<code>Glossary &lt;n_jobs&gt;</code>
+    for more details.</p>
+</li>
+</ul>
 <h4>Attributes</h4>
-<details class="info" open="open"><summary>estimators_ : list of <code>n_classes * (n_classes - 1) / 2</code> estimators</summary><p>Estimators used for predictions.</p>
-</details>
-<details class="info" open="open"><summary>classes_ : numpy array of shape [n_classes]</summary><p>Array containing labels.</p>
-</details>
-<details class="info" open="open"><summary>n_classes_ : int</summary><p>Number of classes</p>
-</details>
-<details class="info" open="open"><summary>pairwise_indices_ : list, length = <code>len(estimators_)</code>, or <code>None</code></summary><p>Indices of samples used when training the estimators.
-<code>None</code> when <code>estimator</code> does not have <code>_pairwise</code> attribute.</p>
-</details>
+<ul>
+<li>
+<p><strong>estimators_ : list of <code>n_classes * (n_classes - 1) / 2</code> estimators</strong>
+    Estimators used for predictions.</p>
+</li>
+<li>
+<p><strong>classes_ : numpy array of shape [n_classes]</strong>
+    Array containing labels.</p>
+</li>
+<li>
+<p><strong>n_classes_ : int</strong>
+    Number of classes</p>
+</li>
+<li>
+<p><strong>pairwise_indices_ : list, length = <code>len(estimators_)</code>, or <code>None</code></strong>
+    Indices of samples used when training the estimators.
+    <code>None</code> when <code>estimator</code> does not have <code>_pairwise</code> attribute.</p>
+</li>
+</ul>
 <h4>Examples</h4>
 <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_iris</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
@@ -2694,7 +2760,7 @@ for more details.</p>
 
 </details>
 <h3 id="decision_function">decision_function<a class="headerlink" href="#decision_function" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">decision_function</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method decision_function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">decision_function</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
@@ -2706,15 +2772,21 @@ normalized sum of pair-wise classification confidence levels to the
 votes in order to disambiguate between the decision values when the
 votes for all the classes are equal leading to a tie.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : array-like of shape (n_samples, n_features)</summary></details>
+<ul>
+<li><strong>X : array-like of shape (n_samples, n_features)</strong></li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>Y : array-like of shape (n_samples, n_classes)</summary><p>.. versionchanged:: 0.19
+<ul>
+<li>
+<p><strong>Y : array-like of shape (n_samples, n_classes)</strong></p>
+<p>.. versionchanged:: 0.19
     output shape changed to <code>(n_samples,)</code> to conform to
     scikit-learn conventions for binary classification.</p>
-</details>
+</li>
+</ul>
 </details>
 <h3 id="fit_1">fit<a class="headerlink" href="#fit_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method fit</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">Spmatrix</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">y</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -2723,15 +2795,21 @@ votes for all the classes are equal leading to a tie.</p>
 
 <p>Fit underlying estimators.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : (sparse) array-like of shape (n_samples, n_features)</summary><p>Data.</p>
-</details>
-<details class="info" open="open"><summary>y : array-like of shape (n_samples,)</summary><p>Multi-class targets.</p>
-</details>
+<ul>
+<li>
+<p><strong>X : (sparse) array-like of shape (n_samples, n_features)</strong>
+    Data.</p>
+</li>
+<li>
+<p><strong>y : array-like of shape (n_samples,)</strong>
+    Multi-class targets.</p>
+</li>
+</ul>
 <h4>Returns</h4>
 <p>self</p>
 </details>
 <h3 id="get_params_1">get_params<a class="headerlink" href="#get_params_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method get_params</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
@@ -2739,15 +2817,19 @@ votes for all the classes are equal leading to a tie.</p>
 
 <p>Get parameters for this estimator.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>deep : bool, default=True</summary><p>If True, will return the parameters for this estimator and
-contained subobjects that are estimators.</p>
-</details>
+<ul>
+<li><strong>deep : bool, default=True</strong>
+    If True, will return the parameters for this estimator and
+    contained subobjects that are estimators.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>params : mapping of string to any</summary><p>Parameter names mapped to their values.</p>
-</details>
+<ul>
+<li><strong>params : mapping of string to any</strong>
+    Parameter names mapped to their values.</li>
+</ul>
 </details>
 <h3 id="partial_fit">partial_fit<a class="headerlink" href="#partial_fit" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">partial_fit</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method partial_fit</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">partial_fit</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">classes</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">Spmatrix</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">y</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -2760,21 +2842,29 @@ contained subobjects that are estimators.</p>
 of data can be passed in several iteration, where the first call
 should have an array of all target variables.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : (sparse) array-like of shape (n_samples, n_features)</summary><p>Data.</p>
-</details>
-<details class="info" open="open"><summary>y : array-like of shape (n_samples,)</summary><p>Multi-class targets.</p>
-</details>
-<details class="info" open="open"><summary>classes : array, shape (n_classes, )</summary><p>Classes across all calls to partial_fit.
-Can be obtained via <code>np.unique(y_all)</code>, where y_all is the
-target vector of the entire dataset.
-This argument is only required in the first call of partial_fit
-and can be omitted in the subsequent calls.</p>
-</details>
+<ul>
+<li>
+<p><strong>X : (sparse) array-like of shape (n_samples, n_features)</strong>
+    Data.</p>
+</li>
+<li>
+<p><strong>y : array-like of shape (n_samples,)</strong>
+    Multi-class targets.</p>
+</li>
+<li>
+<p><strong>classes : array, shape (n_classes, )</strong>
+    Classes across all calls to partial_fit.
+    Can be obtained via <code>np.unique(y_all)</code>, where y_all is the
+    target vector of the entire dataset.
+    This argument is only required in the first call of partial_fit
+    and can be omitted in the subsequent calls.</p>
+</li>
+</ul>
 <h4>Returns</h4>
 <p>self</p>
 </details>
 <h3 id="predict">predict<a class="headerlink" href="#predict" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method predict</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
@@ -2785,14 +2875,18 @@ and can be omitted in the subsequent calls.</p>
 will return the label of the class with most votes by estimators
 predicting the outcome of a decision for each possible class pair.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : (sparse) array-like of shape (n_samples, n_features)</summary><p>Data.</p>
-</details>
+<ul>
+<li><strong>X : (sparse) array-like of shape (n_samples, n_features)</strong>
+    Data.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>y : numpy array of shape [n_samples]</summary><p>Predicted multi-class targets.</p>
-</details>
+<ul>
+<li><strong>y : numpy array of shape [n_samples]</strong>
+    Predicted multi-class targets.</li>
+</ul>
 </details>
 <h3 id="score">score<a class="headerlink" href="#score" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method score</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">sample_weight</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">y</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -2805,18 +2899,28 @@ predicting the outcome of a decision for each possible class pair.</p>
 which is a harsh metric since you require for each sample that
 each label set be correctly predicted.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : array-like of shape (n_samples, n_features)</summary><p>Test samples.</p>
-</details>
-<details class="info" open="open"><summary>y : array-like of shape (n_samples,) or (n_samples, n_outputs)</summary><p>True labels for X.</p>
-</details>
-<details class="info" open="open"><summary>sample_weight : array-like of shape (n_samples,), default=None</summary><p>Sample weights.</p>
-</details>
+<ul>
+<li>
+<p><strong>X : array-like of shape (n_samples, n_features)</strong>
+    Test samples.</p>
+</li>
+<li>
+<p><strong>y : array-like of shape (n_samples,) or (n_samples, n_outputs)</strong>
+    True labels for X.</p>
+</li>
+<li>
+<p><strong>sample_weight : array-like of shape (n_samples,), default=None</strong>
+    Sample weights.</p>
+</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>score : float</summary><p>Mean accuracy of self.predict(X) wrt. y.</p>
-</details>
+<ul>
+<li><strong>score : float</strong>
+    Mean accuracy of self.predict(X) wrt. y.</li>
+</ul>
 </details>
 <h3 id="set_params_1">set_params<a class="headerlink" href="#set_params_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_params</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method set_params</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">params</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
@@ -2828,14 +2932,18 @@ each label set be correctly predicted.</p>
 <code>&lt;component&gt;__&lt;parameter&gt;</code> so that it's possible to update each
 component of a nested object.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>**params : dict</summary><p>Estimator parameters.</p>
-</details>
+<ul>
+<li><strong>**params : dict</strong>
+    Estimator parameters.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>self : object</summary><p>Estimator instance.</p>
-</details>
+<ul>
+<li><strong>self : object</strong>
+    Estimator instance.</li>
+</ul>
 </details>
 <h3 id="estimators_">estimators_<a class="headerlink" href="#estimators_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">estimators_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute estimators_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">estimators_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">estimators_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2843,7 +2951,7 @@ component of a nested object.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="classes__1">classes_<a class="headerlink" href="#classes__1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">classes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute classes_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">classes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">classes_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2851,7 +2959,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="n_classes_">n_classes_<a class="headerlink" href="#n_classes_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_classes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+<details class="note" open="open"><summary>attribute n_classes_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_classes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
 <span class="k">val</span> <span class="n">n_classes_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2859,7 +2967,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="pairwise_indices_">pairwise_indices_<a class="headerlink" href="#pairwise_indices_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pairwise_indices_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute pairwise_indices_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pairwise_indices_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">pairwise_indices_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2867,19 +2975,19 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="to_string_2">to_string<a class="headerlink" href="#to_string_2" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method to_string</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="show_2">show<a class="headerlink" href="#show_2" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method show</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="pp_2">pp<a class="headerlink" href="#pp_2" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+<details class="note" open="open"><summary>method pp</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
 </code></pre></div>
 
 <p>Pretty-print the object to a formatter.</p>
@@ -2890,7 +2998,7 @@ if the attribute is None. The _opt version returns an option.</p>
 </code></pre></div>
 
 <h3 id="create_2">create<a class="headerlink" href="#create_2" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
+<details class="note" open="open"><summary>constructor and attributes create</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">n_jobs</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="n">estimator</span><span class="o">:[&gt;`</span><span class="nc">BaseEstimator</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
@@ -2913,28 +3021,46 @@ in which cell [i, j] is 1 if sample i has label j and 0 otherwise.</p>
 relevance method.</p>
 <p>Read more in the :ref:<code>User Guide &lt;ovr_classification&gt;</code>.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>estimator : estimator object</summary><p>An estimator object implementing :term:<code>fit</code> and one of
-:term:<code>decision_function</code> or :term:<code>predict_proba</code>.</p>
-</details>
-<details class="info" open="open"><summary>n_jobs : int or None, optional (default=None)</summary><p>The number of jobs to use for the computation.
-<code>None</code> means 1 unless in a :obj:<code>joblib.parallel_backend</code> context.
-<code>-1</code> means using all processors. See :term:<code>Glossary &lt;n_jobs&gt;</code>
-for more details.</p>
+<ul>
+<li>
+<p><strong>estimator : estimator object</strong>
+    An estimator object implementing :term:<code>fit</code> and one of
+    :term:<code>decision_function</code> or :term:<code>predict_proba</code>.</p>
+</li>
+<li>
+<p><strong>n_jobs : int or None, optional (default=None)</strong>
+    The number of jobs to use for the computation.
+    <code>None</code> means 1 unless in a :obj:<code>joblib.parallel_backend</code> context.
+    <code>-1</code> means using all processors. See :term:<code>Glossary &lt;n_jobs&gt;</code>
+    for more details.</p>
 <p>.. versionchanged:: v0.20
    <code>n_jobs</code> default changed from 1 to None</p>
-</details>
+</li>
+</ul>
 <h4>Attributes</h4>
-<details class="info" open="open"><summary>estimators_ : list of <code>n_classes</code> estimators</summary><p>Estimators used for predictions.</p>
-</details>
-<details class="info" open="open"><summary>classes_ : array, shape = [<code>n_classes</code>]</summary><p>Class labels.</p>
-</details>
-<details class="info" open="open"><summary>n_classes_ : int</summary><p>Number of classes.</p>
-</details>
-<details class="info" open="open"><summary>label_binarizer_ : LabelBinarizer object</summary><p>Object used to transform multiclass labels to binary labels and
-vice-versa.</p>
-</details>
-<details class="info" open="open"><summary>multilabel_ : boolean</summary><p>Whether a OneVsRestClassifier is a multilabel classifier.</p>
-</details>
+<ul>
+<li>
+<p><strong>estimators_ : list of <code>n_classes</code> estimators</strong>
+    Estimators used for predictions.</p>
+</li>
+<li>
+<p><strong>classes_ : array, shape = [<code>n_classes</code>]</strong>
+    Class labels.</p>
+</li>
+<li>
+<p><strong>n_classes_ : int</strong>
+    Number of classes.</p>
+</li>
+<li>
+<p><strong>label_binarizer_ : LabelBinarizer object</strong>
+    Object used to transform multiclass labels to binary labels and
+    vice-versa.</p>
+</li>
+<li>
+<p><strong>multilabel_ : boolean</strong>
+    Whether a OneVsRestClassifier is a multilabel classifier.</p>
+</li>
+</ul>
 <h4>Examples</h4>
 <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.multiclass</span> <span class="kn">import</span> <span class="n">OneVsRestClassifier</span>
@@ -2955,7 +3081,7 @@ vice-versa.</p>
 
 </details>
 <h3 id="decision_function_1">decision_function<a class="headerlink" href="#decision_function_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">decision_function</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method decision_function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">decision_function</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
@@ -2965,15 +3091,21 @@ vice-versa.</p>
 each class. This can only be used with estimators which implement the
 decision_function method.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : array-like of shape (n_samples, n_features)</summary></details>
+<ul>
+<li><strong>X : array-like of shape (n_samples, n_features)</strong></li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>T : array-like of shape (n_samples, n_classes)</summary><p>.. versionchanged:: 0.19
+<ul>
+<li>
+<p><strong>T : array-like of shape (n_samples, n_classes)</strong></p>
+<p>.. versionchanged:: 0.19
     output shape changed to <code>(n_samples,)</code> to conform to
     scikit-learn conventions for binary classification.</p>
-</details>
+</li>
+</ul>
 </details>
 <h3 id="fit_2">fit<a class="headerlink" href="#fit_2" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method fit</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">Spmatrix</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">y</span><span class="o">:[&gt;`</span><span class="nc">Spmatrix</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -2982,16 +3114,22 @@ decision_function method.</p>
 
 <p>Fit underlying estimators.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : (sparse) array-like of shape (n_samples, n_features)</summary><p>Data.</p>
-</details>
-<details class="info" open="open"><summary>y : (sparse) array-like of shape (n_samples,) or (n_samples, n_classes)</summary><p>Multi-class targets. An indicator matrix turns on multilabel
-classification.</p>
-</details>
+<ul>
+<li>
+<p><strong>X : (sparse) array-like of shape (n_samples, n_features)</strong>
+    Data.</p>
+</li>
+<li>
+<p><strong>y : (sparse) array-like of shape (n_samples,) or (n_samples, n_classes)</strong>
+    Multi-class targets. An indicator matrix turns on multilabel
+    classification.</p>
+</li>
+</ul>
 <h4>Returns</h4>
 <p>self</p>
 </details>
 <h3 id="get_params_2">get_params<a class="headerlink" href="#get_params_2" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method get_params</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
@@ -2999,15 +3137,19 @@ classification.</p>
 
 <p>Get parameters for this estimator.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>deep : bool, default=True</summary><p>If True, will return the parameters for this estimator and
-contained subobjects that are estimators.</p>
-</details>
+<ul>
+<li><strong>deep : bool, default=True</strong>
+    If True, will return the parameters for this estimator and
+    contained subobjects that are estimators.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>params : mapping of string to any</summary><p>Parameter names mapped to their values.</p>
-</details>
+<ul>
+<li><strong>params : mapping of string to any</strong>
+    Parameter names mapped to their values.</li>
+</ul>
 </details>
 <h3 id="partial_fit_1">partial_fit<a class="headerlink" href="#partial_fit_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">partial_fit</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method partial_fit</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">partial_fit</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">classes</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">Spmatrix</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">y</span><span class="o">:[&gt;`</span><span class="nc">Spmatrix</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -3019,22 +3161,30 @@ contained subobjects that are estimators.</p>
 <p>Should be used when memory is inefficient to train all data.
 Chunks of data can be passed in several iteration.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : (sparse) array-like of shape (n_samples, n_features)</summary><p>Data.</p>
-</details>
-<details class="info" open="open"><summary>y : (sparse) array-like of shape (n_samples,) or (n_samples, n_classes)</summary><p>Multi-class targets. An indicator matrix turns on multilabel
-classification.</p>
-</details>
-<details class="info" open="open"><summary>classes : array, shape (n_classes, )</summary><p>Classes across all calls to partial_fit.
-Can be obtained via <code>np.unique(y_all)</code>, where y_all is the
-target vector of the entire dataset.
-This argument is only required in the first call of partial_fit
-and can be omitted in the subsequent calls.</p>
-</details>
+<ul>
+<li>
+<p><strong>X : (sparse) array-like of shape (n_samples, n_features)</strong>
+    Data.</p>
+</li>
+<li>
+<p><strong>y : (sparse) array-like of shape (n_samples,) or (n_samples, n_classes)</strong>
+    Multi-class targets. An indicator matrix turns on multilabel
+    classification.</p>
+</li>
+<li>
+<p><strong>classes : array, shape (n_classes, )</strong>
+    Classes across all calls to partial_fit.
+    Can be obtained via <code>np.unique(y_all)</code>, where y_all is the
+    target vector of the entire dataset.
+    This argument is only required in the first call of partial_fit
+    and can be omitted in the subsequent calls.</p>
+</li>
+</ul>
 <h4>Returns</h4>
 <p>self</p>
 </details>
 <h3 id="predict_1">predict<a class="headerlink" href="#predict_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method predict</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
@@ -3042,14 +3192,18 @@ and can be omitted in the subsequent calls.</p>
 
 <p>Predict multi-class targets using underlying estimators.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : (sparse) array-like of shape (n_samples, n_features)</summary><p>Data.</p>
-</details>
+<ul>
+<li><strong>X : (sparse) array-like of shape (n_samples, n_features)</strong>
+    Data.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>y : (sparse) array-like of shape (n_samples,) or (n_samples, n_classes)</summary><p>Predicted multi-class targets.</p>
-</details>
+<ul>
+<li><strong>y : (sparse) array-like of shape (n_samples,) or (n_samples, n_classes)</strong>
+    Predicted multi-class targets.</li>
+</ul>
 </details>
 <h3 id="predict_proba">predict_proba<a class="headerlink" href="#predict_proba" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict_proba</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method predict_proba</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict_proba</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
@@ -3064,14 +3218,18 @@ labels both have a 90% probability of applying to a given sample.</p>
 <p>In the single label multiclass case, the rows of the returned matrix
 sum to 1.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : array-like of shape (n_samples, n_features)</summary></details>
+<ul>
+<li><strong>X : array-like of shape (n_samples, n_features)</strong></li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>T : (sparse) array-like of shape (n_samples, n_classes)</summary><p>Returns the probability of the sample for each class in the model,
-where classes are ordered as they are in <code>self.classes_</code>.</p>
-</details>
+<ul>
+<li><strong>T : (sparse) array-like of shape (n_samples, n_classes)</strong>
+    Returns the probability of the sample for each class in the model,
+    where classes are ordered as they are in <code>self.classes_</code>.</li>
+</ul>
 </details>
 <h3 id="score_1">score<a class="headerlink" href="#score_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method score</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">sample_weight</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">y</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -3084,18 +3242,28 @@ where classes are ordered as they are in <code>self.classes_</code>.</p>
 which is a harsh metric since you require for each sample that
 each label set be correctly predicted.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : array-like of shape (n_samples, n_features)</summary><p>Test samples.</p>
-</details>
-<details class="info" open="open"><summary>y : array-like of shape (n_samples,) or (n_samples, n_outputs)</summary><p>True labels for X.</p>
-</details>
-<details class="info" open="open"><summary>sample_weight : array-like of shape (n_samples,), default=None</summary><p>Sample weights.</p>
-</details>
+<ul>
+<li>
+<p><strong>X : array-like of shape (n_samples, n_features)</strong>
+    Test samples.</p>
+</li>
+<li>
+<p><strong>y : array-like of shape (n_samples,) or (n_samples, n_outputs)</strong>
+    True labels for X.</p>
+</li>
+<li>
+<p><strong>sample_weight : array-like of shape (n_samples,), default=None</strong>
+    Sample weights.</p>
+</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>score : float</summary><p>Mean accuracy of self.predict(X) wrt. y.</p>
-</details>
+<ul>
+<li><strong>score : float</strong>
+    Mean accuracy of self.predict(X) wrt. y.</li>
+</ul>
 </details>
 <h3 id="set_params_2">set_params<a class="headerlink" href="#set_params_2" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_params</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method set_params</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">params</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
@@ -3107,14 +3275,18 @@ each label set be correctly predicted.</p>
 <code>&lt;component&gt;__&lt;parameter&gt;</code> so that it's possible to update each
 component of a nested object.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>**params : dict</summary><p>Estimator parameters.</p>
-</details>
+<ul>
+<li><strong>**params : dict</strong>
+    Estimator parameters.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>self : object</summary><p>Estimator instance.</p>
-</details>
+<ul>
+<li><strong>self : object</strong>
+    Estimator instance.</li>
+</ul>
 </details>
 <h3 id="estimators__1">estimators_<a class="headerlink" href="#estimators__1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">estimators_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute estimators_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">estimators_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">estimators_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3122,7 +3294,7 @@ component of a nested object.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="classes__2">classes_<a class="headerlink" href="#classes__2" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">classes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute classes_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">classes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">classes_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3130,7 +3302,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="n_classes__1">n_classes_<a class="headerlink" href="#n_classes__1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_classes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+<details class="note" open="open"><summary>attribute n_classes_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">n_classes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
 <span class="k">val</span> <span class="n">n_classes_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3138,7 +3310,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="label_binarizer_">label_binarizer_<a class="headerlink" href="#label_binarizer_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">label_binarizer_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute label_binarizer_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">label_binarizer_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">label_binarizer_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3146,7 +3318,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="multilabel_">multilabel_<a class="headerlink" href="#multilabel_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">multilabel_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
+<details class="note" open="open"><summary>attribute multilabel_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">multilabel_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
 <span class="k">val</span> <span class="n">multilabel_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">bool</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3154,19 +3326,19 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="to_string_3">to_string<a class="headerlink" href="#to_string_3" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method to_string</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="show_3">show<a class="headerlink" href="#show_3" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method show</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="pp_3">pp<a class="headerlink" href="#pp_3" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+<details class="note" open="open"><summary>method pp</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
 </code></pre></div>
 
 <p>Pretty-print the object to a formatter.</p>
@@ -3177,7 +3349,7 @@ if the attribute is None. The _opt version returns an option.</p>
 </code></pre></div>
 
 <h3 id="create_3">create<a class="headerlink" href="#create_3" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
+<details class="note" open="open"><summary>constructor and attributes create</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">code_size</span><span class="o">:</span><span class="kt">float</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">random_state</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">n_jobs</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
@@ -3197,30 +3369,50 @@ for compressing the model (0 &lt; code_size &lt; 1) or for making the model more
 robust to errors (code_size &gt; 1). See the documentation for more details.</p>
 <p>Read more in the :ref:<code>User Guide &lt;ecoc&gt;</code>.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>estimator : estimator object</summary><p>An estimator object implementing :term:<code>fit</code> and one of
-:term:<code>decision_function</code> or :term:<code>predict_proba</code>.</p>
-</details>
-<details class="info" open="open"><summary>code_size : float</summary><p>Percentage of the number of classes to be used to create the code book.
-A number between 0 and 1 will require fewer classifiers than
-one-vs-the-rest. A number greater than 1 will require more classifiers
-than one-vs-the-rest.</p>
-</details>
-<details class="info" open="open"><summary>random_state : int, RandomState instance or None, optional, default: None</summary><p>The generator used to initialize the codebook.
-Pass an int for reproducible output across multiple function calls.</p>
-</details>
-<details class="info" open="open"><summary>See :term:<code>Glossary &lt;random_state&gt;</code>.</summary></details>
-<details class="info" open="open"><summary>n_jobs : int or None, optional (default=None)</summary><p>The number of jobs to use for the computation.
-<code>None</code> means 1 unless in a :obj:<code>joblib.parallel_backend</code> context.
-<code>-1</code> means using all processors. See :term:<code>Glossary &lt;n_jobs&gt;</code>
-for more details.</p>
-</details>
+<ul>
+<li>
+<p><strong>estimator : estimator object</strong>
+    An estimator object implementing :term:<code>fit</code> and one of
+    :term:<code>decision_function</code> or :term:<code>predict_proba</code>.</p>
+</li>
+<li>
+<p><strong>code_size : float</strong>
+    Percentage of the number of classes to be used to create the code book.
+    A number between 0 and 1 will require fewer classifiers than
+    one-vs-the-rest. A number greater than 1 will require more classifiers
+    than one-vs-the-rest.</p>
+</li>
+<li>
+<p><strong>random_state : int, RandomState instance or None, optional, default: None</strong>
+    The generator used to initialize the codebook.
+    Pass an int for reproducible output across multiple function calls.</p>
+</li>
+<li>
+<p><strong>See :term:<code>Glossary &lt;random_state&gt;</code>.</strong></p>
+</li>
+<li>
+<p><strong>n_jobs : int or None, optional (default=None)</strong>
+    The number of jobs to use for the computation.
+    <code>None</code> means 1 unless in a :obj:<code>joblib.parallel_backend</code> context.
+    <code>-1</code> means using all processors. See :term:<code>Glossary &lt;n_jobs&gt;</code>
+    for more details.</p>
+</li>
+</ul>
 <h4>Attributes</h4>
-<details class="info" open="open"><summary>estimators_ : list of <code>int(n_classes * code_size)</code> estimators</summary><p>Estimators used for predictions.</p>
-</details>
-<details class="info" open="open"><summary>classes_ : numpy array of shape [n_classes]</summary><p>Array containing labels.</p>
-</details>
-<details class="info" open="open"><summary>code_book_ : numpy array of shape [n_classes, code_size]</summary><p>Binary array containing the code of each class.</p>
-</details>
+<ul>
+<li>
+<p><strong>estimators_ : list of <code>int(n_classes * code_size)</code> estimators</strong>
+    Estimators used for predictions.</p>
+</li>
+<li>
+<p><strong>classes_ : numpy array of shape [n_classes]</strong>
+    Array containing labels.</p>
+</li>
+<li>
+<p><strong>code_book_ : numpy array of shape [n_classes, code_size]</strong>
+    Binary array containing the code of each class.</p>
+</li>
+</ul>
 <h4>Examples</h4>
 <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.multiclass</span> <span class="kn">import</span> <span class="n">OutputCodeClassifier</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestClassifier</span>
@@ -3250,7 +3442,7 @@ for more details.</p>
    2008.</p>
 </details>
 <h3 id="fit_3">fit<a class="headerlink" href="#fit_3" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method fit</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">fit</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">Spmatrix</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">y</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -3259,15 +3451,21 @@ for more details.</p>
 
 <p>Fit underlying estimators.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : (sparse) array-like of shape (n_samples, n_features)</summary><p>Data.</p>
-</details>
-<details class="info" open="open"><summary>y : numpy array of shape [n_samples]</summary><p>Multi-class targets.</p>
-</details>
+<ul>
+<li>
+<p><strong>X : (sparse) array-like of shape (n_samples, n_features)</strong>
+    Data.</p>
+</li>
+<li>
+<p><strong>y : numpy array of shape [n_samples]</strong>
+    Multi-class targets.</p>
+</li>
+</ul>
 <h4>Returns</h4>
 <p>self</p>
 </details>
 <h3 id="get_params_3">get_params<a class="headerlink" href="#get_params_3" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method get_params</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">get_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">deep</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Dict</span><span class="p">.</span><span class="n">t</span>
@@ -3275,15 +3473,19 @@ for more details.</p>
 
 <p>Get parameters for this estimator.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>deep : bool, default=True</summary><p>If True, will return the parameters for this estimator and
-contained subobjects that are estimators.</p>
-</details>
+<ul>
+<li><strong>deep : bool, default=True</strong>
+    If True, will return the parameters for this estimator and
+    contained subobjects that are estimators.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>params : mapping of string to any</summary><p>Parameter names mapped to their values.</p>
-</details>
+<ul>
+<li><strong>params : mapping of string to any</strong>
+    Parameter names mapped to their values.</li>
+</ul>
 </details>
 <h3 id="predict_2">predict<a class="headerlink" href="#predict_2" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method predict</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">predict</span> <span class="o">:</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
@@ -3291,14 +3493,18 @@ contained subobjects that are estimators.</p>
 
 <p>Predict multi-class targets using underlying estimators.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : (sparse) array-like of shape (n_samples, n_features)</summary><p>Data.</p>
-</details>
+<ul>
+<li><strong>X : (sparse) array-like of shape (n_samples, n_features)</strong>
+    Data.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>y : numpy array of shape [n_samples]</summary><p>Predicted multi-class targets.</p>
-</details>
+<ul>
+<li><strong>y : numpy array of shape [n_samples]</strong>
+    Predicted multi-class targets.</li>
+</ul>
 </details>
 <h3 id="score_2">score<a class="headerlink" href="#score_2" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method score</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">score</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">sample_weight</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">x</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">y</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -3311,18 +3517,28 @@ contained subobjects that are estimators.</p>
 which is a harsh metric since you require for each sample that
 each label set be correctly predicted.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : array-like of shape (n_samples, n_features)</summary><p>Test samples.</p>
-</details>
-<details class="info" open="open"><summary>y : array-like of shape (n_samples,) or (n_samples, n_outputs)</summary><p>True labels for X.</p>
-</details>
-<details class="info" open="open"><summary>sample_weight : array-like of shape (n_samples,), default=None</summary><p>Sample weights.</p>
-</details>
+<ul>
+<li>
+<p><strong>X : array-like of shape (n_samples, n_features)</strong>
+    Test samples.</p>
+</li>
+<li>
+<p><strong>y : array-like of shape (n_samples,) or (n_samples, n_outputs)</strong>
+    True labels for X.</p>
+</li>
+<li>
+<p><strong>sample_weight : array-like of shape (n_samples,), default=None</strong>
+    Sample weights.</p>
+</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>score : float</summary><p>Mean accuracy of self.predict(X) wrt. y.</p>
-</details>
+<ul>
+<li><strong>score : float</strong>
+    Mean accuracy of self.predict(X) wrt. y.</li>
+</ul>
 </details>
 <h3 id="set_params_3">set_params<a class="headerlink" href="#set_params_3" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_params</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method set_params</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_params</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">params</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
@@ -3334,14 +3550,18 @@ each label set be correctly predicted.</p>
 <code>&lt;component&gt;__&lt;parameter&gt;</code> so that it's possible to update each
 component of a nested object.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>**params : dict</summary><p>Estimator parameters.</p>
-</details>
+<ul>
+<li><strong>**params : dict</strong>
+    Estimator parameters.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>self : object</summary><p>Estimator instance.</p>
-</details>
+<ul>
+<li><strong>self : object</strong>
+    Estimator instance.</li>
+</ul>
 </details>
 <h3 id="estimators__2">estimators_<a class="headerlink" href="#estimators__2" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">estimators_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute estimators_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">estimators_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">estimators_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3349,7 +3569,7 @@ component of a nested object.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="classes__3">classes_<a class="headerlink" href="#classes__3" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">classes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute classes_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">classes_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">classes_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3357,7 +3577,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="code_book_">code_book_<a class="headerlink" href="#code_book_" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">code_book_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute code_book_</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">code_book_</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">code_book_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3365,28 +3585,28 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="to_string_4">to_string<a class="headerlink" href="#to_string_4" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method to_string</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="show_4">show<a class="headerlink" href="#show_4" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method show</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="pp_4">pp<a class="headerlink" href="#pp_4" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+<details class="note" open="open"><summary>method pp</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
 </code></pre></div>
 
 <p>Pretty-print the object to a formatter.</p>
 </details>
 <h3 id="check_x_y">check_X_y<a class="headerlink" href="#check_x_y" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">check_X_y</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">accept_sparse</span><span class="o">:[`</span><span class="nc">StringList</span> <span class="k">of</span> <span class="kt">string</span> <span class="kt">list</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Bool</span> <span class="k">of</span> <span class="kt">bool</span> <span class="o">|</span> <span class="o">`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span><span class="o">]</span> <span class="o">-&gt;</span>
+<details class="note" open="open"><summary>function check_X_y</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">check_X_y</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">accept_sparse</span><span class="o">:[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">StringList</span> <span class="k">of</span> <span class="kt">string</span> <span class="kt">list</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Bool</span> <span class="k">of</span> <span class="kt">bool</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">accept_large_sparse</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">dtype</span><span class="o">:[`</span><span class="nc">Dtypes</span> <span class="k">of</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Dtype</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Dtype</span> <span class="k">of</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Dtype</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">dtype</span><span class="o">:[`</span><span class="nc">Dtypes</span> <span class="k">of</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Dtype</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span> <span class="o">|</span> <span class="o">`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Dtype</span> <span class="k">of</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Dtype</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">order</span><span class="o">:[`</span><span class="nc">F</span> <span class="o">|</span> <span class="o">`</span><span class="nc">C</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">copy</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">force_all_finite</span><span class="o">:[`</span><span class="nc">Allow_nan</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Bool</span> <span class="k">of</span> <span class="kt">bool</span><span class="o">]</span> <span class="o">-&gt;</span>
@@ -3411,34 +3631,51 @@ does not have np.nan or np.inf targets. For multi-label y, set
 multi_output=True to allow 2D and sparse y. If the dtype of X is
 object, attempt converting to float, raising on failure.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : nd-array, list or sparse matrix</summary><p>Input data.</p>
-</details>
-<details class="info" open="open"><summary>y : nd-array, list or sparse matrix</summary><p>Labels.</p>
-</details>
-<details class="info" open="open"><summary>accept_sparse : string, boolean or list of string (default=False)</summary><p>String[s] representing allowed sparse matrix formats, such as 'csc',
-'csr', etc. If the input is sparse but not in the allowed format,
-it will be converted to the first listed format. True allows the input
-to be any format. False means that a sparse matrix input will
-raise an error.</p>
-</details>
-<details class="info" open="open"><summary>accept_large_sparse : bool (default=True)</summary><p>If a CSR, CSC, COO or BSR sparse matrix is supplied and accepted by
-accept_sparse, accept_large_sparse will cause it to be accepted only
-if its indices are stored with a 32-bit dtype.</p>
+<ul>
+<li>
+<p><strong>X : nd-array, list or sparse matrix</strong>
+    Input data.</p>
+</li>
+<li>
+<p><strong>y : nd-array, list or sparse matrix</strong>
+    Labels.</p>
+</li>
+<li>
+<p><strong>accept_sparse : string, boolean or list of string (default=False)</strong>
+    String[s] representing allowed sparse matrix formats, such as 'csc',
+    'csr', etc. If the input is sparse but not in the allowed format,
+    it will be converted to the first listed format. True allows the input
+    to be any format. False means that a sparse matrix input will
+    raise an error.</p>
+</li>
+<li>
+<p><strong>accept_large_sparse : bool (default=True)</strong>
+    If a CSR, CSC, COO or BSR sparse matrix is supplied and accepted by
+    accept_sparse, accept_large_sparse will cause it to be accepted only
+    if its indices are stored with a 32-bit dtype.</p>
 <p>.. versionadded:: 0.20</p>
-</details>
-<details class="info" open="open"><summary>dtype : string, type, list of types or None (default='numeric')</summary><p>Data type of result. If None, the dtype of the input is preserved.
-If 'numeric', dtype is preserved unless array.dtype is object.
-If dtype is a list of types, conversion on the first type is only
-performed if the dtype of the input is not in the list.</p>
-</details>
-<details class="info" open="open"><summary>order : 'F', 'C' or None (default=None)</summary><p>Whether an array will be forced to be fortran or c-style.</p>
-</details>
-<details class="info" open="open"><summary>copy : boolean (default=False)</summary><p>Whether a forced copy will be triggered. If copy=False, a copy might
-be triggered by a conversion.</p>
-</details>
-<details class="info" open="open"><summary>force_all_finite : boolean or 'allow-nan', (default=True)</summary><p>Whether to raise an error on np.inf, np.nan, pd.NA in X. This parameter
-does not influence whether y can have np.inf, np.nan, pd.NA values.
-The possibilities are:</p>
+</li>
+<li>
+<p><strong>dtype : string, type, list of types or None (default='numeric')</strong>
+    Data type of result. If None, the dtype of the input is preserved.
+    If 'numeric', dtype is preserved unless array.dtype is object.
+    If dtype is a list of types, conversion on the first type is only
+    performed if the dtype of the input is not in the list.</p>
+</li>
+<li>
+<p><strong>order : 'F', 'C' or None (default=None)</strong>
+    Whether an array will be forced to be fortran or c-style.</p>
+</li>
+<li>
+<p><strong>copy : boolean (default=False)</strong>
+    Whether a forced copy will be triggered. If copy=False, a copy might
+    be triggered by a conversion.</p>
+</li>
+<li>
+<p><strong>force_all_finite : boolean or 'allow-nan', (default=True)</strong>
+    Whether to raise an error on np.inf, np.nan, pd.NA in X. This parameter
+    does not influence whether y can have np.inf, np.nan, pd.NA values.
+    The possibilities are:</p>
 <ul>
 <li>True: Force all values of X to be finite.</li>
 <li>False: accepts np.inf, np.nan, pd.NA in X.</li>
@@ -3449,41 +3686,62 @@ The possibilities are:</p>
    <code>force_all_finite</code> accepts the string <code>'allow-nan'</code>.</p>
 <p>.. versionchanged:: 0.23
    Accepts <code>pd.NA</code> and converts it into <code>np.nan</code></p>
-</details>
-<details class="info" open="open"><summary>ensure_2d : boolean (default=True)</summary><p>Whether to raise a value error if X is not 2D.</p>
-</details>
-<details class="info" open="open"><summary>allow_nd : boolean (default=False)</summary><p>Whether to allow X.ndim &gt; 2.</p>
-</details>
-<details class="info" open="open"><summary>multi_output : boolean (default=False)</summary><p>Whether to allow 2D y (array or sparse matrix). If false, y will be
-validated as a vector. y cannot have np.nan or np.inf values if
-multi_output=True.</p>
-</details>
-<details class="info" open="open"><summary>ensure_min_samples : int (default=1)</summary><p>Make sure that X has a minimum number of samples in its first
-axis (rows for a 2D array).</p>
-</details>
-<details class="info" open="open"><summary>ensure_min_features : int (default=1)</summary><p>Make sure that the 2D array has some minimum number of features
-(columns). The default value of 1 rejects empty datasets.
-This check is only enforced when X has effectively 2 dimensions or
-is originally 1D and <code>ensure_2d</code> is True. Setting to 0 disables
-this check.</p>
-</details>
-<details class="info" open="open"><summary>y_numeric : boolean (default=False)</summary><p>Whether to ensure that y has a numeric type. If dtype of y is object,
-it is converted to float64. Should only be used for regression
-algorithms.</p>
-</details>
-<details class="info" open="open"><summary>estimator : str or estimator instance (default=None)</summary><p>If passed, include the name of the estimator in warning messages.</p>
-</details>
+</li>
+<li>
+<p><strong>ensure_2d : boolean (default=True)</strong>
+    Whether to raise a value error if X is not 2D.</p>
+</li>
+<li>
+<p><strong>allow_nd : boolean (default=False)</strong>
+    Whether to allow X.ndim &gt; 2.</p>
+</li>
+<li>
+<p><strong>multi_output : boolean (default=False)</strong>
+    Whether to allow 2D y (array or sparse matrix). If false, y will be
+    validated as a vector. y cannot have np.nan or np.inf values if
+    multi_output=True.</p>
+</li>
+<li>
+<p><strong>ensure_min_samples : int (default=1)</strong>
+    Make sure that X has a minimum number of samples in its first
+    axis (rows for a 2D array).</p>
+</li>
+<li>
+<p><strong>ensure_min_features : int (default=1)</strong>
+    Make sure that the 2D array has some minimum number of features
+    (columns). The default value of 1 rejects empty datasets.
+    This check is only enforced when X has effectively 2 dimensions or
+    is originally 1D and <code>ensure_2d</code> is True. Setting to 0 disables
+    this check.</p>
+</li>
+<li>
+<p><strong>y_numeric : boolean (default=False)</strong>
+    Whether to ensure that y has a numeric type. If dtype of y is object,
+    it is converted to float64. Should only be used for regression
+    algorithms.</p>
+</li>
+<li>
+<p><strong>estimator : str or estimator instance (default=None)</strong>
+    If passed, include the name of the estimator in warning messages.</p>
+</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>X_converted : object</summary><p>The converted and validated X.</p>
-</details>
-<details class="info" open="open"><summary>y_converted : object</summary><p>The converted and validated y.</p>
-</details>
+<ul>
+<li>
+<p><strong>X_converted : object</strong>
+    The converted and validated X.</p>
+</li>
+<li>
+<p><strong>y_converted : object</strong>
+    The converted and validated y.</p>
+</li>
+</ul>
 </details>
 <h3 id="check_array">check_array<a class="headerlink" href="#check_array" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">check_array</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">accept_sparse</span><span class="o">:[`</span><span class="nc">StringList</span> <span class="k">of</span> <span class="kt">string</span> <span class="kt">list</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Bool</span> <span class="k">of</span> <span class="kt">bool</span> <span class="o">|</span> <span class="o">`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span><span class="o">]</span> <span class="o">-&gt;</span>
+<details class="note" open="open"><summary>function check_array</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">check_array</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">accept_sparse</span><span class="o">:[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">StringList</span> <span class="k">of</span> <span class="kt">string</span> <span class="kt">list</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Bool</span> <span class="k">of</span> <span class="kt">bool</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">accept_large_sparse</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">dtype</span><span class="o">:[`</span><span class="nc">Dtypes</span> <span class="k">of</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Dtype</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Dtype</span> <span class="k">of</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Dtype</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">dtype</span><span class="o">:[`</span><span class="nc">Dtypes</span> <span class="k">of</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Dtype</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span> <span class="o">|</span> <span class="o">`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Dtype</span> <span class="k">of</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Dtype</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">order</span><span class="o">:[`</span><span class="nc">F</span> <span class="o">|</span> <span class="o">`</span><span class="nc">C</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">copy</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">force_all_finite</span><span class="o">:[`</span><span class="nc">Allow_nan</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Bool</span> <span class="k">of</span> <span class="kt">bool</span><span class="o">]</span> <span class="o">-&gt;</span>
@@ -3502,35 +3760,50 @@ algorithms.</p>
 only finite values. If the dtype of the array is object, attempt
 converting to float, raising on failure.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>array : object</summary><p>Input object to check / convert.</p>
-</details>
-<details class="info" open="open"><summary>accept_sparse : string, boolean or list/tuple of strings (default=False)</summary><p>String[s] representing allowed sparse matrix formats, such as 'csc',
-'csr', etc. If the input is sparse but not in the allowed format,
-it will be converted to the first listed format. True allows the input
-to be any format. False means that a sparse matrix input will
-raise an error.</p>
-</details>
-<details class="info" open="open"><summary>accept_large_sparse : bool (default=True)</summary><p>If a CSR, CSC, COO or BSR sparse matrix is supplied and accepted by
-accept_sparse, accept_large_sparse=False will cause it to be accepted
-only if its indices are stored with a 32-bit dtype.</p>
+<ul>
+<li>
+<p><strong>array : object</strong>
+    Input object to check / convert.</p>
+</li>
+<li>
+<p><strong>accept_sparse : string, boolean or list/tuple of strings (default=False)</strong>
+    String[s] representing allowed sparse matrix formats, such as 'csc',
+    'csr', etc. If the input is sparse but not in the allowed format,
+    it will be converted to the first listed format. True allows the input
+    to be any format. False means that a sparse matrix input will
+    raise an error.</p>
+</li>
+<li>
+<p><strong>accept_large_sparse : bool (default=True)</strong>
+    If a CSR, CSC, COO or BSR sparse matrix is supplied and accepted by
+    accept_sparse, accept_large_sparse=False will cause it to be accepted
+    only if its indices are stored with a 32-bit dtype.</p>
 <p>.. versionadded:: 0.20</p>
-</details>
-<details class="info" open="open"><summary>dtype : string, type, list of types or None (default='numeric')</summary><p>Data type of result. If None, the dtype of the input is preserved.
-If 'numeric', dtype is preserved unless array.dtype is object.
-If dtype is a list of types, conversion on the first type is only
-performed if the dtype of the input is not in the list.</p>
-</details>
-<details class="info" open="open"><summary>order : 'F', 'C' or None (default=None)</summary><p>Whether an array will be forced to be fortran or c-style.
-When order is None (default), then if copy=False, nothing is ensured
-about the memory layout of the output array; otherwise (copy=True)
-the memory layout of the returned array is kept as close as possible
-to the original array.</p>
-</details>
-<details class="info" open="open"><summary>copy : boolean (default=False)</summary><p>Whether a forced copy will be triggered. If copy=False, a copy might
-be triggered by a conversion.</p>
-</details>
-<details class="info" open="open"><summary>force_all_finite : boolean or 'allow-nan', (default=True)</summary><p>Whether to raise an error on np.inf, np.nan, pd.NA in array. The
-possibilities are:</p>
+</li>
+<li>
+<p><strong>dtype : string, type, list of types or None (default='numeric')</strong>
+    Data type of result. If None, the dtype of the input is preserved.
+    If 'numeric', dtype is preserved unless array.dtype is object.
+    If dtype is a list of types, conversion on the first type is only
+    performed if the dtype of the input is not in the list.</p>
+</li>
+<li>
+<p><strong>order : 'F', 'C' or None (default=None)</strong>
+    Whether an array will be forced to be fortran or c-style.
+    When order is None (default), then if copy=False, nothing is ensured
+    about the memory layout of the output array; otherwise (copy=True)
+    the memory layout of the returned array is kept as close as possible
+    to the original array.</p>
+</li>
+<li>
+<p><strong>copy : boolean (default=False)</strong>
+    Whether a forced copy will be triggered. If copy=False, a copy might
+    be triggered by a conversion.</p>
+</li>
+<li>
+<p><strong>force_all_finite : boolean or 'allow-nan', (default=True)</strong>
+    Whether to raise an error on np.inf, np.nan, pd.NA in array. The
+    possibilities are:</p>
 <ul>
 <li>True: Force all values of array to be finite.</li>
 <li>False: accepts np.inf, np.nan, pd.NA in array.</li>
@@ -3541,28 +3814,41 @@ possibilities are:</p>
    <code>force_all_finite</code> accepts the string <code>'allow-nan'</code>.</p>
 <p>.. versionchanged:: 0.23
    Accepts <code>pd.NA</code> and converts it into <code>np.nan</code></p>
-</details>
-<details class="info" open="open"><summary>ensure_2d : boolean (default=True)</summary><p>Whether to raise a value error if array is not 2D.</p>
-</details>
-<details class="info" open="open"><summary>allow_nd : boolean (default=False)</summary><p>Whether to allow array.ndim &gt; 2.</p>
-</details>
-<details class="info" open="open"><summary>ensure_min_samples : int (default=1)</summary><p>Make sure that the array has a minimum number of samples in its first
-axis (rows for a 2D array). Setting to 0 disables this check.</p>
-</details>
-<details class="info" open="open"><summary>ensure_min_features : int (default=1)</summary><p>Make sure that the 2D array has some minimum number of features
-(columns). The default value of 1 rejects empty datasets.
-This check is only enforced when the input data has effectively 2
-dimensions or is originally 1D and <code>ensure_2d</code> is True. Setting to 0
-disables this check.</p>
-</details>
-<details class="info" open="open"><summary>estimator : str or estimator instance (default=None)</summary><p>If passed, include the name of the estimator in warning messages.</p>
-</details>
+</li>
+<li>
+<p><strong>ensure_2d : boolean (default=True)</strong>
+    Whether to raise a value error if array is not 2D.</p>
+</li>
+<li>
+<p><strong>allow_nd : boolean (default=False)</strong>
+    Whether to allow array.ndim &gt; 2.</p>
+</li>
+<li>
+<p><strong>ensure_min_samples : int (default=1)</strong>
+    Make sure that the array has a minimum number of samples in its first
+    axis (rows for a 2D array). Setting to 0 disables this check.</p>
+</li>
+<li>
+<p><strong>ensure_min_features : int (default=1)</strong>
+    Make sure that the 2D array has some minimum number of features
+    (columns). The default value of 1 rejects empty datasets.
+    This check is only enforced when the input data has effectively 2
+    dimensions or is originally 1D and <code>ensure_2d</code> is True. Setting to 0
+    disables this check.</p>
+</li>
+<li>
+<p><strong>estimator : str or estimator instance (default=None)</strong>
+    If passed, include the name of the estimator in warning messages.</p>
+</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>array_converted : object</summary><p>The converted and validated array.</p>
-</details>
+<ul>
+<li><strong>array_converted : object</strong>
+    The converted and validated array.</li>
+</ul>
 </details>
 <h3 id="check_classification_targets">check_classification_targets<a class="headerlink" href="#check_classification_targets" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">check_classification_targets</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function check_classification_targets</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">check_classification_targets</span> <span class="o">:</span>
   <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -3572,11 +3858,13 @@ disables this check.</p>
     'binary', 'multiclass', 'multiclass-multioutput',
     'multilabel-indicator', 'multilabel-sequences'</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>y : array-like</summary></details>
+<ul>
+<li><strong>y : array-like</strong></li>
+</ul>
 </details>
 <h3 id="check_is_fitted">check_is_fitted<a class="headerlink" href="#check_is_fitted" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">check_is_fitted</span> <span class="o">:</span>
-  <span class="o">?</span><span class="n">attributes</span><span class="o">:[`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">StringList</span> <span class="k">of</span> <span class="kt">string</span> <span class="kt">list</span> <span class="o">|</span> <span class="o">`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span><span class="o">]</span> <span class="o">-&gt;</span>
+<details class="note" open="open"><summary>function check_is_fitted</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">check_is_fitted</span> <span class="o">:</span>
+  <span class="o">?</span><span class="n">attributes</span><span class="o">:[`</span><span class="nc">Arr</span> <span class="k">of</span> <span class="o">[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">StringList</span> <span class="k">of</span> <span class="kt">string</span> <span class="kt">list</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">msg</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">all_or_any</span><span class="o">:[`</span><span class="nc">Callable</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="n">estimator</span><span class="o">:[&gt;`</span><span class="nc">BaseEstimator</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -3591,23 +3879,37 @@ raises a NotFittedError with the given message.</p>
 <p>This utility is meant to be used internally by estimators themselves,
 typically in their own predict / transform methods.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>estimator : estimator instance.</summary><p>estimator instance for which the check is performed.</p>
-</details>
-<details class="info" open="open"><summary>attributes : str, list or tuple of str, default=None</summary><p>Attribute name(s) given as string or a list/tuple of strings</p>
-</details>
-<details class="info" open="open"><summary>Eg.: <code>['coef_', 'estimator_', ...], 'coef_'</code></summary><p>If <code>None</code>, <code>estimator</code> is considered fitted if there exist an
+<ul>
+<li>
+<p><strong>estimator : estimator instance.</strong>
+    estimator instance for which the check is performed.</p>
+</li>
+<li>
+<p><strong>attributes : str, list or tuple of str, default=None</strong>
+    Attribute name(s) given as string or a list/tuple of strings</p>
+</li>
+<li>
+<p><strong>Eg.: <code>['coef_', 'estimator_', ...], 'coef_'</code></strong></p>
+<p>If <code>None</code>, <code>estimator</code> is considered fitted if there exist an
 attribute that ends with a underscore and does not start with double
 underscore.</p>
-</details>
-<details class="info" open="open"><summary>msg : string</summary><p>The default error message is, 'This %(name)s instance is not fitted
-yet. Call 'fit' with appropriate arguments before using this
-estimator.'</p>
+</li>
+<li>
+<p><strong>msg : string</strong>
+    The default error message is, 'This %(name)s instance is not fitted
+    yet. Call 'fit' with appropriate arguments before using this
+    estimator.'</p>
 <p>For custom messages if '%(name)s' is present in the message string,
 it is substituted for the estimator name.</p>
-</details>
-<details class="info" open="open"><summary>Eg. : 'Estimator, %(name)s, must be fitted before sparsifying'.</summary></details>
-<details class="info" open="open"><summary>all_or_any : callable, {all, any}, default all</summary><p>Specify whether all or any of the given attributes must exist.</p>
-</details>
+</li>
+<li>
+<p><strong>Eg. : 'Estimator, %(name)s, must be fitted before sparsifying'.</strong></p>
+</li>
+<li>
+<p><strong>all_or_any : callable, {all, any}, default all</strong>
+    Specify whether all or any of the given attributes must exist.</p>
+</li>
+</ul>
 <h4>Returns</h4>
 <p>None</p>
 <h4>Raises</h4>
@@ -3615,21 +3917,23 @@ it is substituted for the estimator name.</p>
     If the attributes are not found.</p>
 </details>
 <h3 id="check_random_state">check_random_state<a class="headerlink" href="#check_random_state" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">check_random_state</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function check_random_state</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">check_random_state</span> <span class="o">:</span>
   <span class="o">[`</span><span class="nc">Optional</span> <span class="k">of</span> <span class="o">[`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">None</span><span class="o">]</span> <span class="o">|</span> <span class="o">`</span><span class="nc">RandomState</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Turn seed into a np.random.RandomState instance</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>seed : None | int | instance of RandomState</summary><p>If seed is None, return the RandomState singleton used by np.random.
-If seed is an int, return a new RandomState instance seeded with seed.
-If seed is already a RandomState instance, return it.
-Otherwise raise ValueError.</p>
-</details>
+<ul>
+<li><strong>seed : None | int | instance of RandomState</strong>
+    If seed is None, return the RandomState singleton used by np.random.
+    If seed is an int, return a new RandomState instance seeded with seed.
+    If seed is already a RandomState instance, return it.
+    Otherwise raise ValueError.</li>
+</ul>
 </details>
 <h3 id="clone">clone<a class="headerlink" href="#clone" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">clone</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function clone</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">clone</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">safe</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="n">estimator</span><span class="o">:[&gt;`</span><span class="nc">BaseEstimator</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
@@ -3641,14 +3945,20 @@ Otherwise raise ValueError.</p>
 without actually copying attached data. It yields a new estimator
 with the same parameters that has not been fit on any data.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>estimator : {list, tuple, set} of estimator objects or estimator object</summary><p>The estimator or group of estimators to be cloned.</p>
-</details>
-<details class="info" open="open"><summary>safe : bool, default=True</summary><p>If safe is false, clone will fall back to a deep copy on objects
-that are not estimators.</p>
-</details>
+<ul>
+<li>
+<p><strong>estimator : {list, tuple, set} of estimator objects or estimator object</strong>
+    The estimator or group of estimators to be cloned.</p>
+</li>
+<li>
+<p><strong>safe : bool, default=True</strong>
+    If safe is false, clone will fall back to a deep copy on objects
+    that are not estimators.</p>
+</li>
+</ul>
 </details>
 <h3 id="delayed">delayed<a class="headerlink" href="#delayed" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">delayed</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function delayed</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">delayed</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">check_pickle</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">function_</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
@@ -3658,7 +3968,7 @@ that are not estimators.</p>
 <p>Decorator used to capture the arguments of a function.</p>
 </details>
 <h3 id="euclidean_distances">euclidean_distances<a class="headerlink" href="#euclidean_distances" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">euclidean_distances</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function euclidean_distances</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">euclidean_distances</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">y_norm_squared</span><span class="o">:[&gt;`</span><span class="nc">ArrayLike</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">squared</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
@@ -3685,23 +3995,37 @@ the distance matrix returned by this function may not be exactly
 symmetric as required by, e.g., <code>scipy.spatial.distance</code> functions.</p>
 <p>Read more in the :ref:<code>User Guide &lt;metrics&gt;</code>.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>X : {array-like, sparse matrix}, shape (n_samples_1, n_features)</summary></details>
-<details class="info" open="open"><summary>Y : {array-like, sparse matrix}, shape (n_samples_2, n_features)</summary></details>
-<details class="info" open="open"><summary>Y_norm_squared : array-like, shape (n_samples_2, ), optional</summary><p>Pre-computed dot-products of vectors in Y (e.g.,
-<code>(Y**2).sum(axis=1)</code>)
-May be ignored in some cases, see the note below.</p>
-</details>
-<details class="info" open="open"><summary>squared : boolean, optional</summary><p>Return squared Euclidean distances.</p>
-</details>
-<details class="info" open="open"><summary>X_norm_squared : array-like of shape (n_samples,), optional</summary><p>Pre-computed dot-products of vectors in X (e.g.,
-<code>(X**2).sum(axis=1)</code>)
-May be ignored in some cases, see the note below.</p>
-</details>
+<ul>
+<li>
+<p><strong>X : {array-like, sparse matrix}, shape (n_samples_1, n_features)</strong></p>
+</li>
+<li>
+<p><strong>Y : {array-like, sparse matrix}, shape (n_samples_2, n_features)</strong></p>
+</li>
+<li>
+<p><strong>Y_norm_squared : array-like, shape (n_samples_2, ), optional</strong>
+    Pre-computed dot-products of vectors in Y (e.g.,
+    <code>(Y**2).sum(axis=1)</code>)
+    May be ignored in some cases, see the note below.</p>
+</li>
+<li>
+<p><strong>squared : boolean, optional</strong>
+    Return squared Euclidean distances.</p>
+</li>
+<li>
+<p><strong>X_norm_squared : array-like of shape (n_samples,), optional</strong>
+    Pre-computed dot-products of vectors in X (e.g.,
+    <code>(X**2).sum(axis=1)</code>)
+    May be ignored in some cases, see the note below.</p>
+</li>
+</ul>
 <h4>Notes</h4>
 <p>To achieve better accuracy, <code>X_norm_squared</code> and <code>Y_norm_squared</code> may be
 unused if they are passed as <code>float32</code>.</p>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>distances : array, shape (n_samples_1, n_samples_2)</summary></details>
+<ul>
+<li><strong>distances : array, shape (n_samples_1, n_samples_2)</strong></li>
+</ul>
 <h4>Examples</h4>
 <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="kn">import</span> <span class="n">euclidean_distances</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">X</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
@@ -3716,11 +4040,13 @@ unused if they are passed as <code>float32</code>.</p>
 </code></pre></div>
 
 <h4>See also</h4>
-<details class="info" open="open"><summary>paired_distances : distances betweens pairs of elements of X and Y.</summary></details>
+<ul>
+<li><strong>paired_distances : distances betweens pairs of elements of X and Y.</strong></li>
+</ul>
 </details>
 <h3 id="if_delegate_has_method">if_delegate_has_method<a class="headerlink" href="#if_delegate_has_method" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">if_delegate_has_method</span> <span class="o">:</span>
-  <span class="o">[`</span><span class="nc">StringList</span> <span class="k">of</span> <span class="kt">string</span> <span class="kt">list</span> <span class="o">|</span> <span class="o">`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span><span class="o">]</span> <span class="o">-&gt;</span>
+<details class="note" open="open"><summary>function if_delegate_has_method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">if_delegate_has_method</span> <span class="o">:</span>
+  <span class="o">[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">StringList</span> <span class="k">of</span> <span class="kt">string</span> <span class="kt">list</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
@@ -3728,38 +4054,48 @@ unused if they are passed as <code>float32</code>.</p>
 <p>This enables ducktyping by hasattr returning True according to the
 sub-estimator.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>delegate : string, list of strings or tuple of strings</summary><p>Name of the sub-estimator that can be accessed as an attribute of the
-base object. If a list or a tuple of names are provided, the first
-sub-estimator that is an attribute of the base object will be used.</p>
-</details>
+<ul>
+<li><strong>delegate : string, list of strings or tuple of strings</strong>
+    Name of the sub-estimator that can be accessed as an attribute of the
+    base object. If a list or a tuple of names are provided, the first
+    sub-estimator that is an attribute of the base object will be used.</li>
+</ul>
 </details>
 <h3 id="is_classifier">is_classifier<a class="headerlink" href="#is_classifier" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">is_classifier</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function is_classifier</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">is_classifier</span> <span class="o">:</span>
   <span class="o">[&gt;`</span><span class="nc">BaseEstimator</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">bool</span>
 </code></pre></div>
 
 <p>Return True if the given estimator is (probably) a classifier.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>estimator : object</summary><p>Estimator object to test.</p>
-</details>
+<ul>
+<li><strong>estimator : object</strong>
+    Estimator object to test.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>out : bool</summary><p>True if estimator is a classifier and False otherwise.</p>
-</details>
+<ul>
+<li><strong>out : bool</strong>
+    True if estimator is a classifier and False otherwise.</li>
+</ul>
 </details>
 <h3 id="is_regressor">is_regressor<a class="headerlink" href="#is_regressor" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">is_regressor</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function is_regressor</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">is_regressor</span> <span class="o">:</span>
   <span class="o">[&gt;`</span><span class="nc">BaseEstimator</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="kt">bool</span>
 </code></pre></div>
 
 <p>Return True if the given estimator is (probably) a regressor.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>estimator : object</summary><p>Estimator object to test.</p>
-</details>
+<ul>
+<li><strong>estimator : object</strong>
+    Estimator object to test.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>out : bool</summary><p>True if estimator is a regressor and False otherwise.</p>
-</details>
+<ul>
+<li><strong>out : bool</strong>
+    True if estimator is a regressor and False otherwise.</li>
+</ul>
 </details>
                 
               

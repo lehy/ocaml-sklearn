@@ -2393,7 +2393,7 @@
 </code></pre></div>
 
 <h3 id="create">create<a class="headerlink" href="#create" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
+<details class="note" open="open"><summary>constructor and attributes create</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">we</span><span class="o">:[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">wd</span><span class="o">:[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -2406,56 +2406,70 @@
 
 <p>The data to fit.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>x : array_like</summary><p>Observed data for the independent variable of the regression</p>
-</details>
-<details class="info" open="open"><summary>y : array_like, optional</summary><p>If array-like, observed data for the dependent variable of the
-regression. A scalar input implies that the model to be used on
-the data is implicit.</p>
-</details>
-<details class="info" open="open"><summary>we : array_like, optional</summary><p>If <code>we</code> is a scalar, then that value is used for all data points (and
-all dimensions of the response variable).
-If <code>we</code> is a rank-1 array of length q (the dimensionality of the
-response variable), then this vector is the diagonal of the covariant
-weighting matrix for all data points.
-If <code>we</code> is a rank-1 array of length n (the number of data points), then
-the i'th element is the weight for the i'th response variable
-observation (single-dimensional only).
-If <code>we</code> is a rank-2 array of shape (q, q), then this is the full
-covariant weighting matrix broadcast to each observation.
-If <code>we</code> is a rank-2 array of shape (q, n), then <code>we[:,i]</code> is the
-diagonal of the covariant weighting matrix for the i'th observation.
-If <code>we</code> is a rank-3 array of shape (q, q, n), then <code>we[:,:,i]</code> is the
-full specification of the covariant weighting matrix for each
-observation.
-If the fit is implicit, then only a positive scalar value is used.</p>
-</details>
-<details class="info" open="open"><summary>wd : array_like, optional</summary><p>If <code>wd</code> is a scalar, then that value is used for all data points
-(and all dimensions of the input variable). If <code>wd</code> = 0, then the
-covariant weighting matrix for each observation is set to the identity
-matrix (so each dimension of each observation has the same weight).
-If <code>wd</code> is a rank-1 array of length m (the dimensionality of the input
-variable), then this vector is the diagonal of the covariant weighting
-matrix for all data points.
-If <code>wd</code> is a rank-1 array of length n (the number of data points), then
-the i'th element is the weight for the ith input variable observation
-(single-dimensional only).
-If <code>wd</code> is a rank-2 array of shape (m, m), then this is the full
-covariant weighting matrix broadcast to each observation.
-If <code>wd</code> is a rank-2 array of shape (m, n), then <code>wd[:,i]</code> is the
-diagonal of the covariant weighting matrix for the ith observation.
-If <code>wd</code> is a rank-3 array of shape (m, m, n), then <code>wd[:,:,i]</code> is the
-full specification of the covariant weighting matrix for each
-observation.</p>
-</details>
-<details class="info" open="open"><summary>fix : array_like of ints, optional</summary><p>The <code>fix</code> argument is the same as ifixx in the class ODR. It is an
-array of integers with the same shape as data.x that determines which
-input observations are treated as fixed. One can use a sequence of
-length m (the dimensionality of the input observations) to fix some
-dimensions for all observations. A value of 0 fixes the observation,
-a value &gt; 0 makes it free.</p>
-</details>
-<details class="info" open="open"><summary>meta : dict, optional</summary><p>Free-form dictionary for metadata.</p>
-</details>
+<ul>
+<li>
+<p><strong>x : array_like</strong>
+    Observed data for the independent variable of the regression</p>
+</li>
+<li>
+<p><strong>y : array_like, optional</strong>
+    If array-like, observed data for the dependent variable of the
+    regression. A scalar input implies that the model to be used on
+    the data is implicit.</p>
+</li>
+<li>
+<p><strong>we : array_like, optional</strong>
+    If <code>we</code> is a scalar, then that value is used for all data points (and
+    all dimensions of the response variable).
+    If <code>we</code> is a rank-1 array of length q (the dimensionality of the
+    response variable), then this vector is the diagonal of the covariant
+    weighting matrix for all data points.
+    If <code>we</code> is a rank-1 array of length n (the number of data points), then
+    the i'th element is the weight for the i'th response variable
+    observation (single-dimensional only).
+    If <code>we</code> is a rank-2 array of shape (q, q), then this is the full
+    covariant weighting matrix broadcast to each observation.
+    If <code>we</code> is a rank-2 array of shape (q, n), then <code>we[:,i]</code> is the
+    diagonal of the covariant weighting matrix for the i'th observation.
+    If <code>we</code> is a rank-3 array of shape (q, q, n), then <code>we[:,:,i]</code> is the
+    full specification of the covariant weighting matrix for each
+    observation.
+    If the fit is implicit, then only a positive scalar value is used.</p>
+</li>
+<li>
+<p><strong>wd : array_like, optional</strong>
+    If <code>wd</code> is a scalar, then that value is used for all data points
+    (and all dimensions of the input variable). If <code>wd</code> = 0, then the
+    covariant weighting matrix for each observation is set to the identity
+    matrix (so each dimension of each observation has the same weight).
+    If <code>wd</code> is a rank-1 array of length m (the dimensionality of the input
+    variable), then this vector is the diagonal of the covariant weighting
+    matrix for all data points.
+    If <code>wd</code> is a rank-1 array of length n (the number of data points), then
+    the i'th element is the weight for the ith input variable observation
+    (single-dimensional only).
+    If <code>wd</code> is a rank-2 array of shape (m, m), then this is the full
+    covariant weighting matrix broadcast to each observation.
+    If <code>wd</code> is a rank-2 array of shape (m, n), then <code>wd[:,i]</code> is the
+    diagonal of the covariant weighting matrix for the ith observation.
+    If <code>wd</code> is a rank-3 array of shape (m, m, n), then <code>wd[:,:,i]</code> is the
+    full specification of the covariant weighting matrix for each
+    observation.</p>
+</li>
+<li>
+<p><strong>fix : array_like of ints, optional</strong>
+    The <code>fix</code> argument is the same as ifixx in the class ODR. It is an
+    array of integers with the same shape as data.x that determines which
+    input observations are treated as fixed. One can use a sequence of
+    length m (the dimensionality of the input observations) to fix some
+    dimensions for all observations. A value of 0 fixes the observation,
+    a value &gt; 0 makes it free.</p>
+</li>
+<li>
+<p><strong>meta : dict, optional</strong>
+    Free-form dictionary for metadata.</p>
+</li>
+</ul>
 <h4>Notes</h4>
 <p>Each argument is attached to the member of the instance of the same name.
 The structures of <code>x</code> and <code>y</code> are described in the Model class docstring.
@@ -2474,7 +2488,7 @@ for a particular data point makes a deviation at that point more
 detrimental to the fit.</p>
 </details>
 <h3 id="set_meta">set_meta<a class="headerlink" href="#set_meta" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_meta</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method set_meta</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_meta</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">kwds</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
@@ -2490,19 +2504,19 @@ by keywords.</p>
 
 </details>
 <h3 id="to_string">to_string<a class="headerlink" href="#to_string" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method to_string</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="show">show<a class="headerlink" href="#show" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method show</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="pp">pp<a class="headerlink" href="#pp" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+<details class="note" open="open"><summary>method pp</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
 </code></pre></div>
 
 <p>Pretty-print the object to a formatter.</p>
@@ -2513,7 +2527,7 @@ by keywords.</p>
 </code></pre></div>
 
 <h3 id="create_1">create<a class="headerlink" href="#create_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
+<details class="note" open="open"><summary>constructor and attributes create</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">fjacb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">fjacd</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">extra_args</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -2531,28 +2545,44 @@ functions which compute the Jacobians used during fitting. Also, one
 can provide a function that will provide reasonable starting values
 for the fit parameters possibly given the set of data.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>fcn : function</summary><p>fcn(beta, x) --&gt; y</p>
-</details>
-<details class="info" open="open"><summary>fjacb : function</summary><p>Jacobian of fcn wrt the fit parameters beta.</p>
+<ul>
+<li>
+<p><strong>fcn : function</strong>
+      fcn(beta, x) --&gt; y</p>
+</li>
+<li>
+<p><strong>fjacb : function</strong>
+      Jacobian of fcn wrt the fit parameters beta.</p>
 <p>fjacb(beta, x) --&gt; @f_i(x,B)/@B_j</p>
-</details>
-<details class="info" open="open"><summary>fjacd : function</summary><p>Jacobian of fcn wrt the (possibly multidimensional) input
-  variable.</p>
+</li>
+<li>
+<p><strong>fjacd : function</strong>
+      Jacobian of fcn wrt the (possibly multidimensional) input
+      variable.</p>
 <p>fjacd(beta, x) --&gt; @f_i(x,B)/@x_j</p>
-</details>
-<details class="info" open="open"><summary>extra_args : tuple, optional</summary><p>If specified, <code>extra_args</code> should be a tuple of extra
-  arguments to pass to <code>fcn</code>, <code>fjacb</code>, and <code>fjacd</code>. Each will be called
-  by <code>apply(fcn, (beta, x) + extra_args)</code></p>
-</details>
-<details class="info" open="open"><summary>estimate : array_like of rank-1</summary><p>Provides estimates of the fit parameters from the data</p>
+</li>
+<li>
+<p><strong>extra_args : tuple, optional</strong>
+      If specified, <code>extra_args</code> should be a tuple of extra
+      arguments to pass to <code>fcn</code>, <code>fjacb</code>, and <code>fjacd</code>. Each will be called
+      by <code>apply(fcn, (beta, x) + extra_args)</code></p>
+</li>
+<li>
+<p><strong>estimate : array_like of rank-1</strong>
+      Provides estimates of the fit parameters from the data</p>
 <p>estimate(data) --&gt; estbeta</p>
-</details>
-<details class="info" open="open"><summary>implicit : boolean</summary><p>If TRUE, specifies that the model
-  is implicit; i.e <code>fcn(beta, x)</code> ~= 0 and there is no y data to fit
-  against</p>
-</details>
-<details class="info" open="open"><summary>meta : dict, optional</summary><p>freeform dictionary of metadata for the model</p>
-</details>
+</li>
+<li>
+<p><strong>implicit : boolean</strong>
+      If TRUE, specifies that the model
+      is implicit; i.e <code>fcn(beta, x)</code> ~= 0 and there is no y data to fit
+      against</p>
+</li>
+<li>
+<p><strong>meta : dict, optional</strong>
+      freeform dictionary of metadata for the model</p>
+</li>
+</ul>
 <h4>Notes</h4>
 <p>Note that the <code>fcn</code>, <code>fjacb</code>, and <code>fjacd</code> operate on NumPy arrays and
 return a NumPy array. The <code>estimate</code> object takes an instance of the
@@ -2588,7 +2618,7 @@ arrays of the callback functions:</p>
     <code>m == 1</code>, the shape is (q, n). If <code>m == q == 1</code>, the shape is <code>(n,)</code>.</p>
 </details>
 <h3 id="set_meta_1">set_meta<a class="headerlink" href="#set_meta_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_meta</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method set_meta</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_meta</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">kwds</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
@@ -2600,19 +2630,19 @@ here.</p>
 <p>set_meta(name='Exponential', equation='y = a exp(b x) + c')</p>
 </details>
 <h3 id="to_string_1">to_string<a class="headerlink" href="#to_string_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method to_string</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="show_1">show<a class="headerlink" href="#show_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method show</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="pp_1">pp<a class="headerlink" href="#pp_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+<details class="note" open="open"><summary>method pp</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
 </code></pre></div>
 
 <p>Pretty-print the object to a formatter.</p>
@@ -2623,7 +2653,7 @@ here.</p>
 </code></pre></div>
 
 <h3 id="create_2">create<a class="headerlink" href="#create_2" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
+<details class="note" open="open"><summary>constructor and attributes create</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">beta0</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">delta0</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">ifixb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -2654,100 +2684,154 @@ main fitting routine.</p>
 <p>Members of instances of the ODR class have the same names as the arguments
 to the initialization routine.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>data : Data class instance</summary><p>instance of the Data class</p>
-</details>
-<details class="info" open="open"><summary>model : Model class instance</summary><p>instance of the Model class</p>
-</details>
+<ul>
+<li>
+<p><strong>data : Data class instance</strong>
+    instance of the Data class</p>
+</li>
+<li>
+<p><strong>model : Model class instance</strong>
+    instance of the Model class</p>
+</li>
+</ul>
 <h4>Other Parameters</h4>
-<details class="info" open="open"><summary>beta0 : array_like of rank-1</summary><p>a rank-1 sequence of initial parameter values. Optional if
-model provides an 'estimate' function to estimate these values.</p>
-</details>
-<details class="info" open="open"><summary>delta0 : array_like of floats of rank-1, optional</summary><p>a (double-precision) float array to hold the initial values of
-the errors in the input variables. Must be same shape as data.x</p>
-</details>
-<details class="info" open="open"><summary>ifixb : array_like of ints of rank-1, optional</summary><p>sequence of integers with the same length as beta0 that determines
-which parameters are held fixed. A value of 0 fixes the parameter,
-a value &gt; 0 makes the parameter free.</p>
-</details>
-<details class="info" open="open"><summary>ifixx : array_like of ints with same shape as data.x, optional</summary><p>an array of integers with the same shape as data.x that determines
-which input observations are treated as fixed. One can use a sequence
-of length m (the dimensionality of the input observations) to fix some
-dimensions for all observations. A value of 0 fixes the observation,
-a value &gt; 0 makes it free.</p>
-</details>
-<details class="info" open="open"><summary>job : int, optional</summary><p>an integer telling ODRPACK what tasks to perform. See p. 31 of the
-ODRPACK User's Guide if you absolutely must set the value here. Use the
-method set_job post-initialization for a more readable interface.</p>
-</details>
-<details class="info" open="open"><summary>iprint : int, optional</summary><p>an integer telling ODRPACK what to print. See pp. 33-34 of the
-ODRPACK User's Guide if you absolutely must set the value here. Use the
-method set_iprint post-initialization for a more readable interface.</p>
-</details>
-<details class="info" open="open"><summary>errfile : str, optional</summary><p>string with the filename to print ODRPACK errors to. <em>Do Not Open
-This File Yourself!</em></p>
-</details>
-<details class="info" open="open"><summary>rptfile : str, optional</summary><p>string with the filename to print ODRPACK summaries to. <em>Do Not
-Open This File Yourself!</em></p>
-</details>
-<details class="info" open="open"><summary>ndigit : int, optional</summary><p>integer specifying the number of reliable digits in the computation
-of the function.</p>
-</details>
-<details class="info" open="open"><summary>taufac : float, optional</summary><p>float specifying the initial trust region. The default value is 1.
-The initial trust region is equal to taufac times the length of the
-first computed Gauss-Newton step. taufac must be less than 1.</p>
-</details>
-<details class="info" open="open"><summary>sstol : float, optional</summary><p>float specifying the tolerance for convergence based on the relative
-change in the sum-of-squares. The default value is eps**(1/2) where eps
-is the smallest value such that 1 + eps &gt; 1 for double precision
-computation on the machine. sstol must be less than 1.</p>
-</details>
-<details class="info" open="open"><summary>partol : float, optional</summary><p>float specifying the tolerance for convergence based on the relative
-change in the estimated parameters. The default value is eps**(2/3) for
-explicit models and <code>eps**(1/3)</code> for implicit models. partol must be less
-than 1.</p>
-</details>
-<details class="info" open="open"><summary>maxit : int, optional</summary><p>integer specifying the maximum number of iterations to perform. For
-first runs, maxit is the total number of iterations performed and
-defaults to 50. For restarts, maxit is the number of additional
-iterations to perform and defaults to 10.</p>
-</details>
-<details class="info" open="open"><summary>stpb : array_like, optional</summary><p>sequence (<code>len(stpb) == len(beta0)</code>) of relative step sizes to compute
-finite difference derivatives wrt the parameters.</p>
-</details>
-<details class="info" open="open"><summary>stpd : optional</summary><p>array (<code>stpd.shape == data.x.shape</code> or <code>stpd.shape == (m,)</code>) of relative
-step sizes to compute finite difference derivatives wrt the input
-variable errors. If stpd is a rank-1 array with length m (the
-dimensionality of the input variable), then the values are broadcast to
-all observations.</p>
-</details>
-<details class="info" open="open"><summary>sclb : array_like, optional</summary><p>sequence (<code>len(stpb) == len(beta0)</code>) of scaling factors for the
-parameters. The purpose of these scaling factors are to scale all of
-the parameters to around unity. Normally appropriate scaling factors
-are computed if this argument is not specified. Specify them yourself
-if the automatic procedure goes awry.</p>
-</details>
-<details class="info" open="open"><summary>scld : array_like, optional</summary><p>array (scld.shape == data.x.shape or scld.shape == (m,)) of scaling
-factors for the <em>errors</em> in the input variables. Again, these factors
-are automatically computed if you do not provide them. If scld.shape ==
-(m,), then the scaling factors are broadcast to all observations.</p>
-</details>
-<details class="info" open="open"><summary>work : ndarray, optional</summary><p>array to hold the double-valued working data for ODRPACK. When
-restarting, takes the value of self.output.work.</p>
-</details>
-<details class="info" open="open"><summary>iwork : ndarray, optional</summary><p>array to hold the integer-valued working data for ODRPACK. When
-restarting, takes the value of self.output.iwork.</p>
-</details>
+<ul>
+<li>
+<p><strong>beta0 : array_like of rank-1</strong>
+    a rank-1 sequence of initial parameter values. Optional if
+    model provides an 'estimate' function to estimate these values.</p>
+</li>
+<li>
+<p><strong>delta0 : array_like of floats of rank-1, optional</strong>
+    a (double-precision) float array to hold the initial values of
+    the errors in the input variables. Must be same shape as data.x</p>
+</li>
+<li>
+<p><strong>ifixb : array_like of ints of rank-1, optional</strong>
+    sequence of integers with the same length as beta0 that determines
+    which parameters are held fixed. A value of 0 fixes the parameter,
+    a value &gt; 0 makes the parameter free.</p>
+</li>
+<li>
+<p><strong>ifixx : array_like of ints with same shape as data.x, optional</strong>
+    an array of integers with the same shape as data.x that determines
+    which input observations are treated as fixed. One can use a sequence
+    of length m (the dimensionality of the input observations) to fix some
+    dimensions for all observations. A value of 0 fixes the observation,
+    a value &gt; 0 makes it free.</p>
+</li>
+<li>
+<p><strong>job : int, optional</strong>
+    an integer telling ODRPACK what tasks to perform. See p. 31 of the
+    ODRPACK User's Guide if you absolutely must set the value here. Use the
+    method set_job post-initialization for a more readable interface.</p>
+</li>
+<li>
+<p><strong>iprint : int, optional</strong>
+    an integer telling ODRPACK what to print. See pp. 33-34 of the
+    ODRPACK User's Guide if you absolutely must set the value here. Use the
+    method set_iprint post-initialization for a more readable interface.</p>
+</li>
+<li>
+<p><strong>errfile : str, optional</strong>
+    string with the filename to print ODRPACK errors to. <em>Do Not Open
+    This File Yourself!</em></p>
+</li>
+<li>
+<p><strong>rptfile : str, optional</strong>
+    string with the filename to print ODRPACK summaries to. <em>Do Not
+    Open This File Yourself!</em></p>
+</li>
+<li>
+<p><strong>ndigit : int, optional</strong>
+    integer specifying the number of reliable digits in the computation
+    of the function.</p>
+</li>
+<li>
+<p><strong>taufac : float, optional</strong>
+    float specifying the initial trust region. The default value is 1.
+    The initial trust region is equal to taufac times the length of the
+    first computed Gauss-Newton step. taufac must be less than 1.</p>
+</li>
+<li>
+<p><strong>sstol : float, optional</strong>
+    float specifying the tolerance for convergence based on the relative
+    change in the sum-of-squares. The default value is eps**(1/2) where eps
+    is the smallest value such that 1 + eps &gt; 1 for double precision
+    computation on the machine. sstol must be less than 1.</p>
+</li>
+<li>
+<p><strong>partol : float, optional</strong>
+    float specifying the tolerance for convergence based on the relative
+    change in the estimated parameters. The default value is eps**(2/3) for
+    explicit models and <code>eps**(1/3)</code> for implicit models. partol must be less
+    than 1.</p>
+</li>
+<li>
+<p><strong>maxit : int, optional</strong>
+    integer specifying the maximum number of iterations to perform. For
+    first runs, maxit is the total number of iterations performed and
+    defaults to 50. For restarts, maxit is the number of additional
+    iterations to perform and defaults to 10.</p>
+</li>
+<li>
+<p><strong>stpb : array_like, optional</strong>
+    sequence (<code>len(stpb) == len(beta0)</code>) of relative step sizes to compute
+    finite difference derivatives wrt the parameters.</p>
+</li>
+<li>
+<p><strong>stpd : optional</strong>
+    array (<code>stpd.shape == data.x.shape</code> or <code>stpd.shape == (m,)</code>) of relative
+    step sizes to compute finite difference derivatives wrt the input
+    variable errors. If stpd is a rank-1 array with length m (the
+    dimensionality of the input variable), then the values are broadcast to
+    all observations.</p>
+</li>
+<li>
+<p><strong>sclb : array_like, optional</strong>
+    sequence (<code>len(stpb) == len(beta0)</code>) of scaling factors for the
+    parameters. The purpose of these scaling factors are to scale all of
+    the parameters to around unity. Normally appropriate scaling factors
+    are computed if this argument is not specified. Specify them yourself
+    if the automatic procedure goes awry.</p>
+</li>
+<li>
+<p><strong>scld : array_like, optional</strong>
+    array (scld.shape == data.x.shape or scld.shape == (m,)) of scaling
+    factors for the <em>errors</em> in the input variables. Again, these factors
+    are automatically computed if you do not provide them. If scld.shape ==
+    (m,), then the scaling factors are broadcast to all observations.</p>
+</li>
+<li>
+<p><strong>work : ndarray, optional</strong>
+    array to hold the double-valued working data for ODRPACK. When
+    restarting, takes the value of self.output.work.</p>
+</li>
+<li>
+<p><strong>iwork : ndarray, optional</strong>
+    array to hold the integer-valued working data for ODRPACK. When
+    restarting, takes the value of self.output.iwork.</p>
+</li>
+</ul>
 <h4>Attributes</h4>
-<details class="info" open="open"><summary>data : Data</summary><p>The data for this fit</p>
-</details>
-<details class="info" open="open"><summary>model : Model</summary><p>The model used in fit</p>
-</details>
-<details class="info" open="open"><summary>output : Output</summary><p>An instance if the Output class containing all of the returned
-data from an invocation of ODR.run() or ODR.restart()</p>
-</details>
+<ul>
+<li>
+<p><strong>data : Data</strong>
+    The data for this fit</p>
+</li>
+<li>
+<p><strong>model : Model</strong>
+    The model used in fit</p>
+</li>
+<li>
+<p><strong>output : Output</strong>
+    An instance if the Output class containing all of the returned
+    data from an invocation of ODR.run() or ODR.restart()</p>
+</li>
+</ul>
 </details>
 <h3 id="restart">restart<a class="headerlink" href="#restart" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">restart</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method restart</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">restart</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">iter</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
@@ -2755,25 +2839,31 @@ data from an invocation of ODR.run() or ODR.restart()</p>
 
 <p>Restarts the run with iter more iterations.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>iter : int, optional</summary><p>ODRPACK's default for the number of new iterations is 10.</p>
-</details>
+<ul>
+<li><strong>iter : int, optional</strong>
+    ODRPACK's default for the number of new iterations is 10.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>output : Output instance</summary><p>This object is also assigned to the attribute .output .</p>
-</details>
+<ul>
+<li><strong>output : Output instance</strong>
+    This object is also assigned to the attribute .output .</li>
+</ul>
 </details>
 <h3 id="run">run<a class="headerlink" href="#run" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">run</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method run</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">run</span> <span class="o">:</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Run the fitting routine with all of the information given and with <code>full_output=1</code>.</p>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>output : Output instance</summary><p>This object is also assigned to the attribute .output .</p>
-</details>
+<ul>
+<li><strong>output : Output instance</strong>
+    This object is also assigned to the attribute .output .</li>
+</ul>
 </details>
 <h3 id="set_iprint">set_iprint<a class="headerlink" href="#set_iprint" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_iprint</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method set_iprint</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_iprint</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">init</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">so_init</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">iter</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -2806,9 +2896,9 @@ iteration report is made, regardless of the other arguments.</p>
 exception.</p>
 </details>
 <h3 id="set_job">set_job<a class="headerlink" href="#set_job" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_job</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method set_job</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_job</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">fit_type</span><span class="o">:[`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">One</span><span class="o">]</span> <span class="o">-&gt;</span>
-  <span class="o">?</span><span class="n">deriv</span><span class="o">:[`</span><span class="nc">One</span> <span class="o">|</span> <span class="o">`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Two</span><span class="o">]</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">deriv</span><span class="o">:[`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">One</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Two</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">var_calc</span><span class="o">:[`</span><span class="nc">PyObject</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">One</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">del_init</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">restart</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -2821,28 +2911,40 @@ exception.</p>
 default value from class initialization is for all of these options set
 to 0.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>fit_type : {0, 1, 2} int</summary><p>0 -&gt; explicit ODR</p>
+<ul>
+<li>
+<p><strong>fit_type : {0, 1, 2} int</strong>
+    0 -&gt; explicit ODR</p>
 <p>1 -&gt; implicit ODR</p>
 <p>2 -&gt; ordinary least-squares</p>
-</details>
-<details class="info" open="open"><summary>deriv : {0, 1, 2, 3} int</summary><p>0 -&gt; forward finite differences</p>
+</li>
+<li>
+<p><strong>deriv : {0, 1, 2, 3} int</strong>
+    0 -&gt; forward finite differences</p>
 <p>1 -&gt; central finite differences</p>
 <p>2 -&gt; user-supplied derivatives (Jacobians) with results
   checked by ODRPACK</p>
 <p>3 -&gt; user-supplied derivatives, no checking</p>
-</details>
-<details class="info" open="open"><summary>var_calc : {0, 1, 2} int</summary><p>0 -&gt; calculate asymptotic covariance matrix and fit
-     parameter uncertainties (V_B, s_B) using derivatives
-     recomputed at the final solution</p>
+</li>
+<li>
+<p><strong>var_calc : {0, 1, 2} int</strong>
+    0 -&gt; calculate asymptotic covariance matrix and fit
+         parameter uncertainties (V_B, s_B) using derivatives
+         recomputed at the final solution</p>
 <p>1 -&gt; calculate V_B and s_B using derivatives from last iteration</p>
 <p>2 -&gt; do not calculate V_B and s_B</p>
-</details>
-<details class="info" open="open"><summary>del_init : {0, 1} int</summary><p>0 -&gt; initial input variable offsets set to 0</p>
+</li>
+<li>
+<p><strong>del_init : {0, 1} int</strong>
+    0 -&gt; initial input variable offsets set to 0</p>
 <p>1 -&gt; initial offsets provided by user in variable 'work'</p>
-</details>
-<details class="info" open="open"><summary>restart : {0, 1} int</summary><p>0 -&gt; fit is not a restart</p>
+</li>
+<li>
+<p><strong>restart : {0, 1} int</strong>
+    0 -&gt; fit is not a restart</p>
 <p>1 -&gt; fit is a restart</p>
-</details>
+</li>
+</ul>
 <h4>Notes</h4>
 <p>The permissible values are different from those given on pg. 31 of the
 ODRPACK User's Guide only in that one cannot specify numbers greater than
@@ -2853,7 +2955,7 @@ initialize the input variable offsets by yourself, set del_init to 1 and
 put the offsets into the 'work' variable correctly.</p>
 </details>
 <h3 id="data_1">data<a class="headerlink" href="#data_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">data</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute data</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">data</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">data_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2861,7 +2963,7 @@ put the offsets into the 'work' variable correctly.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="model_1">model<a class="headerlink" href="#model_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">model</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute model</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">model</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">model_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2869,7 +2971,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="output">output<a class="headerlink" href="#output" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">output</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute output</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">output</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">output_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -2877,19 +2979,19 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="to_string_2">to_string<a class="headerlink" href="#to_string_2" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method to_string</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="show_2">show<a class="headerlink" href="#show_2" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method show</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="pp_2">pp<a class="headerlink" href="#pp_2" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+<details class="note" open="open"><summary>method pp</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
 </code></pre></div>
 
 <p>Pretty-print the object to a formatter.</p>
@@ -2900,7 +3002,7 @@ if the attribute is None. The _opt version returns an option.</p>
 </code></pre></div>
 
 <h3 id="with_traceback">with_traceback<a class="headerlink" href="#with_traceback" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">with_traceback</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method with_traceback</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">with_traceback</span> <span class="o">:</span>
   <span class="n">tb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
@@ -2910,19 +3012,19 @@ if the attribute is None. The _opt version returns an option.</p>
 set self.<strong>traceback</strong> to tb and return self.</p>
 </details>
 <h3 id="to_string_3">to_string<a class="headerlink" href="#to_string_3" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method to_string</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="show_3">show<a class="headerlink" href="#show_3" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method show</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="pp_3">pp<a class="headerlink" href="#pp_3" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+<details class="note" open="open"><summary>method pp</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
 </code></pre></div>
 
 <p>Pretty-print the object to a formatter.</p>
@@ -2933,7 +3035,7 @@ set self.<strong>traceback</strong> to tb and return self.</p>
 </code></pre></div>
 
 <h3 id="with_traceback_1">with_traceback<a class="headerlink" href="#with_traceback_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">with_traceback</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method with_traceback</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">with_traceback</span> <span class="o">:</span>
   <span class="n">tb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
@@ -2943,19 +3045,19 @@ set self.<strong>traceback</strong> to tb and return self.</p>
 set self.<strong>traceback</strong> to tb and return self.</p>
 </details>
 <h3 id="to_string_4">to_string<a class="headerlink" href="#to_string_4" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method to_string</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="show_4">show<a class="headerlink" href="#show_4" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method show</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="pp_4">pp<a class="headerlink" href="#pp_4" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+<details class="note" open="open"><summary>method pp</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
 </code></pre></div>
 
 <p>Pretty-print the object to a formatter.</p>
@@ -2966,7 +3068,7 @@ set self.<strong>traceback</strong> to tb and return self.</p>
 </code></pre></div>
 
 <h3 id="with_traceback_2">with_traceback<a class="headerlink" href="#with_traceback_2" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">with_traceback</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method with_traceback</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">with_traceback</span> <span class="o">:</span>
   <span class="n">tb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
@@ -2976,19 +3078,19 @@ set self.<strong>traceback</strong> to tb and return self.</p>
 set self.<strong>traceback</strong> to tb and return self.</p>
 </details>
 <h3 id="to_string_5">to_string<a class="headerlink" href="#to_string_5" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method to_string</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="show_5">show<a class="headerlink" href="#show_5" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method show</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="pp_5">pp<a class="headerlink" href="#pp_5" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+<details class="note" open="open"><summary>method pp</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
 </code></pre></div>
 
 <p>Pretty-print the object to a formatter.</p>
@@ -2999,54 +3101,90 @@ set self.<strong>traceback</strong> to tb and return self.</p>
 </code></pre></div>
 
 <h3 id="create_3">create<a class="headerlink" href="#create_3" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
+<details class="note" open="open"><summary>constructor and attributes create</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">t</span>
 </code></pre></div>
 
 <p>The Output class stores the output of an ODR run.</p>
 <h4>Attributes</h4>
-<details class="info" open="open"><summary>beta : ndarray</summary><p>Estimated parameter values, of shape (q,).</p>
-</details>
-<details class="info" open="open"><summary>sd_beta : ndarray</summary><p>Standard errors of the estimated parameters, of shape (p,).</p>
-</details>
-<details class="info" open="open"><summary>cov_beta : ndarray</summary><p>Covariance matrix of the estimated parameters, of shape (p,p).</p>
-</details>
-<details class="info" open="open"><summary>delta : ndarray, optional</summary><p>Array of estimated errors in input variables, of same shape as <code>x</code>.</p>
-</details>
-<details class="info" open="open"><summary>eps : ndarray, optional</summary><p>Array of estimated errors in response variables, of same shape as <code>y</code>.</p>
-</details>
-<details class="info" open="open"><summary>xplus : ndarray, optional</summary><p>Array of <code>x + delta</code>.</p>
-</details>
-<details class="info" open="open"><summary>y : ndarray, optional</summary><p>Array <code>y = fcn(x + delta)</code>.</p>
-</details>
-<details class="info" open="open"><summary>res_var : float, optional</summary><p>Residual variance.</p>
-</details>
-<details class="info" open="open"><summary>sum_square : float, optional</summary><p>Sum of squares error.</p>
-</details>
-<details class="info" open="open"><summary>sum_square_delta : float, optional</summary><p>Sum of squares of delta error.</p>
-</details>
-<details class="info" open="open"><summary>sum_square_eps : float, optional</summary><p>Sum of squares of eps error.</p>
-</details>
-<details class="info" open="open"><summary>inv_condnum : float, optional</summary><p>Inverse condition number (cf. ODRPACK UG p. 77).</p>
-</details>
-<details class="info" open="open"><summary>rel_error : float, optional</summary><p>Relative error in function values computed within fcn.</p>
-</details>
-<details class="info" open="open"><summary>work : ndarray, optional</summary><p>Final work array.</p>
-</details>
-<details class="info" open="open"><summary>work_ind : dict, optional</summary><p>Indices into work for drawing out values (cf. ODRPACK UG p. 83).</p>
-</details>
-<details class="info" open="open"><summary>info : int, optional</summary><p>Reason for returning, as output by ODRPACK (cf. ODRPACK UG p. 38).</p>
-</details>
-<details class="info" open="open"><summary>stopreason : list of str, optional</summary><p><code>info</code> interpreted into English.</p>
-</details>
+<ul>
+<li>
+<p><strong>beta : ndarray</strong>
+    Estimated parameter values, of shape (q,).</p>
+</li>
+<li>
+<p><strong>sd_beta : ndarray</strong>
+    Standard errors of the estimated parameters, of shape (p,).</p>
+</li>
+<li>
+<p><strong>cov_beta : ndarray</strong>
+    Covariance matrix of the estimated parameters, of shape (p,p).</p>
+</li>
+<li>
+<p><strong>delta : ndarray, optional</strong>
+    Array of estimated errors in input variables, of same shape as <code>x</code>.</p>
+</li>
+<li>
+<p><strong>eps : ndarray, optional</strong>
+    Array of estimated errors in response variables, of same shape as <code>y</code>.</p>
+</li>
+<li>
+<p><strong>xplus : ndarray, optional</strong>
+    Array of <code>x + delta</code>.</p>
+</li>
+<li>
+<p><strong>y : ndarray, optional</strong>
+    Array <code>y = fcn(x + delta)</code>.</p>
+</li>
+<li>
+<p><strong>res_var : float, optional</strong>
+    Residual variance.</p>
+</li>
+<li>
+<p><strong>sum_square : float, optional</strong>
+    Sum of squares error.</p>
+</li>
+<li>
+<p><strong>sum_square_delta : float, optional</strong>
+    Sum of squares of delta error.</p>
+</li>
+<li>
+<p><strong>sum_square_eps : float, optional</strong>
+    Sum of squares of eps error.</p>
+</li>
+<li>
+<p><strong>inv_condnum : float, optional</strong>
+    Inverse condition number (cf. ODRPACK UG p. 77).</p>
+</li>
+<li>
+<p><strong>rel_error : float, optional</strong>
+    Relative error in function values computed within fcn.</p>
+</li>
+<li>
+<p><strong>work : ndarray, optional</strong>
+    Final work array.</p>
+</li>
+<li>
+<p><strong>work_ind : dict, optional</strong>
+    Indices into work for drawing out values (cf. ODRPACK UG p. 83).</p>
+</li>
+<li>
+<p><strong>info : int, optional</strong>
+    Reason for returning, as output by ODRPACK (cf. ODRPACK UG p. 38).</p>
+</li>
+<li>
+<p><strong>stopreason : list of str, optional</strong>
+    <code>info</code> interpreted into English.</p>
+</li>
+</ul>
 <h4>Notes</h4>
 <p>Takes one argument for initialization, the return value from the
 function <code>~scipy.odr.odr</code>. The attributes listed as 'optional' above are
 only present if <code>~scipy.odr.odr</code> was run with <code>full_output=1</code>.</p>
 </details>
 <h3 id="pprint">pprint<a class="headerlink" href="#pprint" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pprint</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method pprint</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pprint</span> <span class="o">:</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -3054,7 +3192,7 @@ only present if <code>~scipy.odr.odr</code> was run with <code>full_output=1</co
 <p>Pretty-print important results.</p>
 </details>
 <h3 id="beta">beta<a class="headerlink" href="#beta" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">beta</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute beta</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">beta</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">beta_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3062,7 +3200,7 @@ only present if <code>~scipy.odr.odr</code> was run with <code>full_output=1</co
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="sd_beta">sd_beta<a class="headerlink" href="#sd_beta" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sd_beta</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute sd_beta</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sd_beta</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">sd_beta_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3070,7 +3208,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="cov_beta">cov_beta<a class="headerlink" href="#cov_beta" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">cov_beta</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute cov_beta</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">cov_beta</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">cov_beta_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3078,7 +3216,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="delta">delta<a class="headerlink" href="#delta" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">delta</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute delta</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">delta</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">delta_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3086,7 +3224,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="eps">eps<a class="headerlink" href="#eps" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">eps</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute eps</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">eps</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">eps_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3094,7 +3232,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="xplus">xplus<a class="headerlink" href="#xplus" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">xplus</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute xplus</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">xplus</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">xplus_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3102,7 +3240,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="y">y<a class="headerlink" href="#y" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">y</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute y</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">y</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">y_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3110,7 +3248,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="res_var">res_var<a class="headerlink" href="#res_var" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">res_var</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+<details class="note" open="open"><summary>attribute res_var</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">res_var</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
 <span class="k">val</span> <span class="n">res_var_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3118,7 +3256,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="sum_square">sum_square<a class="headerlink" href="#sum_square" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sum_square</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+<details class="note" open="open"><summary>attribute sum_square</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sum_square</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
 <span class="k">val</span> <span class="n">sum_square_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3126,7 +3264,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="sum_square_delta">sum_square_delta<a class="headerlink" href="#sum_square_delta" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sum_square_delta</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+<details class="note" open="open"><summary>attribute sum_square_delta</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sum_square_delta</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
 <span class="k">val</span> <span class="n">sum_square_delta_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3134,7 +3272,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="sum_square_eps">sum_square_eps<a class="headerlink" href="#sum_square_eps" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sum_square_eps</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+<details class="note" open="open"><summary>attribute sum_square_eps</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sum_square_eps</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
 <span class="k">val</span> <span class="n">sum_square_eps_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3142,7 +3280,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="inv_condnum">inv_condnum<a class="headerlink" href="#inv_condnum" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">inv_condnum</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+<details class="note" open="open"><summary>attribute inv_condnum</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">inv_condnum</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
 <span class="k">val</span> <span class="n">inv_condnum_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3150,7 +3288,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="rel_error">rel_error<a class="headerlink" href="#rel_error" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">rel_error</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
+<details class="note" open="open"><summary>attribute rel_error</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">rel_error</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">float</span>
 <span class="k">val</span> <span class="n">rel_error_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3158,7 +3296,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="work">work<a class="headerlink" href="#work" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">work</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute work</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">work</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">[`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">work_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">([`</span><span class="nc">ArrayLike</span><span class="o">|`</span><span class="nc">Ndarray</span><span class="o">|`</span><span class="nc">Object</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3166,7 +3304,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="work_ind">work_ind<a class="headerlink" href="#work_ind" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">work_ind</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
+<details class="note" open="open"><summary>attribute work_ind</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">work_ind</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">work_ind_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3174,7 +3312,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="info">info<a class="headerlink" href="#info" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">info</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+<details class="note" open="open"><summary>attribute info</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">info</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
 <span class="k">val</span> <span class="n">info_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3182,7 +3320,7 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="stopreason">stopreason<a class="headerlink" href="#stopreason" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>attribute</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">stopreason</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span> <span class="kt">list</span>
+<details class="note" open="open"><summary>attribute stopreason</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">stopreason</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span> <span class="kt">list</span>
 <span class="k">val</span> <span class="n">stopreason_opt</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="kt">string</span> <span class="kt">list</span><span class="o">)</span> <span class="n">option</span>
 </code></pre></div>
 
@@ -3190,19 +3328,19 @@ if the attribute is None. The _opt version returns an option.</p>
 if the attribute is None. The _opt version returns an option.</p>
 </details>
 <h3 id="to_string_6">to_string<a class="headerlink" href="#to_string_6" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method to_string</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="show_6">show<a class="headerlink" href="#show_6" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method show</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="pp_6">pp<a class="headerlink" href="#pp_6" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+<details class="note" open="open"><summary>method pp</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
 </code></pre></div>
 
 <p>Pretty-print the object to a formatter.</p>
@@ -3213,7 +3351,7 @@ if the attribute is None. The _opt version returns an option.</p>
 </code></pre></div>
 
 <h3 id="create_4">create<a class="headerlink" href="#create_4" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>constructor and attributes</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
+<details class="note" open="open"><summary>constructor and attributes create</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">create</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">y</span><span class="o">:[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">sx</span><span class="o">:[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">sy</span><span class="o">:[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -3229,39 +3367,57 @@ if the attribute is None. The _opt version returns an option.</p>
 <p>The data, with weightings as actual standard deviations and/or
 covariances.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>x : array_like</summary><p>Observed data for the independent variable of the regression</p>
-</details>
-<details class="info" open="open"><summary>y : array_like, optional</summary><p>If array-like, observed data for the dependent variable of the
-regression. A scalar input implies that the model to be used on
-the data is implicit.</p>
-</details>
-<details class="info" open="open"><summary>sx : array_like, optional</summary><p>Standard deviations of <code>x</code>.
-<code>sx</code> are standard deviations of <code>x</code> and are converted to weights by
-dividing 1.0 by their squares.</p>
-</details>
-<details class="info" open="open"><summary>sy : array_like, optional</summary><p>Standard deviations of <code>y</code>.
-<code>sy</code> are standard deviations of <code>y</code> and are converted to weights by
-dividing 1.0 by their squares.</p>
-</details>
-<details class="info" open="open"><summary>covx : array_like, optional</summary><p>Covariance of <code>x</code>
-<code>covx</code> is an array of covariance matrices of <code>x</code> and are converted to
-weights by performing a matrix inversion on each observation's
-covariance matrix.</p>
-</details>
-<details class="info" open="open"><summary>covy : array_like, optional</summary><p>Covariance of <code>y</code>
-<code>covy</code> is an array of covariance matrices and are converted to
-weights by performing a matrix inversion on each observation's
-covariance matrix.</p>
-</details>
-<details class="info" open="open"><summary>fix : array_like, optional</summary><p>The argument and member fix is the same as Data.fix and ODR.ifixx:
-It is an array of integers with the same shape as <code>x</code> that
-determines which input observations are treated as fixed. One can
-use a sequence of length m (the dimensionality of the input
-observations) to fix some dimensions for all observations. A value
-of 0 fixes the observation, a value &gt; 0 makes it free.</p>
-</details>
-<details class="info" open="open"><summary>meta : dict, optional</summary><p>Free-form dictionary for metadata.</p>
-</details>
+<ul>
+<li>
+<p><strong>x : array_like</strong>
+    Observed data for the independent variable of the regression</p>
+</li>
+<li>
+<p><strong>y : array_like, optional</strong>
+    If array-like, observed data for the dependent variable of the
+    regression. A scalar input implies that the model to be used on
+    the data is implicit.</p>
+</li>
+<li>
+<p><strong>sx : array_like, optional</strong>
+    Standard deviations of <code>x</code>.
+    <code>sx</code> are standard deviations of <code>x</code> and are converted to weights by
+    dividing 1.0 by their squares.</p>
+</li>
+<li>
+<p><strong>sy : array_like, optional</strong>
+    Standard deviations of <code>y</code>.
+    <code>sy</code> are standard deviations of <code>y</code> and are converted to weights by
+    dividing 1.0 by their squares.</p>
+</li>
+<li>
+<p><strong>covx : array_like, optional</strong>
+    Covariance of <code>x</code>
+    <code>covx</code> is an array of covariance matrices of <code>x</code> and are converted to
+    weights by performing a matrix inversion on each observation's
+    covariance matrix.</p>
+</li>
+<li>
+<p><strong>covy : array_like, optional</strong>
+    Covariance of <code>y</code>
+    <code>covy</code> is an array of covariance matrices and are converted to
+    weights by performing a matrix inversion on each observation's
+    covariance matrix.</p>
+</li>
+<li>
+<p><strong>fix : array_like, optional</strong>
+    The argument and member fix is the same as Data.fix and ODR.ifixx:
+    It is an array of integers with the same shape as <code>x</code> that
+    determines which input observations are treated as fixed. One can
+    use a sequence of length m (the dimensionality of the input
+    observations) to fix some dimensions for all observations. A value
+    of 0 fixes the observation, a value &gt; 0 makes it free.</p>
+</li>
+<li>
+<p><strong>meta : dict, optional</strong>
+    Free-form dictionary for metadata.</p>
+</li>
+</ul>
 <h4>Notes</h4>
 <p>The weights <code>wd</code> and <code>we</code> are computed from provided values as follows:</p>
 <p><code>sx</code> and <code>sy</code> are converted to weights by dividing 1.0 by their squares.
@@ -3276,7 +3432,7 @@ we only restricted by their natures: <code>sx</code> and <code>sy</code> can't b
 exception. Same with <code>sy</code> and <code>covy</code>.</p>
 </details>
 <h3 id="set_meta_2">set_meta<a class="headerlink" href="#set_meta_2" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_meta</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method set_meta</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">set_meta</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">kwds</span><span class="o">:(</span><span class="kt">string</span> <span class="o">*</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="kt">list</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
@@ -3292,19 +3448,19 @@ by keywords.</p>
 
 </details>
 <h3 id="to_string_7">to_string<a class="headerlink" href="#to_string_7" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method to_string</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="show_7">show<a class="headerlink" href="#show_7" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method show</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="pp_7">pp<a class="headerlink" href="#pp_7" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+<details class="note" open="open"><summary>method pp</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
 </code></pre></div>
 
 <p>Pretty-print the object to a formatter.</p>
@@ -3312,22 +3468,26 @@ by keywords.</p>
 <h2 id="models">Models<a class="headerlink" href="#models" title="Permanent link">&para;</a></h2>
 <p>Module <code>Scipy.​Odr.​Models</code> wraps Python module <code>scipy.odr.models</code>.</p>
 <h3 id="polynomial">polynomial<a class="headerlink" href="#polynomial" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">polynomial</span> <span class="o">:</span>
-  <span class="o">[`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Sequence</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+<details class="note" open="open"><summary>function polynomial</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">polynomial</span> <span class="o">:</span>
+  <span class="o">[`</span><span class="nc">Sequence</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Factory function for a general polynomial model.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>order : int or sequence</summary><p>If an integer, it becomes the order of the polynomial to fit. If
-a sequence of numbers, then these are the explicit powers in the
-polynomial.
-A constant term (power 0) is always included, so don't include 0.
-Thus, polynomial(n) is equivalent to polynomial(range(1, n+1)).</p>
-</details>
+<ul>
+<li><strong>order : int or sequence</strong>
+    If an integer, it becomes the order of the polynomial to fit. If
+    a sequence of numbers, then these are the explicit powers in the
+    polynomial.
+    A constant term (power 0) is always included, so don't include 0.
+    Thus, polynomial(n) is equivalent to polynomial(range(1, n+1)).</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>polynomial : Model instance</summary><p>Model instance.</p>
-</details>
+<ul>
+<li><strong>polynomial : Model instance</strong>
+    Model instance.</li>
+</ul>
 <h4>Examples</h4>
 <p>We can fit an input data using orthogonal distance regression (ODR) with
 a polynomial model:</p>
@@ -3351,7 +3511,7 @@ a polynomial model:</p>
 <h2 id="odrpack">Odrpack<a class="headerlink" href="#odrpack" title="Permanent link">&para;</a></h2>
 <p>Module <code>Scipy.​Odr.​Odrpack</code> wraps Python module <code>scipy.odr.odrpack</code>.</p>
 <h3 id="odr_1">odr<a class="headerlink" href="#odr_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">odr</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function odr</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">odr</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">we</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">wd</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">fjacb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -3386,17 +3546,27 @@ a polynomial model:</p>
 <p>odr(fcn, beta0, y, x, we=None, wd=None, fjacb=None, fjacd=None, extra_args=None, ifixx=None, ifixb=None, job=0, iprint=0, errfile=None, rptfile=None, ndigit=0, taufac=0.0, sstol=-1.0, partol=-1.0, maxit=-1, stpb=None, stpd=None, sclb=None, scld=None, work=None, iwork=None, full_output=0)</p>
 <p>Low-level function for ODR.</p>
 <h4>See Also</h4>
-<details class="info" open="open"><summary>ODR : The ODR class gathers all information and coordinates the running of the main fitting routine.</summary></details>
-<details class="info" open="open"><summary>Model : The Model class stores information about the function you wish to fit.</summary></details>
-<details class="info" open="open"><summary>Data : The data to fit.</summary></details>
-<details class="info" open="open"><summary>RealData : Data with weights as actual std. dev.s and/or covariances.</summary></details>
+<ul>
+<li>
+<p><strong>ODR : The ODR class gathers all information and coordinates the running of the main fitting routine.</strong></p>
+</li>
+<li>
+<p><strong>Model : The Model class stores information about the function you wish to fit.</strong></p>
+</li>
+<li>
+<p><strong>Data : The data to fit.</strong></p>
+</li>
+<li>
+<p><strong>RealData : Data with weights as actual std. dev.s and/or covariances.</strong></p>
+</li>
+</ul>
 <h4>Notes</h4>
 <p>This is a function performing the same operation as the <code>ODR</code>,
 <code>Model</code>, and <code>Data</code> classes together. The parameters of this
 function are explained in the class documentation.</p>
 </details>
 <h3 id="warn">warn<a class="headerlink" href="#warn" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">warn</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function warn</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">warn</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">category</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">stacklevel</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">source</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -3408,7 +3578,7 @@ function are explained in the class documentation.</p>
 <p>Issue a warning, or maybe ignore it or raise an exception.</p>
 </details>
 <h3 id="odr_2">odr<a class="headerlink" href="#odr_2" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">odr</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function odr</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">odr</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">we</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">wd</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">fjacb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
@@ -3443,32 +3613,46 @@ function are explained in the class documentation.</p>
 <p>odr(fcn, beta0, y, x, we=None, wd=None, fjacb=None, fjacd=None, extra_args=None, ifixx=None, ifixb=None, job=0, iprint=0, errfile=None, rptfile=None, ndigit=0, taufac=0.0, sstol=-1.0, partol=-1.0, maxit=-1, stpb=None, stpd=None, sclb=None, scld=None, work=None, iwork=None, full_output=0)</p>
 <p>Low-level function for ODR.</p>
 <h4>See Also</h4>
-<details class="info" open="open"><summary>ODR : The ODR class gathers all information and coordinates the running of the main fitting routine.</summary></details>
-<details class="info" open="open"><summary>Model : The Model class stores information about the function you wish to fit.</summary></details>
-<details class="info" open="open"><summary>Data : The data to fit.</summary></details>
-<details class="info" open="open"><summary>RealData : Data with weights as actual std. dev.s and/or covariances.</summary></details>
+<ul>
+<li>
+<p><strong>ODR : The ODR class gathers all information and coordinates the running of the main fitting routine.</strong></p>
+</li>
+<li>
+<p><strong>Model : The Model class stores information about the function you wish to fit.</strong></p>
+</li>
+<li>
+<p><strong>Data : The data to fit.</strong></p>
+</li>
+<li>
+<p><strong>RealData : Data with weights as actual std. dev.s and/or covariances.</strong></p>
+</li>
+</ul>
 <h4>Notes</h4>
 <p>This is a function performing the same operation as the <code>ODR</code>,
 <code>Model</code>, and <code>Data</code> classes together. The parameters of this
 function are explained in the class documentation.</p>
 </details>
 <h3 id="polynomial_1">polynomial<a class="headerlink" href="#polynomial_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">polynomial</span> <span class="o">:</span>
-  <span class="o">[`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Sequence</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
+<details class="note" open="open"><summary>function polynomial</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">polynomial</span> <span class="o">:</span>
+  <span class="o">[`</span><span class="nc">Sequence</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">I</span> <span class="k">of</span> <span class="kt">int</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Factory function for a general polynomial model.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>order : int or sequence</summary><p>If an integer, it becomes the order of the polynomial to fit. If
-a sequence of numbers, then these are the explicit powers in the
-polynomial.
-A constant term (power 0) is always included, so don't include 0.
-Thus, polynomial(n) is equivalent to polynomial(range(1, n+1)).</p>
-</details>
+<ul>
+<li><strong>order : int or sequence</strong>
+    If an integer, it becomes the order of the polynomial to fit. If
+    a sequence of numbers, then these are the explicit powers in the
+    polynomial.
+    A constant term (power 0) is always included, so don't include 0.
+    Thus, polynomial(n) is equivalent to polynomial(range(1, n+1)).</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>polynomial : Model instance</summary><p>Model instance.</p>
-</details>
+<ul>
+<li><strong>polynomial : Model instance</strong>
+    Model instance.</li>
+</ul>
 <h4>Examples</h4>
 <p>We can fit an input data using orthogonal distance regression (ODR) with
 a polynomial model:</p>

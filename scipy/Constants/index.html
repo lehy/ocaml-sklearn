@@ -1595,7 +1595,7 @@
 </code></pre></div>
 
 <h3 id="with_traceback">with_traceback<a class="headerlink" href="#with_traceback" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">with_traceback</span> <span class="o">:</span>
+<details class="note" open="open"><summary>method with_traceback</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">with_traceback</span> <span class="o">:</span>
   <span class="n">tb</span><span class="o">:</span><span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="o">[&gt;</span> <span class="n">tag</span><span class="o">]</span> <span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
@@ -1605,19 +1605,19 @@
 set self.<strong>traceback</strong> to tb and return self.</p>
 </details>
 <h3 id="to_string">to_string<a class="headerlink" href="#to_string" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method to_string</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">to_string</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="show">show<a class="headerlink" href="#show" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<details class="note" open="open"><summary>method show</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">show</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span>
 </code></pre></div>
 
 <p>Print the object to a human-readable representation.</p>
 </details>
 <h3 id="pp">pp<a class="headerlink" href="#pp" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>method</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+<details class="note" open="open"><summary>method pp</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">pp</span><span class="o">:</span> <span class="nn">Format</span><span class="p">.</span><span class="n">formatter</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
 </code></pre></div>
 
 <p>Pretty-print the object to a formatter.</p>
@@ -1625,7 +1625,7 @@ set self.<strong>traceback</strong> to tb and return self.</p>
 <h2 id="codata">Codata<a class="headerlink" href="#codata" title="Permanent link">&para;</a></h2>
 <p>Module <code>Scipy.​Constants.​Codata</code> wraps Python module <code>scipy.constants.codata</code>.</p>
 <h3 id="find">find<a class="headerlink" href="#find" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">find</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function find</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">find</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">sub</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">disp</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
@@ -1634,15 +1634,23 @@ set self.<strong>traceback</strong> to tb and return self.</p>
 
 <p>Return list of physical_constant keys containing a given string.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>sub : str, unicode</summary><p>Sub-string to search keys for. By default, return all keys.</p>
-</details>
-<details class="info" open="open"><summary>disp : bool</summary><p>If True, print the keys that are found and return None.
-Otherwise, return the list of keys without printing anything.</p>
-</details>
+<ul>
+<li>
+<p><strong>sub : str, unicode</strong>
+    Sub-string to search keys for. By default, return all keys.</p>
+</li>
+<li>
+<p><strong>disp : bool</strong>
+    If True, print the keys that are found and return None.
+    Otherwise, return the list of keys without printing anything.</p>
+</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>keys : list or None</summary><p>If <code>disp</code> is False, the list of keys is returned.
-Otherwise, None is returned.</p>
-</details>
+<ul>
+<li><strong>keys : list or None</strong>
+    If <code>disp</code> is False, the list of keys is returned.
+    Otherwise, None is returned.</li>
+</ul>
 <h4>Examples</h4>
 <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="kn">import</span> <span class="n">find</span><span class="p">,</span> <span class="n">physical_constants</span>
 </code></pre></div>
@@ -1673,32 +1681,36 @@ Otherwise, None is returned.</p>
 
 </details>
 <h3 id="parse_constants_2002to2014">parse_constants_2002to2014<a class="headerlink" href="#parse_constants_2002to2014" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">parse_constants_2002to2014</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function parse_constants_2002to2014</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">parse_constants_2002to2014</span> <span class="o">:</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 </details>
 <h3 id="parse_constants_2018toxxxx">parse_constants_2018toXXXX<a class="headerlink" href="#parse_constants_2018toxxxx" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">parse_constants_2018toXXXX</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function parse_constants_2018toXXXX</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">parse_constants_2018toXXXX</span> <span class="o">:</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 </details>
 <h3 id="precision">precision<a class="headerlink" href="#precision" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">precision</span> <span class="o">:</span>
-  <span class="o">[`</span><span class="nc">Python_string</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span><span class="o">]</span> <span class="o">-&gt;</span>
+<details class="note" open="open"><summary>function precision</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">precision</span> <span class="o">:</span>
+  <span class="o">[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Python_string</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="kt">float</span>
 </code></pre></div>
 
 <p>Relative precision in physical_constants indexed by key</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>key : Python string or unicode</summary><p>Key in dictionary <code>physical_constants</code></p>
-</details>
+<ul>
+<li><strong>key : Python string or unicode</strong>
+    Key in dictionary <code>physical_constants</code></li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>prec : float</summary><p>Relative precision in <code>physical_constants</code> corresponding to <code>key</code></p>
-</details>
+<ul>
+<li><strong>prec : float</strong>
+    Relative precision in <code>physical_constants</code> corresponding to <code>key</code></li>
+</ul>
 <h4>Examples</h4>
 <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">constants</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">constants</span><span class="o">.</span><span class="n">precision</span><span class="p">(</span><span class="sa">u</span><span class="s1">&#39;proton mass&#39;</span><span class="p">)</span>
@@ -1707,7 +1719,7 @@ Otherwise, None is returned.</p>
 
 </details>
 <h3 id="sqrt">sqrt<a class="headerlink" href="#sqrt" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sqrt</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function sqrt</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">sqrt</span> <span class="o">:</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
@@ -1715,18 +1727,22 @@ Otherwise, None is returned.</p>
 <p>Return the square root of x.</p>
 </details>
 <h3 id="unit">unit<a class="headerlink" href="#unit" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="kt">unit</span> <span class="o">:</span>
-  <span class="o">[`</span><span class="nc">Python_string</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span><span class="o">]</span> <span class="o">-&gt;</span>
+<details class="note" open="open"><summary>function unit</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="kt">unit</span> <span class="o">:</span>
+  <span class="o">[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Python_string</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Unit in physical_constants indexed by key</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>key : Python string or unicode</summary><p>Key in dictionary <code>physical_constants</code></p>
-</details>
+<ul>
+<li><strong>key : Python string or unicode</strong>
+    Key in dictionary <code>physical_constants</code></li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>unit : Python string</summary><p>Unit in <code>physical_constants</code> corresponding to <code>key</code></p>
-</details>
+<ul>
+<li><strong>unit : Python string</strong>
+    Unit in <code>physical_constants</code> corresponding to <code>key</code></li>
+</ul>
 <h4>Examples</h4>
 <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">constants</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">constants</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="sa">u</span><span class="s1">&#39;proton mass&#39;</span><span class="p">)</span>
@@ -1735,18 +1751,22 @@ Otherwise, None is returned.</p>
 
 </details>
 <h3 id="value">value<a class="headerlink" href="#value" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="k">value</span> <span class="o">:</span>
-  <span class="o">[`</span><span class="nc">Python_string</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span><span class="o">]</span> <span class="o">-&gt;</span>
+<details class="note" open="open"><summary>function value</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="k">value</span> <span class="o">:</span>
+  <span class="o">[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Python_string</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="kt">float</span>
 </code></pre></div>
 
 <p>Value in physical_constants indexed by key</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>key : Python string or unicode</summary><p>Key in dictionary <code>physical_constants</code></p>
-</details>
+<ul>
+<li><strong>key : Python string or unicode</strong>
+    Key in dictionary <code>physical_constants</code></li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>value : float</summary><p>Value in <code>physical_constants</code> corresponding to <code>key</code></p>
-</details>
+<ul>
+<li><strong>value : float</strong>
+    Value in <code>physical_constants</code> corresponding to <code>key</code></li>
+</ul>
 <h4>Examples</h4>
 <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">constants</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">constants</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="sa">u</span><span class="s1">&#39;elementary charge&#39;</span><span class="p">)</span>
@@ -1757,7 +1777,7 @@ Otherwise, None is returned.</p>
 <h2 id="constants">Constants<a class="headerlink" href="#constants" title="Permanent link">&para;</a></h2>
 <p>Module <code>Scipy.​Constants.​Constants</code> wraps Python module <code>scipy.constants.constants</code>.</p>
 <h3 id="convert_temperature">convert_temperature<a class="headerlink" href="#convert_temperature" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">convert_temperature</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function convert_temperature</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">convert_temperature</span> <span class="o">:</span>
   <span class="n">val_</span><span class="o">:[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">old_scale</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span>
   <span class="n">new_scale</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span>
@@ -1768,24 +1788,34 @@ Otherwise, None is returned.</p>
 <p>Convert from a temperature scale to another one among Celsius, Kelvin,
 Fahrenheit, and Rankine scales.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>val : array_like</summary><p>Value(s) of the temperature(s) to be converted expressed in the
-original scale.</p>
-</details>
-<details class="info" open="open"><summary>old_scale: str</summary><p>Specifies as a string the original scale from which the temperature
-value(s) will be converted. Supported scales are Celsius ('Celsius',
-'celsius', 'C' or 'c'), Kelvin ('Kelvin', 'kelvin', 'K', 'k'),
-Fahrenheit ('Fahrenheit', 'fahrenheit', 'F' or 'f'), and Rankine
-('Rankine', 'rankine', 'R', 'r').</p>
-</details>
-<details class="info" open="open"><summary>new_scale: str</summary><p>Specifies as a string the new scale to which the temperature
-value(s) will be converted. Supported scales are Celsius ('Celsius',
-'celsius', 'C' or 'c'), Kelvin ('Kelvin', 'kelvin', 'K', 'k'),
-Fahrenheit ('Fahrenheit', 'fahrenheit', 'F' or 'f'), and Rankine
-('Rankine', 'rankine', 'R', 'r').</p>
-</details>
+<ul>
+<li>
+<p><strong>val : array_like</strong>
+    Value(s) of the temperature(s) to be converted expressed in the
+    original scale.</p>
+</li>
+<li>
+<p><strong>old_scale: str</strong>
+    Specifies as a string the original scale from which the temperature
+    value(s) will be converted. Supported scales are Celsius ('Celsius',
+    'celsius', 'C' or 'c'), Kelvin ('Kelvin', 'kelvin', 'K', 'k'),
+    Fahrenheit ('Fahrenheit', 'fahrenheit', 'F' or 'f'), and Rankine
+    ('Rankine', 'rankine', 'R', 'r').</p>
+</li>
+<li>
+<p><strong>new_scale: str</strong>
+    Specifies as a string the new scale to which the temperature
+    value(s) will be converted. Supported scales are Celsius ('Celsius',
+    'celsius', 'C' or 'c'), Kelvin ('Kelvin', 'kelvin', 'K', 'k'),
+    Fahrenheit ('Fahrenheit', 'fahrenheit', 'F' or 'f'), and Rankine
+    ('Rankine', 'rankine', 'R', 'r').</p>
+</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>res : float or array of floats</summary><p>Value(s) of the converted temperature(s) expressed in the new scale.</p>
-</details>
+<ul>
+<li><strong>res : float or array of floats</strong>
+    Value(s) of the converted temperature(s) expressed in the new scale.</li>
+</ul>
 <h4>Notes</h4>
 <p>.. versionadded:: 0.18.0</p>
 <h4>Examples</h4>
@@ -1796,18 +1826,22 @@ Fahrenheit ('Fahrenheit', 'fahrenheit', 'F' or 'f'), and Rankine
 
 </details>
 <h3 id="lambda2nu">lambda2nu<a class="headerlink" href="#lambda2nu" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">lambda2nu</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function lambda2nu</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">lambda2nu</span> <span class="o">:</span>
   <span class="o">[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Convert wavelength to optical frequency</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>lambda_ : array_like</summary><p>Wavelength(s) to be converted.</p>
-</details>
+<ul>
+<li><strong>lambda_ : array_like</strong>
+    Wavelength(s) to be converted.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>nu : float or array of floats</summary><p>Equivalent optical frequency.</p>
-</details>
+<ul>
+<li><strong>nu : float or array of floats</strong>
+    Equivalent optical frequency.</li>
+</ul>
 <h4>Notes</h4>
 <p>Computes <code>nu = c / lambda</code> where c = 299792458.0, i.e., the
 (vacuum) speed of light in meters/second.</p>
@@ -1819,18 +1853,22 @@ Fahrenheit ('Fahrenheit', 'fahrenheit', 'F' or 'f'), and Rankine
 
 </details>
 <h3 id="nu2lambda">nu2lambda<a class="headerlink" href="#nu2lambda" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">nu2lambda</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function nu2lambda</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">nu2lambda</span> <span class="o">:</span>
   <span class="o">[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Convert optical frequency to wavelength.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>nu : array_like</summary><p>Optical frequency to be converted.</p>
-</details>
+<ul>
+<li><strong>nu : array_like</strong>
+    Optical frequency to be converted.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>lambda : float or array of floats</summary><p>Equivalent wavelength(s).</p>
-</details>
+<ul>
+<li><strong>lambda : float or array of floats</strong>
+    Equivalent wavelength(s).</li>
+</ul>
 <h4>Notes</h4>
 <p>Computes <code>lambda = c / nu</code> where c = 299792458.0, i.e., the
 (vacuum) speed of light in meters/second.</p>
@@ -1842,7 +1880,7 @@ Fahrenheit ('Fahrenheit', 'fahrenheit', 'F' or 'f'), and Rankine
 
 </details>
 <h3 id="convert_temperature_1">convert_temperature<a class="headerlink" href="#convert_temperature_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">convert_temperature</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function convert_temperature</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">convert_temperature</span> <span class="o">:</span>
   <span class="n">val_</span><span class="o">:[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="n">old_scale</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span>
   <span class="n">new_scale</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span>
@@ -1853,24 +1891,34 @@ Fahrenheit ('Fahrenheit', 'fahrenheit', 'F' or 'f'), and Rankine
 <p>Convert from a temperature scale to another one among Celsius, Kelvin,
 Fahrenheit, and Rankine scales.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>val : array_like</summary><p>Value(s) of the temperature(s) to be converted expressed in the
-original scale.</p>
-</details>
-<details class="info" open="open"><summary>old_scale: str</summary><p>Specifies as a string the original scale from which the temperature
-value(s) will be converted. Supported scales are Celsius ('Celsius',
-'celsius', 'C' or 'c'), Kelvin ('Kelvin', 'kelvin', 'K', 'k'),
-Fahrenheit ('Fahrenheit', 'fahrenheit', 'F' or 'f'), and Rankine
-('Rankine', 'rankine', 'R', 'r').</p>
-</details>
-<details class="info" open="open"><summary>new_scale: str</summary><p>Specifies as a string the new scale to which the temperature
-value(s) will be converted. Supported scales are Celsius ('Celsius',
-'celsius', 'C' or 'c'), Kelvin ('Kelvin', 'kelvin', 'K', 'k'),
-Fahrenheit ('Fahrenheit', 'fahrenheit', 'F' or 'f'), and Rankine
-('Rankine', 'rankine', 'R', 'r').</p>
-</details>
+<ul>
+<li>
+<p><strong>val : array_like</strong>
+    Value(s) of the temperature(s) to be converted expressed in the
+    original scale.</p>
+</li>
+<li>
+<p><strong>old_scale: str</strong>
+    Specifies as a string the original scale from which the temperature
+    value(s) will be converted. Supported scales are Celsius ('Celsius',
+    'celsius', 'C' or 'c'), Kelvin ('Kelvin', 'kelvin', 'K', 'k'),
+    Fahrenheit ('Fahrenheit', 'fahrenheit', 'F' or 'f'), and Rankine
+    ('Rankine', 'rankine', 'R', 'r').</p>
+</li>
+<li>
+<p><strong>new_scale: str</strong>
+    Specifies as a string the new scale to which the temperature
+    value(s) will be converted. Supported scales are Celsius ('Celsius',
+    'celsius', 'C' or 'c'), Kelvin ('Kelvin', 'kelvin', 'K', 'k'),
+    Fahrenheit ('Fahrenheit', 'fahrenheit', 'F' or 'f'), and Rankine
+    ('Rankine', 'rankine', 'R', 'r').</p>
+</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>res : float or array of floats</summary><p>Value(s) of the converted temperature(s) expressed in the new scale.</p>
-</details>
+<ul>
+<li><strong>res : float or array of floats</strong>
+    Value(s) of the converted temperature(s) expressed in the new scale.</li>
+</ul>
 <h4>Notes</h4>
 <p>.. versionadded:: 0.18.0</p>
 <h4>Examples</h4>
@@ -1881,7 +1929,7 @@ Fahrenheit ('Fahrenheit', 'fahrenheit', 'F' or 'f'), and Rankine
 
 </details>
 <h3 id="find_1">find<a class="headerlink" href="#find_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">find</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function find</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">find</span> <span class="o">:</span>
   <span class="o">?</span><span class="n">sub</span><span class="o">:</span><span class="kt">string</span> <span class="o">-&gt;</span>
   <span class="o">?</span><span class="n">disp</span><span class="o">:</span><span class="kt">bool</span> <span class="o">-&gt;</span>
   <span class="kt">unit</span> <span class="o">-&gt;</span>
@@ -1890,15 +1938,23 @@ Fahrenheit ('Fahrenheit', 'fahrenheit', 'F' or 'f'), and Rankine
 
 <p>Return list of physical_constant keys containing a given string.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>sub : str, unicode</summary><p>Sub-string to search keys for. By default, return all keys.</p>
-</details>
-<details class="info" open="open"><summary>disp : bool</summary><p>If True, print the keys that are found and return None.
-Otherwise, return the list of keys without printing anything.</p>
-</details>
+<ul>
+<li>
+<p><strong>sub : str, unicode</strong>
+    Sub-string to search keys for. By default, return all keys.</p>
+</li>
+<li>
+<p><strong>disp : bool</strong>
+    If True, print the keys that are found and return None.
+    Otherwise, return the list of keys without printing anything.</p>
+</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>keys : list or None</summary><p>If <code>disp</code> is False, the list of keys is returned.
-Otherwise, None is returned.</p>
-</details>
+<ul>
+<li><strong>keys : list or None</strong>
+    If <code>disp</code> is False, the list of keys is returned.
+    Otherwise, None is returned.</li>
+</ul>
 <h4>Examples</h4>
 <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="kn">import</span> <span class="n">find</span><span class="p">,</span> <span class="n">physical_constants</span>
 </code></pre></div>
@@ -1929,18 +1985,22 @@ Otherwise, None is returned.</p>
 
 </details>
 <h3 id="lambda2nu_1">lambda2nu<a class="headerlink" href="#lambda2nu_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">lambda2nu</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function lambda2nu</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">lambda2nu</span> <span class="o">:</span>
   <span class="o">[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Convert wavelength to optical frequency</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>lambda_ : array_like</summary><p>Wavelength(s) to be converted.</p>
-</details>
+<ul>
+<li><strong>lambda_ : array_like</strong>
+    Wavelength(s) to be converted.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>nu : float or array of floats</summary><p>Equivalent optical frequency.</p>
-</details>
+<ul>
+<li><strong>nu : float or array of floats</strong>
+    Equivalent optical frequency.</li>
+</ul>
 <h4>Notes</h4>
 <p>Computes <code>nu = c / lambda</code> where c = 299792458.0, i.e., the
 (vacuum) speed of light in meters/second.</p>
@@ -1952,18 +2012,22 @@ Otherwise, None is returned.</p>
 
 </details>
 <h3 id="nu2lambda_1">nu2lambda<a class="headerlink" href="#nu2lambda_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">nu2lambda</span> <span class="o">:</span>
+<details class="note" open="open"><summary>function nu2lambda</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">nu2lambda</span> <span class="o">:</span>
   <span class="o">[&gt;`</span><span class="nc">Ndarray</span><span class="o">]</span> <span class="nn">Np</span><span class="p">.</span><span class="nn">Obj</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Convert optical frequency to wavelength.</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>nu : array_like</summary><p>Optical frequency to be converted.</p>
-</details>
+<ul>
+<li><strong>nu : array_like</strong>
+    Optical frequency to be converted.</li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>lambda : float or array of floats</summary><p>Equivalent wavelength(s).</p>
-</details>
+<ul>
+<li><strong>lambda : float or array of floats</strong>
+    Equivalent wavelength(s).</li>
+</ul>
 <h4>Notes</h4>
 <p>Computes <code>lambda = c / nu</code> where c = 299792458.0, i.e., the
 (vacuum) speed of light in meters/second.</p>
@@ -1975,18 +2039,22 @@ Otherwise, None is returned.</p>
 
 </details>
 <h3 id="precision_1">precision<a class="headerlink" href="#precision_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">precision</span> <span class="o">:</span>
-  <span class="o">[`</span><span class="nc">Python_string</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span><span class="o">]</span> <span class="o">-&gt;</span>
+<details class="note" open="open"><summary>function precision</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="n">precision</span> <span class="o">:</span>
+  <span class="o">[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Python_string</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="kt">float</span>
 </code></pre></div>
 
 <p>Relative precision in physical_constants indexed by key</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>key : Python string or unicode</summary><p>Key in dictionary <code>physical_constants</code></p>
-</details>
+<ul>
+<li><strong>key : Python string or unicode</strong>
+    Key in dictionary <code>physical_constants</code></li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>prec : float</summary><p>Relative precision in <code>physical_constants</code> corresponding to <code>key</code></p>
-</details>
+<ul>
+<li><strong>prec : float</strong>
+    Relative precision in <code>physical_constants</code> corresponding to <code>key</code></li>
+</ul>
 <h4>Examples</h4>
 <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">constants</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">constants</span><span class="o">.</span><span class="n">precision</span><span class="p">(</span><span class="sa">u</span><span class="s1">&#39;proton mass&#39;</span><span class="p">)</span>
@@ -1995,18 +2063,22 @@ Otherwise, None is returned.</p>
 
 </details>
 <h3 id="unit_1">unit<a class="headerlink" href="#unit_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="kt">unit</span> <span class="o">:</span>
-  <span class="o">[`</span><span class="nc">Python_string</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span><span class="o">]</span> <span class="o">-&gt;</span>
+<details class="note" open="open"><summary>function unit</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="kt">unit</span> <span class="o">:</span>
+  <span class="o">[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Python_string</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span>
 </code></pre></div>
 
 <p>Unit in physical_constants indexed by key</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>key : Python string or unicode</summary><p>Key in dictionary <code>physical_constants</code></p>
-</details>
+<ul>
+<li><strong>key : Python string or unicode</strong>
+    Key in dictionary <code>physical_constants</code></li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>unit : Python string</summary><p>Unit in <code>physical_constants</code> corresponding to <code>key</code></p>
-</details>
+<ul>
+<li><strong>unit : Python string</strong>
+    Unit in <code>physical_constants</code> corresponding to <code>key</code></li>
+</ul>
 <h4>Examples</h4>
 <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">constants</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">constants</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="sa">u</span><span class="s1">&#39;proton mass&#39;</span><span class="p">)</span>
@@ -2015,18 +2087,22 @@ Otherwise, None is returned.</p>
 
 </details>
 <h3 id="value_1">value<a class="headerlink" href="#value_1" title="Permanent link">&para;</a></h3>
-<details class="note" open="open"><summary>function</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="k">value</span> <span class="o">:</span>
-  <span class="o">[`</span><span class="nc">Python_string</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span> <span class="o">|</span> <span class="o">`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span><span class="o">]</span> <span class="o">-&gt;</span>
+<details class="note" open="open"><summary>function value</summary><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="k">value</span> <span class="o">:</span>
+  <span class="o">[`</span><span class="nc">S</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="o">`</span><span class="nc">Python_string</span> <span class="k">of</span> <span class="nn">Py</span><span class="p">.</span><span class="nn">Object</span><span class="p">.</span><span class="n">t</span><span class="o">]</span> <span class="o">-&gt;</span>
   <span class="kt">float</span>
 </code></pre></div>
 
 <p>Value in physical_constants indexed by key</p>
 <h4>Parameters</h4>
-<details class="info" open="open"><summary>key : Python string or unicode</summary><p>Key in dictionary <code>physical_constants</code></p>
-</details>
+<ul>
+<li><strong>key : Python string or unicode</strong>
+    Key in dictionary <code>physical_constants</code></li>
+</ul>
 <h4>Returns</h4>
-<details class="info" open="open"><summary>value : float</summary><p>Value in <code>physical_constants</code> corresponding to <code>key</code></p>
-</details>
+<ul>
+<li><strong>value : float</strong>
+    Value in <code>physical_constants</code> corresponding to <code>key</code></li>
+</ul>
 <h4>Examples</h4>
 <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">constants</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">constants</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="sa">u</span><span class="s1">&#39;elementary charge&#39;</span><span class="p">)</span>
