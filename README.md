@@ -139,7 +139,8 @@ scikit-learn's documentation.
 ### Dev tl;dr
 
 ~~~sh
-python3 -mvenv .venv
+sudo apt install python-3.8 python3.8-venv libpython3.8
+python3.8 -mvenv .venv
 source .venv/bin/activate
 pip install -r requirements-dev.txt
 opam switch create . 4.11.1 --deps-only
@@ -155,8 +156,8 @@ The requirements for developing (not using) the bindings are in file
 `requirements-dev.txt`. Install it using:
 
 ~~~sh
-# sudo apt install python3-venv
-python3 -mvenv .venv
+sudo apt install python-3.8 python3.8-venv libpython3.8
+python3.8 -mvenv .venv
 source .venv/bin/activate
 pip install -r requirements-dev.txt
 ~~~
